@@ -103,7 +103,7 @@ object Square {
     }
 
     fun getSquare(bitboard: Long): Int {
-        return Utils.instance.numberOfTrailingZeros(bitboard)
+        return Utils.specific.numberOfTrailingZeros(bitboard)
     }
 
     fun getSquare(square: String): Int {
@@ -135,7 +135,7 @@ object Square {
         if (bitboard == 0L) {
             return IntArray(0)
         }
-        val squareCount = Utils.instance.bitCount(bitboard)
+        val squareCount = Utils.specific.bitCount(bitboard)
         val result = IntArray(squareCount)
         var index = 0
         for (i in 0 until Square.SIZE) {
