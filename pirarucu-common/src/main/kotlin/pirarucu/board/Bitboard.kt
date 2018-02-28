@@ -129,7 +129,7 @@ object Bitboard {
     val QUEEN_SIDE = FILE_A or FILE_B or FILE_C
 
     fun mirrorVertical(bitboard: Long): Long {
-        return Utils.instance.reverseBytes(bitboard)
+        return Utils.specific.reverseBytes(bitboard)
     }
 
     fun getNeighbours(bitboard: Long): Long {
@@ -155,7 +155,7 @@ object Bitboard {
     }
 
     fun bitCount(bitboard: Long): Int {
-        return Utils.instance.bitCount(bitboard)
+        return Utils.specific.bitCount(bitboard)
     }
 
     fun toString(bitboard: Long): String {
