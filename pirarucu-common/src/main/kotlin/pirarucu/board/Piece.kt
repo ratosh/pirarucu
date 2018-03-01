@@ -15,15 +15,15 @@ object Piece {
 
     private val CHARACTER = charArrayOf('-', 'P', 'N', 'B', 'R', 'Q', 'K', '+', 'p', 'n', 'b', 'r', 'q', 'k')
 
-    fun getPiece(character: Char): Int {
-        val indexOf = CHARACTER.indexOf(character)
+    fun getPiece(token: Char): Int {
+        val indexOf = CHARACTER.indexOf(token)
         return if (indexOf <= NONE) {
             NONE
-        } else indexOf % SIZE
+        } else indexOf.rem(SIZE)
     }
 
-    fun getPieceColor(character: Char): Int {
-        return if (CHARACTER.indexOf(character) < SIZE) Color.WHITE else Color.BLACK
+    fun getPieceColor(token: Char): Int {
+        return if (CHARACTER.indexOf(token) < SIZE) Color.WHITE else Color.BLACK
     }
 
     fun toString(piece: Int): Char {

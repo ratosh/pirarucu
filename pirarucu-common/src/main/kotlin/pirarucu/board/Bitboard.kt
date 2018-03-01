@@ -160,7 +160,9 @@ object Bitboard {
 
     fun toString(bitboard: Long): String {
         val buffer = StringBuilder()
+        buffer.append("  abcdefgh\n")
         for (rank in Rank.RANK_8 downTo Rank.RANK_1) {
+            buffer.append(rank).append('-')
             for (file in File.FILE_A until File.SIZE) {
                 val square = Square.getSquare(file, rank)
                 buffer.append(if (bitboard and getBitboard(square) != 0L) "1" else "0")
