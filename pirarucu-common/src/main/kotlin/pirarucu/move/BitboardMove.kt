@@ -47,11 +47,12 @@ object BitboardMove {
 
     private fun slideBetween(square: Int, slideValue: Int, limit: Long): Long {
         var mask = 0L
-        var slider = square
-        while (Square.isValid(slider)) {
-            slider += slideValue
-            val bitboard = Bitboard.getBitboard(slider)
-            if (limit and bitboard != 0L) {
+        var newSquare = square
+        while (Square.isValid(newSquare)) {
+            val oldSquare = newSquare
+            newSquare += slideValue
+            val bitboard = Bitboard.getBitboard(newSquare)
+            if (limit and bitboard != 0L || !Square.isValid(newSquare) || Square.SQUARE_DISTANCE[oldSquare][newSquare] > 2) {
                 break
             }
             mask = mask or bitboard
@@ -83,30 +84,50 @@ object BitboardMove {
 
     private fun populateBetween() {
         for (square1 in Square.A1 until Square.SIZE) {
-            for (square2 in square1 + 7 until Square.SIZE step 7) {
-                val bitboard = Bitboard.getBitboard(square2)
+            var newSquare = square1
+            do {
+                newSquare += 7
+                if (!Square.isValid(newSquare)) {
+                    break
+                }
+                val bitboard = Bitboard.getBitboard(newSquare)
                 val between = slideBetween(square1, 7, Bitboard.FILE_A or Bitboard.RANK_8 or bitboard)
-                BETWEEN_BITBOARD[square1][square2] = between
-                BETWEEN_BITBOARD[square2][square1] = between
-            }
-            for (square2 in square1 + 9 until Square.SIZE step 9) {
-                val bitboard = Bitboard.getBitboard(square2)
+                BETWEEN_BITBOARD[square1][newSquare] = between
+                BETWEEN_BITBOARD[newSquare][square1] = between
+            } while (bitboard and Bitboard.FILE_A and Bitboard.RANK_8 == 0L)
+            newSquare = square1
+            do {
+                newSquare += 9
+                if (!Square.isValid(newSquare)) {
+                    break
+                }
+                val bitboard = Bitboard.getBitboard(newSquare)
                 val between = slideBetween(square1, 9, Bitboard.FILE_H or Bitboard.RANK_8 or bitboard)
-                BETWEEN_BITBOARD[square1][square2] = between
-                BETWEEN_BITBOARD[square2][square1] = between
-            }
-            for (square2 in square1 + 1 until Square.SIZE step 1) {
-                val bitboard = Bitboard.getBitboard(square2)
+                BETWEEN_BITBOARD[square1][newSquare] = between
+                BETWEEN_BITBOARD[newSquare][square1] = between
+            } while (bitboard and Bitboard.FILE_H and Bitboard.RANK_8 == 0L)
+            newSquare = square1
+            do {
+                newSquare += 1
+                if (!Square.isValid(newSquare)) {
+                    break
+                }
+                val bitboard = Bitboard.getBitboard(newSquare)
                 val between = slideBetween(square1, 1, Bitboard.RANK_8 or bitboard)
-                BETWEEN_BITBOARD[square1][square2] = between
-                BETWEEN_BITBOARD[square2][square1] = between
-            }
-            for (square2 in square1 + 8 until Square.SIZE step 8) {
-                val bitboard = Bitboard.getBitboard(square2)
+                BETWEEN_BITBOARD[square1][newSquare] = between
+                BETWEEN_BITBOARD[newSquare][square1] = between
+            } while (bitboard and Bitboard.RANK_8 == 0L)
+            newSquare = square1
+            do {
+                newSquare += 8
+                if (!Square.isValid(newSquare)) {
+                    break
+                }
+                val bitboard = Bitboard.getBitboard(newSquare)
                 val between = slideBetween(square1, 8, Bitboard.FILE_H or bitboard)
-                BETWEEN_BITBOARD[square1][square2] = between
-                BETWEEN_BITBOARD[square2][square1] = between
-            }
+                BETWEEN_BITBOARD[square1][newSquare] = between
+                BETWEEN_BITBOARD[newSquare][square1] = between
+            } while (bitboard and Bitboard.FILE_H == 0L)
         }
     }
 

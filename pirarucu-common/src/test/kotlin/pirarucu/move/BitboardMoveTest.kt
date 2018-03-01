@@ -79,4 +79,15 @@ class BitboardMoveTest {
                 Bitboard.F4 or Bitboard.F5 or Bitboard.F6)
         assertEquals(BitboardMove.KING_MOVES[Square.H8], Bitboard.G7 or Bitboard.G8 or Bitboard.H7)
     }
+
+    @Test
+    fun testBetween() {
+        assertEquals(BitboardMove.BETWEEN_BITBOARD[Square.A1][Square.H8], Bitboard.B2 or
+            Bitboard.C3 or Bitboard.D4 or Bitboard.E5 or Bitboard.F6 or Bitboard.G7)
+        assertEquals(BitboardMove.BETWEEN_BITBOARD[Square.A1][Square.A8], Bitboard.A2 or
+            Bitboard.A3 or Bitboard.A4 or Bitboard.A5 or Bitboard.A6 or Bitboard.A7)
+        assertEquals(BitboardMove.BETWEEN_BITBOARD[Square.A1][Square.B8], 0)
+        assertEquals(BitboardMove.BETWEEN_BITBOARD[Square.A1][Square.H1], Bitboard.B1 or
+            Bitboard.C1 or Bitboard.D1 or Bitboard.E1 or Bitboard.F1 or Bitboard.G1)
+    }
 }
