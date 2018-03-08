@@ -9,7 +9,10 @@ import pirarucu.board.Square
 
 object BitboardMove {
 
-    val PAWN_FORWARD = arrayOf(8, -8)
+    val NORTH = 8
+    val SOUTH = -NORTH
+    val PAWN_FORWARD = arrayOf(NORTH, SOUTH)
+    private val DOUBLE_PAWN_FORWARD = arrayOf(NORTH * 2, SOUTH * 2)
 
     private val PAWN_ATTACK_STEP = intArrayOf(7, 9)
     private val KNIGHT_MOVE_STEPS = intArrayOf(-17, -15, -10, -6, 6, 10, 15, 17)
@@ -18,6 +21,7 @@ object BitboardMove {
     private val KING_MOVE_STEPS = intArrayOf(-9, -8, -7, -1, 1, 7, 8, 9)
 
     val PAWN_MOVES = Array(Color.SIZE) { LongArray(Square.SIZE) }
+    val DOUBLE_PAWN_MOVES = Array(Color.SIZE) { LongArray(Square.SIZE) }
     val PAWN_ATTACKS = Array(Color.SIZE) { LongArray(Square.SIZE) }
     val KNIGHT_MOVES = LongArray(Square.SIZE)
     val KING_MOVES = LongArray(Square.SIZE)
@@ -26,6 +30,7 @@ object BitboardMove {
 
     // Large overlapping attack table indexed using magic multiplication.
     private val MAGIC_ATTACKS = LongArray(88772)
+    val PINNED_MOVE_MASK = Array(Square.SIZE) { LongArray(Square.SIZE) }
 
     init {
         populateBetween()
@@ -35,6 +40,7 @@ object BitboardMove {
         populateBishopMoves()
         populateRookMoves()
         populateKingMoves()
+        populatePinnedMask()
     }
 
     private fun slideBetween(square: Int, slideValue: IntArray, limit: Long): Long {
@@ -48,11 +54,11 @@ object BitboardMove {
     private fun slideBetween(square: Int, slideValue: Int, limit: Long): Long {
         var mask = 0L
         var newSquare = square
-        while (Square.isValid(newSquare)) {
-            val oldSquare = newSquare
+        var bitboard = Bitboard.getBitboard(newSquare)
+        while (Square.isValid(newSquare) && limit and bitboard == 0L) {
             newSquare += slideValue
-            val bitboard = Bitboard.getBitboard(newSquare)
-            if (limit and bitboard != 0L || !Square.isValid(newSquare) || Square.SQUARE_DISTANCE[oldSquare][newSquare] > 2) {
+            bitboard = Bitboard.getBitboard(newSquare)
+            if (limit and bitboard != 0L || !Square.isValid(newSquare)) {
                 break
             }
             mask = mask or bitboard
@@ -83,51 +89,29 @@ object BitboardMove {
     }
 
     private fun populateBetween() {
+        val directionArray = arrayOf(7, 9, 1, 8)
+        val borderArray = arrayOf(Bitboard.FILE_A or Bitboard.RANK_8,
+            Bitboard.FILE_H or Bitboard.RANK_8,
+            Bitboard.FILE_H,
+            Bitboard.RANK_8)
         for (square1 in Square.A1 until Square.SIZE) {
-            var newSquare = square1
-            do {
-                newSquare += 7
-                if (!Square.isValid(newSquare)) {
-                    break
-                }
-                val bitboard = Bitboard.getBitboard(newSquare)
-                val between = slideBetween(square1, 7, Bitboard.FILE_A or Bitboard.RANK_8 or bitboard)
-                BETWEEN_BITBOARD[square1][newSquare] = between
-                BETWEEN_BITBOARD[newSquare][square1] = between
-            } while (bitboard and Bitboard.FILE_A and Bitboard.RANK_8 == 0L)
-            newSquare = square1
-            do {
-                newSquare += 9
-                if (!Square.isValid(newSquare)) {
-                    break
-                }
-                val bitboard = Bitboard.getBitboard(newSquare)
-                val between = slideBetween(square1, 9, Bitboard.FILE_H or Bitboard.RANK_8 or bitboard)
-                BETWEEN_BITBOARD[square1][newSquare] = between
-                BETWEEN_BITBOARD[newSquare][square1] = between
-            } while (bitboard and Bitboard.FILE_H and Bitboard.RANK_8 == 0L)
-            newSquare = square1
-            do {
-                newSquare += 1
-                if (!Square.isValid(newSquare)) {
-                    break
-                }
-                val bitboard = Bitboard.getBitboard(newSquare)
-                val between = slideBetween(square1, 1, Bitboard.RANK_8 or bitboard)
-                BETWEEN_BITBOARD[square1][newSquare] = between
-                BETWEEN_BITBOARD[newSquare][square1] = between
-            } while (bitboard and Bitboard.RANK_8 == 0L)
-            newSquare = square1
-            do {
-                newSquare += 8
-                if (!Square.isValid(newSquare)) {
-                    break
-                }
-                val bitboard = Bitboard.getBitboard(newSquare)
-                val between = slideBetween(square1, 8, Bitboard.FILE_H or bitboard)
-                BETWEEN_BITBOARD[square1][newSquare] = between
-                BETWEEN_BITBOARD[newSquare][square1] = between
-            } while (bitboard and Bitboard.FILE_H == 0L)
+            for (index in directionArray.indices) {
+                val direction = directionArray[index]
+                val border = borderArray[index]
+
+                var newSquare = square1
+
+                do {
+                    newSquare += direction
+                    if (!Square.isValid(newSquare)) {
+                        break
+                    }
+                    val bitboard = Bitboard.getBitboard(newSquare)
+                    val between = slideBetween(square1, direction, border or bitboard)
+                    BETWEEN_BITBOARD[square1][newSquare] = between
+                    BETWEEN_BITBOARD[newSquare][square1] = between
+                } while (bitboard and border == 0L)
+            }
         }
     }
 
@@ -135,6 +119,8 @@ object BitboardMove {
         for (square in Square.A1 until Square.SIZE) {
             PAWN_MOVES[Color.WHITE][square] = getPawnMove(Color.WHITE, square)
             PAWN_MOVES[Color.BLACK][square] = getPawnMove(Color.BLACK, square)
+            DOUBLE_PAWN_MOVES[Color.WHITE][square] = getDoublePawnMove(Color.WHITE, square)
+            DOUBLE_PAWN_MOVES[Color.BLACK][square] = getDoublePawnMove(Color.BLACK, square)
         }
     }
 
@@ -145,10 +131,18 @@ object BitboardMove {
         if (Square.isValid(forwardSquare)) {
             result = result or Bitboard.getBitboard(forwardSquare)
         }
-        val rank = Rank.getRelativeRank(color, Rank.getRank(square))
-        if (rank == Rank.RANK_2) {
-            val doubleForwardSquare = square + pawnMove * 2
-            result = result or Bitboard.getBitboard(doubleForwardSquare)
+        return result
+    }
+
+    private fun getDoublePawnMove(color: Int, square: Int): Long {
+        var result = 0L
+        val bitboard = Bitboard.getBitboard(square)
+        if (bitboard and Bitboard.DOUBLE_MOVEMENT_BITBOARD[color] != 0L) {
+            val doublePawnMove = DOUBLE_PAWN_FORWARD[color]
+            val forwardSquare = square + doublePawnMove
+            if (Square.isValid(forwardSquare)) {
+                result = result or Bitboard.getBitboard(forwardSquare)
+            }
         }
         return result
     }
@@ -256,6 +250,38 @@ object BitboardMove {
         }
 
         return slideMove(square, KING_MOVE_STEPS, blockers) and possibleBitboard
+    }
+
+    private fun populatePinnedMask() {
+        val directionArray = arrayOf(7, 9, 1, 8, -7, -9, -1, -8)
+        val borderArray = arrayOf(Bitboard.FILE_A or Bitboard.RANK_8,
+            Bitboard.FILE_H or Bitboard.RANK_8,
+            Bitboard.FILE_H,
+            Bitboard.RANK_8,
+            Bitboard.FILE_H or Bitboard.RANK_1,
+            Bitboard.FILE_A or Bitboard.RANK_1,
+            Bitboard.FILE_A,
+            Bitboard.RANK_1)
+        for (square1 in Square.A1 until Square.SIZE) {
+            for (index in directionArray.indices) {
+                val direction = directionArray[index]
+                val border = borderArray[index]
+
+                val mask = slideMove(square1, direction, border)
+
+                var newSquare = square1
+                var bitboard = Bitboard.getBitboard(newSquare)
+
+                while (bitboard and border == 0L) {
+                    newSquare += direction
+                    if (!Square.isValid(newSquare)) {
+                        break
+                    }
+                    bitboard = Bitboard.getBitboard(newSquare)
+                    PINNED_MOVE_MASK[square1][newSquare] = mask
+                }
+            }
+        }
     }
 
     fun bishopMoves(square: Int, occupied: Long): Long {

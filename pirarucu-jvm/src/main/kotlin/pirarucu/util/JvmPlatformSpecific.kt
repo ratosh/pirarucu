@@ -27,6 +27,10 @@ actual class PlatformSpecific actual constructor() {
         return java.lang.Long.numberOfTrailingZeros(value)
     }
 
+    actual fun numberOfTrailingZeros(value: Int): Int {
+        return java.lang.Integer.numberOfTrailingZeros(value)
+    }
+
     actual fun bitCount(value: Long): Int {
         return java.lang.Long.bitCount(value)
     }

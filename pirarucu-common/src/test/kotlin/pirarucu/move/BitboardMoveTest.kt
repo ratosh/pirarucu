@@ -11,11 +11,16 @@ class BitboardMoveTest {
 
     @Test
     fun testPawnMove() {
-        assertEquals(BitboardMove.PAWN_MOVES[Color.WHITE][Square.A2], Bitboard.A3 or Bitboard.A4)
+        assertEquals(BitboardMove.PAWN_MOVES[Color.WHITE][Square.A2], Bitboard.A3)
         assertEquals(BitboardMove.PAWN_MOVES[Color.WHITE][Square.A3], Bitboard.A4)
         assertEquals(BitboardMove.PAWN_MOVES[Color.BLACK][Square.A1], 0)
         assertEquals(BitboardMove.PAWN_MOVES[Color.BLACK][Square.A2], Bitboard.A1)
-        assertEquals(BitboardMove.PAWN_MOVES[Color.BLACK][Square.A7], Bitboard.A6 or Bitboard.A5)
+        assertEquals(BitboardMove.PAWN_MOVES[Color.BLACK][Square.A7], Bitboard.A6)
+        assertEquals(BitboardMove.DOUBLE_PAWN_MOVES[Color.WHITE][Square.A2], Bitboard.A4)
+        assertEquals(BitboardMove.DOUBLE_PAWN_MOVES[Color.WHITE][Square.A3], 0)
+        assertEquals(BitboardMove.DOUBLE_PAWN_MOVES[Color.BLACK][Square.A1], 0)
+        assertEquals(BitboardMove.DOUBLE_PAWN_MOVES[Color.BLACK][Square.A2], 0)
+        assertEquals(BitboardMove.DOUBLE_PAWN_MOVES[Color.BLACK][Square.A7], Bitboard.A5)
     }
 
     @Test
@@ -38,7 +43,6 @@ class BitboardMoveTest {
 
     @Test
     fun testBishopMoves() {
-        println(Bitboard.toString(BitboardMove.bishopMoves(Square.A1, 0L)))
         assertEquals(BitboardMove.bishopMoves(Square.A1, 0L), Bitboard.B2 or Bitboard.C3 or
             Bitboard.D4 or Bitboard.E5 or Bitboard.F6 or Bitboard.G7 or Bitboard.H8)
         assertEquals(BitboardMove.bishopMoves(Square.E5, 0L),
@@ -84,10 +88,33 @@ class BitboardMoveTest {
     fun testBetween() {
         assertEquals(BitboardMove.BETWEEN_BITBOARD[Square.A1][Square.H8], Bitboard.B2 or
             Bitboard.C3 or Bitboard.D4 or Bitboard.E5 or Bitboard.F6 or Bitboard.G7)
+        assertEquals(BitboardMove.BETWEEN_BITBOARD[Square.H8][Square.A1],
+            BitboardMove.BETWEEN_BITBOARD[Square.A1][Square.H8])
         assertEquals(BitboardMove.BETWEEN_BITBOARD[Square.A1][Square.A8], Bitboard.A2 or
             Bitboard.A3 or Bitboard.A4 or Bitboard.A5 or Bitboard.A6 or Bitboard.A7)
+        assertEquals(BitboardMove.BETWEEN_BITBOARD[Square.A1][Square.A8],
+            BitboardMove.BETWEEN_BITBOARD[Square.A8][Square.A1])
         assertEquals(BitboardMove.BETWEEN_BITBOARD[Square.A1][Square.B8], 0)
         assertEquals(BitboardMove.BETWEEN_BITBOARD[Square.A1][Square.H1], Bitboard.B1 or
             Bitboard.C1 or Bitboard.D1 or Bitboard.E1 or Bitboard.F1 or Bitboard.G1)
+        assertEquals(BitboardMove.BETWEEN_BITBOARD[Square.A1][Square.H1],
+            BitboardMove.BETWEEN_BITBOARD[Square.H1][Square.A1])
+    }
+
+    @Test
+    fun testPinnedMask() {
+        assertEquals(BitboardMove.PINNED_MOVE_MASK[Square.A1][Square.H8], Bitboard.B2 or
+            Bitboard.C3 or Bitboard.D4 or Bitboard.E5 or Bitboard.F6 or Bitboard.G7 or Bitboard.H8)
+        assertEquals(BitboardMove.PINNED_MOVE_MASK[Square.A1][Square.H8] xor Bitboard.H8,
+            BitboardMove.PINNED_MOVE_MASK[Square.H8][Square.A1] xor Bitboard.A1)
+        assertEquals(BitboardMove.PINNED_MOVE_MASK[Square.A1][Square.A8], Bitboard.A2 or
+            Bitboard.A3 or Bitboard.A4 or Bitboard.A5 or Bitboard.A6 or Bitboard.A7 or Bitboard.A8)
+        assertEquals(BitboardMove.PINNED_MOVE_MASK[Square.A1][Square.A8] xor Bitboard.A8,
+            BitboardMove.PINNED_MOVE_MASK[Square.A8][Square.A1] xor Bitboard.A1)
+        assertEquals(BitboardMove.PINNED_MOVE_MASK[Square.A1][Square.B8], 0)
+        assertEquals(BitboardMove.PINNED_MOVE_MASK[Square.A1][Square.H1], Bitboard.B1 or
+            Bitboard.C1 or Bitboard.D1 or Bitboard.E1 or Bitboard.F1 or Bitboard.G1 or Bitboard.H1)
+        assertEquals(BitboardMove.PINNED_MOVE_MASK[Square.A1][Square.H1] xor Bitboard.H1,
+            BitboardMove.PINNED_MOVE_MASK[Square.H1][Square.A1] xor Bitboard.A1)
     }
 }

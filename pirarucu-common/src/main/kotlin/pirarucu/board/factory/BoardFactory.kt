@@ -13,6 +13,10 @@ object BoardFactory {
     const val STARTER_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
     private const val SPLITTER = '/'
 
+    fun getBoard(): Board {
+        return getBoard(STARTER_FEN)
+    }
+
     fun getBoard(fen: String): Board {
         val result = Board()
 
@@ -56,11 +60,12 @@ object BoardFactory {
         moveNumber = max(2 * (moveNumber - 1), 0) + colorToMove
 
         result.colorToMove = colorToMove
-        result.currentState.castlingRights = castlingRigts
-        result.currentState.epSquare = epSquare
-        result.currentState.rule50 = rule50
+        result.castlingRights = castlingRigts
+        result.epSquare = epSquare
+        result.rule50 = rule50
         result.moveNumber = moveNumber
 
+        result.updateBasicInfo()
         BoardUtil.updateZobristKeys(result)
 
         return result

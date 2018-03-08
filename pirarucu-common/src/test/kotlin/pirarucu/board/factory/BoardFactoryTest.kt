@@ -21,8 +21,8 @@ class BoardFactoryTest {
 
         assertEquals(board.pieceTypeBoard[Square.E1], Piece.KING)
 
-        assertEquals(board.currentState.castlingRights, CastlingRights.ANY_CASTLING)
-        assertEquals(board.currentState.epSquare, Square.NONE)
+        assertEquals(board.castlingRights, CastlingRights.ANY_CASTLING)
+        assertEquals(board.epSquare, Square.NONE)
 
         assertEquals(board.colorToMove, Color.WHITE)
     }

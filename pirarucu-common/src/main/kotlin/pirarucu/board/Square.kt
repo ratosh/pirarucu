@@ -106,6 +106,10 @@ object Square {
         return Utils.specific.numberOfTrailingZeros(bitboard)
     }
 
+    fun getSquare(bitboard: Int): Int {
+        return Utils.specific.numberOfTrailingZeros(bitboard)
+    }
+
     fun getSquare(square: String): Int {
         return CHARACTER.indexOf(square)
     }

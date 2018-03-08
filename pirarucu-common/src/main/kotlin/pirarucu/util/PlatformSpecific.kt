@@ -11,6 +11,8 @@ expect class PlatformSpecific() {
     fun currentTimeMillis(): Long
 
     fun numberOfTrailingZeros(value: Long): Int
+    
+    fun numberOfTrailingZeros(value: Int): Int
 
     fun bitCount(value: Long): Int
 
