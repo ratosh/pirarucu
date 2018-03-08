@@ -1,6 +1,7 @@
 package pirarucu.board
 
 import pirarucu.eval.BasicEvalInfo
+import pirarucu.game.GameConstants
 import pirarucu.hash.Zobrist
 import pirarucu.move.BitboardMove
 import pirarucu.move.Move
@@ -10,7 +11,8 @@ import pirarucu.util.Utils
 class Board {
 
     // This change on 960 chess, but we do not support that at the moment
-    private val initialRookSquare = arrayOf(Square.H1, Square.A1, Square.H8, Square.A8)
+    val initialRookSquare = arrayOf(Square.H1, Square.A1, Square.H8, Square.A8)
+    private val initialKingSquare = arrayOf(Square.E1, Square.E8)
 
     private var castlingRightsSquare = IntArray(Square.SIZE)
 
@@ -24,12 +26,24 @@ class Board {
     val pieceCount = IntArray(Piece.SIZE)
 
     var colorToMove = Color.WHITE
+    var nextColorToMove = Color.BLACK
 
     var moveNumber: Int
 
     var basicEvalInfo: BasicEvalInfo
 
-    var currentState: BoardState
+    var rule50: Int
+    var castlingRights: Int
+    var epSquare: Int
+    var pawnZobristKey: Long
+    var zobristKey: Long
+
+    // History
+    var historyZobristKey = LongArray(GameConstants.GAME_MAX_LENGTH)
+    var historyPawnZobristKey = LongArray(GameConstants.GAME_MAX_LENGTH)
+    var historyEpSquare = IntArray(GameConstants.GAME_MAX_LENGTH)
+    var historyCastlingRights = IntArray(GameConstants.GAME_MAX_LENGTH)
+    var historyRule50 = IntArray(GameConstants.GAME_MAX_LENGTH)
 
     fun colorAt(square: Int): Int {
         val bitboard = Bitboard.getBitboard(square)
@@ -41,28 +55,48 @@ class Board {
     }
 
     init {
-        currentState = BoardState(0, 0, Square.NONE, CastlingRights.ANY_CASTLING, 0, 0, null)
+        rule50 = 0
+        castlingRights = CastlingRights.ANY_CASTLING
+        epSquare = Square.NONE
+        pawnZobristKey = 0L
+        zobristKey = 0L
         basicEvalInfo = BasicEvalInfo()
         gameBitboard = 0
         emptyBitboard = 0
         moveNumber = 0
         Utils.specific.arrayFill(pieceTypeBoard, Piece.NONE)
+        castlingRightsSquare[initialKingSquare[0]] = CastlingRights.WHITE_CASTLING_RIGHTS
+        castlingRightsSquare[initialKingSquare[1]] = CastlingRights.BLACK_CASTLING_RIGHTS
+        castlingRightsSquare[initialRookSquare[0]] = CastlingRights.WHITE_OO
+        castlingRightsSquare[initialRookSquare[1]] = CastlingRights.WHITE_OOO
+        castlingRightsSquare[initialRookSquare[2]] = CastlingRights.BLACK_OO
+        castlingRightsSquare[initialRookSquare[3]] = CastlingRights.BLACK_OOO
     }
 
-    private fun pushToHistory(move: Int) {
-        currentState = currentState.copy(lastMove = move, previousState = currentState)
+    private fun pushToHistory() {
+        historyRule50[moveNumber] = rule50
+        historyCastlingRights[moveNumber] = castlingRights
+        historyEpSquare[moveNumber] = epSquare
+        historyPawnZobristKey[moveNumber] = pawnZobristKey
+        historyZobristKey[moveNumber] = zobristKey
         moveNumber++
-
-        currentState.rule50++
     }
 
     private fun popFromHistory() {
-        currentState = currentState.previousState!!
         moveNumber--
+        rule50 = historyRule50[moveNumber]
+        castlingRights = historyCastlingRights[moveNumber]
+        epSquare = historyEpSquare[moveNumber]
+        pawnZobristKey = historyPawnZobristKey[moveNumber]
+        zobristKey = historyZobristKey[moveNumber]
+    }
+
+    fun possibleMove(move: Int): Boolean {
+        return Move.getAttackedPieceType(move) != Piece.KING
     }
 
     fun doMove(move: Int) {
-        pushToHistory(move)
+        pushToHistory()
 
         val fromSquare = Move.getFromSquare(move)
         val toSquare = Move.getToSquare(move)
@@ -71,87 +105,115 @@ class Board {
         val moveType = Move.getMoveType(move)
 
         val ourColor = colorToMove
-        val theirColor = Color.invertColor(ourColor)
+        val theirColor = nextColorToMove
 
-        currentState.zobristKey = currentState.zobristKey xor Zobrist.SIDE xor
+        zobristKey = zobristKey xor Zobrist.SIDE xor
             Zobrist.PIECE_SQUARE_TABLE[ourColor][movedPieceType][fromSquare] xor
             Zobrist.PIECE_SQUARE_TABLE[ourColor][movedPieceType][toSquare]
-
-        currentState.lastMove = move
 
         // Castling needs to move two pieces
         if (MoveType.isCastling(moveType)) {
             doCastle(ourColor, fromSquare, toSquare)
         } else {
-            movePiece(ourColor, movedPieceType, fromSquare, toSquare)
-        }
-
-        if (attackedPieceType != Piece.NONE) {
-            var capturedSquare = toSquare
-            if (attackedPieceType == Piece.PAWN) {
-                if (MoveType.TYPE_PASSANT == moveType) {
-                    capturedSquare -= BitboardMove.PAWN_FORWARD[ourColor]
+            if (attackedPieceType != Piece.NONE) {
+                var capturedSquare = toSquare
+                if (attackedPieceType == Piece.PAWN) {
+                    if (MoveType.TYPE_PASSANT == moveType) {
+                        capturedSquare -= BitboardMove.PAWN_FORWARD[ourColor]
+                    }
+                    pawnZobristKey = pawnZobristKey xor Zobrist.PIECE_SQUARE_TABLE[theirColor][Piece.PAWN][capturedSquare]
                 }
-                currentState.pawnZobristKey = currentState.pawnZobristKey xor Zobrist.PIECE_SQUARE_TABLE[theirColor][Piece.PAWN][capturedSquare]
-            }
-            removePiece(theirColor, attackedPieceType, capturedSquare)
+                removePiece(theirColor, attackedPieceType, capturedSquare)
 
-            currentState.zobristKey = currentState.zobristKey xor Zobrist.PIECE_SQUARE_TABLE[theirColor][attackedPieceType][capturedSquare]
-            currentState.rule50 = 0
+                zobristKey = zobristKey xor Zobrist.PIECE_SQUARE_TABLE[theirColor][attackedPieceType][capturedSquare]
+                rule50 = 0
+            }
+
+            movePiece(ourColor, movedPieceType, fromSquare, toSquare)
         }
 
         clearEpSquare()
 
         when (movedPieceType) {
             Piece.PAWN -> {
-                currentState.pawnZobristKey = currentState.pawnZobristKey xor Zobrist.PIECE_SQUARE_TABLE[ourColor][Piece.PAWN][fromSquare]
+                pawnZobristKey = pawnZobristKey xor Zobrist.PIECE_SQUARE_TABLE[ourColor][Piece.PAWN][fromSquare]
                 val promotedPiece = MoveType.getPromotedPiece(moveType)
                 if (promotedPiece != Piece.NONE) {
                     removePiece(ourColor, Piece.PAWN, toSquare)
-                    currentState.zobristKey = currentState.zobristKey xor Zobrist.PIECE_SQUARE_TABLE[ourColor][movedPieceType][toSquare]
+                    zobristKey = zobristKey xor Zobrist.PIECE_SQUARE_TABLE[ourColor][movedPieceType][toSquare]
                     putPiece(ourColor, promotedPiece, toSquare)
-                    currentState.zobristKey = currentState.zobristKey xor Zobrist.PIECE_SQUARE_TABLE[ourColor][promotedPiece][toSquare]
+                    zobristKey = zobristKey xor Zobrist.PIECE_SQUARE_TABLE[ourColor][promotedPiece][toSquare]
                 } else {
                     val betweenBitboard = BitboardMove.BETWEEN_BITBOARD[fromSquare][toSquare]
                     if (betweenBitboard != 0L) {
-                        currentState.epSquare = Square.getSquare(betweenBitboard)
-                        currentState.zobristKey = currentState.zobristKey xor Zobrist.PASSANT_FILE[File.getFile(currentState.epSquare)]
+                        epSquare = Square.getSquare(betweenBitboard)
+                        zobristKey = zobristKey xor Zobrist.PASSANT_FILE[File.getFile(epSquare)]
                     }
-                    currentState.pawnZobristKey = currentState.pawnZobristKey xor Zobrist.PIECE_SQUARE_TABLE[ourColor][Piece.PAWN][toSquare]
+                    pawnZobristKey = pawnZobristKey xor Zobrist.PIECE_SQUARE_TABLE[ourColor][Piece.PAWN][toSquare]
                 }
             }
         }
 
         updateCastlingRights(fromSquare, toSquare)
 
+        nextColorToMove = colorToMove
         colorToMove = Color.invertColor(colorToMove)
 
+        gameBitboard = colorBitboard[Color.WHITE] or colorBitboard[Color.BLACK]
+        emptyBitboard = gameBitboard.inv()
+        updateBasicInfo()
+    }
+
+    fun debugString(): String {
+        val buffer = StringBuilder()
+        for (color in Color.WHITE until Color.SIZE) {
+            buffer.append(Color.toString(color))
+            buffer.append("\n")
+            buffer.append(Bitboard.toString(colorBitboard[color]))
+            buffer.append("\n")
+            for (piece in Piece.PAWN until Piece.SIZE) {
+                buffer.append(Piece.toString(piece))
+                buffer.append("\n")
+                buffer.append(Bitboard.toString(pieceBitboard[color][piece]))
+                buffer.append("\n")
+            }
+        }
+        return buffer.toString()
+    }
+
+    fun updateBasicInfo() {
         gameBitboard = colorBitboard[Color.WHITE] or colorBitboard[Color.BLACK]
         emptyBitboard = gameBitboard.inv()
         basicEvalInfo.update(this)
     }
 
-    fun undoMove() {
-        if (currentState.lastMove != Move.NONE) {
+    fun undoMove(move: Int) {
+        nextColorToMove = colorToMove
+        colorToMove = Color.invertColor(colorToMove)
 
-            colorToMove = Color.invertColor(colorToMove)
+        val ourColor = colorToMove
+        val theirColor = nextColorToMove
 
-            val ourColor = colorToMove
-            val theirColor = Color.invertColor(ourColor)
+        val fromSquare = Move.getFromSquare(move)
+        val toSquare = Move.getToSquare(move)
+        val movedPieceType = Move.getMovedPieceType(move)
+        val attackedPieceType = Move.getAttackedPieceType(move)
+        val moveType = Move.getMoveType(move)
 
-            val move = currentState.lastMove
-
-            val fromSquare = Move.getFromSquare(move)
-            val toSquare = Move.getToSquare(move)
-            val movedPieceType = Move.getMovedPieceType(move)
-            val attackedPieceType = Move.getAttackedPieceType(move)
-            val moveType = Move.getMoveType(move)
-
-            if (MoveType.isCastling(moveType)) {
-                undoCastle(ourColor, fromSquare, toSquare)
-            } else {
-                movePiece(ourColor, movedPieceType, toSquare, fromSquare)
+        when (movedPieceType) {
+            Piece.PAWN -> {
+                val promotedPiece = MoveType.getPromotedPiece(moveType)
+                if (promotedPiece != Piece.NONE) {
+                    removePiece(ourColor, promotedPiece, toSquare)
+                    putPiece(ourColor, Piece.PAWN, toSquare)
+                }
             }
+        }
+
+        if (MoveType.isCastling(moveType)) {
+            undoCastle(ourColor, fromSquare, toSquare)
+        } else {
+            movePiece(ourColor, movedPieceType, toSquare, fromSquare)
 
             if (attackedPieceType != Piece.NONE) {
                 var capturedSquare = toSquare
@@ -162,36 +224,27 @@ class Board {
                 }
                 putPiece(theirColor, attackedPieceType, capturedSquare)
             }
-
-            when (movedPieceType) {
-                Piece.PAWN -> {
-                    val promotedPiece = MoveType.getPromotedPiece(moveType)
-                    if (promotedPiece != Piece.NONE) {
-                        putPiece(ourColor, promotedPiece, toSquare)
-                    }
-                }
-            }
-
-            gameBitboard = colorBitboard[Color.WHITE] or colorBitboard[Color.BLACK]
-            emptyBitboard = gameBitboard.inv()
-            basicEvalInfo.update(this)
-            popFromHistory()
         }
+
+        gameBitboard = colorBitboard[Color.WHITE] or colorBitboard[Color.BLACK]
+        emptyBitboard = gameBitboard.inv()
+        basicEvalInfo.update(this)
+        popFromHistory()
     }
 
     private fun updateCastlingRights(fromSquare: Int, toSquare: Int) {
         val castlingChange: Int = castlingRightsSquare[fromSquare] or castlingRightsSquare[toSquare]
-        if (castlingChange and currentState.castlingRights != 0) {
-            currentState.zobristKey = currentState.zobristKey xor Zobrist.CASTLING_RIGHT[currentState.castlingRights]
-            currentState.castlingRights = currentState.castlingRights and -castlingChange
-            currentState.zobristKey = currentState.zobristKey xor Zobrist.CASTLING_RIGHT[currentState.castlingRights]
+        if (castlingChange and castlingRights != 0) {
+            zobristKey = zobristKey xor Zobrist.CASTLING_RIGHT[castlingRights]
+            castlingRights = castlingRights and castlingChange.inv()
+            zobristKey = zobristKey xor Zobrist.CASTLING_RIGHT[castlingRights]
         }
     }
 
     private fun clearEpSquare() {
-        if (currentState.epSquare != Square.NONE) {
-            currentState.zobristKey = currentState.pawnZobristKey xor Zobrist.PASSANT_FILE[File.getFile(currentState.epSquare)]
-            currentState.epSquare = Square.NONE
+        if (epSquare != Square.NONE) {
+            zobristKey = pawnZobristKey xor Zobrist.PASSANT_FILE[File.getFile(epSquare)]
+            epSquare = Square.NONE
         }
     }
 
@@ -211,7 +264,7 @@ class Board {
         putPiece(ourColor, Piece.KING, toSquare)
         putPiece(ourColor, Piece.ROOK, rookTo)
 
-        currentState.zobristKey = currentState.zobristKey xor Zobrist.PIECE_SQUARE_TABLE[ourColor][Piece.ROOK][rookFrom] xor Zobrist.PIECE_SQUARE_TABLE[ourColor][Piece.ROOK][rookTo]
+        zobristKey = zobristKey xor Zobrist.PIECE_SQUARE_TABLE[ourColor][Piece.ROOK][rookFrom] xor Zobrist.PIECE_SQUARE_TABLE[ourColor][Piece.ROOK][rookTo]
     }
 
     /**

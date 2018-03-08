@@ -9,8 +9,8 @@ object BoardUtil {
         if (board.colorToMove == Color.BLACK) {
             zobristKey = Zobrist.SIDE
         }
-        if (board.currentState.epSquare != Square.NONE) {
-            zobristKey = zobristKey xor Zobrist.PASSANT_FILE[File.getFile(board.currentState.epSquare)]
+        if (board.epSquare != Square.NONE) {
+            zobristKey = zobristKey xor Zobrist.PASSANT_FILE[File.getFile(board.epSquare)]
         }
         for (square in Square.A1 until Square.SIZE) {
             val piece = board.pieceTypeBoard[square]
@@ -28,8 +28,20 @@ object BoardUtil {
                 }
             }
         }
-        zobristKey = zobristKey xor Zobrist.CASTLING_RIGHT[board.currentState.castlingRights]
-        board.currentState.zobristKey = zobristKey
-        board.currentState.pawnZobristKey = pawnZobristKey
+        zobristKey = zobristKey xor Zobrist.CASTLING_RIGHT[board.castlingRights]
+        board.zobristKey = zobristKey
+        board.pawnZobristKey = pawnZobristKey
+    }
+
+    fun validBoard(board: Board): Boolean {
+        var bitboard = board.gameBitboard
+        while (bitboard != 0L) {
+            val square = Square.getSquare(bitboard)
+            if (board.pieceTypeBoard[square] == Piece.NONE) {
+                return false
+            }
+            bitboard = bitboard and bitboard - 1
+        }
+        return board.colorBitboard[Color.WHITE] and board.colorBitboard[Color.BLACK] == 0L
     }
 }

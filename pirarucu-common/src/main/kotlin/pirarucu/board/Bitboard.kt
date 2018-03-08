@@ -128,6 +128,9 @@ object Bitboard {
     val KING_SIDE = FILE_F or FILE_G or FILE_H
     val QUEEN_SIDE = FILE_A or FILE_B or FILE_C
 
+    val PROMOTION_BITBOARD = RANK_1 or RANK_8
+    val DOUBLE_MOVEMENT_BITBOARD = arrayOf(RANK_2, RANK_7)
+
     fun mirrorVertical(bitboard: Long): Long {
         return Utils.specific.reverseBytes(bitboard)
     }

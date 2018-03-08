@@ -9,13 +9,13 @@ object BoardTestUtil {
     }
 
     private fun testZobristKey(board: Board) {
-        val zobristKey = board.currentState.zobristKey
-        val pawnZobristKey = board.currentState.pawnZobristKey
+        val zobristKey = board.zobristKey
+        val pawnZobristKey = board.pawnZobristKey
 
         BoardUtil.updateZobristKeys(board)
 
-        assertEquals(zobristKey, board.currentState.zobristKey)
-        assertEquals(pawnZobristKey, board.currentState.pawnZobristKey)
+        assertEquals(zobristKey, board.zobristKey)
+        assertEquals(pawnZobristKey, board.pawnZobristKey)
     }
 }
 
