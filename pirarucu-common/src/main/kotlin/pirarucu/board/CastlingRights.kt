@@ -22,6 +22,11 @@ object CastlingRights {
     const val KING_SIDE = 0
     const val QUEEN_SIDE = 1
 
+    const val WHITE_KING_CASTLING_INDEX = 0
+    const val WHITE_QUEEN_CASTLING_INDEX = 1
+    const val BLACK_KING_CASTLING_INDEX = 2
+    const val BLACK_QUEEN_CASTLING_INDEX = 3
+
     const val SIZE = 16
 
     private val CHARACTER = charArrayOf('K', 'Q', 'k', 'q', '-')

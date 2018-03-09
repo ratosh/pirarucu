@@ -210,15 +210,25 @@ class PerftTest {
         //assertEquals(moveInfoList[4].moveCount, 164075551)
     }
 
-    fun getString(rootNode: MoveNode, wantedDepth: Int, depth: Int = 0): String {
-        val result = StringBuilder()
-        for (child in rootNode.children) {
-            result.append("move " + Move.toString(child.move) + " | " + child.children.size + " | " + child.moveCount + "\n")
-            if (wantedDepth > depth) {
-                result.append(getString(child, wantedDepth, depth + 1) + "\n")
+    fun divide(board: Board,
+        moveInfoList: Array<MoveInfo>,
+        wantedDepth: Int) {
+        val moveList = MoveList()
+        moveList.startPly()
+        MoveGenerator.legalAttacks(board, moveList)
+        MoveGenerator.legalMoves(board, moveList)
+        while (moveList.hasNext()) {
+            val move = moveList.next()
+
+            if (!board.possibleMove(move)) {
+                continue
             }
+
+            board.doMove(move)
+            println(Move.toString(move) + " = " + recursive(board, moveList, moveInfoList, 1, wantedDepth - 1))
+            board.undoMove(move)
         }
-        return result.toString()
+        moveList.endPly()
     }
 
     private fun recursive(board: Board,
@@ -280,19 +290,8 @@ class PerftTest {
         return totalMove
     }
 
-    data class MoveNode(val move: Int) {
-        val children = mutableListOf<MoveNode>()
-        var moveCount = 0
-    }
-
-    private class MoveInfo {
-
-        var moveCount: Int = 0
-        var captures: Int = 0
-        var passantCaptures: Int = 0
-        var castles: Int = 0
-        var promotions: Int = 0
-        var checks: Int = 0
+    data class MoveInfo(var moveCount: Int = 0, var captures: Int = 0, var passantCaptures: Int = 0,
+        var castles: Int = 0, var promotions: Int = 0, var checks: Int = 0) {
 
         override fun toString(): String {
             return ("MoveInfo{"

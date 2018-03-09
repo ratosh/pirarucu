@@ -9,14 +9,16 @@ import pirarucu.board.Square
 
 object BitboardMove {
 
-    val NORTH = 8
-    val SOUTH = -NORTH
+    const val NORTH = 8
+    const val SOUTH = -NORTH
     val PAWN_FORWARD = arrayOf(NORTH, SOUTH)
-    private val DOUBLE_PAWN_FORWARD = arrayOf(NORTH * 2, SOUTH * 2)
+    val DOUBLE_PAWN_FORWARD = arrayOf(NORTH * 2, SOUTH * 2)
 
     private val PAWN_ATTACK_STEP = intArrayOf(7, 9)
     private val KNIGHT_MOVE_STEPS = intArrayOf(-17, -15, -10, -6, 6, 10, 15, 17)
+    private const val BISHOP_MAGIC_SHIFT = 9
     private val BISHOP_MOVE_STEPS = intArrayOf(-9, -7, 7, 9)
+    private const val ROOK_MAGIC_SHIFT = 12
     private val ROOK_MOVE_STEPS = intArrayOf(-8, -1, 1, 8)
     private val KING_MOVE_STEPS = intArrayOf(-9, -8, -7, -1, 1, 7, 8, 9)
 
@@ -29,7 +31,7 @@ object BitboardMove {
     val BETWEEN_BITBOARD = Array(Square.SIZE) { LongArray(Square.SIZE) }
 
     // Large overlapping attack table indexed using magic multiplication.
-    private val MAGIC_ATTACKS = LongArray(88772)
+    private val MAGIC_ATTACKS = LongArray(Magic.SIZE)
     val PINNED_MOVE_MASK = Array(Square.SIZE) { LongArray(Square.SIZE) }
 
     init {
@@ -205,13 +207,13 @@ object BitboardMove {
 
     private fun populateBishopMoves() {
         for (square in Square.A1 until Square.SIZE) {
-            initMagics(square, Magic.BISHOP[square], 9, BISHOP_MOVE_STEPS)
+            initMagics(square, Magic.BISHOP[square], BISHOP_MAGIC_SHIFT, BISHOP_MOVE_STEPS)
         }
     }
 
     private fun populateRookMoves() {
         for (square in Square.A1 until Square.SIZE) {
-            initMagics(square, Magic.ROOK[square], 12, ROOK_MOVE_STEPS)
+            initMagics(square, Magic.ROOK[square], ROOK_MAGIC_SHIFT, ROOK_MOVE_STEPS)
         }
     }
 
@@ -219,7 +221,7 @@ object BitboardMove {
         var subset: Long = 0
         do {
             val attack = slideMove(square, deltas, subset)
-            val idx = (magic.factor * subset).ushr(64 - shift).toInt() + magic.offset
+            val idx = (magic.factor * subset).ushr(Square.SIZE - shift).toInt() + magic.offset
             MAGIC_ATTACKS[idx] = attack
 
             subset = subset - magic.mask and magic.mask
@@ -286,12 +288,14 @@ object BitboardMove {
 
     fun bishopMoves(square: Int, occupied: Long): Long {
         val magic = Magic.BISHOP[square]
-        return MAGIC_ATTACKS[(magic.factor * (occupied and magic.mask)).ushr(64 - 9).toInt() + magic.offset]
+        return MAGIC_ATTACKS[(magic.factor * (occupied and magic.mask)).ushr(Square.SIZE -
+            BISHOP_MAGIC_SHIFT).toInt() + magic.offset]
     }
 
     fun rookMoves(square: Int, occupied: Long): Long {
         val magic = Magic.ROOK[square]
-        return MAGIC_ATTACKS[(magic.factor * (occupied and magic.mask)).ushr(64 - 12).toInt() + magic.offset]
+        return MAGIC_ATTACKS[(magic.factor * (occupied and magic.mask)).ushr(Square.SIZE -
+            ROOK_MAGIC_SHIFT).toInt() + magic.offset]
     }
 
     fun queenMoves(square: Int, occupied: Long): Long {

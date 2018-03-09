@@ -9,6 +9,7 @@ internal class Magic(
     val offset: Int) {
 
     companion object {
+        const val SIZE = 88772
         var ROOK = arrayOf(
             Magic(0x000101010101017eL, 0x00280077ffebfffeL, 26304),
             Magic(0x000202020202027cL, 0x2004010201097fffL, 35520),

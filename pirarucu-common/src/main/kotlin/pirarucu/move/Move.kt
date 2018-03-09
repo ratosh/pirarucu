@@ -16,10 +16,10 @@ object Move {
     const val NONE_STRING = "none"
     const val NULL_STRING = "null"
 
-    private val TO_SHIFT = 6
-    private val MOVED_PIECE_SHIFT = 12
-    private val ATTACKED_PIECE_SHIFT = 15
-    private val MOVE_TYPE_SHIFT = 18
+    private const val TO_SHIFT = 6
+    private const val MOVED_PIECE_SHIFT = 12
+    private const val ATTACKED_PIECE_SHIFT = 15
+    private const val MOVE_TYPE_SHIFT = 18
 
     fun createAttackMove(fromSquare: Int, toSquare: Int,
         movedPieceType: Int, attackedPieceType: Int): Int {
@@ -80,26 +80,23 @@ object Move {
     }
 
     fun toString(move: Int): String {
-        if (move == Move.NONE) {
-            return NONE_STRING
-        } else if (move == Move.NULL) {
-            return NULL_STRING
+        return when (move) {
+            Move.NONE -> NONE_STRING
+            Move.NULL -> NULL_STRING
+            else -> {
+                val sb = StringBuilder()
+                val moveType = getMoveType(move)
+                sb.append(Square.toString(Move.getFromSquare(move)))
+                sb.append(Square.toString(Move.getToSquare(move)))
+                if (MoveType.isPromotion(moveType)) {
+                    sb.append(Piece.toString(Color.WHITE, MoveType.getPromotedPiece(moveType)))
+                }
+                sb.toString()
+            }
         }
-        val sb = StringBuilder()
-        val moveType = getMoveType(move)
-        sb.append(Square.toString(Move.getFromSquare(move)))
-        sb.append(Square.toString(Move.getToSquare(move)))
-        if (MoveType.isPromotion(moveType)) {
-            sb.append(Piece.toString(Color.WHITE, MoveType.getPromotedPiece(moveType)))
-        }
-        return sb.toString()
     }
 
     fun isCapture(move: Int): Boolean {
         return Piece.NONE != getAttackedPieceType(move)
-    }
-
-    fun getFromTo(move: Int): Int {
-        return move and 0xFFF
     }
 }

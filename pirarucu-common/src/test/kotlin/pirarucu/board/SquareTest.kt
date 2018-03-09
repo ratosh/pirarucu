@@ -55,12 +55,6 @@ class SquareTest {
     }
 
     @Test
-    fun testFlipHorizontal() {
-        assertEquals(Square.flipHorizontal(Square.A1), Square.H1)
-        assertEquals(Square.flipHorizontal(Square.H1), Square.A1)
-    }
-
-    @Test
     fun testIsValid() {
         assertTrue(Square.isValid(Square.A1))
         assertTrue(Square.isValid(Square.H8))

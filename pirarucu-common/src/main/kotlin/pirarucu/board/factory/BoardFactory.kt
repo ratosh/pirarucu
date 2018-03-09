@@ -7,11 +7,19 @@ import pirarucu.board.Color
 import pirarucu.board.Piece
 import pirarucu.board.Rank
 import pirarucu.board.Square
+import pirarucu.move.BitboardMove
 import kotlin.math.max
 
 object BoardFactory {
     const val STARTER_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
     private const val SPLITTER = '/'
+
+    private const val BOARD_POSITION = 0
+    private const val COLOR_POSITION = 1
+    private const val CASTLING_POSITION = 2
+    private const val EP_SQUARE_POSITION = 3
+    private const val RULE_50_POSITION = 4
+    private const val MOVE_NUMBER_POSITION = 5
 
     fun getBoard(): Board {
         return getBoard(STARTER_FEN)
@@ -24,9 +32,9 @@ object BoardFactory {
 
         val tokenList = fen.split(' ')
 
-        for (token in tokenList[0]) {
+        for (token in tokenList[BOARD_POSITION]) {
             if (token == SPLITTER) {
-                square -= 16
+                square -= BitboardMove.DOUBLE_PAWN_FORWARD[Color.WHITE]
                 continue
             }
 
@@ -42,22 +50,22 @@ object BoardFactory {
             }
         }
 
-        val colorToMove = Color.getColor(tokenList[1].single())
+        val colorToMove = Color.getColor(tokenList[COLOR_POSITION].single())
 
-        val castlingRigts = CastlingRights.getCastlingRight(tokenList[2])
+        val castlingRigts = CastlingRights.getCastlingRight(tokenList[CASTLING_POSITION])
 
-        val epSquare = Square.getSquare(tokenList[3])
+        val epSquare = Square.getSquare(tokenList[EP_SQUARE_POSITION])
 
         var rule50 = 0
         var moveNumber = 0
-        if (tokenList.size > 4) {
-            rule50 = tokenList[4].toInt()
-            if (tokenList.size > 5) {
-                moveNumber = tokenList[5].toInt()
+        if (tokenList.size > RULE_50_POSITION) {
+            rule50 = tokenList[RULE_50_POSITION].toInt()
+            if (tokenList.size > MOVE_NUMBER_POSITION) {
+                moveNumber = tokenList[MOVE_NUMBER_POSITION].toInt()
             }
         }
 
-        moveNumber = max(2 * (moveNumber - 1), 0) + colorToMove
+        moveNumber = max(Color.SIZE * (moveNumber - Color.BLACK), Color.WHITE) + colorToMove
 
         result.colorToMove = colorToMove
         result.castlingRights = castlingRigts

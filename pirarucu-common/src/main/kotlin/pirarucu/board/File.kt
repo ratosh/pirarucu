@@ -22,7 +22,7 @@ object File {
     }
 
     fun getFile(square: Int): Int {
-        return square and 7
+        return square and FILE_H
     }
 
     fun isValid(file: Int): Boolean {

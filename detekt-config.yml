@@ -1,0 +1,130 @@
+autoCorrect: true
+
+build:
+  warningThreshold: 5
+  failThreshold: 0
+  weights:
+    complexity: 2
+    formatting: 0
+    LongParameterList: 1
+    comments: 0.5
+
+potential-bugs:
+  active: true
+  DuplicateCaseInWhenExpression:
+    active: true
+  EqualsWithHashCodeExist:
+    active: true
+  ExplicitGarbageCollectionCall:
+    active: true
+  LateinitUsage:
+    active: false
+
+exceptions:
+  active: true
+
+empty-blocks:
+  active: true
+
+complexity:
+  active: true
+  LongMethod:
+    threshold: 50
+  LongParameterList:
+    threshold: 10
+  LargeClass:
+    threshold: 500
+  ComplexMethod:
+    threshold: 20
+  TooManyFunctions:
+    threshold: 20
+  ComplexCondition:
+    threshold: 3
+
+code-smell:
+  active: true
+  FeatureEnvy:
+    threshold: 0.5
+    weight: 0.45
+    base: 0.5
+
+formatting:
+  active: true
+  useTabs: true
+  Indentation:
+    active: false
+    indentSize: 4
+  ConsecutiveBlankLines:
+    active: true
+    autoCorrect: true
+  MultipleSpaces:
+    active: true
+    autoCorrect: true
+  SpacingAfterComma:
+    active: true
+    autoCorrect: true
+  SpacingAfterKeyword:
+    active: true
+    autoCorrect: true
+  SpacingAroundColon:
+    active: true
+    autoCorrect: true
+  SpacingAroundCurlyBraces:
+    active: true
+    autoCorrect: true
+  SpacingAroundOperator:
+    active: true
+    autoCorrect: true
+  TrailingSpaces:
+    active: true
+    autoCorrect: true
+  UnusedImports:
+    active: true
+    autoCorrect: true
+  OptionalSemicolon:
+    active: true
+    autoCorrect: true
+  OptionalUnit:
+    active: true
+    autoCorrect: true
+  ExpressionBodySyntax:
+    active: false
+    autoCorrect: false
+  ExpressionBodySyntaxLineBreaks:
+    active: false
+    autoCorrect: false
+  OptionalReturnKeyword:
+    active: true
+    autoCorrect: false
+
+style:
+  active: true
+  WildcardImport:
+    active: true
+  MaxLineLength:
+    active: true
+    maxLineLength: 120
+    excludePackageStatements: false
+    excludeImportStatements: false
+  NamingConventionViolation:
+    active: true
+    variablePattern: '^(_)?[a-z$][a-zA-Z$0-9]*$'
+    constantPattern: '^([A-Z_]*|serialVersionUID)$'
+    methodPattern: '^[a-z$][a-zA-Z$0-9]*$'
+    classPattern: '[A-Z$][a-zA-Z$]*'
+    enumEntryPattern: '^[A-Z$][a-zA-Z_$]*$'
+
+comments:
+  active: true
+  CommentOverPrivateMethod:
+    active: true
+  CommentOverPrivateProperty:
+    active: true
+  UndocumentedPublicClass:
+    active: false
+  UndocumentedPublicFunction:
+    active: false
+
+migration:
+  active: true
+  imports:
