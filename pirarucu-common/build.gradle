@@ -1,7 +1,24 @@
 apply plugin: 'kotlin-platform-common'
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlin_version"
-    testCompile "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlin_version"
-    testCompile "org.jetbrains.kotlin:kotlin-test-common:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-common:${kotlin_version}"
+    testCompile "org.jetbrains.kotlin:kotlin-test-annotations-common:${kotlin_version}"
+    testCompile "org.jetbrains.kotlin:kotlin-test-common:${kotlin_version}"
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
+}
+
+apply plugin: "io.gitlab.arturbosch.detekt"
+
+detekt {
+    debug = true
+    version = "${detekt_version}"
+    profile("main") {
+        config = "${rootProject.projectDir}/detekt-config.yml"
+    }
 }

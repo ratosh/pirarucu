@@ -14,7 +14,8 @@ class CastlingRightsTest {
         assertEquals(CastlingRights.getCastlingRight('q'), CastlingRights.BLACK_OOO)
         assertEquals(CastlingRights.getCastlingRight("KQkq"), CastlingRights.ANY_CASTLING)
 
-        assertEquals(CastlingRights.getCastlingRight(CastlingRights.CASTLING_BITS), CastlingRights.NO_CASTLING)
+        assertEquals(CastlingRights.getCastlingRight(CastlingRights.CASTLING_BITS),
+            CastlingRights.NO_CASTLING)
         assertEquals(CastlingRights.getCastlingRight(-1), CastlingRights.NO_CASTLING)
         assertEquals(CastlingRights.getCastlingRight(0), CastlingRights.WHITE_OO)
         assertEquals(CastlingRights.getCastlingRight(1), CastlingRights.WHITE_OOO)
@@ -24,16 +25,22 @@ class CastlingRightsTest {
 
     @Test
     fun testGetCastlingRightIndex() {
-        assertEquals(CastlingRights.getCastlingRightIndex(Color.WHITE, CastlingRights.KING_SIDE), 0)
-        assertEquals(CastlingRights.getCastlingRightIndex(Color.WHITE, CastlingRights.QUEEN_SIDE), 1)
-        assertEquals(CastlingRights.getCastlingRightIndex(Color.BLACK, CastlingRights.KING_SIDE), 2)
-        assertEquals(CastlingRights.getCastlingRightIndex(Color.BLACK, CastlingRights.QUEEN_SIDE), 3)
+        assertEquals(CastlingRights.getCastlingRightIndex(Color.WHITE, CastlingRights.KING_SIDE),
+            CastlingRights.WHITE_KING_CASTLING_INDEX)
+        assertEquals(CastlingRights.getCastlingRightIndex(Color.WHITE, CastlingRights.QUEEN_SIDE),
+            CastlingRights.WHITE_QUEEN_CASTLING_INDEX)
+        assertEquals(CastlingRights.getCastlingRightIndex(Color.BLACK, CastlingRights.KING_SIDE),
+            CastlingRights.BLACK_KING_CASTLING_INDEX)
+        assertEquals(CastlingRights.getCastlingRightIndex(Color.BLACK, CastlingRights.QUEEN_SIDE),
+            CastlingRights.BLACK_QUEEN_CASTLING_INDEX)
     }
 
     @Test
     fun testFilterCastlingRight() {
-        assertEquals(CastlingRights.filterCastlingRight(Color.WHITE, CastlingRights.ANY_CASTLING), CastlingRights.WHITE_CASTLING_RIGHTS)
-        assertEquals(CastlingRights.filterCastlingRight(Color.BLACK, CastlingRights.ANY_CASTLING), CastlingRights.BLACK_CASTLING_RIGHTS)
+        assertEquals(CastlingRights.filterCastlingRight(Color.WHITE, CastlingRights.ANY_CASTLING),
+            CastlingRights.WHITE_CASTLING_RIGHTS)
+        assertEquals(CastlingRights.filterCastlingRight(Color.BLACK, CastlingRights.ANY_CASTLING),
+            CastlingRights.BLACK_CASTLING_RIGHTS)
     }
 
     @Test

@@ -65,12 +65,17 @@ class Board {
         emptyBitboard = 0
         moveNumber = 0
         Utils.specific.arrayFill(pieceTypeBoard, Piece.NONE)
-        castlingRightsSquare[initialKingSquare[0]] = CastlingRights.WHITE_CASTLING_RIGHTS
-        castlingRightsSquare[initialKingSquare[1]] = CastlingRights.BLACK_CASTLING_RIGHTS
-        castlingRightsSquare[initialRookSquare[0]] = CastlingRights.WHITE_OO
-        castlingRightsSquare[initialRookSquare[1]] = CastlingRights.WHITE_OOO
-        castlingRightsSquare[initialRookSquare[2]] = CastlingRights.BLACK_OO
-        castlingRightsSquare[initialRookSquare[3]] = CastlingRights.BLACK_OOO
+        castlingRightsSquare[initialKingSquare[Color.WHITE]] = CastlingRights.WHITE_CASTLING_RIGHTS
+        castlingRightsSquare[initialKingSquare[Color.BLACK]] = CastlingRights.BLACK_CASTLING_RIGHTS
+
+        castlingRightsSquare[initialRookSquare[CastlingRights.WHITE_KING_CASTLING_INDEX]] =
+            CastlingRights.WHITE_OO
+        castlingRightsSquare[initialRookSquare[CastlingRights.WHITE_QUEEN_CASTLING_INDEX]] =
+            CastlingRights.WHITE_OOO
+        castlingRightsSquare[initialRookSquare[CastlingRights.BLACK_KING_CASTLING_INDEX]] =
+            CastlingRights.BLACK_OO
+        castlingRightsSquare[initialRookSquare[CastlingRights.BLACK_QUEEN_CASTLING_INDEX]] =
+            CastlingRights.BLACK_OOO
     }
 
     private fun pushToHistory() {
@@ -121,11 +126,13 @@ class Board {
                     if (MoveType.TYPE_PASSANT == moveType) {
                         capturedSquare -= BitboardMove.PAWN_FORWARD[ourColor]
                     }
-                    pawnZobristKey = pawnZobristKey xor Zobrist.PIECE_SQUARE_TABLE[theirColor][Piece.PAWN][capturedSquare]
+                    pawnZobristKey = pawnZobristKey xor
+                        Zobrist.PIECE_SQUARE_TABLE[theirColor][Piece.PAWN][capturedSquare]
                 }
                 removePiece(theirColor, attackedPieceType, capturedSquare)
 
-                zobristKey = zobristKey xor Zobrist.PIECE_SQUARE_TABLE[theirColor][attackedPieceType][capturedSquare]
+                zobristKey = zobristKey xor
+                    Zobrist.PIECE_SQUARE_TABLE[theirColor][attackedPieceType][capturedSquare]
                 rule50 = 0
             }
 
@@ -136,20 +143,24 @@ class Board {
 
         when (movedPieceType) {
             Piece.PAWN -> {
-                pawnZobristKey = pawnZobristKey xor Zobrist.PIECE_SQUARE_TABLE[ourColor][Piece.PAWN][fromSquare]
+                pawnZobristKey = pawnZobristKey xor
+                    Zobrist.PIECE_SQUARE_TABLE[ourColor][Piece.PAWN][fromSquare]
                 val promotedPiece = MoveType.getPromotedPiece(moveType)
                 if (promotedPiece != Piece.NONE) {
                     removePiece(ourColor, Piece.PAWN, toSquare)
-                    zobristKey = zobristKey xor Zobrist.PIECE_SQUARE_TABLE[ourColor][movedPieceType][toSquare]
+                    zobristKey = zobristKey xor
+                        Zobrist.PIECE_SQUARE_TABLE[ourColor][movedPieceType][toSquare]
                     putPiece(ourColor, promotedPiece, toSquare)
-                    zobristKey = zobristKey xor Zobrist.PIECE_SQUARE_TABLE[ourColor][promotedPiece][toSquare]
+                    zobristKey = zobristKey xor
+                        Zobrist.PIECE_SQUARE_TABLE[ourColor][promotedPiece][toSquare]
                 } else {
                     val betweenBitboard = BitboardMove.BETWEEN_BITBOARD[fromSquare][toSquare]
                     if (betweenBitboard != 0L) {
                         epSquare = Square.getSquare(betweenBitboard)
                         zobristKey = zobristKey xor Zobrist.PASSANT_FILE[File.getFile(epSquare)]
                     }
-                    pawnZobristKey = pawnZobristKey xor Zobrist.PIECE_SQUARE_TABLE[ourColor][Piece.PAWN][toSquare]
+                    pawnZobristKey = pawnZobristKey xor
+                        Zobrist.PIECE_SQUARE_TABLE[ourColor][Piece.PAWN][toSquare]
                 }
             }
         }
@@ -249,7 +260,8 @@ class Board {
     }
 
     private fun doCastle(ourColor: Int, fromSquare: Int, toSquare: Int) {
-        val kingSide = if (toSquare > fromSquare) CastlingRights.KING_SIDE else CastlingRights.QUEEN_SIDE
+        val kingSide = if (toSquare > fromSquare) CastlingRights.KING_SIDE else
+            CastlingRights.QUEEN_SIDE
         val castlingRightIndex = CastlingRights.getCastlingRightIndex(ourColor, kingSide)
         val rookFrom = initialRookSquare[castlingRightIndex]
         val rookTo = CastlingRights.ROOK_FINAL_SQUARE[castlingRightIndex]
@@ -264,14 +276,16 @@ class Board {
         putPiece(ourColor, Piece.KING, toSquare)
         putPiece(ourColor, Piece.ROOK, rookTo)
 
-        zobristKey = zobristKey xor Zobrist.PIECE_SQUARE_TABLE[ourColor][Piece.ROOK][rookFrom] xor Zobrist.PIECE_SQUARE_TABLE[ourColor][Piece.ROOK][rookTo]
+        zobristKey = zobristKey xor Zobrist.PIECE_SQUARE_TABLE[ourColor][Piece.ROOK][rookFrom] xor
+            Zobrist.PIECE_SQUARE_TABLE[ourColor][Piece.ROOK][rookTo]
     }
 
     /**
      * There is no need to update zobrist key when undoing the castle (it is cached in history data)
      */
     private fun undoCastle(ourColor: Int, fromSquare: Int, toSquare: Int) {
-        val kingSide = if (toSquare > fromSquare) CastlingRights.KING_SIDE else CastlingRights.QUEEN_SIDE
+        val kingSide = if (toSquare > fromSquare) CastlingRights.KING_SIDE else
+            CastlingRights.QUEEN_SIDE
         val castlingRightIndex = CastlingRights.getCastlingRightIndex(ourColor, kingSide)
         val rookFrom = initialRookSquare[castlingRightIndex]
         val rookTo = CastlingRights.ROOK_FINAL_SQUARE[castlingRightIndex]

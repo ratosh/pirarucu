@@ -17,7 +17,8 @@ class BoardTest {
         assertEquals(board.castlingRights, CastlingRights.ANY_CASTLING)
         assertEquals(board.moveNumber, 1)
         assertEquals(board.colorBitboard[Color.BLACK], Bitboard.RANK_7 or Bitboard.RANK_8)
-        assertEquals(board.colorBitboard[Color.WHITE], Bitboard.RANK_1 or Bitboard.RANK_2 xor Bitboard.E2 xor Bitboard.E3)
+        assertEquals(board.colorBitboard[Color.WHITE], Bitboard.RANK_1 or Bitboard.RANK_2 xor
+            Bitboard.E2 xor Bitboard.E3)
         BoardTestUtil.testBoard(board)
     }
 
@@ -31,7 +32,8 @@ class BoardTest {
         assertEquals(board.castlingRights, CastlingRights.ANY_CASTLING)
         assertEquals(board.moveNumber, 1)
         assertEquals(board.colorBitboard[Color.BLACK], Bitboard.RANK_7 or Bitboard.RANK_8)
-        assertEquals(board.colorBitboard[Color.WHITE], Bitboard.RANK_1 or Bitboard.RANK_2 xor Bitboard.E2 xor Bitboard.E4)
+        assertEquals(board.colorBitboard[Color.WHITE], Bitboard.RANK_1 or Bitboard.RANK_2 xor
+            Bitboard.E2 xor Bitboard.E4)
         BoardTestUtil.testBoard(board)
     }
 

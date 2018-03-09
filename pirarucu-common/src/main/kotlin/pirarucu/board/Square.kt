@@ -99,7 +99,7 @@ object Square {
     }
 
     fun getSquare(file: Int, rank: Int): Int {
-        return (rank shl 3) + file
+        return (rank shl Rank.RANK_SHIFT) + file
     }
 
     fun getSquare(bitboard: Long): Int {
@@ -154,7 +154,12 @@ object Square {
     }
 
     fun toString(bitboard: Long): String {
-        return toString(*getSquareListFromBitboard(bitboard))
+        val buffer = StringBuilder()
+        val squareList = getSquareListFromBitboard(bitboard)
+        for (square in squareList) {
+            buffer.append(toString(square))
+        }
+        return buffer.toString()
     }
 
     fun toString(square: Int): String {
@@ -183,10 +188,6 @@ object Square {
     private fun calculateDistance(square1: Int, square2: Int): Int {
         return max(abs(File.getFile(square1) - File.getFile(square2)),
             abs(Rank.getRank(square1) - Rank.getRank(square2)))
-    }
-
-    fun flipHorizontal(square: Int): Int {
-        return square and 0xF8 or 7 - (square and 7)
     }
 
     fun isValid(square: Int): Boolean {
