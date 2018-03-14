@@ -190,6 +190,10 @@ object Square {
             abs(Rank.getRank(square1) - Rank.getRank(square2)))
     }
 
+    fun flipHorizontal(square: Int): Int {
+        return square and Square.A8 or File.FILE_H - (square and File.FILE_H)
+    }
+
     fun isValid(square: Int): Boolean {
         return square >= Square.A1 && square <= Square.H8
     }

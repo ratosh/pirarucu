@@ -1,6 +1,7 @@
 package pirarucu.board
 
 import pirarucu.eval.BasicEvalInfo
+import pirarucu.eval.EvalConstants
 import pirarucu.game.GameConstants
 import pirarucu.hash.Zobrist
 import pirarucu.move.BitboardMove
@@ -16,8 +17,8 @@ class Board {
 
     private var castlingRightsSquare = IntArray(Square.SIZE)
 
-    var gameBitboard: Long
-    var emptyBitboard: Long
+    var gameBitboard: Long = 0L
+    var emptyBitboard: Long = 0L
 
     val pieceTypeBoard = IntArray(Square.SIZE)
     val pieceBitboard = Array(Color.SIZE) { LongArray(Piece.SIZE) }
@@ -28,22 +29,25 @@ class Board {
     var colorToMove = Color.WHITE
     var nextColorToMove = Color.BLACK
 
-    var moveNumber: Int
+    var moveNumber: Int = 0
 
-    var basicEvalInfo: BasicEvalInfo
+    var basicEvalInfo = BasicEvalInfo()
 
-    var rule50: Int
-    var castlingRights: Int
-    var epSquare: Int
-    var pawnZobristKey: Long
-    var zobristKey: Long
+    var rule50 = 0
+    var castlingRights = CastlingRights.ANY_CASTLING
+    var epSquare = Square.NONE
+    var zobristKey = 0L
+    var pawnZobristKey = 0L
+    var psqScore = 0
+    var pieceScore = 0
+    var phase = 0
 
     // History
-    var historyZobristKey = LongArray(GameConstants.GAME_MAX_LENGTH)
-    var historyPawnZobristKey = LongArray(GameConstants.GAME_MAX_LENGTH)
-    var historyEpSquare = IntArray(GameConstants.GAME_MAX_LENGTH)
-    var historyCastlingRights = IntArray(GameConstants.GAME_MAX_LENGTH)
-    var historyRule50 = IntArray(GameConstants.GAME_MAX_LENGTH)
+    val historyRule50 = IntArray(GameConstants.GAME_MAX_LENGTH)
+    val historyCastlingRights = IntArray(GameConstants.GAME_MAX_LENGTH)
+    val historyEpSquare = IntArray(GameConstants.GAME_MAX_LENGTH)
+    val historyZobristKey = LongArray(GameConstants.GAME_MAX_LENGTH)
+    val historyPawnZobristKey = LongArray(GameConstants.GAME_MAX_LENGTH)
 
     fun colorAt(square: Int): Int {
         val bitboard = Bitboard.getBitboard(square)
@@ -55,16 +59,8 @@ class Board {
     }
 
     init {
-        rule50 = 0
-        castlingRights = CastlingRights.ANY_CASTLING
-        epSquare = Square.NONE
-        pawnZobristKey = 0L
-        zobristKey = 0L
-        basicEvalInfo = BasicEvalInfo()
-        gameBitboard = 0
-        emptyBitboard = 0
-        moveNumber = 0
         Utils.specific.arrayFill(pieceTypeBoard, Piece.NONE)
+
         castlingRightsSquare[initialKingSquare[Color.WHITE]] = CastlingRights.WHITE_CASTLING_RIGHTS
         castlingRightsSquare[initialKingSquare[Color.BLACK]] = CastlingRights.BLACK_CASTLING_RIGHTS
 
@@ -78,12 +74,35 @@ class Board {
             CastlingRights.BLACK_OOO
     }
 
+    fun reset() {
+        rule50 = 0
+        castlingRights = CastlingRights.ANY_CASTLING
+        epSquare = Square.NONE
+        zobristKey = 0L
+        pawnZobristKey = 0L
+        psqScore = 0
+        pieceScore = 0
+        phase = 0
+
+        gameBitboard = 0L
+        emptyBitboard = 0L
+        moveNumber = 0
+
+        Utils.specific.arrayFill(pieceTypeBoard, Piece.NONE)
+
+        Utils.specific.arrayFill(pieceBitboard[Color.WHITE], Bitboard.NONE)
+        Utils.specific.arrayFill(pieceBitboard[Color.BLACK], Bitboard.NONE)
+        Utils.specific.arrayFill(colorBitboard, Bitboard.NONE)
+
+        Utils.specific.arrayFill(pieceCount, 0)
+    }
+
     private fun pushToHistory() {
         historyRule50[moveNumber] = rule50
         historyCastlingRights[moveNumber] = castlingRights
         historyEpSquare[moveNumber] = epSquare
-        historyPawnZobristKey[moveNumber] = pawnZobristKey
         historyZobristKey[moveNumber] = zobristKey
+        historyPawnZobristKey[moveNumber] = pawnZobristKey
         moveNumber++
     }
 
@@ -92,8 +111,8 @@ class Board {
         rule50 = historyRule50[moveNumber]
         castlingRights = historyCastlingRights[moveNumber]
         epSquare = historyEpSquare[moveNumber]
-        pawnZobristKey = historyPawnZobristKey[moveNumber]
         zobristKey = historyZobristKey[moveNumber]
+        pawnZobristKey = historyPawnZobristKey[moveNumber]
     }
 
     fun possibleMove(move: Int): Boolean {
@@ -154,8 +173,10 @@ class Board {
                     zobristKey = zobristKey xor
                         Zobrist.PIECE_SQUARE_TABLE[ourColor][promotedPiece][toSquare]
                 } else {
-                    val betweenBitboard = BitboardMove.BETWEEN_BITBOARD[fromSquare][toSquare]
-                    if (betweenBitboard != 0L) {
+                    val betweenBitboard =
+                        BitboardMove.BETWEEN_BITBOARD[fromSquare][toSquare]
+                    if (betweenBitboard != 0L && BitboardMove.NEIGHBOURS[toSquare]
+                        and pieceBitboard[theirColor][Piece.PAWN] != 0L) {
                         epSquare = Square.getSquare(betweenBitboard)
                         zobristKey = zobristKey xor Zobrist.PASSANT_FILE[File.getFile(epSquare)]
                     }
@@ -305,6 +326,11 @@ class Board {
         pieceBitboard[color][piece] = pieceBitboard[color][piece] xor bitboard
         colorBitboard[color] = colorBitboard[color] xor bitboard
         pieceCount[piece]--
+
+        val relativeSquare = Square.getRelativeSquare(color, square)
+        psqScore -= EvalConstants.PSQT[piece][relativeSquare] * GameConstants.COLOR_FACTOR[color]
+        pieceScore -= EvalConstants.PIECE_SCORE[piece] * GameConstants.COLOR_FACTOR[color]
+        phase -= EvalConstants.PHASE_PIECE_SCORE[piece]
     }
 
     fun putPiece(color: Int, piece: Int, square: Int) {
@@ -313,6 +339,11 @@ class Board {
         pieceBitboard[color][piece] = pieceBitboard[color][piece] or bitboard
         colorBitboard[color] = colorBitboard[color] or bitboard
         pieceCount[piece]++
+
+        val relativeSquare = Square.getRelativeSquare(color, square)
+        psqScore += EvalConstants.PSQT[piece][relativeSquare] * GameConstants.COLOR_FACTOR[color]
+        pieceScore += EvalConstants.PIECE_SCORE[piece] * GameConstants.COLOR_FACTOR[color]
+        phase += EvalConstants.PHASE_PIECE_SCORE[piece]
     }
 
     private fun movePiece(color: Int, piece: Int, fromSquare: Int, toSquare: Int) {
@@ -321,5 +352,13 @@ class Board {
         colorBitboard[color] = colorBitboard[color] xor moveBitboard
         pieceTypeBoard[fromSquare] = Piece.NONE
         pieceTypeBoard[toSquare] = piece
+
+        val relativeFromSquare = Square.getRelativeSquare(color, fromSquare)
+        val relativeToSquare = Square.getRelativeSquare(color, toSquare)
+        psqScore -= EvalConstants.PSQT[piece][relativeFromSquare] * GameConstants.COLOR_FACTOR[color]
+        psqScore += EvalConstants.PSQT[piece][relativeToSquare] * GameConstants.COLOR_FACTOR[color]
+
+        pieceScore -= EvalConstants.PIECE_SCORE[piece] * GameConstants.COLOR_FACTOR[color]
+        pieceScore += EvalConstants.PIECE_SCORE[piece] * GameConstants.COLOR_FACTOR[color]
     }
 }

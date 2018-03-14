@@ -6,6 +6,15 @@ object BoardTestUtil {
 
     fun testBoard(board: Board) {
         testZobristKey(board)
+
+        val psq = BoardUtil.calculatePsqtScore(board)
+        assertEquals(psq, board.psqScore)
+
+        val pieceScore = BoardUtil.calculatePieceScore(board)
+        assertEquals(pieceScore, board.pieceScore)
+
+        val phase = BoardUtil.calculatePhase(board)
+        assertEquals(phase, board.phase)
     }
 
     private fun testZobristKey(board: Board) {

@@ -1,21 +1,25 @@
 package pirarucu.move
 
-import pirarucu.GameConstants
 import pirarucu.board.Bitboard
 import pirarucu.board.Color
 import pirarucu.board.File
 import pirarucu.board.Rank
 import pirarucu.board.Square
+import pirarucu.game.GameConstants
 
 object BitboardMove {
 
     const val NORTH = 8
     const val SOUTH = -NORTH
+
+    const val EAST = 1
+    const val WEST = -EAST
+
     val PAWN_FORWARD = arrayOf(NORTH, SOUTH)
     val DOUBLE_PAWN_FORWARD = arrayOf(NORTH * 2, SOUTH * 2)
 
-    private val PAWN_ATTACK_STEP = intArrayOf(7, 9)
-    private val KNIGHT_MOVE_STEPS = intArrayOf(-17, -15, -10, -6, 6, 10, 15, 17)
+    private val PAWN_ATTACK_STEP = intArrayOf(NORTH + WEST, NORTH + EAST)
+    private val KNIGHT_MOVE_STEPS = intArrayOf(SOUTH * 2 + WEST, SOUTH * 2 + EAST, -10, -6, 6, 10, 15, 17)
     private const val BISHOP_MAGIC_SHIFT = 9
     private val BISHOP_MOVE_STEPS = intArrayOf(-9, -7, 7, 9)
     private const val ROOK_MAGIC_SHIFT = 12
@@ -33,6 +37,7 @@ object BitboardMove {
     // Large overlapping attack table indexed using magic multiplication.
     private val MAGIC_ATTACKS = LongArray(Magic.SIZE)
     val PINNED_MOVE_MASK = Array(Square.SIZE) { LongArray(Square.SIZE) }
+    val NEIGHBOURS = LongArray(Square.SIZE)
 
     init {
         populateBetween()
@@ -43,6 +48,7 @@ object BitboardMove {
         populateRookMoves()
         populateKingMoves()
         populatePinnedMask()
+        populateNeighbours()
     }
 
     private fun slideBetween(square: Int, slideValue: IntArray, limit: Long): Long {
@@ -283,6 +289,24 @@ object BitboardMove {
                     PINNED_MOVE_MASK[square1][newSquare] = mask
                 }
             }
+        }
+    }
+
+    private fun populateNeighbours() {
+        for (square in Square.A1 until Square.SIZE) {
+            val file = File.getFile(square)
+            var possibleBitboard = Bitboard.ALL
+
+            when (file) {
+                File.FILE_H -> {
+                    possibleBitboard = possibleBitboard and Bitboard.NOT_FILE_A
+                }
+                File.FILE_A -> {
+                    possibleBitboard = possibleBitboard and Bitboard.NOT_FILE_H
+                }
+            }
+            NEIGHBOURS[square] = (Bitboard.getBitboard(square + WEST) or
+                Bitboard.getBitboard(square + EAST)) and possibleBitboard
         }
     }
 

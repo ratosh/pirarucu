@@ -27,7 +27,12 @@ object BoardFactory {
 
     fun getBoard(fen: String): Board {
         val result = Board()
+        setBoard(fen, result)
+        return result
+    }
 
+    fun setBoard(fen: String, board: Board) {
+        board.reset()
         var square = Square.A8
 
         val tokenList = fen.split(' ')
@@ -45,7 +50,7 @@ object BoardFactory {
             } else {
                 val piece = Piece.getPiece(token)
                 val pieceColor = Piece.getPieceColor(token)
-                result.putPiece(pieceColor, piece, square)
+                board.putPiece(pieceColor, piece, square)
                 square += 1
             }
         }
@@ -67,15 +72,13 @@ object BoardFactory {
 
         moveNumber = max(Color.SIZE * (moveNumber - Color.BLACK), Color.WHITE) + colorToMove
 
-        result.colorToMove = colorToMove
-        result.castlingRights = castlingRigts
-        result.epSquare = epSquare
-        result.rule50 = rule50
-        result.moveNumber = moveNumber
+        board.colorToMove = colorToMove
+        board.castlingRights = castlingRigts
+        board.epSquare = epSquare
+        board.rule50 = rule50
+        board.moveNumber = moveNumber
 
-        result.updateBasicInfo()
-        BoardUtil.updateZobristKeys(result)
-
-        return result
+        board.updateBasicInfo()
+        BoardUtil.updateZobristKeys(board)
     }
 }
