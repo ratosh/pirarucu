@@ -80,6 +80,7 @@ object Bitboard {
     val H8 = Bitboard.getBitboard(Square.H8)
 
     const val ALL: Long = -1
+    const val NONE: Long = 0L
     const val WHITES: Long = -0x55aa55aa55aa55abL
     const val BLACKS: Long = 0x55aa55aa55aa55aaL
 

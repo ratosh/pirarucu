@@ -24,16 +24,11 @@ class BoardTest {
 
     @Test
     fun testPassantMove() {
-        val board = BoardFactory.getBoard(BoardFactory.STARTER_FEN)
-        val move = Move.createMove(Square.E2, Square.E4, Piece.PAWN)
+        val board = BoardFactory.getBoard("8/8/1K6/8/7p/4k3/6P1/8 w - -")
+        val move = Move.createMove(Square.G2, Square.G4, Piece.PAWN)
         board.doMove(move)
         assertEquals(board.colorToMove, Color.BLACK)
-        assertEquals(board.epSquare, Square.E3)
-        assertEquals(board.castlingRights, CastlingRights.ANY_CASTLING)
-        assertEquals(board.moveNumber, 1)
-        assertEquals(board.colorBitboard[Color.BLACK], Bitboard.RANK_7 or Bitboard.RANK_8)
-        assertEquals(board.colorBitboard[Color.WHITE], Bitboard.RANK_1 or Bitboard.RANK_2 xor
-            Bitboard.E2 xor Bitboard.E4)
+        assertEquals(board.epSquare, Square.G3)
         BoardTestUtil.testBoard(board)
     }
 

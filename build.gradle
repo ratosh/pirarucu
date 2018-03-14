@@ -3,6 +3,10 @@ task wrapper(type: Wrapper) {
 }
 
 allprojects {
+
+    group = "${group}"
+    version = "${version}"
+
     buildscript {
         repositories {
             mavenCentral()
