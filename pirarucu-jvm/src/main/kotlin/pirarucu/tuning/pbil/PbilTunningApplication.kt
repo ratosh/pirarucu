@@ -23,7 +23,7 @@ object PbilTunningApplication {
 
             tuningObjects.add(PbilTunningObject(
                 "PHASE",
-                EvalConstants.PHASE_PIECE_SCORE,
+                EvalConstants.PHASE_PIECE_VALUE,
                 intArrayOf(1, 8, 9, 9, 10, 11, 1),
                 false, 0, 6))
 
@@ -50,26 +50,41 @@ object PbilTunningApplication {
     @Throws(ExecutionException::class, InterruptedException::class)
     fun optimize(tuningObjects: List<PbilTunningObject>) {
         val bestError = executeTest()
-        println("Best error $bestError")
+        println("Original error $bestError")
         for (tuningObject in tuningObjects) {
             tuningObject.reportOriginal(bestError)
         }
 
         for (i in 0 until INTERACTIONS) {
             println("Starting interaction $i")
+            var improving = false
             for (tuningObject in tuningObjects) {
+                var skipped = 0
                 println("Starting " + tuningObject.name)
                 for (j in 0 until tuningObject.population) {
                     println("Population $j")
                     val population = tuningObject.nextPopulation()
+                    EvalConstants.update()
                     if (population != null) {
                         val error = executeTest()
                         tuningObject.reportCurrent(population, error)
+                    } else {
+                        skipped++
+                        println("Skipped")
                     }
                 }
+                if (!improving && skipped.toDouble() / tuningObject.population < 0.9) {
+                    improving = true
+                }
+                println("Skip proportion " + (skipped.toDouble() / tuningObject.population))
                 tuningObject.finishInteraction()
             }
+            if (!improving) {
+                println("Seems like we are not improving")
+                break
+            }
         }
+
         println("Optimization done.")
         for (tuningObject in tuningObjects) {
             tuningObject.printBestElements()

@@ -15,7 +15,7 @@ class PbilTunningObject(val name: String, protected val elementList: IntArray, b
     private var bestElementList: IntArray
     private var bestElementResult: Double = 0.toDouble()
 
-    private var interactionBestElementList: IntArray? = null
+    private var interactionBestElementList = IntArray(elementList.size)
     private var bestGenes: BitSet? = null
     private var bestResult: Double = 0.toDouble()
 
@@ -57,13 +57,11 @@ class PbilTunningObject(val name: String, protected val elementList: IntArray, b
                 return null
             }
         }
-        val elements = generator.generateElements(genes!!)
+        val elements = generator.generateElements(genes)
 
-        for (i in elementList.indices) {
-            elementList[i] = elements[i]
-        }
+        Utils.specific.arrayCopy(elements, 0, elementList, 0, elementList.size)
 
-        interactionGenes.add(genes!!)
+        interactionGenes.add(genes)
         return genes
     }
 
@@ -71,14 +69,14 @@ class PbilTunningObject(val name: String, protected val elementList: IntArray, b
         if (bestResult > result) {
             bestResult = result
             bestGenes = genes
-            interactionBestElementList = Arrays.copyOf(elementList, elementList.size)
+            Utils.specific.arrayCopy(elementList, 0, interactionBestElementList, 0, elementList.size)
         }
         if (worstResult < result) {
             worstResult = result
             worstGenes = genes
         }
         if (bestElementResult > result) {
-            bestElementList = Arrays.copyOf(elementList, elementList.size)
+            Utils.specific.arrayCopy(elementList, 0, bestElementList, 0, elementList.size)
             bestElementResult = result
         }
     }
@@ -96,7 +94,7 @@ class PbilTunningObject(val name: String, protected val elementList: IntArray, b
 
     fun finishInteraction() {
         println("Best interaction result $bestResult")
-        printElements(interactionBestElementList!!)
+        printElements(interactionBestElementList)
         printBestElements()
         generator.reportResult(bestGenes!!, worstGenes!!)
         reset()

@@ -331,7 +331,7 @@ class Board {
         val relativeSquare = Square.getRelativeSquare(color, square)
         psqScore -= EvalConstants.PSQT[piece][relativeSquare] * GameConstants.COLOR_FACTOR[color]
         pieceScore -= EvalConstants.PIECE_SCORE[piece] * GameConstants.COLOR_FACTOR[color]
-        phase -= EvalConstants.PHASE_PIECE_SCORE[piece]
+        phase -= EvalConstants.PHASE_PIECE_VALUE[piece]
     }
 
     fun putPiece(color: Int, piece: Int, square: Int) {
@@ -344,7 +344,7 @@ class Board {
         val relativeSquare = Square.getRelativeSquare(color, square)
         psqScore += EvalConstants.PSQT[piece][relativeSquare] * GameConstants.COLOR_FACTOR[color]
         pieceScore += EvalConstants.PIECE_SCORE[piece] * GameConstants.COLOR_FACTOR[color]
-        phase += EvalConstants.PHASE_PIECE_SCORE[piece]
+        phase += EvalConstants.PHASE_PIECE_VALUE[piece]
     }
 
     private fun movePiece(color: Int, piece: Int, fromSquare: Int, toSquare: Int) {

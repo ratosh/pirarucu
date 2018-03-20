@@ -92,10 +92,10 @@ object BoardUtil {
     }
 
     fun calculatePhase(board: Board): Int {
-        return EvalConstants.PHASE_PIECE_SCORE[Piece.PAWN] * board.pieceCount[Piece.PAWN] +
-            EvalConstants.PHASE_PIECE_SCORE[Piece.KNIGHT] * board.pieceCount[Piece.KNIGHT] +
-            EvalConstants.PHASE_PIECE_SCORE[Piece.BISHOP] * board.pieceCount[Piece.BISHOP] +
-            EvalConstants.PHASE_PIECE_SCORE[Piece.ROOK] * board.pieceCount[Piece.ROOK] +
-            EvalConstants.PHASE_PIECE_SCORE[Piece.QUEEN] * board.pieceCount[Piece.QUEEN]
+        return EvalConstants.PHASE_PIECE_VALUE[Piece.PAWN] * board.pieceCount[Piece.PAWN] +
+            EvalConstants.PHASE_PIECE_VALUE[Piece.KNIGHT] * board.pieceCount[Piece.KNIGHT] +
+            EvalConstants.PHASE_PIECE_VALUE[Piece.BISHOP] * board.pieceCount[Piece.BISHOP] +
+            EvalConstants.PHASE_PIECE_VALUE[Piece.ROOK] * board.pieceCount[Piece.ROOK] +
+            EvalConstants.PHASE_PIECE_VALUE[Piece.QUEEN] * board.pieceCount[Piece.QUEEN]
     }
 }

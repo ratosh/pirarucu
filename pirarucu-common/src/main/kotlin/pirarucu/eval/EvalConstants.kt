@@ -6,12 +6,12 @@ import pirarucu.util.SplitValue
 
 object EvalConstants {
 
-    val PHASE_PIECE_SCORE = intArrayOf(0, 0, 45, 46, 88, 162, 0)
-    val PHASE_MAX = PHASE_PIECE_SCORE[Piece.PAWN] * 16 +
-        PHASE_PIECE_SCORE[Piece.KNIGHT] * 4 +
-        PHASE_PIECE_SCORE[Piece.BISHOP] * 4 +
-        PHASE_PIECE_SCORE[Piece.ROOK] * 4 +
-        PHASE_PIECE_SCORE[Piece.QUEEN] * 2
+    val PHASE_PIECE_VALUE = intArrayOf(0, 0, 45, 46, 88, 162, 0)
+    var PHASE_MAX = PHASE_PIECE_VALUE[Piece.PAWN] * 16 +
+        PHASE_PIECE_VALUE[Piece.KNIGHT] * 4 +
+        PHASE_PIECE_VALUE[Piece.BISHOP] * 4 +
+        PHASE_PIECE_VALUE[Piece.ROOK] * 4 +
+        PHASE_PIECE_VALUE[Piece.QUEEN] * 2
 
     val PIECE_SCORE = intArrayOf(
         0,
@@ -180,5 +180,13 @@ object EvalConstants {
                 PSQT[piece][Square.flipHorizontal(square)] = psqtValue
             }
         }
+    }
+
+    fun update() {
+        PHASE_MAX = PHASE_PIECE_VALUE[Piece.PAWN] * 16 +
+            PHASE_PIECE_VALUE[Piece.KNIGHT] * 4 +
+            PHASE_PIECE_VALUE[Piece.BISHOP] * 4 +
+            PHASE_PIECE_VALUE[Piece.ROOK] * 4 +
+            PHASE_PIECE_VALUE[Piece.QUEEN] * 2
     }
 }
