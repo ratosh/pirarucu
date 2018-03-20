@@ -31,9 +31,9 @@ class BasicEvalInfo {
             val kingSquarePosition =
                 Square.getSquare(board.pieceBitboard[ourColor][Piece.KING])
             kingSquare[ourColor] = kingSquarePosition
-            pinnedBitboard[ourColor] = 0L
-            pinnersBitboard[theirColor] = 0L
-            checkBitboard[ourColor] = 0L
+            pinnedBitboard[ourColor] = Bitboard.EMPTY
+            pinnersBitboard[theirColor] = Bitboard.EMPTY
+            checkBitboard[ourColor] = Bitboard.EMPTY
 
             dangerBitboard[Piece.PAWN] = BitboardMove.PAWN_ATTACKS[ourColor][kingSquarePosition]
             dangerBitboard[Piece.KNIGHT] = BitboardMove.KNIGHT_MOVES[kingSquarePosition]
@@ -46,14 +46,14 @@ class BasicEvalInfo {
             for (piece in Piece.PAWN until Piece.KING) {
                 var possibleCheck = dangerBitboard[piece] and
                     board.pieceBitboard[theirColor][piece]
-                while (possibleCheck != 0L) {
+                while (possibleCheck != Bitboard.EMPTY) {
                     val checkSquare = Square.getSquare(possibleCheck)
                     val bitboard = Bitboard.getBitboard(checkSquare)
                     if (piece == Piece.BISHOP || piece == Piece.ROOK || piece == Piece.QUEEN) {
                         val between =
                             BitboardMove.BETWEEN_BITBOARD[checkSquare][kingSquarePosition] and
                                 ourColorBitboard
-                        if (between == 0L) {
+                        if (between == Bitboard.EMPTY) {
                             checkBitboard[ourColor] = checkBitboard[ourColor] or bitboard
                         } else if (Bitboard.oneElement(between)) {
                             pinnedBitboard[ourColor] = pinnedBitboard[ourColor] or between

@@ -9,16 +9,20 @@ import pirarucu.util.Utils
 class MoveList {
 
     private val moves = IntArray(GameConstants.MAX_MOVES)
-    private val nextToMove = IntArray(GameConstants.MAX_PLIES + GameConstants.PLIES_EXTENDED)
-    private val nextToGenerate = IntArray(GameConstants.MAX_PLIES + GameConstants.PLIES_EXTENDED)
+    private val nextToMove = IntArray(GameConstants.MAX_PLIES)
+    private val nextToGenerate = IntArray(GameConstants.MAX_PLIES)
 
     var currentPly: Int = 0
         private set
 
-    fun startPly() {
+    fun startPly(): Boolean {
+        if (currentPly >= GameConstants.MAX_PLIES) {
+            return false
+        }
         nextToGenerate[currentPly + 1] = nextToGenerate[currentPly]
         nextToMove[currentPly + 1] = nextToGenerate[currentPly]
         currentPly++
+        return true
     }
 
     fun endPly() {

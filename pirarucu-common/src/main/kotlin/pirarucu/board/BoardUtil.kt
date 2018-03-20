@@ -45,7 +45,14 @@ object BoardUtil {
             }
             bitboard = bitboard and bitboard - 1
         }
-        return board.colorBitboard[Color.WHITE] and board.colorBitboard[Color.BLACK] == 0L
+        for (square in Square.H1 until Square.SIZE) {
+            if (board.pieceTypeBoard[square] != Piece.NONE &&
+                Bitboard.getBitboard(square) and board.gameBitboard == Bitboard.EMPTY) {
+                return false
+            }
+        }
+        return board.colorBitboard[Color.WHITE] and board.colorBitboard[Color.BLACK] ==
+            Bitboard.EMPTY
     }
 
     fun calculatePsqtScore(board: Board): Int {

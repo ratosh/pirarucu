@@ -73,6 +73,7 @@ object BoardFactory {
         moveNumber = max(Color.SIZE * (moveNumber - Color.BLACK), Color.WHITE) + colorToMove
 
         board.colorToMove = colorToMove
+        board.nextColorToMove = Color.invertColor(colorToMove)
         board.castlingRights = castlingRigts
         board.epSquare = epSquare
         board.rule50 = rule50

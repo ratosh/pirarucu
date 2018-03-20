@@ -8,7 +8,6 @@ import pirarucu.board.Square
  * Original from chess22k.
  */
 object Move {
-
     // Predefined moves
     const val NONE = 0
     const val NULL = -1
@@ -20,6 +19,8 @@ object Move {
     private const val MOVED_PIECE_SHIFT = 12
     private const val ATTACKED_PIECE_SHIFT = 15
     private const val MOVE_TYPE_SHIFT = 18
+
+    val SIZE = MOVE_TYPE_SHIFT + Square.getSquare(MoveType.SIZE)
 
     fun createAttackMove(fromSquare: Int, toSquare: Int,
         movedPieceType: Int, attackedPieceType: Int): Int {
