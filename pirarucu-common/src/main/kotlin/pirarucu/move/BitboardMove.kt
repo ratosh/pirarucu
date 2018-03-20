@@ -52,7 +52,7 @@ object BitboardMove {
     }
 
     private fun slideBetween(square: Int, slideValue: IntArray, limit: Long): Long {
-        var result = 0L
+        var result = Bitboard.EMPTY
         for (slide in slideValue) {
             result = result or slideBetween(square, slide, limit)
         }
@@ -60,13 +60,13 @@ object BitboardMove {
     }
 
     private fun slideBetween(square: Int, slideValue: Int, limit: Long): Long {
-        var mask = 0L
+        var mask = Bitboard.EMPTY
         var newSquare = square
         var bitboard = Bitboard.getBitboard(newSquare)
-        while (Square.isValid(newSquare) && limit and bitboard == 0L) {
+        while (Square.isValid(newSquare) && limit and bitboard == Bitboard.EMPTY) {
             newSquare += slideValue
             bitboard = Bitboard.getBitboard(newSquare)
-            if (limit and bitboard != 0L || !Square.isValid(newSquare)) {
+            if (limit and bitboard != Bitboard.EMPTY || !Square.isValid(newSquare)) {
                 break
             }
             mask = mask or bitboard
@@ -75,7 +75,7 @@ object BitboardMove {
     }
 
     private fun slideMove(square: Int, slideValue: IntArray, limit: Long): Long {
-        var result = 0L
+        var result = Bitboard.EMPTY
         for (slide in slideValue) {
             result = result or slideMove(square, slide, limit)
         }
@@ -83,7 +83,7 @@ object BitboardMove {
     }
 
     private fun slideMove(square: Int, slideValue: Int, limit: Long): Long {
-        var mask = 0L
+        var mask = Bitboard.EMPTY
         var newSquare = square
         do {
             val oldSquare = newSquare
@@ -92,7 +92,7 @@ object BitboardMove {
                 break
             }
             mask = mask or Bitboard.getBitboard(newSquare)
-        } while (limit and mask == 0L)
+        } while (limit and mask == Bitboard.EMPTY)
         return mask
     }
 
@@ -118,7 +118,7 @@ object BitboardMove {
                     val between = slideBetween(square1, direction, border or bitboard)
                     BETWEEN_BITBOARD[square1][newSquare] = between
                     BETWEEN_BITBOARD[newSquare][square1] = between
-                } while (bitboard and border == 0L)
+                } while (bitboard and border == Bitboard.EMPTY)
             }
         }
     }
@@ -133,7 +133,7 @@ object BitboardMove {
     }
 
     private fun getPawnMove(color: Int, square: Int): Long {
-        var result = 0L
+        var result = Bitboard.EMPTY
         val pawnMove = PAWN_FORWARD[color]
         val forwardSquare = square + pawnMove
         if (Square.isValid(forwardSquare)) {
@@ -143,9 +143,9 @@ object BitboardMove {
     }
 
     private fun getDoublePawnMove(color: Int, square: Int): Long {
-        var result = 0L
+        var result = Bitboard.EMPTY
         val bitboard = Bitboard.getBitboard(square)
-        if (bitboard and Bitboard.DOUBLE_MOVEMENT_BITBOARD[color] != 0L) {
+        if (bitboard and Bitboard.DOUBLE_MOVEMENT_BITBOARD[color] != Bitboard.EMPTY) {
             val doublePawnMove = DOUBLE_PAWN_FORWARD[color]
             val forwardSquare = square + doublePawnMove
             if (Square.isValid(forwardSquare)) {
@@ -163,7 +163,7 @@ object BitboardMove {
     }
 
     private fun getPawnAttack(color: Int, square: Int): Long {
-        var result = 0L
+        var result = Bitboard.EMPTY
 
         var possibleBitboard: Long = Bitboard.ALL
         val file = File.getFile(square)
@@ -231,7 +231,7 @@ object BitboardMove {
             MAGIC_ATTACKS[idx] = attack
 
             subset = subset - magic.mask and magic.mask
-        } while (subset != 0L)
+        } while (subset != Bitboard.EMPTY)
     }
 
     private fun populateKingMoves() {
@@ -280,7 +280,7 @@ object BitboardMove {
                 var newSquare = square1
                 var bitboard = Bitboard.getBitboard(newSquare)
 
-                while (bitboard and border == 0L) {
+                while (bitboard and border == Bitboard.EMPTY) {
                     newSquare += direction
                     if (!Square.isValid(newSquare)) {
                         break

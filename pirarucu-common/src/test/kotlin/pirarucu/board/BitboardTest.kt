@@ -1,5 +1,6 @@
 package pirarucu.board
 
+import pirarucu.util.Utils
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -47,11 +48,11 @@ class BitboardTest {
     fun testBitCount() {
         for (square in Square.A1 until Square.SIZE) {
             val bitboard = Bitboard.getBitboard(square)
-            assertEquals(Bitboard.bitCount(bitboard), 1)
+            assertEquals(Utils.specific.bitCount(bitboard), 1)
             val garbageBitboard = bitboard or Bitboard.getBitboard((square + 1) % Square.SIZE)
-            assertEquals(Bitboard.bitCount(garbageBitboard), 2)
+            assertEquals(Utils.specific.bitCount(garbageBitboard), 2)
         }
-        assertEquals(Bitboard.bitCount(Bitboard.ALL), 64)
+        assertEquals(Utils.specific.bitCount(Bitboard.ALL), 64)
     }
 }
 

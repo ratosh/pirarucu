@@ -18,7 +18,8 @@ Concepts
 Features
 ========
 
-Bitboard representation
+- Bitboard representation
+- Magic bitboard
 
 Author
 ======

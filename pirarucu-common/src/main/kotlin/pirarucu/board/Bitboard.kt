@@ -80,7 +80,7 @@ object Bitboard {
     val H8 = Bitboard.getBitboard(Square.H8)
 
     const val ALL: Long = -1
-    const val NONE: Long = 0L
+    const val EMPTY: Long = 0L
     const val WHITES: Long = -0x55aa55aa55aa55abL
     const val BLACKS: Long = 0x55aa55aa55aa55aaL
 
@@ -143,12 +143,12 @@ object Bitboard {
 
     fun getBitboard(square: Int): Long {
         return if (square >= Square.NONE || square < 0) {
-            0L
+            Bitboard.EMPTY
         } else 1L shl square
     }
 
     fun getBitboard(vararg squareList: Int): Long {
-        var result = 0L
+        var result = Bitboard.EMPTY
         for (square in squareList) {
             result = result or getBitboard(square)
         }
@@ -156,11 +156,7 @@ object Bitboard {
     }
 
     fun oneElement(bitboard: Long): Boolean {
-        return bitboard and (bitboard - 1) == 0L
-    }
-
-    fun bitCount(bitboard: Long): Int {
-        return Utils.specific.bitCount(bitboard)
+        return bitboard and (bitboard - 1) == Bitboard.EMPTY
     }
 
     fun toString(bitboard: Long): String {
@@ -170,7 +166,7 @@ object Bitboard {
             buffer.append(rank).append('-')
             for (file in File.FILE_A until File.SIZE) {
                 val square = Square.getSquare(file, rank)
-                buffer.append(if (bitboard and getBitboard(square) != 0L) "1" else "0")
+                buffer.append(if (bitboard and getBitboard(square) != Bitboard.EMPTY) "1" else "0")
             }
             buffer.append("\n")
         }

@@ -90,9 +90,9 @@ class Board {
 
         Utils.specific.arrayFill(pieceTypeBoard, Piece.NONE)
 
-        Utils.specific.arrayFill(pieceBitboard[Color.WHITE], Bitboard.NONE)
-        Utils.specific.arrayFill(pieceBitboard[Color.BLACK], Bitboard.NONE)
-        Utils.specific.arrayFill(colorBitboard, Bitboard.NONE)
+        Utils.specific.arrayFill(pieceBitboard[Color.WHITE], Bitboard.EMPTY)
+        Utils.specific.arrayFill(pieceBitboard[Color.BLACK], Bitboard.EMPTY)
+        Utils.specific.arrayFill(colorBitboard, Bitboard.EMPTY)
 
         Utils.specific.arrayFill(pieceCount, 0)
     }
@@ -149,6 +149,7 @@ class Board {
                         Zobrist.PIECE_SQUARE_TABLE[theirColor][Piece.PAWN][capturedSquare]
                 }
                 removePiece(theirColor, attackedPieceType, capturedSquare)
+                pieceTypeBoard[capturedSquare] = Piece.NONE
 
                 zobristKey = zobristKey xor
                     Zobrist.PIECE_SQUARE_TABLE[theirColor][attackedPieceType][capturedSquare]
@@ -199,12 +200,12 @@ class Board {
     fun debugString(): String {
         val buffer = StringBuilder()
         for (color in Color.WHITE until Color.SIZE) {
-            buffer.append(Color.toString(color))
+            buffer.append("Color " + Color.toString(color))
             buffer.append("\n")
             buffer.append(Bitboard.toString(colorBitboard[color]))
             buffer.append("\n")
             for (piece in Piece.PAWN until Piece.SIZE) {
-                buffer.append(Piece.toString(piece))
+                buffer.append("Piece " + Piece.toString(piece))
                 buffer.append("\n")
                 buffer.append(Bitboard.toString(pieceBitboard[color][piece]))
                 buffer.append("\n")
