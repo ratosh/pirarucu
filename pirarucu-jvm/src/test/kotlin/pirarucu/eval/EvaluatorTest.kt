@@ -2,7 +2,6 @@ package pirarucu.eval
 
 import pirarucu.board.factory.BoardFactory
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class EvaluatorTest {
@@ -11,7 +10,8 @@ class EvaluatorTest {
     fun testEqualKing() {
         val board = BoardFactory.getBoard("4k3/8/8/8/8/8/8/4K3 b - -")
         val eval = Evaluator.evaluate(board)
-        assertEquals(eval, 0)
+        assertTrue(eval < 100)
+        assertTrue(eval > -100)
     }
 
     @Test

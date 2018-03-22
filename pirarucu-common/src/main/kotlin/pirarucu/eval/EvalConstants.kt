@@ -2,18 +2,35 @@ package pirarucu.eval
 
 import pirarucu.board.Piece
 import pirarucu.board.Square
+import pirarucu.game.GameConstants
 import pirarucu.util.SplitValue
 
 object EvalConstants {
 
-    val PHASE_PIECE_VALUE = intArrayOf(0, 0, 45, 46, 88, 162, 0)
+    const val SCORE_DRAW = 0
+
+    const val SCORE_MAX: Int = Short.MAX_VALUE.toInt()
+    const val SCORE_MIN: Int = -SCORE_MAX
+
+    const val SCORE_MATE = SCORE_MAX - GameConstants.MAX_PLIES
+
+    const val SCORE_UNKNOWN = Short.MIN_VALUE
+
+    const val SCORE_KNOW_WIN = 6500
+
+    val TEMPO = SplitValue.mergeParts(20, 15)
+
+    val PHASE_PIECE_VALUE = intArrayOf(0, 42, 371, 402, 672, 1289, 0)
+
     var PHASE_MAX = PHASE_PIECE_VALUE[Piece.PAWN] * 16 +
         PHASE_PIECE_VALUE[Piece.KNIGHT] * 4 +
         PHASE_PIECE_VALUE[Piece.BISHOP] * 4 +
         PHASE_PIECE_VALUE[Piece.ROOK] * 4 +
         PHASE_PIECE_VALUE[Piece.QUEEN] * 2
 
-    val PIECE_SCORE = intArrayOf(
+    val QS_PIECE_VALUE = intArrayOf(0, 100, 330, 330, 550, 900, 10000)
+
+    val MATERIAL_SCORE = intArrayOf(
         0,
         SplitValue.mergeParts(100, 100),
         SplitValue.mergeParts(320, 330),
@@ -181,6 +198,24 @@ object EvalConstants {
             }
         }
     }
+
+    val MATERIAL_IMBALANCE_OURS = arrayOf(
+        intArrayOf(0, 0, 0, 0, 0, 0),
+        intArrayOf(5, 0, 0, 0, 0, 0),
+        intArrayOf(5, 25, 15, 0, 0, 0),
+        intArrayOf(0, 10, 5, 25, 0, 0),
+        intArrayOf(0, 0, 5, 10, -15, 0),
+        intArrayOf(0, 5, 10, 15, -15, 0)
+    )
+
+    val MATERIAL_IMBALANCE_THEIRS = arrayOf(
+        intArrayOf(0, 0, 0, 0, 0, 0),
+        intArrayOf(5, 0, 0, 0, 0, 0),
+        intArrayOf(0, 5, 0, 0, 0, 0),
+        intArrayOf(0, 5, 5, 0, 0, 0),
+        intArrayOf(0, 5, 5, -5, 0, 0),
+        intArrayOf(0, 10, -5, 15, 25, 0)
+    )
 
     fun update() {
         PHASE_MAX = PHASE_PIECE_VALUE[Piece.PAWN] * 16 +

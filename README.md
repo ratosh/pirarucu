@@ -20,6 +20,7 @@ Features
 
 - Bitboard representation
 - Magic bitboard
+- Material imbalance
 
 Author
 ======

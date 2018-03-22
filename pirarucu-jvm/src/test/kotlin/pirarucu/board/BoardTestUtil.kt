@@ -10,8 +10,8 @@ object BoardTestUtil {
         val psq = BoardUtil.calculatePsqtScore(board)
         assertEquals(psq, board.psqScore)
 
-        val pieceScore = BoardUtil.calculatePieceScore(board)
-        assertEquals(pieceScore, board.pieceScore)
+        val materialScore = BoardUtil.calculateMaterialScore(board)
+        assertEquals(materialScore, board.materialScore)
 
         val phase = BoardUtil.calculatePhase(board)
         assertEquals(phase, board.phase)

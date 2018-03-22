@@ -1,8 +1,11 @@
 package pirarucu.move
 
+import pirarucu.board.Piece
+import pirarucu.board.Square
 import pirarucu.board.factory.BoardFactory
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 class MoveGeneratorTest {
 
@@ -220,5 +223,19 @@ class MoveGeneratorTest {
         val moveList = MoveList()
         MoveGenerator.legalAttacks(board, moveList)
         assertEquals(moveList.movesLeft(), 1)
+    }
+
+    @Test
+    fun testInCheckGeneration() {
+        val board = BoardFactory.getBoard("7K/8/3P4/3r4/8/2k3r1/7p/8 w - -")
+        val moveList = MoveList()
+        board.doMove(Move.createMove(Square.H8, Square.H7, Piece.KING))
+        board.doMove(Move.createMove(Square.D5, Square.H5, Piece.ROOK))
+        moveList.startPly()
+        MoveGenerator.legalMoves(board, moveList)
+        MoveGenerator.legalAttacks(board, moveList)
+        moveList.endPly()
+        assertEquals(0, moveList.movesLeft())
+        assertFalse(moveList.hasNext())
     }
 }
