@@ -2,6 +2,8 @@ package pirarucu.move
 
 import pirarucu.board.Board
 import pirarucu.board.Color
+import pirarucu.board.Piece
+import pirarucu.board.Square
 import pirarucu.board.factory.BoardFactory
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -242,6 +244,10 @@ class PerftTest {
         moveInfoList: Array<MoveInfo>,
         depth: Int,
         wantedDepth: Int): Int {
+
+        if (depth > wantedDepth) {
+            return 1
+        }
 
         moveList.startPly()
         MoveGenerator.legalAttacks(board, moveList)

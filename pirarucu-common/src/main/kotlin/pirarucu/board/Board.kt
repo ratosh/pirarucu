@@ -20,26 +20,28 @@ class Board {
     var gameBitboard: Long = 0L
     var emptyBitboard: Long = 0L
 
-    val pieceTypeBoard = IntArray(Square.SIZE)
-    val pieceBitboard = Array(Color.SIZE) { LongArray(Piece.SIZE) }
-    val colorBitboard = LongArray(Color.SIZE)
-
-    val pieceCount = IntArray(Piece.SIZE)
+    var moveNumber: Int = 0
 
     var colorToMove = Color.WHITE
     var nextColorToMove = Color.BLACK
 
-    var moveNumber: Int = 0
-
     var basicEvalInfo = BasicEvalInfo()
+
+    val pieceTypeBoard = IntArray(Square.SIZE)
+    val pieceBitboard = Array(Color.SIZE) { LongArray(Piece.SIZE) }
+    val colorBitboard = LongArray(Color.SIZE)
+
+    val pieceCountType = IntArray(Piece.SIZE)
+    val pieceCountColorType = Array(Color.SIZE) { IntArray(Piece.SIZE) }
 
     var rule50 = 0
     var castlingRights = CastlingRights.ANY_CASTLING
     var epSquare = Square.NONE
     var zobristKey = 0L
     var pawnZobristKey = 0L
+
     var psqScore = 0
-    var pieceScore = 0
+    var materialScore = 0
     var phase = 0
 
     // History
@@ -80,13 +82,18 @@ class Board {
         epSquare = Square.NONE
         zobristKey = 0L
         pawnZobristKey = 0L
+
         psqScore = 0
-        pieceScore = 0
+        materialScore = 0
         phase = 0
 
         gameBitboard = 0L
         emptyBitboard = 0L
+
         moveNumber = 0
+
+        colorToMove = Color.WHITE
+        nextColorToMove = Color.BLACK
 
         Utils.specific.arrayFill(pieceTypeBoard, Piece.NONE)
 
@@ -94,7 +101,9 @@ class Board {
         Utils.specific.arrayFill(pieceBitboard[Color.BLACK], Bitboard.EMPTY)
         Utils.specific.arrayFill(colorBitboard, Bitboard.EMPTY)
 
-        Utils.specific.arrayFill(pieceCount, 0)
+        Utils.specific.arrayFill(pieceCountType, 0)
+        Utils.specific.arrayFill(pieceCountColorType[Color.WHITE], 0)
+        Utils.specific.arrayFill(pieceCountColorType[Color.BLACK], 0)
     }
 
     private fun pushToHistory() {
@@ -326,11 +335,16 @@ class Board {
         val bitboard = Bitboard.getBitboard(square)
         pieceBitboard[color][piece] = pieceBitboard[color][piece] xor bitboard
         colorBitboard[color] = colorBitboard[color] xor bitboard
-        pieceCount[piece]--
+
+        pieceCountType[Piece.NONE]--
+        pieceCountType[piece]--
+
+        pieceCountColorType[color][Piece.NONE]--
+        pieceCountColorType[color][piece]--
 
         val relativeSquare = Square.getRelativeSquare(color, square)
         psqScore -= EvalConstants.PSQT[piece][relativeSquare] * GameConstants.COLOR_FACTOR[color]
-        pieceScore -= EvalConstants.PIECE_SCORE[piece] * GameConstants.COLOR_FACTOR[color]
+        materialScore -= EvalConstants.MATERIAL_SCORE[piece] * GameConstants.COLOR_FACTOR[color]
         phase -= EvalConstants.PHASE_PIECE_VALUE[piece]
     }
 
@@ -339,11 +353,16 @@ class Board {
         pieceTypeBoard[square] = piece
         pieceBitboard[color][piece] = pieceBitboard[color][piece] or bitboard
         colorBitboard[color] = colorBitboard[color] or bitboard
-        pieceCount[piece]++
+
+        pieceCountType[Piece.NONE]++
+        pieceCountType[piece]++
+
+        pieceCountColorType[color][Piece.NONE]++
+        pieceCountColorType[color][piece]++
 
         val relativeSquare = Square.getRelativeSquare(color, square)
         psqScore += EvalConstants.PSQT[piece][relativeSquare] * GameConstants.COLOR_FACTOR[color]
-        pieceScore += EvalConstants.PIECE_SCORE[piece] * GameConstants.COLOR_FACTOR[color]
+        materialScore += EvalConstants.MATERIAL_SCORE[piece] * GameConstants.COLOR_FACTOR[color]
         phase += EvalConstants.PHASE_PIECE_VALUE[piece]
     }
 
@@ -351,6 +370,7 @@ class Board {
         val moveBitboard = Bitboard.getBitboard(fromSquare) xor Bitboard.getBitboard(toSquare)
         pieceBitboard[color][piece] = pieceBitboard[color][piece] xor moveBitboard
         colorBitboard[color] = colorBitboard[color] xor moveBitboard
+
         pieceTypeBoard[fromSquare] = Piece.NONE
         pieceTypeBoard[toSquare] = piece
 
@@ -359,7 +379,7 @@ class Board {
         psqScore -= EvalConstants.PSQT[piece][relativeFromSquare] * GameConstants.COLOR_FACTOR[color]
         psqScore += EvalConstants.PSQT[piece][relativeToSquare] * GameConstants.COLOR_FACTOR[color]
 
-        pieceScore -= EvalConstants.PIECE_SCORE[piece] * GameConstants.COLOR_FACTOR[color]
-        pieceScore += EvalConstants.PIECE_SCORE[piece] * GameConstants.COLOR_FACTOR[color]
+        materialScore -= EvalConstants.MATERIAL_SCORE[piece] * GameConstants.COLOR_FACTOR[color]
+        materialScore += EvalConstants.MATERIAL_SCORE[piece] * GameConstants.COLOR_FACTOR[color]
     }
 }

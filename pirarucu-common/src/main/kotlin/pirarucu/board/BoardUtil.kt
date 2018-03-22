@@ -3,7 +3,6 @@ package pirarucu.board
 import pirarucu.eval.EvalConstants
 import pirarucu.game.GameConstants
 import pirarucu.hash.Zobrist
-import pirarucu.util.Utils
 
 object BoardUtil {
     fun updateZobristKeys(board: Board) {
@@ -68,34 +67,34 @@ object BoardUtil {
         return result
     }
 
-    fun calculatePieceScore(board: Board): Int {
-        return (EvalConstants.PIECE_SCORE[Piece.PAWN] *
-            Utils.specific.bitCount(board.pieceBitboard[Color.WHITE][Piece.PAWN]) +
-            EvalConstants.PIECE_SCORE[Piece.KNIGHT] *
-            Utils.specific.bitCount(board.pieceBitboard[Color.WHITE][Piece.KNIGHT]) +
-            EvalConstants.PIECE_SCORE[Piece.BISHOP] *
-            Utils.specific.bitCount(board.pieceBitboard[Color.WHITE][Piece.BISHOP]) +
-            EvalConstants.PIECE_SCORE[Piece.ROOK] *
-            Utils.Companion.specific.bitCount(board.pieceBitboard[Color.WHITE][Piece.ROOK]) +
-            EvalConstants.PIECE_SCORE[Piece.QUEEN] *
-            Utils.Companion.specific.bitCount(board.pieceBitboard[Color.WHITE][Piece.QUEEN])) -
-            (EvalConstants.PIECE_SCORE[Piece.PAWN] *
-                Utils.specific.bitCount(board.pieceBitboard[Color.BLACK][Piece.PAWN]) +
-                EvalConstants.PIECE_SCORE[Piece.KNIGHT] *
-                Utils.specific.bitCount(board.pieceBitboard[Color.BLACK][Piece.KNIGHT]) +
-                EvalConstants.PIECE_SCORE[Piece.BISHOP] *
-                Utils.specific.bitCount(board.pieceBitboard[Color.BLACK][Piece.BISHOP]) +
-                EvalConstants.PIECE_SCORE[Piece.ROOK] *
-                Utils.Companion.specific.bitCount(board.pieceBitboard[Color.BLACK][Piece.ROOK]) +
-                EvalConstants.PIECE_SCORE[Piece.QUEEN] *
-                Utils.Companion.specific.bitCount(board.pieceBitboard[Color.BLACK][Piece.QUEEN]))
+    fun calculateMaterialScore(board: Board): Int {
+        return (EvalConstants.MATERIAL_SCORE[Piece.PAWN] *
+            board.pieceCountColorType[Color.WHITE][Piece.PAWN] +
+            EvalConstants.MATERIAL_SCORE[Piece.KNIGHT] *
+            board.pieceCountColorType[Color.WHITE][Piece.KNIGHT] +
+            EvalConstants.MATERIAL_SCORE[Piece.BISHOP] *
+            board.pieceCountColorType[Color.WHITE][Piece.BISHOP] +
+            EvalConstants.MATERIAL_SCORE[Piece.ROOK] *
+            board.pieceCountColorType[Color.WHITE][Piece.ROOK] +
+            EvalConstants.MATERIAL_SCORE[Piece.QUEEN] *
+            board.pieceCountColorType[Color.WHITE][Piece.QUEEN] -
+            (EvalConstants.MATERIAL_SCORE[Piece.PAWN] *
+                board.pieceCountColorType[Color.BLACK][Piece.PAWN] +
+                EvalConstants.MATERIAL_SCORE[Piece.KNIGHT] *
+                board.pieceCountColorType[Color.BLACK][Piece.KNIGHT] +
+                EvalConstants.MATERIAL_SCORE[Piece.BISHOP] *
+                board.pieceCountColorType[Color.BLACK][Piece.BISHOP] +
+                EvalConstants.MATERIAL_SCORE[Piece.ROOK] *
+                board.pieceCountColorType[Color.BLACK][Piece.ROOK] +
+                EvalConstants.MATERIAL_SCORE[Piece.QUEEN] *
+                board.pieceCountColorType[Color.BLACK][Piece.QUEEN]))
     }
 
     fun calculatePhase(board: Board): Int {
-        return EvalConstants.PHASE_PIECE_VALUE[Piece.PAWN] * board.pieceCount[Piece.PAWN] +
-            EvalConstants.PHASE_PIECE_VALUE[Piece.KNIGHT] * board.pieceCount[Piece.KNIGHT] +
-            EvalConstants.PHASE_PIECE_VALUE[Piece.BISHOP] * board.pieceCount[Piece.BISHOP] +
-            EvalConstants.PHASE_PIECE_VALUE[Piece.ROOK] * board.pieceCount[Piece.ROOK] +
-            EvalConstants.PHASE_PIECE_VALUE[Piece.QUEEN] * board.pieceCount[Piece.QUEEN]
+        return EvalConstants.PHASE_PIECE_VALUE[Piece.PAWN] * board.pieceCountType[Piece.PAWN] +
+            EvalConstants.PHASE_PIECE_VALUE[Piece.KNIGHT] * board.pieceCountType[Piece.KNIGHT] +
+            EvalConstants.PHASE_PIECE_VALUE[Piece.BISHOP] * board.pieceCountType[Piece.BISHOP] +
+            EvalConstants.PHASE_PIECE_VALUE[Piece.ROOK] * board.pieceCountType[Piece.ROOK] +
+            EvalConstants.PHASE_PIECE_VALUE[Piece.QUEEN] * board.pieceCountType[Piece.QUEEN]
     }
 }
