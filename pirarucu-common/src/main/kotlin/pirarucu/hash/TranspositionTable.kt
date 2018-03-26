@@ -13,7 +13,7 @@ import kotlin.math.min
  * Transposition table
  * https://chessprogramming.wikispaces.com/Transposition+Table
  *
- * keys (LongArray)
+ * keys (IntArray)
  * Zobrist key - 32 bits
  *
  * scores (ShortArray) (16 bits)
