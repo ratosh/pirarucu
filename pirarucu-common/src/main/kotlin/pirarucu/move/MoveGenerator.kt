@@ -70,7 +70,7 @@ object MoveGenerator {
                         moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
                             MoveType.TYPE_PROMOTION_QUEEN))
                     }
-                    else -> moveList.addMove(Move.createMove(fromSquare, toSquare, Piece.PAWN))
+                    else -> moveList.addMove(Move.createMove(fromSquare, toSquare))
                 }
                 bitboard = bitboard and bitboard - 1
             }
@@ -89,8 +89,7 @@ object MoveGenerator {
 
             while (bitboard != Bitboard.EMPTY) {
                 val toSquare = Square.getSquare(bitboard)
-                moveList.addMove(Move.createMove(fromSquare, toSquare, Piece.KNIGHT,
-                    board.pieceTypeBoard[toSquare]))
+                moveList.addMove(Move.createMove(fromSquare, toSquare))
                 bitboard = bitboard and bitboard - 1
             }
             tmpPieces = tmpPieces and tmpPieces - 1
@@ -114,9 +113,7 @@ object MoveGenerator {
 
             while (bitboard != Bitboard.EMPTY) {
                 val toSquare = Square.getSquare(bitboard)
-                moveList.addMove(Move.createMove(fromSquare, toSquare,
-                    board.pieceTypeBoard[fromSquare],
-                    board.pieceTypeBoard[toSquare]))
+                moveList.addMove(Move.createMove(fromSquare, toSquare))
                 bitboard = bitboard and bitboard - 1
             }
             tmpPieces = tmpPieces and tmpPieces - 1
@@ -140,8 +137,7 @@ object MoveGenerator {
 
             while (bitboard != Bitboard.EMPTY) {
                 val toSquare = Square.getSquare(bitboard)
-                moveList.addMove(Move.createMove(fromSquare, toSquare,
-                    board.pieceTypeBoard[fromSquare], board.pieceTypeBoard[toSquare]))
+                moveList.addMove(Move.createMove(fromSquare, toSquare))
                 bitboard = bitboard and bitboard - 1
             }
             tmpPieces = tmpPieces and tmpPieces - 1
@@ -159,8 +155,7 @@ object MoveGenerator {
             val toSquare = Square.getSquare(moves)
             if (!squareUnderAttack(toSquare, ourColor, board.pieceBitboard[theirColor],
                     gameBitboard)) {
-                moveList.addMove(Move.createMove(fromSquare, toSquare, Piece.KING,
-                    board.pieceTypeBoard[toSquare]))
+                moveList.addMove(Move.createMove(fromSquare, toSquare))
             }
             moves = moves and moves - 1
         }
@@ -264,17 +259,16 @@ object MoveGenerator {
                 val toBitboard = Bitboard.getBitboard(toSquare)
                 when {
                     Bitboard.PROMOTION_BITBOARD and toBitboard != Bitboard.EMPTY -> {
-                        moveList.addMove(Move.createPromotionAttack(fromSquare, toSquare,
-                            board.pieceTypeBoard[toSquare], MoveType.TYPE_PROMOTION_KNIGHT))
-                        moveList.addMove(Move.createPromotionAttack(fromSquare, toSquare,
-                            board.pieceTypeBoard[toSquare], MoveType.TYPE_PROMOTION_BISHOP))
-                        moveList.addMove(Move.createPromotionAttack(fromSquare, toSquare,
-                            board.pieceTypeBoard[toSquare], MoveType.TYPE_PROMOTION_ROOK))
-                        moveList.addMove(Move.createPromotionAttack(fromSquare, toSquare,
-                            board.pieceTypeBoard[toSquare], MoveType.TYPE_PROMOTION_QUEEN))
+                        moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
+                            MoveType.TYPE_PROMOTION_KNIGHT))
+                        moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
+                            MoveType.TYPE_PROMOTION_BISHOP))
+                        moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
+                            MoveType.TYPE_PROMOTION_ROOK))
+                        moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
+                            MoveType.TYPE_PROMOTION_QUEEN))
                     }
-                    else -> moveList.addMove(Move.createAttackMove(fromSquare, toSquare, Piece.PAWN,
-                        board.pieceTypeBoard[toSquare]))
+                    else -> moveList.addMove(Move.createMove(fromSquare, toSquare))
                 }
                 bitboard = bitboard and bitboard - 1
             }

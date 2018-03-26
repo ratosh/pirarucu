@@ -19,20 +19,8 @@ class MoveTest {
     }
 
     @Test
-    fun testMovedPiece() {
-        assertEquals(Move.getMovedPieceType(Move.createMove(Square.E2, Square.E4, Piece.PAWN)),
-            Piece.PAWN)
-    }
-
-    @Test
-    fun testAttackedPiece() {
-        assertEquals(Move.getAttackedPieceType(Move.createMove(Square.E2, Square.E4, Piece.PAWN,
-            Piece.BISHOP)), Piece.BISHOP)
-    }
-
-    @Test
     fun testMoveType() {
-        assertEquals(Move.getMoveType(Move.createMove(Square.E2, Square.E4, Piece.PAWN,
-            Piece.BISHOP, MoveType.TYPE_PASSANT)), MoveType.TYPE_PASSANT)
+        assertEquals(Move.getMoveType(Move.createMove(Square.E2, Square.E4, MoveType.TYPE_PASSANT)),
+            MoveType.TYPE_PASSANT)
     }
 }

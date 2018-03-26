@@ -2,6 +2,8 @@ package pirarucu.board
 
 import pirarucu.board.factory.BoardFactory
 import pirarucu.move.Move
+import pirarucu.move.MoveGenerator
+import pirarucu.move.MoveList
 import pirarucu.move.MoveType
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -11,7 +13,7 @@ class BoardTest {
     @Test
     fun testMove() {
         val board = BoardFactory.getBoard(BoardFactory.STARTER_FEN)
-        val move = Move.createMove(Square.E2, Square.E3, Piece.PAWN)
+        val move = Move.createMove(Square.E2, Square.E3)
         board.doMove(move)
         assertEquals(board.colorToMove, Color.BLACK)
         assertEquals(board.castlingRights, CastlingRights.ANY_CASTLING)
@@ -25,7 +27,7 @@ class BoardTest {
     @Test
     fun testPassantMove() {
         val board = BoardFactory.getBoard("8/8/1K6/8/7p/4k3/6P1/8 w - -")
-        val move = Move.createMove(Square.G2, Square.G4, Piece.PAWN)
+        val move = Move.createMove(Square.G2, Square.G4)
         board.doMove(move)
         assertEquals(board.colorToMove, Color.BLACK)
         assertEquals(board.epSquare, Square.G3)
@@ -35,7 +37,7 @@ class BoardTest {
     @Test
     fun testCaptureMove() {
         val board = BoardFactory.getBoard("4k3/8/8/3p4/4P3/8/8/4K3 w - -")
-        val move = Move.createMove(Square.E4, Square.D5, Piece.PAWN, Piece.PAWN)
+        val move = Move.createMove(Square.E4, Square.D5)
         board.doMove(move)
         assertEquals(board.colorToMove, Color.BLACK)
         assertEquals(board.colorBitboard[Color.BLACK], Bitboard.E8)
@@ -63,7 +65,7 @@ class BoardTest {
     @Test
     fun testPromotionAttack() {
         val board = BoardFactory.getBoard("1b2k3/2P5/8/8/8/8/8/4K3 w - -")
-        val move = Move.createPromotionAttack(Square.C7, Square.B8, Piece.BISHOP, MoveType.TYPE_PROMOTION_ROOK)
+        val move = Move.createPromotionMove(Square.C7, Square.B8, MoveType.TYPE_PROMOTION_ROOK)
         board.doMove(move)
         assertEquals(board.colorToMove, Color.BLACK)
         assertEquals(board.colorBitboard[Color.BLACK], Bitboard.E8)
@@ -97,7 +99,7 @@ class BoardTest {
     @Test
     fun testCheck() {
         val board = BoardFactory.getBoard("6k1/8/8/8/8/8/8/4K2R w - -")
-        val move = Move.createMove(Square.H1, Square.G1, Piece.ROOK)
+        val move = Move.createMove(Square.H1, Square.G1)
         board.doMove(move)
         assertEquals(board.colorToMove, Color.BLACK)
         assertEquals(board.basicEvalInfo.checkBitboard[Color.BLACK], Bitboard.G1)
@@ -105,9 +107,26 @@ class BoardTest {
     }
 
     @Test
-    fun testUndo() {
+    fun testUndoPawn() {
+        val board = BoardFactory.getBoard("6k1/8/8/8/8/8/7P/4K3 w - -")
+        val move = Move.createMove(Square.H2, Square.H4)
+        board.doMove(move)
+        board.undoMove(move)
+        assertEquals(board.colorBitboard[Color.BLACK], Bitboard.G8)
+        assertEquals(board.colorBitboard[Color.WHITE], Bitboard.E1 or Bitboard.H2)
+        assertEquals(board.pieceBitboard[Color.BLACK][Piece.KING], Bitboard.G8)
+        assertEquals(board.pieceBitboard[Color.WHITE][Piece.KING], Bitboard.E1)
+        assertEquals(board.pieceBitboard[Color.WHITE][Piece.PAWN], Bitboard.H2)
+        assertEquals(board.pieceTypeBoard[Square.H4], Piece.NONE)
+        assertEquals(board.pieceTypeBoard[Square.H2], Piece.PAWN)
+        assertEquals(board.colorToMove, Color.WHITE)
+        BoardTestUtil.testBoard(board)
+    }
+
+    @Test
+    fun testUndoRook() {
         val board = BoardFactory.getBoard("6k1/8/8/8/8/8/8/4K2R w - -")
-        val move = Move.createMove(Square.H1, Square.G1, Piece.ROOK)
+        val move = Move.createMove(Square.H1, Square.G1)
         board.doMove(move)
         board.undoMove(move)
         assertEquals(board.colorBitboard[Color.BLACK], Bitboard.G8)
@@ -140,7 +159,7 @@ class BoardTest {
     @Test
     fun testUndoCapture() {
         val board = BoardFactory.getBoard("4k3/8/4p3/3P4/8/8/8/4K3 w - -")
-        val move = Move.createAttackMove(Square.D5, Square.E6, Piece.PAWN, Piece.PAWN)
+        val move = Move.createMove(Square.D5, Square.E6)
         board.doMove(move)
         board.undoMove(move)
         assertEquals(board.colorToMove, Color.WHITE)
@@ -173,6 +192,22 @@ class BoardTest {
         assertEquals(board.pieceTypeBoard[Square.F8], Piece.NONE)
         assertEquals(board.castlingRights, CastlingRights.BLACK_CASTLING_RIGHTS)
         BoardTestUtil.testBoard(board)
+    }
+
+    @Test
+    fun testUndoPosition6() {
+        val board = BoardFactory
+            .getBoard("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -")
+        board.doMove(Move.createMove(Square.A2, Square.A4))
+        val moveList = MoveList()
+        MoveGenerator.legalAttacks(board, moveList)
+        while (moveList.hasNext()) {
+            val move = moveList.next()
+            board.doMove(move)
+            println(board.capturedPiece)
+            board.undoMove(move)
+        }
+        println(moveList.getString())
     }
 }
 

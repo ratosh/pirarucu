@@ -21,6 +21,7 @@ Features
 - Bitboard representation
 - Magic bitboard
 - Material imbalance
+- Transposition table
 
 Author
 ======
