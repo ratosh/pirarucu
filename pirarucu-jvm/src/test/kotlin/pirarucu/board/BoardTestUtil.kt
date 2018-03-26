@@ -1,6 +1,7 @@
 package pirarucu.board
 
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 object BoardTestUtil {
 
@@ -15,6 +16,8 @@ object BoardTestUtil {
 
         val phase = BoardUtil.calculatePhase(board)
         assertEquals(phase, board.phase)
+
+        assertTrue(BoardUtil.validBoard(board))
     }
 
     private fun testZobristKey(board: Board) {

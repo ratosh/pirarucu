@@ -5,55 +5,39 @@ import pirarucu.board.Piece
 import pirarucu.board.Square
 
 /**
- * Original from chess22k.
+ * 16 Bits move representation
  */
 object Move {
     // Predefined moves
     const val NONE = 0
-    const val NULL = -1
+    const val NULL = 65535
 
     const val NONE_STRING = "none"
     const val NULL_STRING = "null"
 
     private const val TO_SHIFT = 6
-    private const val MOVED_PIECE_SHIFT = 12
-    private const val ATTACKED_PIECE_SHIFT = 15
-    private const val MOVE_TYPE_SHIFT = 18
+    private const val MOVE_TYPE_SHIFT = 12
 
-    val SIZE = MOVE_TYPE_SHIFT + Square.getSquare(MoveType.SIZE)
-
-    fun createAttackMove(fromSquare: Int, toSquare: Int,
-        movedPieceType: Int, attackedPieceType: Int): Int {
-        return createMove(fromSquare, toSquare, movedPieceType, attackedPieceType,
-            MoveType.TYPE_NORMAL)
-    }
+    const val SIZE = 16
 
     fun createPromotionMove(fromSquare: Int, toSquare: Int,
         moveType: Int): Int {
-        return createMove(fromSquare, toSquare, Piece.PAWN, Piece.NONE, moveType)
-    }
-
-    fun createPromotionAttack(fromSquare: Int, toSquare: Int,
-        attackedPieceType: Int, moveType: Int): Int {
-        return createMove(fromSquare, toSquare, Piece.PAWN, attackedPieceType, moveType)
+        return createMove(fromSquare, toSquare, moveType)
     }
 
     fun createPassantMove(fromSquare: Int, toSquare: Int): Int {
-        return createMove(fromSquare, toSquare, Piece.PAWN, Piece.PAWN, MoveType.TYPE_PASSANT)
+        return createMove(fromSquare, toSquare, MoveType.TYPE_PASSANT)
     }
 
     fun createCastlingMove(fromSquare: Int, toSquare: Int): Int {
-        return createMove(fromSquare, toSquare, Piece.KING, Piece.NONE, MoveType.TYPE_CASTLING)
+        return createMove(fromSquare, toSquare, MoveType.TYPE_CASTLING)
     }
 
     fun createMove(
         fromSquare: Int,
         toSquare: Int,
-        movedPieceType: Int,
-        attackedPieceType: Int = 0,
         moveType: Int = MoveType.TYPE_NORMAL): Int {
-        return (fromSquare or (toSquare shl TO_SHIFT) or (movedPieceType shl MOVED_PIECE_SHIFT)
-            or (attackedPieceType shl ATTACKED_PIECE_SHIFT) or (moveType shl MOVE_TYPE_SHIFT))
+        return (fromSquare or (toSquare shl TO_SHIFT) or (moveType shl MOVE_TYPE_SHIFT))
     }
 
     fun isValid(move: Int): Boolean {
@@ -66,14 +50,6 @@ object Move {
 
     fun getToSquare(move: Int): Int {
         return (move ushr TO_SHIFT) and Square.H8
-    }
-
-    fun getMovedPieceType(move: Int): Int {
-        return move.ushr(MOVED_PIECE_SHIFT) and Piece.SIZE
-    }
-
-    fun getAttackedPieceType(move: Int): Int {
-        return move.ushr(ATTACKED_PIECE_SHIFT) and Piece.SIZE
     }
 
     fun getMoveType(move: Int): Int {
@@ -95,9 +71,5 @@ object Move {
                 sb.toString()
             }
         }
-    }
-
-    fun isCapture(move: Int): Boolean {
-        return Piece.NONE != getAttackedPieceType(move)
     }
 }

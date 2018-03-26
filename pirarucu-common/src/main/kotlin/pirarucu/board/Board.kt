@@ -44,12 +44,15 @@ class Board {
     var materialScore = 0
     var phase = 0
 
+    var capturedPiece = Piece.NONE
+
     // History
     val historyRule50 = IntArray(GameConstants.GAME_MAX_LENGTH)
     val historyCastlingRights = IntArray(GameConstants.GAME_MAX_LENGTH)
     val historyEpSquare = IntArray(GameConstants.GAME_MAX_LENGTH)
     val historyZobristKey = LongArray(GameConstants.GAME_MAX_LENGTH)
     val historyPawnZobristKey = LongArray(GameConstants.GAME_MAX_LENGTH)
+    val historyCapturedPiece = IntArray(GameConstants.GAME_MAX_LENGTH)
 
     fun colorAt(square: Int): Int {
         val bitboard = Bitboard.getBitboard(square)
@@ -94,6 +97,7 @@ class Board {
 
         colorToMove = Color.WHITE
         nextColorToMove = Color.BLACK
+        capturedPiece = Piece.NONE
 
         Utils.specific.arrayFill(pieceTypeBoard, Piece.NONE)
 
@@ -112,6 +116,7 @@ class Board {
         historyEpSquare[moveNumber] = epSquare
         historyZobristKey[moveNumber] = zobristKey
         historyPawnZobristKey[moveNumber] = pawnZobristKey
+        historyCapturedPiece[moveNumber] = capturedPiece
         moveNumber++
     }
 
@@ -122,10 +127,11 @@ class Board {
         epSquare = historyEpSquare[moveNumber]
         zobristKey = historyZobristKey[moveNumber]
         pawnZobristKey = historyPawnZobristKey[moveNumber]
+        capturedPiece = historyCapturedPiece[moveNumber]
     }
 
     fun possibleMove(move: Int): Boolean {
-        return Move.getAttackedPieceType(move) != Piece.KING
+        return pieceTypeBoard[Move.getToSquare(move)] != Piece.KING
     }
 
     fun doMove(move: Int) {
@@ -133,8 +139,8 @@ class Board {
 
         val fromSquare = Move.getFromSquare(move)
         val toSquare = Move.getToSquare(move)
-        val movedPieceType = Move.getMovedPieceType(move)
-        val attackedPieceType = Move.getAttackedPieceType(move)
+        val movedPieceType = pieceTypeBoard[fromSquare]
+        capturedPiece = pieceTypeBoard[toSquare]
         val moveType = Move.getMoveType(move)
 
         val ourColor = colorToMove
@@ -148,20 +154,21 @@ class Board {
         if (MoveType.isCastling(moveType)) {
             doCastle(ourColor, fromSquare, toSquare)
         } else {
-            if (attackedPieceType != Piece.NONE) {
-                var capturedSquare = toSquare
-                if (attackedPieceType == Piece.PAWN) {
-                    if (MoveType.TYPE_PASSANT == moveType) {
-                        capturedSquare -= BitboardMove.PAWN_FORWARD[ourColor]
-                    }
+            var capturedSquare = toSquare
+            if (MoveType.TYPE_PASSANT == moveType) {
+                capturedSquare -= BitboardMove.PAWN_FORWARD[ourColor]
+                capturedPiece = Piece.PAWN
+            }
+            if (capturedPiece != Piece.NONE) {
+                if (capturedPiece == Piece.PAWN) {
                     pawnZobristKey = pawnZobristKey xor
                         Zobrist.PIECE_SQUARE_TABLE[theirColor][Piece.PAWN][capturedSquare]
                 }
-                removePiece(theirColor, attackedPieceType, capturedSquare)
+                removePiece(theirColor, capturedPiece, capturedSquare)
                 pieceTypeBoard[capturedSquare] = Piece.NONE
 
                 zobristKey = zobristKey xor
-                    Zobrist.PIECE_SQUARE_TABLE[theirColor][attackedPieceType][capturedSquare]
+                    Zobrist.PIECE_SQUARE_TABLE[theirColor][capturedPiece][capturedSquare]
                 rule50 = 0
             }
 
@@ -238,18 +245,14 @@ class Board {
 
         val fromSquare = Move.getFromSquare(move)
         val toSquare = Move.getToSquare(move)
-        val movedPieceType = Move.getMovedPieceType(move)
-        val attackedPieceType = Move.getAttackedPieceType(move)
+        var movedPieceType = pieceTypeBoard[toSquare]
         val moveType = Move.getMoveType(move)
 
-        when (movedPieceType) {
-            Piece.PAWN -> {
-                val promotedPiece = MoveType.getPromotedPiece(moveType)
-                if (promotedPiece != Piece.NONE) {
-                    removePiece(ourColor, promotedPiece, toSquare)
-                    putPiece(ourColor, Piece.PAWN, toSquare)
-                }
-            }
+        if (MoveType.isPromotion(moveType)) {
+            removePiece(ourColor, movedPieceType, toSquare)
+            putPiece(ourColor, Piece.PAWN, toSquare)
+
+            movedPieceType = Piece.PAWN
         }
 
         if (MoveType.isCastling(moveType)) {
@@ -257,14 +260,14 @@ class Board {
         } else {
             movePiece(ourColor, movedPieceType, toSquare, fromSquare)
 
-            if (attackedPieceType != Piece.NONE) {
+            if (capturedPiece != Piece.NONE) {
                 var capturedSquare = toSquare
-                if (attackedPieceType == Piece.PAWN) {
+                if (capturedPiece == Piece.PAWN) {
                     if (MoveType.TYPE_PASSANT == moveType) {
                         capturedSquare -= BitboardMove.PAWN_FORWARD[ourColor]
                     }
                 }
-                putPiece(theirColor, attackedPieceType, capturedSquare)
+                putPiece(theirColor, capturedPiece, capturedSquare)
             }
         }
 

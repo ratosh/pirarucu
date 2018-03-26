@@ -3,7 +3,6 @@ package pirarucu.move
 import pirarucu.board.Board
 import pirarucu.board.Color
 import pirarucu.board.Piece
-import pirarucu.board.Square
 import pirarucu.board.factory.BoardFactory
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -12,45 +11,45 @@ class PerftTest {
 
     @Test
     fun testInitialPosition() {
-        val moveInfoList = arrayOf(MoveInfo(), MoveInfo(), MoveInfo(), MoveInfo(), MoveInfo())
+        val moveInfoList = Array(5) { MoveInfo() }
         val board = BoardFactory.getBoard()
 
         recursive(board, moveInfoList, 5)
 
-        assertEquals(moveInfoList[0].moveCount, 20)
-        assertEquals(moveInfoList[0].captures, 0)
-        assertEquals(moveInfoList[0].passantCaptures, 0)
-        assertEquals(moveInfoList[0].castles, 0)
-        assertEquals(moveInfoList[0].promotions, 0)
-        assertEquals(moveInfoList[0].checks, 0)
+        assertEquals(20, moveInfoList[0].moveCount)
+        assertEquals(0, moveInfoList[0].captures)
+        assertEquals(0, moveInfoList[0].passantCaptures)
+        assertEquals(0, moveInfoList[0].castles)
+        assertEquals(0, moveInfoList[0].promotions)
+        assertEquals(0, moveInfoList[0].checks)
 
-        assertEquals(moveInfoList[1].moveCount, 400)
-        assertEquals(moveInfoList[1].captures, 0)
-        assertEquals(moveInfoList[1].passantCaptures, 0)
-        assertEquals(moveInfoList[1].castles, 0)
-        assertEquals(moveInfoList[1].promotions, 0)
-        assertEquals(moveInfoList[1].checks, 0)
+        assertEquals(400, moveInfoList[1].moveCount)
+        assertEquals(0, moveInfoList[1].captures)
+        assertEquals(0, moveInfoList[1].passantCaptures)
+        assertEquals(0, moveInfoList[1].castles)
+        assertEquals(0, moveInfoList[1].promotions)
+        assertEquals(0, moveInfoList[1].checks)
 
-        assertEquals(moveInfoList[2].moveCount, 8902)
-        assertEquals(moveInfoList[2].captures, 34)
-        assertEquals(moveInfoList[2].passantCaptures, 0)
-        assertEquals(moveInfoList[2].castles, 0)
-        assertEquals(moveInfoList[2].promotions, 0)
-        assertEquals(moveInfoList[2].checks, 12)
+        assertEquals(8902, moveInfoList[2].moveCount)
+        assertEquals(34, moveInfoList[2].captures)
+        assertEquals(0, moveInfoList[2].passantCaptures)
+        assertEquals(0, moveInfoList[2].castles)
+        assertEquals(0, moveInfoList[2].promotions)
+        assertEquals(12, moveInfoList[2].checks)
 
-        assertEquals(moveInfoList[3].moveCount, 197281)
-        assertEquals(moveInfoList[3].captures, 1576)
-        assertEquals(moveInfoList[3].passantCaptures, 0)
-        assertEquals(moveInfoList[3].castles, 0)
-        assertEquals(moveInfoList[3].promotions, 0)
-        assertEquals(moveInfoList[3].checks, 469)
+        assertEquals(197281, moveInfoList[3].moveCount)
+        assertEquals(1576, moveInfoList[3].captures)
+        assertEquals(0, moveInfoList[3].passantCaptures)
+        assertEquals(0, moveInfoList[3].castles)
+        assertEquals(0, moveInfoList[3].promotions)
+        assertEquals(469, moveInfoList[3].checks)
 
-        assertEquals(moveInfoList[4].moveCount, 4865609)
-        assertEquals(moveInfoList[4].captures, 82719)
-        assertEquals(moveInfoList[4].passantCaptures, 258)
-        assertEquals(moveInfoList[4].castles, 0)
-        assertEquals(moveInfoList[4].promotions, 0)
-        assertEquals(moveInfoList[4].checks, 27351)
+        assertEquals(4865609, moveInfoList[4].moveCount)
+        assertEquals(82719, moveInfoList[4].captures)
+        assertEquals(258, moveInfoList[4].passantCaptures)
+        assertEquals(0, moveInfoList[4].castles)
+        assertEquals(0, moveInfoList[4].promotions)
+        assertEquals(27351, moveInfoList[4].checks)
     }
 
     @Test
@@ -60,33 +59,33 @@ class PerftTest {
 
         recursive(board, moveInfoList, 4)
 
-        assertEquals(moveInfoList[0].moveCount, 48)
-        assertEquals(moveInfoList[0].captures, 8)
-        assertEquals(moveInfoList[0].passantCaptures, 0)
-        assertEquals(moveInfoList[0].castles, 2)
-        assertEquals(moveInfoList[0].promotions, 0)
-        assertEquals(moveInfoList[0].checks, 0)
+        assertEquals(48, moveInfoList[0].moveCount)
+        assertEquals(8, moveInfoList[0].captures)
+        assertEquals(0, moveInfoList[0].passantCaptures)
+        assertEquals(2, moveInfoList[0].castles)
+        assertEquals(0, moveInfoList[0].promotions)
+        assertEquals(0, moveInfoList[0].checks)
 
-        assertEquals(moveInfoList[1].moveCount, 2039)
-        assertEquals(moveInfoList[1].captures, 351)
-        assertEquals(moveInfoList[1].passantCaptures, 1)
-        assertEquals(moveInfoList[1].castles, 91)
-        assertEquals(moveInfoList[1].promotions, 0)
-        assertEquals(moveInfoList[1].checks, 3)
+        assertEquals(2039, moveInfoList[1].moveCount)
+        assertEquals(351, moveInfoList[1].captures)
+        assertEquals(1, moveInfoList[1].passantCaptures)
+        assertEquals(91, moveInfoList[1].castles)
+        assertEquals(0, moveInfoList[1].promotions)
+        assertEquals(3, moveInfoList[1].checks)
 
-        assertEquals(moveInfoList[2].moveCount, 97862)
-        assertEquals(moveInfoList[2].captures, 17102)
-        assertEquals(moveInfoList[2].passantCaptures, 45)
-        assertEquals(moveInfoList[2].castles, 3162)
-        assertEquals(moveInfoList[2].promotions, 0)
-        assertEquals(moveInfoList[2].checks, 993)
+        assertEquals(97862, moveInfoList[2].moveCount)
+        assertEquals(17102, moveInfoList[2].captures)
+        assertEquals(45, moveInfoList[2].passantCaptures)
+        assertEquals(3162, moveInfoList[2].castles)
+        assertEquals(0, moveInfoList[2].promotions)
+        assertEquals(993, moveInfoList[2].checks)
 
-        assertEquals(moveInfoList[3].moveCount, 4085603)
-        assertEquals(moveInfoList[3].captures, 757163)
-        assertEquals(moveInfoList[3].passantCaptures, 1929)
-        assertEquals(moveInfoList[3].castles, 128013)
-        assertEquals(moveInfoList[3].promotions, 15172)
-        assertEquals(moveInfoList[3].checks, 25523)
+        assertEquals(4085603, moveInfoList[3].moveCount)
+        assertEquals(757163, moveInfoList[3].captures)
+        assertEquals(1929, moveInfoList[3].passantCaptures)
+        assertEquals(128013, moveInfoList[3].castles)
+        assertEquals(15172, moveInfoList[3].promotions)
+        assertEquals(25523, moveInfoList[3].checks)
     }
 
     @Test
@@ -96,47 +95,47 @@ class PerftTest {
 
         recursive(board, moveInfoList, 6)
 
-        assertEquals(moveInfoList[0].moveCount, 14)
-        assertEquals(moveInfoList[0].captures, 1)
-        assertEquals(moveInfoList[0].passantCaptures, 0)
-        assertEquals(moveInfoList[0].castles, 0)
-        assertEquals(moveInfoList[0].promotions, 0)
-        assertEquals(moveInfoList[0].checks, 2)
+        assertEquals(14, moveInfoList[0].moveCount)
+        assertEquals(1, moveInfoList[0].captures)
+        assertEquals(0, moveInfoList[0].passantCaptures)
+        assertEquals(0, moveInfoList[0].castles)
+        assertEquals(0, moveInfoList[0].promotions)
+        assertEquals(2, moveInfoList[0].checks)
 
-        assertEquals(moveInfoList[1].moveCount, 191)
-        assertEquals(moveInfoList[1].captures, 14)
-        assertEquals(moveInfoList[1].passantCaptures, 0)
-        assertEquals(moveInfoList[1].castles, 0)
-        assertEquals(moveInfoList[1].promotions, 0)
-        assertEquals(moveInfoList[1].checks, 10)
+        assertEquals(191, moveInfoList[1].moveCount)
+        assertEquals(14, moveInfoList[1].captures)
+        assertEquals(0, moveInfoList[1].passantCaptures)
+        assertEquals(0, moveInfoList[1].castles)
+        assertEquals(0, moveInfoList[1].promotions)
+        assertEquals(10, moveInfoList[1].checks)
 
-        assertEquals(moveInfoList[2].moveCount, 2812)
-        assertEquals(moveInfoList[2].captures, 209)
-        assertEquals(moveInfoList[2].passantCaptures, 2)
-        assertEquals(moveInfoList[2].castles, 0)
-        assertEquals(moveInfoList[2].promotions, 0)
-        assertEquals(moveInfoList[2].checks, 267)
+        assertEquals(2812, moveInfoList[2].moveCount)
+        assertEquals(209, moveInfoList[2].captures)
+        assertEquals(2, moveInfoList[2].passantCaptures)
+        assertEquals(0, moveInfoList[2].castles)
+        assertEquals(0, moveInfoList[2].promotions)
+        assertEquals(267, moveInfoList[2].checks)
 
-        assertEquals(moveInfoList[3].moveCount, 43238)
-        assertEquals(moveInfoList[3].captures, 3348)
-        assertEquals(moveInfoList[3].passantCaptures, 123)
-        assertEquals(moveInfoList[3].castles, 0)
-        assertEquals(moveInfoList[3].promotions, 0)
-        assertEquals(moveInfoList[3].checks, 1680)
+        assertEquals(43238, moveInfoList[3].moveCount)
+        assertEquals(3348, moveInfoList[3].captures)
+        assertEquals(123, moveInfoList[3].passantCaptures)
+        assertEquals(0, moveInfoList[3].castles)
+        assertEquals(0, moveInfoList[3].promotions)
+        assertEquals(1680, moveInfoList[3].checks)
 
-        assertEquals(moveInfoList[4].moveCount, 674624)
-        assertEquals(moveInfoList[4].captures, 52051)
-        assertEquals(moveInfoList[4].passantCaptures, 1165)
-        assertEquals(moveInfoList[4].castles, 0)
-        assertEquals(moveInfoList[4].promotions, 0)
-        assertEquals(moveInfoList[4].checks, 52950)
+        assertEquals(674624, moveInfoList[4].moveCount)
+        assertEquals(52051, moveInfoList[4].captures)
+        assertEquals(1165, moveInfoList[4].passantCaptures)
+        assertEquals(0, moveInfoList[4].castles)
+        assertEquals(0, moveInfoList[4].promotions)
+        assertEquals(52950, moveInfoList[4].checks)
 
-        assertEquals(moveInfoList[5].moveCount, 11030083)
-        assertEquals(moveInfoList[5].captures, 940350)
-        assertEquals(moveInfoList[5].passantCaptures, 33325)
-        assertEquals(moveInfoList[5].castles, 0)
-        assertEquals(moveInfoList[5].promotions, 7552)
-        assertEquals(moveInfoList[5].checks, 452473)
+        assertEquals(11030083, moveInfoList[5].moveCount)
+        assertEquals(940350, moveInfoList[5].captures)
+        assertEquals(33325, moveInfoList[5].passantCaptures)
+        assertEquals(0, moveInfoList[5].castles)
+        assertEquals(7552, moveInfoList[5].promotions)
+        assertEquals(452473, moveInfoList[5].checks)
     }
 
     @Test
@@ -147,40 +146,40 @@ class PerftTest {
 
         recursive(board, moveInfoList, 5)
 
-        assertEquals(moveInfoList[0].moveCount, 6)
-        assertEquals(moveInfoList[0].captures, 0)
-        assertEquals(moveInfoList[0].passantCaptures, 0)
-        assertEquals(moveInfoList[0].castles, 0)
-        assertEquals(moveInfoList[0].promotions, 0)
-        assertEquals(moveInfoList[0].checks, 0)
+        assertEquals(6, moveInfoList[0].moveCount)
+        assertEquals(0, moveInfoList[0].captures)
+        assertEquals(0, moveInfoList[0].passantCaptures)
+        assertEquals(0, moveInfoList[0].castles)
+        assertEquals(0, moveInfoList[0].promotions)
+        assertEquals(0, moveInfoList[0].checks)
 
-        assertEquals(moveInfoList[1].moveCount, 264)
-        assertEquals(moveInfoList[1].captures, 87)
-        assertEquals(moveInfoList[1].passantCaptures, 0)
-        assertEquals(moveInfoList[1].castles, 6)
-        assertEquals(moveInfoList[1].promotions, 48)
-        assertEquals(moveInfoList[1].checks, 10)
+        assertEquals(264, moveInfoList[1].moveCount)
+        assertEquals(87, moveInfoList[1].captures)
+        assertEquals(0, moveInfoList[1].passantCaptures)
+        assertEquals(6, moveInfoList[1].castles)
+        assertEquals(48, moveInfoList[1].promotions)
+        assertEquals(10, moveInfoList[1].checks)
 
-        assertEquals(moveInfoList[2].moveCount, 9467)
-        assertEquals(moveInfoList[2].captures, 1021)
-        assertEquals(moveInfoList[2].passantCaptures, 4)
-        assertEquals(moveInfoList[2].castles, 0)
-        assertEquals(moveInfoList[2].promotions, 120)
-        assertEquals(moveInfoList[2].checks, 38)
+        assertEquals(9467, moveInfoList[2].moveCount)
+        assertEquals(1021, moveInfoList[2].captures)
+        assertEquals(4, moveInfoList[2].passantCaptures)
+        assertEquals(0, moveInfoList[2].castles)
+        assertEquals(120, moveInfoList[2].promotions)
+        assertEquals(38, moveInfoList[2].checks)
 
-        assertEquals(moveInfoList[3].moveCount, 422333)
-        assertEquals(moveInfoList[3].captures, 131393)
-        assertEquals(moveInfoList[3].passantCaptures, 0)
-        assertEquals(moveInfoList[3].castles, 7795)
-        assertEquals(moveInfoList[3].promotions, 60032)
-        assertEquals(moveInfoList[3].checks, 15492)
+        assertEquals(422333, moveInfoList[3].moveCount)
+        assertEquals(131393, moveInfoList[3].captures)
+        assertEquals(0, moveInfoList[3].passantCaptures)
+        assertEquals(7795, moveInfoList[3].castles)
+        assertEquals(60032, moveInfoList[3].promotions)
+        assertEquals(15492, moveInfoList[3].checks)
 
-        assertEquals(moveInfoList[4].moveCount, 15833292)
-        assertEquals(moveInfoList[4].captures, 2046173)
-        assertEquals(moveInfoList[4].passantCaptures, 6512)
-        assertEquals(moveInfoList[4].castles, 0)
-        assertEquals(moveInfoList[4].promotions, 329464)
-        assertEquals(moveInfoList[4].checks, 200568)
+        assertEquals(15833292, moveInfoList[4].moveCount)
+        assertEquals(2046173, moveInfoList[4].captures)
+        assertEquals(6512, moveInfoList[4].passantCaptures)
+        assertEquals(0, moveInfoList[4].castles)
+        assertEquals(329464, moveInfoList[4].promotions)
+        assertEquals(200568, moveInfoList[4].checks)
     }
 
     @Test
@@ -190,11 +189,11 @@ class PerftTest {
 
         recursive(board, moveInfoList, 4)
 
-        assertEquals(moveInfoList[0].moveCount, 44)
-        assertEquals(moveInfoList[1].moveCount, 1486)
-        assertEquals(moveInfoList[2].moveCount, 62379)
-        assertEquals(moveInfoList[3].moveCount, 2103487)
-        //assertEquals(moveInfoList[4].moveCount, 89941194)
+        assertEquals(44, moveInfoList[0].moveCount)
+        assertEquals(1486, moveInfoList[1].moveCount)
+        assertEquals(62379, moveInfoList[2].moveCount)
+        assertEquals(2103487, moveInfoList[3].moveCount)
+        //assertEquals(89941194, moveInfoList[4].moveCount)
     }
 
     @Test
@@ -205,21 +204,21 @@ class PerftTest {
 
         recursive(board, moveInfoList, 4)
 
-        assertEquals(moveInfoList[0].moveCount, 46)
-        assertEquals(moveInfoList[1].moveCount, 2079)
-        assertEquals(moveInfoList[2].moveCount, 89890)
-        assertEquals(moveInfoList[3].moveCount, 3894594)
-        //assertEquals(moveInfoList[4].moveCount, 164075551)
+        assertEquals(46, moveInfoList[0].moveCount)
+        assertEquals(2079, moveInfoList[1].moveCount)
+        assertEquals(89890, moveInfoList[2].moveCount)
+        assertEquals(3894594, moveInfoList[3].moveCount)
+        //assertEquals(164075551, moveInfoList[4].moveCount)
     }
 
     fun divide(board: Board,
-        moveInfoList: Array<MoveInfo>,
         wantedDepth: Int) {
         val moveList = MoveList()
         moveList.startPly()
         MoveGenerator.legalAttacks(board, moveList)
         MoveGenerator.legalMoves(board, moveList)
         while (moveList.hasNext()) {
+            val moveInfoArray = Array(wantedDepth) { MoveInfo() }
             val move = moveList.next()
 
             if (!board.possibleMove(move)) {
@@ -227,7 +226,8 @@ class PerftTest {
             }
 
             board.doMove(move)
-            println(Move.toString(move) + " = " + recursive(board, moveList, moveInfoList, 1, wantedDepth - 1))
+            recursive(board, moveList, moveInfoArray, 1, wantedDepth - 1)
+            println(getString(moveInfoArray))
             board.undoMove(move)
         }
         moveList.endPly()
@@ -265,7 +265,7 @@ class PerftTest {
             board.doMove(move)
 
             val moveType = Move.getMoveType(move)
-            if (Move.isCapture(move)) {
+            if (board.capturedPiece != Piece.NONE) {
                 moveInfoList[depth].captures++
             }
             if (moveType == MoveType.TYPE_PASSANT) {
@@ -294,6 +294,16 @@ class PerftTest {
 
         moveList.endPly()
         return totalMove
+    }
+
+    private fun getString(moveInfoList: Array<MoveInfo>): String {
+        val buffer = StringBuilder()
+        for (index in moveInfoList.indices) {
+
+            buffer.append("depth ").append(index).append(" ").append(moveInfoList[index].toString())
+            buffer.append("\n")
+        }
+        return buffer.toString()
     }
 
     data class MoveInfo(var moveCount: Int = 0, var captures: Int = 0, var passantCaptures: Int = 0,
