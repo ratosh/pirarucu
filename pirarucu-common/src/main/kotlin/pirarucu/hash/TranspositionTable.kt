@@ -203,17 +203,22 @@ object TranspositionTable {
     private fun buildInfo(oldInfo: Long, depth: Int, scoreType: Int, move: Int): Long {
         val move1 = (move.toLong() and MOVE_MASK) shl MOVE_SHIFT_1
         val move2 = (move.toLong() and MOVE_MASK) shl MOVE_SHIFT_2
-        val move3 = (move.toLong() and MOVE_MASK) shl MOVE_SHIFT_3
 
+        // Inserting the move in the first position of the stack
         val moveStack = when {
-            MOVE_MASK_1 and oldInfo == move1 ||
-                MOVE_MASK_2 and oldInfo == move2 ||
-                MOVE_MASK_3 and oldInfo == move3 -> {
+            MOVE_MASK_1 and oldInfo == move1 -> {
+                // Move already in first position
                 oldInfo and MOVES_MASK
+            }
+            MOVE_MASK_2 and oldInfo == move2 -> {
+                // Move in second position
+                move1 or
+                    ((oldInfo and MOVE_MASK_1) shl MOVE_SHIFT) or
+                    (oldInfo and MOVE_MASK_3)
             }
             else -> {
                 ((oldInfo and MOVES_MASK) shl MOVE_SHIFT) or
-                    ((move.toLong() and MOVE_MASK) shl MOVE_SHIFT)
+                    move1
             }
         }
         return depth.toLong() or
