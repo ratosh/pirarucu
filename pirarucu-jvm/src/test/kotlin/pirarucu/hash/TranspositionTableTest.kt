@@ -75,7 +75,7 @@ class TranspositionTableTest {
         TranspositionTable.save(board, 0, 0, HashConstants.SCORE_TYPE_EXACT_SCORE, 0, Move.NULL)
         TranspositionTable.save(board, 0, 0, HashConstants.SCORE_TYPE_EXACT_SCORE, 0, 1)
         assertTrue(TranspositionTable.findEntry(board))
-        assertEquals(1, TranspositionTable.getMove(1))
-        assertEquals(Move.NULL, TranspositionTable.getMove(2))
+        assertEquals(1, TranspositionTable.getMove(0))
+        assertEquals(Move.NULL, TranspositionTable.getMove(1))
     }
 }

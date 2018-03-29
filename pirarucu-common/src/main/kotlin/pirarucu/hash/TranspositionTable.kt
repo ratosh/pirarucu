@@ -78,12 +78,15 @@ object TranspositionTable {
         return getScore(foundScore, ply)
     }
 
+    /**
+     * Move number from 0 to 2
+     */
     fun getMove(moveNumber: Int): Int {
         return getMove(foundInfo, moveNumber)
     }
 
-    val eval: Short
-        get() = foundEval
+    val eval: Int
+        get() = foundEval.toInt()
 
     val scoreType: Int
         get() = getScoreType(foundInfo)
@@ -95,7 +98,7 @@ object TranspositionTable {
         get() = foundInfo and MOVES_MASK != 0L
 
     val firstMove: Int
-        get() = getMove(foundInfo, 1)
+        get() = getMove(0)
 
     fun findEntry(board: Board): Boolean {
         val startIndex = getIndex(board)
@@ -189,7 +192,7 @@ object TranspositionTable {
     }
 
     private fun getMove(value: Long, position: Int): Int {
-        return ((value ushr (MOVE_SHIFT * position)) and MOVE_MASK).toInt()
+        return ((value ushr (MOVE_SHIFT * (position + 1))) and MOVE_MASK).toInt()
     }
 
     private fun getScoreType(value: Long): Int {
