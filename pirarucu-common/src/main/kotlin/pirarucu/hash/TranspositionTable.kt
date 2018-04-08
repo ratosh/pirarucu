@@ -5,6 +5,8 @@ import pirarucu.board.Board
 import pirarucu.board.Square
 import pirarucu.eval.EvalConstants
 import pirarucu.game.GameConstants
+import pirarucu.search.SearchOptions
+import pirarucu.stats.Statistics
 import pirarucu.util.Utils
 import kotlin.math.max
 import kotlin.math.min
@@ -87,6 +89,9 @@ object TranspositionTable {
                 break
             }
             if (wantedKey == key) {
+                if (Statistics.ENABLED) {
+                    Statistics.ttHits++
+                }
                 foundKey = key
                 foundScore = scores[index].toInt()
                 foundInfo = infos[index].toInt()
@@ -95,10 +100,16 @@ object TranspositionTable {
             }
             index++
         }
+        if (Statistics.ENABLED) {
+            Statistics.ttMisses++
+        }
         return false
     }
 
     fun save(board: Board, score: Int, scoreType: Int, depth: Int, ply: Int, bestMove: Int) {
+        if (SearchOptions.stop) {
+            return
+        }
         val startIndex = getIndex(board)
         val maxIndex = getMaxIndex(startIndex)
         var index = startIndex

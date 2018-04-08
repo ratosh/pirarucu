@@ -3,7 +3,7 @@
 Pirarucu
 ========
 
-A Kotlin Chess Engine. It will use UCI protocol to communicate with Graphical Interfaces.
+A Kotlin Chess Engine with UCI protocol support.
 
 Concepts
 ========
@@ -22,6 +22,18 @@ Features
 - Magic bitboard
 - Material imbalance
 - Transposition table
+- Quiescence search
+- Alpha-beta search
+    - Aspiration window
+    - Interactive deepening
+    - Null move reductions
+    - Razoring pruning
+    - Futility pruning
+
+Contributions
+=============
+
+You are welcome to contribute. Create an issue to discuss a feature before sending a Pull Request.
 
 Author
 ======

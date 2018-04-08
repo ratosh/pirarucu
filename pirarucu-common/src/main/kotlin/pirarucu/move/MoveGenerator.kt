@@ -6,6 +6,7 @@ import pirarucu.board.CastlingRights
 import pirarucu.board.Color
 import pirarucu.board.Piece
 import pirarucu.board.Square
+import pirarucu.stats.Statistics
 
 object MoveGenerator {
 
@@ -33,6 +34,10 @@ object MoveGenerator {
             }
         }
         legalKingMoves(board, moveList, mask)
+
+        if (Statistics.ENABLED) {
+            Statistics.gMoves += moveList.movesLeft()
+        }
     }
 
     private fun legalPawnMoves(board: Board, moveList: MoveList, maskBitboard: Long) {
@@ -211,6 +216,9 @@ object MoveGenerator {
             }
         }
         legalKingMoves(board, moveList, theirBitboard)
+        if (Statistics.ENABLED) {
+            Statistics.gMoves += moveList.movesLeft()
+        }
     }
 
     private fun legalPawnEPCapture(board: Board, moveList: MoveList, maskBitboard: Long) {

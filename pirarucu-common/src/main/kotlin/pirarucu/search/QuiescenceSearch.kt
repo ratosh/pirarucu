@@ -10,6 +10,7 @@ import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
 import pirarucu.move.MoveGenerator
 import pirarucu.move.MoveList
+import pirarucu.stats.Statistics
 import kotlin.math.max
 
 /**
@@ -22,11 +23,21 @@ object QuiescenceSearch {
                ply: Int,
                alpha: Int,
                beta: Int): Int {
+        if (Statistics.ENABLED) {
+            Statistics.qMaxPly = max(Statistics.qMaxPly, ply)
+            Statistics.qNodes++
+        }
         if (DrawEvaluator.isDrawByRules(board) || !DrawEvaluator.hasSufficientMaterial(board)) {
+            if (Statistics.ENABLED) {
+                Statistics.qDraw++
+            }
             return EvalConstants.SCORE_DRAW
         }
         val eval: Int
         if (TranspositionTable.findEntry(board)) {
+            if (Statistics.ENABLED) {
+                Statistics.qTTEntry++
+            }
             val foundInfo = TranspositionTable.foundInfo
             eval = TranspositionTable.getScore(TranspositionTable.foundInfo, ply)
             when (TranspositionTable.getScoreType(foundInfo)) {
@@ -43,6 +54,9 @@ object QuiescenceSearch {
         }
 
         if (eval >= beta) {
+            if (Statistics.ENABLED) {
+                Statistics.qStandpat++
+            }
             return eval
         }
 
@@ -53,6 +67,9 @@ object QuiescenceSearch {
          */
         val futilityValue = eval + EvalConstants.QS_PIECE_VALUE[board.capturedPiece]
         if (futilityValue <= alpha) {
+            if (Statistics.ENABLED) {
+                Statistics.qFutility++
+            }
             return max(bestScore, futilityValue)
         }
 
@@ -68,6 +85,10 @@ object QuiescenceSearch {
             val move = moveList.next()
             moveCount++
 
+            if (Statistics.ENABLED) {
+                Statistics.qRenodes++
+            }
+
             board.doMove(move)
             val innerScore = -search(board, moveList, ply + 1, -beta, -bestScore)
             board.undoMove(move)
@@ -77,6 +98,9 @@ object QuiescenceSearch {
                 bestMove = move
             }
             if (innerScore >= beta) {
+                if (Statistics.ENABLED) {
+                    Statistics.qFailHigh++
+                }
                 break
             }
 

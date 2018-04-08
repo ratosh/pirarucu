@@ -26,6 +26,7 @@ class PrincipalVariationTest {
 
     @BeforeTest
     fun setup() {
+        SearchOptions.reset()
         TranspositionTable.reset()
         PrincipalVariation.reset()
     }

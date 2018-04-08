@@ -7,6 +7,7 @@ import pirarucu.hash.Zobrist
 import pirarucu.move.BitboardMove
 import pirarucu.move.Move
 import pirarucu.move.MoveType
+import pirarucu.stats.Statistics
 import pirarucu.util.Utils
 
 class Board {
@@ -156,6 +157,7 @@ class Board {
     }
 
     fun doMove(move: Int) {
+        Statistics.moves++
         pushToHistory()
 
         val fromSquare = Move.getFromSquare(move)
