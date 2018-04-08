@@ -2,7 +2,6 @@ package pirarucu.hash
 
 import pirarucu.board.CastlingRights
 import pirarucu.board.Color
-import pirarucu.board.File
 import pirarucu.board.Piece
 import pirarucu.board.Square
 import pirarucu.util.Utils
@@ -10,7 +9,7 @@ import pirarucu.util.Utils
 object Zobrist {
 
     val PIECE_SQUARE_TABLE = Array(Color.SIZE) { Array(Piece.SIZE) { LongArray(Square.SIZE) } }
-    val PASSANT_FILE = LongArray(File.SIZE)
+    val PASSANT_SQUARE = LongArray(Square.SIZE)
     val CASTLING_RIGHT = LongArray(CastlingRights.SIZE)
     val SIDE: Long
 
@@ -24,9 +23,10 @@ object Zobrist {
             }
         }
 
-        for (file in 0 until File.SIZE) {
-            PASSANT_FILE[file] = Utils.specific.randomLong()
+        for (square in 0 until Square.SIZE) {
+            PASSANT_SQUARE[square] = Utils.specific.randomLong()
         }
+
 
         // skip first item: contains only zeros, default value and has no effect when xorring
         for (castlingRight in 1 until CastlingRights.SIZE) {

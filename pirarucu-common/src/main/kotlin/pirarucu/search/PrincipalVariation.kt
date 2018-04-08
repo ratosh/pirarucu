@@ -1,41 +1,45 @@
 package pirarucu.search
 
 import pirarucu.board.Board
-import pirarucu.game.GameConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
 import pirarucu.util.Utils
 
 object PrincipalVariation {
 
-    val bestMoveList = IntArray(GameConstants.MAX_PLIES)
-    var bestScore = 0
+    private const val PV_DEPTH = 10
 
-    var maxDepth = 0
+    var bestMove = Move.NONE
+    val bestMoveList = IntArray(PV_DEPTH)
+    var bestScore = 0
 
     fun reset() {
         Utils.Companion.specific.arrayFill(bestMoveList, 0)
+        bestMove = Move.NONE
         bestScore = 0
-        maxDepth = 0
     }
 
     fun save(board: Board) {
         var ply = 0
-        while (ply < GameConstants.MAX_PLIES - 1 && TranspositionTable.findEntry(board)) {
-            if (ply == 0) {
-                bestScore = TranspositionTable.getScore(1)
-            }
-            val bestMove = TranspositionTable.firstMove
-            if (bestMove != Move.NONE) {
-                bestMoveList[ply] = bestMove
-                maxDepth = ply + 1
-                board.doMove(bestMove)
+        while (ply < PV_DEPTH && TranspositionTable.findEntry(board)) {
+            val moves = TranspositionTable.foundMoves
+            val score = TranspositionTable.foundScore
+            val firstMove = TranspositionTable.getFirstMove(moves)
+            if (firstMove != Move.NONE) {
+                if (ply == 0) {
+                    bestMove = firstMove
+                    bestScore = score
+                }
+                bestMoveList[ply] = firstMove
+                board.doMove(firstMove)
             } else {
                 break
             }
             ply++
         }
-        bestMoveList[ply] = Move.NONE
+        if (ply < PV_DEPTH) {
+            bestMoveList[ply] = Move.NONE
+        }
         while (ply > 0) {
             ply--
             board.undoMove(bestMoveList[ply])

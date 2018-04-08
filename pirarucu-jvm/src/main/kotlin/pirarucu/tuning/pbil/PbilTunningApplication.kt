@@ -1,5 +1,6 @@
 package pirarucu.tuning.pbil
 
+import pirarucu.board.Piece
 import pirarucu.eval.EvalConstants
 import pirarucu.tuning.ErrorCalculator
 import pirarucu.util.EpdFileLoader
@@ -12,20 +13,83 @@ object PbilTunningApplication {
 
     private const val INTERACTIONS = 300
 
-    const val numberOfThreads = 1
-    val workers = arrayOfNulls<ErrorCalculator>(numberOfThreads)
-    val executor = Executors.newFixedThreadPool(numberOfThreads)!!
-    val epdFileLoader = EpdFileLoader("d:\\chess\\epds\\quiet_labeled_v6.epd")
+    private const val numberOfThreads = 1
+    private val workers = arrayOfNulls<ErrorCalculator>(numberOfThreads)
+    private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
+    private val epdFileLoader = EpdFileLoader("d:\\chess\\epds\\quiet_labeled_v6.epd")
 
-    val tuningObjects: List<PbilTunningObject>
+    private val tuningObjects: List<PbilTunningObject>
         get() {
             val tuningObjects = ArrayList<PbilTunningObject>()
-
+            /*
             tuningObjects.add(PbilTunningObject(
                 "PHASE",
                 EvalConstants.PHASE_PIECE_VALUE,
-                intArrayOf(1, 8, 9, 9, 10, 11, 1),
+                intArrayOf(0, 8, 9, 9, 10, 11, 0),
                 false, 0, 6))
+
+            tuningObjects.add(PbilTunningObject(
+                "MATERIAL_IMBALANCE_OURS[PAWN]",
+                EvalConstants.MATERIAL_IMBALANCE_OURS[Piece.PAWN],
+                intArrayOf(4, 4, 0, 0, 0, 0),
+                true, 2, 3, 4, 5))
+
+            tuningObjects.add(PbilTunningObject(
+                "MATERIAL_IMBALANCE_OURS[KNIGHT]",
+                EvalConstants.MATERIAL_IMBALANCE_OURS[Piece.KNIGHT],
+                intArrayOf(4, 4, 4, 0, 0, 0),
+                true, 3, 4, 5))
+
+            tuningObjects.add(PbilTunningObject(
+                "MATERIAL_IMBALANCE_OURS[BISHOP]",
+                EvalConstants.MATERIAL_IMBALANCE_OURS[Piece.BISHOP],
+                intArrayOf(4, 4, 4, 4, 0, 0),
+                true, 4, 5))
+
+            tuningObjects.add(PbilTunningObject(
+                "MATERIAL_IMBALANCE_OURS[ROOK]",
+                EvalConstants.MATERIAL_IMBALANCE_OURS[Piece.ROOK],
+                intArrayOf(4, 4, 4, 4, 4, 0),
+                true, 5))
+
+            tuningObjects.add(PbilTunningObject(
+                "MATERIAL_IMBALANCE_OURS[QUEEN]",
+                EvalConstants.MATERIAL_IMBALANCE_OURS[Piece.QUEEN],
+                intArrayOf(4, 4, 4, 4, 4, 0),
+                true, 5))
+                */
+
+            tuningObjects.add(PbilTunningObject(
+                "MATERIAL_IMBALANCE_THEIRS[PAWN]",
+                EvalConstants.MATERIAL_IMBALANCE_THEIRS[Piece.PAWN],
+                intArrayOf(4, 4, 0, 0, 0, 0),
+                true, 2, 3, 4, 5))
+
+            /*
+            tuningObjects.add(PbilTunningObject(
+                "MATERIAL_IMBALANCE_THEIRS[KNIGHT]",
+                EvalConstants.MATERIAL_IMBALANCE_THEIRS[Piece.KNIGHT],
+                intArrayOf(4, 4, 4, 0, 0, 0),
+                true, 3, 4, 5))
+
+            tuningObjects.add(PbilTunningObject(
+                "MATERIAL_IMBALANCE_THEIRS[BISHOP]",
+                EvalConstants.MATERIAL_IMBALANCE_THEIRS[Piece.BISHOP],
+                intArrayOf(4, 4, 4, 4, 0, 0),
+                true, 4, 5))
+
+            tuningObjects.add(PbilTunningObject(
+                "MATERIAL_IMBALANCE_THEIRS[ROOK]",
+                EvalConstants.MATERIAL_IMBALANCE_THEIRS[Piece.ROOK],
+                intArrayOf(4, 4, 4, 4, 4, 0),
+                true, 5))
+
+            tuningObjects.add(PbilTunningObject(
+                "MATERIAL_IMBALANCE_THEIRS[QUEEN]",
+                EvalConstants.MATERIAL_IMBALANCE_THEIRS[Piece.QUEEN],
+                intArrayOf(4, 4, 4, 4, 4, 0),
+                true, 5))
+                */
 
             return tuningObjects
         }
@@ -50,7 +114,7 @@ object PbilTunningApplication {
     @Throws(ExecutionException::class, InterruptedException::class)
     fun optimize(tuningObjects: List<PbilTunningObject>) {
         val bestError = executeTest()
-        println("Original error $bestError")
+        println("Starting error $bestError")
         for (tuningObject in tuningObjects) {
             tuningObject.reportOriginal(bestError)
         }
@@ -60,20 +124,23 @@ object PbilTunningApplication {
             var improving = false
             for (tuningObject in tuningObjects) {
                 var skipped = 0
-                println("Starting " + tuningObject.name)
+                val error = executeTest()
+                tuningObject.reportOriginal(error)
+                println("Starting " + tuningObject.name + " error " + error)
                 for (j in 0 until tuningObject.population) {
                     println("Population $j")
                     val population = tuningObject.nextPopulation()
                     EvalConstants.update()
                     if (population != null) {
-                        val error = executeTest()
-                        tuningObject.reportCurrent(population, error)
+                        tuningObject.reportCurrent(population, executeTest())
                     } else {
                         skipped++
                         println("Skipped")
                     }
                 }
-                if (!improving && skipped.toDouble() / tuningObject.population < 0.9) {
+                if (!improving &&
+                    tuningObject.population - skipped > 2 &&
+                    skipped.toDouble() / (tuningObject.population - 1) < 0.9) {
                     improving = true
                 }
                 println("Skip proportion " + (skipped.toDouble() / tuningObject.population))

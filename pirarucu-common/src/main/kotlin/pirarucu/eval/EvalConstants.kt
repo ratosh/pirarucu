@@ -1,6 +1,8 @@
 package pirarucu.eval
 
+import pirarucu.board.File
 import pirarucu.board.Piece
+import pirarucu.board.Rank
 import pirarucu.board.Square
 import pirarucu.game.GameConstants
 import pirarucu.util.SplitValue
@@ -16,7 +18,7 @@ object EvalConstants {
 
     const val SCORE_UNKNOWN = Short.MIN_VALUE
 
-    const val SCORE_KNOW_WIN = 6500
+    const val SCORE_KNOW_WIN = 10000
 
     val TEMPO = SplitValue.mergeParts(20, 15)
 
@@ -40,8 +42,8 @@ object EvalConstants {
         0
     )
 
-    private val MG_PSQT = arrayOf(
-        arrayOf(
+    val MG_PSQT = arrayOf(
+        intArrayOf(
             0, 0, 0, 0,
             0, 0, 0, 0,
             0, 0, 0, 0,
@@ -51,7 +53,7 @@ object EvalConstants {
             0, 0, 0, 0,
             0, 0, 0, 0
         ),
-        arrayOf(
+        intArrayOf(
             0, 0, 0, 0,
             50, 50, 50, 50,
             10, 10, 20, 30,
@@ -61,7 +63,7 @@ object EvalConstants {
             5, 10, 10, -20,
             0, 0, 0, 0
         ),
-        arrayOf(
+        intArrayOf(
             -50, -40, -30, -30,
             -40, -20, 0, 0,
             -30, 0, 10, 15,
@@ -71,7 +73,7 @@ object EvalConstants {
             -40, -20, 0, 5,
             -50, -40, -30, -30
         ),
-        arrayOf(
+        intArrayOf(
             -20, -10, -10, -10,
             -10, 0, 0, 0,
             -10, 0, 5, 10,
@@ -81,7 +83,7 @@ object EvalConstants {
             -10, 5, 0, 0,
             -20, -10, -10, -10
         ),
-        arrayOf(
+        intArrayOf(
             0, 0, 0, 0,
             5, 10, 10, 10,
             -5, 0, 0, 0,
@@ -91,7 +93,7 @@ object EvalConstants {
             -5, 0, 0, 0,
             0, 0, 0, 5
         ),
-        arrayOf(
+        intArrayOf(
             -20, -10, -10, -5,
             -10, 0, 0, 0,
             -10, 0, 5, 5,
@@ -101,7 +103,7 @@ object EvalConstants {
             -10, 0, 5, 0,
             -20, -10, -10, -5
         ),
-        arrayOf(
+        intArrayOf(
             -30, -40, -40, -50,
             -30, -40, -40, -50,
             -30, -40, -40, -50,
@@ -113,8 +115,8 @@ object EvalConstants {
         )
     )
 
-    private val EG_PSQT = arrayOf(
-        arrayOf(
+    val EG_PSQT = arrayOf(
+        intArrayOf(
             0, 0, 0, 0,
             0, 0, 0, 0,
             0, 0, 0, 0,
@@ -124,7 +126,7 @@ object EvalConstants {
             0, 0, 0, 0,
             0, 0, 0, 0
         ),
-        arrayOf(
+        intArrayOf(
             0, 0, 0, 0,
             50, 50, 50, 50,
             10, 10, 20, 30,
@@ -134,7 +136,7 @@ object EvalConstants {
             5, 10, 10, -20,
             0, 0, 0, 0
         ),
-        arrayOf(
+        intArrayOf(
             -50, -40, -30, -30,
             -40, -20, 0, 0,
             -30, 0, 10, 15,
@@ -144,7 +146,7 @@ object EvalConstants {
             -40, -20, 0, 5,
             -50, -40, -30, -30
         ),
-        arrayOf(
+        intArrayOf(
             -20, -10, -10, -10,
             -10, 0, 0, 0,
             -10, 0, 5, 10,
@@ -154,7 +156,7 @@ object EvalConstants {
             -10, 5, 0, 0,
             -20, -10, -10, -10
         ),
-        arrayOf(
+        intArrayOf(
             0, 0, 0, 0,
             5, 10, 10, 10,
             -5, 0, 0, 0,
@@ -164,7 +166,7 @@ object EvalConstants {
             -5, 0, 0, 0,
             0, 0, 0, 5
         ),
-        arrayOf(
+        intArrayOf(
             -20, -10, -10, -5,
             -10, 0, 0, 0,
             -10, 0, 5, 5,
@@ -174,7 +176,7 @@ object EvalConstants {
             -10, 0, 5, 0,
             -20, -10, -10, -5
         ),
-        arrayOf(
+        intArrayOf(
             -50, -40, -30, -20,
             -30, -20, -10, 0,
             -30, -10, 20, 30,
@@ -189,14 +191,7 @@ object EvalConstants {
     val PSQT = Array(Piece.SIZE) { IntArray(Square.SIZE) }
 
     init {
-        for (square in Square.A1 until Square.SIZE / 2) {
-            for (piece in Piece.PAWN until Piece.SIZE) {
-                val psqtValue =
-                    SplitValue.mergeParts(MG_PSQT[piece][square], EG_PSQT[piece][square])
-                PSQT[piece][square] = psqtValue
-                PSQT[piece][Square.flipHorizontal(square)] = psqtValue
-            }
-        }
+        update()
     }
 
     val MATERIAL_IMBALANCE_OURS = arrayOf(
@@ -223,5 +218,18 @@ object EvalConstants {
             PHASE_PIECE_VALUE[Piece.BISHOP] * 4 +
             PHASE_PIECE_VALUE[Piece.ROOK] * 4 +
             PHASE_PIECE_VALUE[Piece.QUEEN] * 2
+
+        for (piece in Piece.PAWN until Piece.SIZE) {
+            var psqPosition = 0
+            for (rank in Rank.RANK_1 until Rank.SIZE) {
+                for (file in File.FILE_A until File.SIZE / 2) {
+                    val square = Square.getSquare(file, Rank.invertRank(rank))
+                    val psqtValue = SplitValue.mergeParts(MG_PSQT[piece][psqPosition], EG_PSQT[piece][psqPosition])
+                    PSQT[piece][square] = psqtValue
+                    PSQT[piece][Square.flipHorizontal(square)] = psqtValue
+                    psqPosition++
+                }
+            }
+        }
     }
 }

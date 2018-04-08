@@ -19,6 +19,10 @@ object MoveType {
 
     private val CHARACTER = charArrayOf('-', '-', '-', 'n', 'b', 'r', 'q', 'k')
 
+    fun getPromotionMoveType(piece: Int): Int {
+        return piece + 1
+    }
+
     /**
      * Get promotion piece.
      *

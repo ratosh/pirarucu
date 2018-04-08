@@ -53,17 +53,28 @@ class MoveList {
         }
     }
 
+    fun contains(move: Int): Boolean {
+        val left = nextToMove[currentPly]
+        val right = nextToGenerate[currentPly]
+        for (index in left..right) {
+            if (moves[index] == move) {
+                return true
+            }
+        }
+        return false
+    }
+
     fun skipMoves() {
         nextToMove[currentPly] = nextToGenerate[currentPly]
     }
 
-    fun getString(): String {
+    override fun toString(): String {
         val left = nextToMove[currentPly]
         val right = nextToGenerate[currentPly]
         val buffer = StringBuilder()
         for (index in left until right) {
             buffer.append(Move.toString(moves[index]))
-            buffer.append('\n')
+            buffer.append(' ')
         }
         return buffer.toString()
     }

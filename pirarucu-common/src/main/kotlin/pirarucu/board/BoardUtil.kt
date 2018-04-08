@@ -12,7 +12,7 @@ object BoardUtil {
             zobristKey = Zobrist.SIDE
         }
         if (board.epSquare != Square.NONE) {
-            zobristKey = zobristKey xor Zobrist.PASSANT_FILE[File.getFile(board.epSquare)]
+            zobristKey = zobristKey xor Zobrist.PASSANT_SQUARE[board.epSquare]
         }
         for (square in Square.A1 until Square.SIZE) {
             val piece = board.pieceTypeBoard[square]

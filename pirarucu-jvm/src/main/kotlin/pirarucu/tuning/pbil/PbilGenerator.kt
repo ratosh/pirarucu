@@ -73,7 +73,7 @@ class PbilGenerator(private val bitsPerValue: IntArray,
             tmpValue -= bitsPerValue[result]
             result++
         }
-        return tmpValue == bitsPerValue[result]
+        return tmpValue == bitsPerValue[result] - 1
     }
 
     fun reportResult(bestGenes: BitSet, worstGenes: BitSet) {

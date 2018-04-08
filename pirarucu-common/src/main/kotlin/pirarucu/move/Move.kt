@@ -1,8 +1,11 @@
 package pirarucu.move
 
+import pirarucu.board.Bitboard
+import pirarucu.board.Board
 import pirarucu.board.Color
 import pirarucu.board.Piece
 import pirarucu.board.Square
+
 
 /**
  * 16 Bits move representation
@@ -20,23 +23,25 @@ object Move {
 
     const val SIZE = 16
 
-    fun createPromotionMove(fromSquare: Int, toSquare: Int,
-        moveType: Int): Int {
+    fun createPromotionMove(fromSquare: Int,
+                            toSquare: Int,
+                            moveType: Int): Int {
         return createMove(fromSquare, toSquare, moveType)
     }
 
-    fun createPassantMove(fromSquare: Int, toSquare: Int): Int {
+    fun createPassantMove(fromSquare: Int,
+                          toSquare: Int): Int {
         return createMove(fromSquare, toSquare, MoveType.TYPE_PASSANT)
     }
 
-    fun createCastlingMove(fromSquare: Int, toSquare: Int): Int {
+    fun createCastlingMove(fromSquare: Int,
+                           toSquare: Int): Int {
         return createMove(fromSquare, toSquare, MoveType.TYPE_CASTLING)
     }
 
-    fun createMove(
-        fromSquare: Int,
-        toSquare: Int,
-        moveType: Int = MoveType.TYPE_NORMAL): Int {
+    fun createMove(fromSquare: Int,
+                   toSquare: Int,
+                   moveType: Int = MoveType.TYPE_NORMAL): Int {
         return (fromSquare or (toSquare shl TO_SHIFT) or (moveType shl MOVE_TYPE_SHIFT))
     }
 
@@ -71,5 +76,34 @@ object Move {
                 sb.toString()
             }
         }
+    }
+
+    fun getMove(board: Board, token: String): Int {
+        var moveType = MoveType.TYPE_NORMAL
+        val fromSquare = Square.getSquare(token.substring(0, 2))
+        val toSquare = Square.getSquare(token.substring(2, 4))
+
+        val movedPiece = board.pieceTypeBoard[fromSquare]
+
+        when (movedPiece) {
+            Piece.PAWN -> {
+                val toBitboard = Bitboard.getBitboard(toSquare)
+                if (toBitboard and Bitboard.PROMOTION_BITBOARD != Bitboard.EMPTY) {
+                    moveType = if (token.length == 4) {
+                        MoveType.getPromotionMoveType(Piece.QUEEN)
+                    } else {
+                        MoveType.getPromotionMoveType(Piece.getPiece(token[4]))
+                    }
+                } else if (toSquare == board.epSquare) {
+                    moveType = MoveType.TYPE_PASSANT
+                }
+            }
+            Piece.KING -> {
+                if (Square.SQUARE_DISTANCE[fromSquare][toSquare] > 1) {
+                    moveType = MoveType.TYPE_CASTLING
+                }
+            }
+        }
+        return Move.createMove(fromSquare, toSquare, moveType)
     }
 }

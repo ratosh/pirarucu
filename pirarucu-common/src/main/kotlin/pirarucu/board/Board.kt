@@ -40,8 +40,8 @@ class Board {
     var zobristKey = 0L
     var pawnZobristKey = 0L
 
-    var psqScore = 0
-    var materialScore = 0
+    var psqScore = IntArray(Color.SIZE)
+    var materialScore = IntArray(Color.SIZE)
     var phase = 0
 
     var capturedPiece = Piece.NONE
@@ -86,8 +86,8 @@ class Board {
         zobristKey = 0L
         pawnZobristKey = 0L
 
-        psqScore = 0
-        materialScore = 0
+        Utils.specific.arrayFill(psqScore, 0)
+        Utils.specific.arrayFill(materialScore, 0)
         phase = 0
 
         gameBitboard = 0L
@@ -132,6 +132,27 @@ class Board {
 
     fun possibleMove(move: Int): Boolean {
         return pieceTypeBoard[Move.getToSquare(move)] != Piece.KING
+    }
+
+    fun doNullMove() {
+        pushToHistory()
+
+        zobristKey = zobristKey xor Zobrist.SIDE
+        if (epSquare != Square.NONE) {
+            zobristKey = zobristKey xor Zobrist.PASSANT_SQUARE[epSquare]
+        }
+        epSquare = 0
+        capturedPiece = 0
+
+        nextColorToMove = colorToMove
+        colorToMove = Color.invertColor(colorToMove)
+    }
+
+    fun undoNullMove() {
+        popFromHistory()
+
+        nextColorToMove = colorToMove
+        colorToMove = Color.invertColor(colorToMove)
     }
 
     fun doMove(move: Int) {
@@ -195,7 +216,7 @@ class Board {
                     if (betweenBitboard != 0L && BitboardMove.NEIGHBOURS[toSquare]
                         and pieceBitboard[theirColor][Piece.PAWN] != 0L) {
                         epSquare = Square.getSquare(betweenBitboard)
-                        zobristKey = zobristKey xor Zobrist.PASSANT_FILE[File.getFile(epSquare)]
+                        zobristKey = zobristKey xor Zobrist.PASSANT_SQUARE[epSquare]
                     }
                     pawnZobristKey = pawnZobristKey xor
                         Zobrist.PIECE_SQUARE_TABLE[ourColor][Piece.PAWN][toSquare]
@@ -288,7 +309,7 @@ class Board {
 
     private fun clearEpSquare() {
         if (epSquare != Square.NONE) {
-            zobristKey = pawnZobristKey xor Zobrist.PASSANT_FILE[File.getFile(epSquare)]
+            zobristKey = zobristKey xor Zobrist.PASSANT_SQUARE[epSquare]
             epSquare = Square.NONE
         }
     }
@@ -346,8 +367,8 @@ class Board {
         pieceCountColorType[color][piece]--
 
         val relativeSquare = Square.getRelativeSquare(color, square)
-        psqScore -= EvalConstants.PSQT[piece][relativeSquare] * GameConstants.COLOR_FACTOR[color]
-        materialScore -= EvalConstants.MATERIAL_SCORE[piece] * GameConstants.COLOR_FACTOR[color]
+        psqScore[color] -= EvalConstants.PSQT[piece][relativeSquare]
+        materialScore[color] -= EvalConstants.MATERIAL_SCORE[piece]
         phase -= EvalConstants.PHASE_PIECE_VALUE[piece]
     }
 
@@ -364,8 +385,8 @@ class Board {
         pieceCountColorType[color][piece]++
 
         val relativeSquare = Square.getRelativeSquare(color, square)
-        psqScore += EvalConstants.PSQT[piece][relativeSquare] * GameConstants.COLOR_FACTOR[color]
-        materialScore += EvalConstants.MATERIAL_SCORE[piece] * GameConstants.COLOR_FACTOR[color]
+        psqScore[color] += EvalConstants.PSQT[piece][relativeSquare]
+        materialScore[color] += EvalConstants.MATERIAL_SCORE[piece]
         phase += EvalConstants.PHASE_PIECE_VALUE[piece]
     }
 
@@ -379,10 +400,10 @@ class Board {
 
         val relativeFromSquare = Square.getRelativeSquare(color, fromSquare)
         val relativeToSquare = Square.getRelativeSquare(color, toSquare)
-        psqScore -= EvalConstants.PSQT[piece][relativeFromSquare] * GameConstants.COLOR_FACTOR[color]
-        psqScore += EvalConstants.PSQT[piece][relativeToSquare] * GameConstants.COLOR_FACTOR[color]
+        psqScore[color] -= EvalConstants.PSQT[piece][relativeFromSquare]
+        psqScore[color] += EvalConstants.PSQT[piece][relativeToSquare]
 
-        materialScore -= EvalConstants.MATERIAL_SCORE[piece] * GameConstants.COLOR_FACTOR[color]
-        materialScore += EvalConstants.MATERIAL_SCORE[piece] * GameConstants.COLOR_FACTOR[color]
+        materialScore[color] -= EvalConstants.MATERIAL_SCORE[piece]
+        materialScore[color] += EvalConstants.MATERIAL_SCORE[piece]
     }
 }

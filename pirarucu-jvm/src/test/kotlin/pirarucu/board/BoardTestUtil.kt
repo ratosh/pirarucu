@@ -9,10 +9,10 @@ object BoardTestUtil {
         testZobristKey(board)
 
         val psq = BoardUtil.calculatePsqtScore(board)
-        assertEquals(psq, board.psqScore)
+        assertEquals(psq, board.psqScore[Color.WHITE] - board.psqScore[Color.BLACK])
 
         val materialScore = BoardUtil.calculateMaterialScore(board)
-        assertEquals(materialScore, board.materialScore)
+        assertEquals(materialScore, board.materialScore[Color.WHITE] - board.materialScore[Color.BLACK])
 
         val phase = BoardUtil.calculatePhase(board)
         assertEquals(phase, board.phase)
