@@ -1,11 +1,14 @@
 package pirarucu.uci
 
+import pirarucu.eval.EvalConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.search.PrincipalVariation
 import pirarucu.stats.Statistics
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class UciInputTest {
 
@@ -17,12 +20,18 @@ class UciInputTest {
         Statistics.ENABLED = true
     }
 
+    @AfterTest
+    fun tearDown() {
+        println(Statistics.toString())
+    }
+
     @Test
     fun testOption1() {
         UciInput.process("uci")
         UciInput.process("ucinewgame")
         UciInput.process("isready")
         UciInput.process("setoption name PHASE_PIECE_VALUE-1 value 100")
+        assertEquals(EvalConstants.PHASE_PIECE_VALUE[1], 100)
     }
 
     @Test
@@ -31,6 +40,7 @@ class UciInputTest {
         UciInput.process("ucinewgame")
         UciInput.process("isready")
         UciInput.process("setoption name MG_PSQT-1-0 value 100")
+        assertEquals(EvalConstants.MG_PSQT[1][0], 100)
     }
 
     @Ignore
@@ -47,6 +57,7 @@ class UciInputTest {
         UciInput.process("go wtime 10000 btime 10000 winc 2000 binc 2000")
     }
 
+    @Ignore
     @Test
     fun testGame2() {
         UciInput.process("uci")
@@ -104,7 +115,6 @@ class UciInputTest {
         UciInput.process("go wtime 120000 btime 120000 winc 2000 binc 2000")
         UciInput.process("position fen r1nq1rk1/1p2bppp/3pbn2/p3p3/4P3/1NN1BP2/PPPQB1PP/3RK2R w K - 0 1 moves b3c1 d8c7 c1d3 f6h5 e1f2 e7h4 g2g3 h4f6 f2g2 g7g6 d1f1 c8e7 g3g4 h5f4 e3f4 e5f4 d3f4 f6c3 b2c3 e6a2 f1a1 a2e6 f4e6 f7e6 c3c4 c7c5 h1b1 a5a4 b1b7 d6d5 d2g5 e7c6 e4d5 e6d5 e2d3 c6b4 d3g6 h7g6 g5g6 g8h8")
         UciInput.process("go wtime 120000 btime 120000 winc 2000 binc 2000")
-        println(Statistics.toString())
     }
 
     @Ignore
@@ -127,7 +137,6 @@ class UciInputTest {
         UciInput.process("go wtime 10000 btime 10000 winc 2000 binc 2000")
         UciInput.process("position fen 1r1qkbnr/pppnpp1p/3p2p1/8/2PP4/5Q1P/PP2PPP1/RNB1KB1R w KQk - 0 1 moves b1c3 e7e5 d4e5 d8c8 e5d6 f8h6 f3e4 e8f8 e4d4 h8g7 d6c7 g7d4 c7b8Q")
         UciInput.process("go wtime 10000 btime 10000 winc 2000 binc 2000")
-        println(Statistics.toString())
     }
 
     @Ignore
@@ -138,7 +147,6 @@ class UciInputTest {
         UciInput.process("isready")
         UciInput.process("position fen 1n1qkb1r/rp2pppp/p1p2n2/3p1b2/2PP4/1QN1PN2/PP3PPP/R1B1KB1R w KQk - 0 1 moves c4d5 c6d5 e1d2 b8c6 f1d3 f5g4 f3e5 c6d4 e3d4 a7a8 c3d5 d8d5 b3d5 f6d5 e5g4 e7e6 g4e5 f8b4 d2e2 e8g8 h1d1 b4d6 a1b1 d6e5 d4e5 f7f6 e5f6 f8f6 d3a6 b7a6 c1g5 f6g6 g5h4 g6g2 e2f3 g2g6 h4g3 g6g5 b1c1 a8d8 c1c5 d8f8 f3e4 d5f6 e4d4 f8d8 d4e3 g5g3 h2g3 d8d1 c5c8 g8f7 c8c7 d1d7 c7d7 f6d7 e3f3 d7c5 a2a3 c5d3 b2b3 d3e1 f3e4 e1c2 a3a4 c2a1 f2f3 a1b3 e4e3 b3c5 f3f4 c5a4 e3f2 a4b2 g3g4 b2d3 f2e3 d3b4 f4f5 e6f5 g4f5 b4c6 e3e4 c6e7 e4d4 e7f5 d4c5 f5e3 c5b6 h7h5 b6a6 h5h4 a6a5 h4h3 a5a4 h3h2 a4a3 h2h1q a3a2 e3d1 a2a1 d1f2")
         UciInput.process("go wtime 10000 btime 10000 winc 2000 binc 2000")
-        println(Statistics.toString())
     }
 }
 
