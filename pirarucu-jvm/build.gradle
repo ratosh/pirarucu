@@ -1,5 +1,11 @@
 apply plugin: 'kotlin-platform-jvm'
 
+
+apply plugin: 'kotlin'
+apply plugin: 'application'
+
+mainClassName = "pirarucu.MainKt"
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin_version}"
     expectedBy project(":pirarucu-common")
@@ -7,4 +13,13 @@ dependencies {
     testCompile "junit:junit:4.12"
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:${kotlin_version}"
     testCompile "org.jetbrains.kotlin:kotlin-test:${kotlin_version}"
+}
+
+jar {
+    manifest {
+        attributes("Implementation-Title": "Gradle",
+                "Implementation-Version": version,
+                "Main-Class": "pirarucu.MainKt"
+        )
+    }
 }

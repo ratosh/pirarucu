@@ -11,7 +11,7 @@ expect class PlatformSpecific() {
     fun currentTimeMillis(): Long
 
     fun numberOfTrailingZeros(value: Long): Int
-    
+
     fun numberOfTrailingZeros(value: Int): Int
 
     fun bitCount(value: Long): Int
@@ -31,6 +31,8 @@ expect class PlatformSpecific() {
     fun arrayCopy(src: LongArray, srcPos: Int, dest: LongArray, destPos: Int, length: Int)
 
     fun formatString(source: String, vararg args: Any): String
+
+    fun applyConfig(option: String, value: Int)
 
     fun exit(code: Int)
 
