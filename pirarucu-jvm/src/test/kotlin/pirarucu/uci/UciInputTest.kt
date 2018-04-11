@@ -1,9 +1,9 @@
 package pirarucu.uci
 
-import pirarucu.eval.EvalConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.search.PrincipalVariation
 import pirarucu.stats.Statistics
+import pirarucu.tuning.TunableConstants
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Ignore
@@ -31,7 +31,7 @@ class UciInputTest {
         UciInput.process("ucinewgame")
         UciInput.process("isready")
         UciInput.process("setoption name PHASE_PIECE_VALUE-1 value 100")
-        assertEquals(EvalConstants.PHASE_PIECE_VALUE[1], 100)
+        assertEquals(TunableConstants.PHASE_PIECE_VALUE[1], 100)
     }
 
     @Test
@@ -40,7 +40,7 @@ class UciInputTest {
         UciInput.process("ucinewgame")
         UciInput.process("isready")
         UciInput.process("setoption name MG_PSQT-1-0 value 100")
-        assertEquals(EvalConstants.MG_PSQT[1][0], 100)
+        assertEquals(TunableConstants.MG_PSQT[1][0], 100)
     }
 
     @Ignore

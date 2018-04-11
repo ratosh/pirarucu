@@ -1,13 +1,13 @@
 package pirarucu.board
 
 import pirarucu.eval.BasicEvalInfo
-import pirarucu.eval.EvalConstants
 import pirarucu.game.GameConstants
 import pirarucu.hash.Zobrist
 import pirarucu.move.BitboardMove
 import pirarucu.move.Move
 import pirarucu.move.MoveType
 import pirarucu.stats.Statistics
+import pirarucu.tuning.TunableConstants
 import pirarucu.util.Utils
 
 class Board {
@@ -141,8 +141,8 @@ class Board {
         zobristKey = zobristKey xor Zobrist.SIDE
         if (epSquare != Square.NONE) {
             zobristKey = zobristKey xor Zobrist.PASSANT_SQUARE[epSquare]
+            epSquare = Square.NONE
         }
-        epSquare = 0
         capturedPiece = 0
 
         nextColorToMove = colorToMove
@@ -369,9 +369,9 @@ class Board {
         pieceCountColorType[color][piece]--
 
         val relativeSquare = Square.getRelativeSquare(color, square)
-        psqScore[color] -= EvalConstants.PSQT[piece][relativeSquare]
-        materialScore[color] -= EvalConstants.MATERIAL_SCORE[piece]
-        phase -= EvalConstants.PHASE_PIECE_VALUE[piece]
+        psqScore[color] -= TunableConstants.PSQT[piece][relativeSquare]
+        materialScore[color] -= TunableConstants.MATERIAL_SCORE[piece]
+        phase -= TunableConstants.PHASE_PIECE_VALUE[piece]
     }
 
     fun putPiece(color: Int, piece: Int, square: Int) {
@@ -387,9 +387,9 @@ class Board {
         pieceCountColorType[color][piece]++
 
         val relativeSquare = Square.getRelativeSquare(color, square)
-        psqScore[color] += EvalConstants.PSQT[piece][relativeSquare]
-        materialScore[color] += EvalConstants.MATERIAL_SCORE[piece]
-        phase += EvalConstants.PHASE_PIECE_VALUE[piece]
+        psqScore[color] += TunableConstants.PSQT[piece][relativeSquare]
+        materialScore[color] += TunableConstants.MATERIAL_SCORE[piece]
+        phase += TunableConstants.PHASE_PIECE_VALUE[piece]
     }
 
     private fun movePiece(color: Int, piece: Int, fromSquare: Int, toSquare: Int) {
@@ -402,10 +402,7 @@ class Board {
 
         val relativeFromSquare = Square.getRelativeSquare(color, fromSquare)
         val relativeToSquare = Square.getRelativeSquare(color, toSquare)
-        psqScore[color] -= EvalConstants.PSQT[piece][relativeFromSquare]
-        psqScore[color] += EvalConstants.PSQT[piece][relativeToSquare]
-
-        materialScore[color] -= EvalConstants.MATERIAL_SCORE[piece]
-        materialScore[color] += EvalConstants.MATERIAL_SCORE[piece]
+        psqScore[color] -= TunableConstants.PSQT[piece][relativeFromSquare]
+        psqScore[color] += TunableConstants.PSQT[piece][relativeToSquare]
     }
 }

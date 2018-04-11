@@ -9,7 +9,7 @@ object SearchOptions {
     var searchTimeLimit = 0
     var extraPanicTimeLimit = 0
 
-    var depth = GameConstants.MAX_PLIES
+    var depth = GameConstants.MAX_PLIES - 1
     var panicEnabled = true
 
     var stop = false

@@ -33,6 +33,9 @@ object Statistics {
     var nullMove = 0L
     var nullMoveHit = 0L
 
+    var mate = 0L
+    var stalemate = 0L
+
     fun reset() {
         ttHits = 0
         ttMisses = 0
@@ -60,6 +63,9 @@ object Statistics {
 
         nullMove = 0L
         nullMoveHit = 0L
+
+        mate = 0L
+        stalemate = 0L
     }
 
     override fun toString(): String {
@@ -71,6 +77,9 @@ object Statistics {
         buffer.append("MS futility: " + buildPercentage(futilityHit, futility) + "\n")
         buffer.append("MS razoring: " + buildPercentage(razoringHit, razoring) + "\n")
         buffer.append("MS nullMove: " + buildPercentage(nullMoveHit, nullMove) + "\n")
+
+        buffer.append("Mates: " + buildPercentage(mate, moves) + "\n")
+        buffer.append("Stalemates: " + buildPercentage(stalemate, moves) + "\n")
 
         buffer.append("--- Quiescence Search\n")
         buffer.append("QS Draw: " + buildPercentage(qDraw, qNodes) + " \n")
@@ -98,7 +107,7 @@ object Statistics {
         return if (tryCount != 0L) {
             hitCount.toString() + "/" + tryCount + " (" + hitCount * 100 / tryCount + "%)"
         } else {
-            "invalid"
+            "none"
         }
 
     }

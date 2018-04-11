@@ -6,6 +6,10 @@ fun main(args: Array<String>) {
     while (true) {
         val line = readLine()
         line ?: return
-        UciInput.process(line)
+        try {
+            UciInput.process(line)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

@@ -1,8 +1,8 @@
 package pirarucu.board
 
-import pirarucu.eval.EvalConstants
 import pirarucu.game.GameConstants
 import pirarucu.hash.Zobrist
+import pirarucu.tuning.TunableConstants
 
 object BoardUtil {
     fun updateZobristKeys(board: Board) {
@@ -40,6 +40,7 @@ object BoardUtil {
         while (bitboard != 0L) {
             val square = Square.getSquare(bitboard)
             if (board.pieceTypeBoard[square] == Piece.NONE) {
+                println("piece type not set")
                 return false
             }
             bitboard = bitboard and bitboard - 1
@@ -47,9 +48,26 @@ object BoardUtil {
         for (square in Square.H1 until Square.SIZE) {
             if (board.pieceTypeBoard[square] != Piece.NONE &&
                 Bitboard.getBitboard(square) and board.gameBitboard == Bitboard.EMPTY) {
+                println("game bitboard not set")
                 return false
             }
         }
+
+        val zobKey = board.zobristKey
+        val pawnZobKey = board.pawnZobristKey
+
+        updateZobristKeys(board)
+
+        if (zobKey != board.zobristKey) {
+            println("ZOBRIST KEY PROBLEM")
+            return false
+        }
+
+        if (pawnZobKey != board.pawnZobristKey) {
+            println("PAWN ZOBRIST KEY PROBLEM")
+            return false
+        }
+
         return board.colorBitboard[Color.WHITE] and board.colorBitboard[Color.BLACK] ==
             Bitboard.EMPTY
     }
@@ -61,40 +79,40 @@ object BoardUtil {
             if (piece != Piece.NONE) {
                 val color = board.colorAt(square)
                 val relativeSquare = Square.getRelativeSquare(color, square)
-                result += EvalConstants.PSQT[piece][relativeSquare] * GameConstants.COLOR_FACTOR[color]
+                result += TunableConstants.PSQT[piece][relativeSquare] * GameConstants.COLOR_FACTOR[color]
             }
         }
         return result
     }
 
     fun calculateMaterialScore(board: Board): Int {
-        return (EvalConstants.MATERIAL_SCORE[Piece.PAWN] *
+        return (TunableConstants.MATERIAL_SCORE[Piece.PAWN] *
             board.pieceCountColorType[Color.WHITE][Piece.PAWN] +
-            EvalConstants.MATERIAL_SCORE[Piece.KNIGHT] *
+            TunableConstants.MATERIAL_SCORE[Piece.KNIGHT] *
             board.pieceCountColorType[Color.WHITE][Piece.KNIGHT] +
-            EvalConstants.MATERIAL_SCORE[Piece.BISHOP] *
+            TunableConstants.MATERIAL_SCORE[Piece.BISHOP] *
             board.pieceCountColorType[Color.WHITE][Piece.BISHOP] +
-            EvalConstants.MATERIAL_SCORE[Piece.ROOK] *
+            TunableConstants.MATERIAL_SCORE[Piece.ROOK] *
             board.pieceCountColorType[Color.WHITE][Piece.ROOK] +
-            EvalConstants.MATERIAL_SCORE[Piece.QUEEN] *
+            TunableConstants.MATERIAL_SCORE[Piece.QUEEN] *
             board.pieceCountColorType[Color.WHITE][Piece.QUEEN] -
-            (EvalConstants.MATERIAL_SCORE[Piece.PAWN] *
+            (TunableConstants.MATERIAL_SCORE[Piece.PAWN] *
                 board.pieceCountColorType[Color.BLACK][Piece.PAWN] +
-                EvalConstants.MATERIAL_SCORE[Piece.KNIGHT] *
+                TunableConstants.MATERIAL_SCORE[Piece.KNIGHT] *
                 board.pieceCountColorType[Color.BLACK][Piece.KNIGHT] +
-                EvalConstants.MATERIAL_SCORE[Piece.BISHOP] *
+                TunableConstants.MATERIAL_SCORE[Piece.BISHOP] *
                 board.pieceCountColorType[Color.BLACK][Piece.BISHOP] +
-                EvalConstants.MATERIAL_SCORE[Piece.ROOK] *
+                TunableConstants.MATERIAL_SCORE[Piece.ROOK] *
                 board.pieceCountColorType[Color.BLACK][Piece.ROOK] +
-                EvalConstants.MATERIAL_SCORE[Piece.QUEEN] *
+                TunableConstants.MATERIAL_SCORE[Piece.QUEEN] *
                 board.pieceCountColorType[Color.BLACK][Piece.QUEEN]))
     }
 
     fun calculatePhase(board: Board): Int {
-        return EvalConstants.PHASE_PIECE_VALUE[Piece.PAWN] * board.pieceCountType[Piece.PAWN] +
-            EvalConstants.PHASE_PIECE_VALUE[Piece.KNIGHT] * board.pieceCountType[Piece.KNIGHT] +
-            EvalConstants.PHASE_PIECE_VALUE[Piece.BISHOP] * board.pieceCountType[Piece.BISHOP] +
-            EvalConstants.PHASE_PIECE_VALUE[Piece.ROOK] * board.pieceCountType[Piece.ROOK] +
-            EvalConstants.PHASE_PIECE_VALUE[Piece.QUEEN] * board.pieceCountType[Piece.QUEEN]
+        return TunableConstants.PHASE_PIECE_VALUE[Piece.PAWN] * board.pieceCountType[Piece.PAWN] +
+            TunableConstants.PHASE_PIECE_VALUE[Piece.KNIGHT] * board.pieceCountType[Piece.KNIGHT] +
+            TunableConstants.PHASE_PIECE_VALUE[Piece.BISHOP] * board.pieceCountType[Piece.BISHOP] +
+            TunableConstants.PHASE_PIECE_VALUE[Piece.ROOK] * board.pieceCountType[Piece.ROOK] +
+            TunableConstants.PHASE_PIECE_VALUE[Piece.QUEEN] * board.pieceCountType[Piece.QUEEN]
     }
 }

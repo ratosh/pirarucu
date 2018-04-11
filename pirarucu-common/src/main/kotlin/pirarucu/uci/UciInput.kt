@@ -2,13 +2,12 @@ package pirarucu.uci
 
 import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory
-import pirarucu.board.factory.FenFactory
-import pirarucu.eval.EvalConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
 import pirarucu.search.MainSearch
 import pirarucu.search.PrincipalVariation
 import pirarucu.search.SearchOptions
+import pirarucu.tuning.TunableConstants
 import pirarucu.util.Utils
 
 object UciInput {
@@ -44,7 +43,7 @@ object UciInput {
     private fun setOption(option: String, value: String) {
         Utils.specific.applyConfig(option, value.toInt())
 
-        EvalConstants.update()
+        TunableConstants.update()
     }
 
     private fun position(tokens: Array<String>) {

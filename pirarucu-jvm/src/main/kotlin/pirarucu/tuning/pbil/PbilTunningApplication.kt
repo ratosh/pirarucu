@@ -1,8 +1,8 @@
 package pirarucu.tuning.pbil
 
 import pirarucu.board.Piece
-import pirarucu.eval.EvalConstants
 import pirarucu.tuning.ErrorCalculator
+import pirarucu.tuning.TunableConstants
 import pirarucu.util.EpdFileLoader
 import java.util.ArrayList
 import java.util.concurrent.ExecutionException
@@ -13,7 +13,7 @@ object PbilTunningApplication {
 
     private const val INTERACTIONS = 300
 
-    private const val numberOfThreads = 1
+    private const val numberOfThreads = 2
     private val workers = arrayOfNulls<ErrorCalculator>(numberOfThreads)
     private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
     private val epdFileLoader = EpdFileLoader("d:\\chess\\epds\\quiet_labeled_v6.epd")
@@ -24,72 +24,240 @@ object PbilTunningApplication {
             /*
             tuningObjects.add(PbilTunningObject(
                 "PHASE",
-                EvalConstants.PHASE_PIECE_VALUE,
-                intArrayOf(0, 8, 9, 9, 10, 11, 0),
+                TunableConstants.PHASE_PIECE_VALUE,
+                intArrayOf(0, 4, 5, 5, 6, 7, 0),
                 false, 0, 6))
+                */
 
             tuningObjects.add(PbilTunningObject(
+                "MG[PAWN]",
+                TunableConstants.MG_PSQT[Piece.PAWN],
+                intArrayOf(0, 0, 0, 0,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    0, 0, 0, 0
+                ),
+                true, 0, 1, 2, 3, 28, 29, 30, 31))
+
+            tuningObjects.add(PbilTunningObject(
+                "EG[PAWN]",
+                TunableConstants.EG_PSQT[Piece.PAWN],
+                intArrayOf(0, 0, 0, 0,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    0, 0, 0, 0
+                ),
+                true, 0, 1, 2, 3, 28, 29, 30, 31))
+
+            tuningObjects.add(PbilTunningObject(
+                "MG[KNIGHT]",
+                TunableConstants.MG_PSQT[Piece.KNIGHT],
+                intArrayOf(6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6
+                ),
+                true))
+
+            tuningObjects.add(PbilTunningObject(
+                "EG[KNIGHT]",
+                TunableConstants.EG_PSQT[Piece.KNIGHT],
+                intArrayOf(6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6
+                ),
+                true))
+
+            tuningObjects.add(PbilTunningObject(
+                "MG[BISHOP]",
+                TunableConstants.MG_PSQT[Piece.BISHOP],
+                intArrayOf(6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6
+                ),
+                true))
+
+            tuningObjects.add(PbilTunningObject(
+                "EG[BISHOP]",
+                TunableConstants.EG_PSQT[Piece.BISHOP],
+                intArrayOf(6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6
+                ),
+                true))
+
+            tuningObjects.add(PbilTunningObject(
+                "MG[ROOK]",
+                TunableConstants.MG_PSQT[Piece.ROOK],
+                intArrayOf(6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6
+                ),
+                true))
+
+            tuningObjects.add(PbilTunningObject(
+                "EG[ROOK]",
+                TunableConstants.EG_PSQT[Piece.ROOK],
+                intArrayOf(6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6
+                ),
+                true))
+
+            tuningObjects.add(PbilTunningObject(
+                "MG[QUEEN]",
+                TunableConstants.MG_PSQT[Piece.QUEEN],
+                intArrayOf(6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6
+                ),
+                true))
+
+            tuningObjects.add(PbilTunningObject(
+                "EG[QUEEN]",
+                TunableConstants.EG_PSQT[Piece.QUEEN],
+                intArrayOf(6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6
+                ),
+                true))
+
+            tuningObjects.add(PbilTunningObject(
+                "MG[KING]",
+                TunableConstants.MG_PSQT[Piece.KING],
+                intArrayOf(6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6
+                ),
+                true))
+
+            tuningObjects.add(PbilTunningObject(
+                "EG[KING]",
+                TunableConstants.EG_PSQT[Piece.KING],
+                intArrayOf(6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6,
+                    6, 6, 6, 6
+                ),
+                true))
+
+            /*
+            tuningObjects.add(PbilTunningObject(
                 "MATERIAL_IMBALANCE_OURS[PAWN]",
-                EvalConstants.MATERIAL_IMBALANCE_OURS[Piece.PAWN],
-                intArrayOf(4, 4, 0, 0, 0, 0),
+                TunableConstants.MATERIAL_IMBALANCE_OURS[Piece.PAWN],
+                intArrayOf(3, 3, 0, 0, 0, 0),
                 true, 2, 3, 4, 5))
 
             tuningObjects.add(PbilTunningObject(
                 "MATERIAL_IMBALANCE_OURS[KNIGHT]",
-                EvalConstants.MATERIAL_IMBALANCE_OURS[Piece.KNIGHT],
-                intArrayOf(4, 4, 4, 0, 0, 0),
+                TunableConstants.MATERIAL_IMBALANCE_OURS[Piece.KNIGHT],
+                intArrayOf(3, 3, 3, 0, 0, 0),
                 true, 3, 4, 5))
 
             tuningObjects.add(PbilTunningObject(
                 "MATERIAL_IMBALANCE_OURS[BISHOP]",
-                EvalConstants.MATERIAL_IMBALANCE_OURS[Piece.BISHOP],
-                intArrayOf(4, 4, 4, 4, 0, 0),
+                TunableConstants.MATERIAL_IMBALANCE_OURS[Piece.BISHOP],
+                intArrayOf(3, 3, 3, 3, 0, 0),
                 true, 4, 5))
 
             tuningObjects.add(PbilTunningObject(
                 "MATERIAL_IMBALANCE_OURS[ROOK]",
-                EvalConstants.MATERIAL_IMBALANCE_OURS[Piece.ROOK],
-                intArrayOf(4, 4, 4, 4, 4, 0),
+                TunableConstants.MATERIAL_IMBALANCE_OURS[Piece.ROOK],
+                intArrayOf(3, 3, 3, 3, 3, 0),
                 true, 5))
 
             tuningObjects.add(PbilTunningObject(
                 "MATERIAL_IMBALANCE_OURS[QUEEN]",
-                EvalConstants.MATERIAL_IMBALANCE_OURS[Piece.QUEEN],
-                intArrayOf(4, 4, 4, 4, 4, 0),
+                TunableConstants.MATERIAL_IMBALANCE_OURS[Piece.QUEEN],
+                intArrayOf(3, 3, 3, 3, 3, 0),
                 true, 5))
-                */
 
             tuningObjects.add(PbilTunningObject(
                 "MATERIAL_IMBALANCE_THEIRS[PAWN]",
-                EvalConstants.MATERIAL_IMBALANCE_THEIRS[Piece.PAWN],
-                intArrayOf(4, 4, 0, 0, 0, 0),
+                TunableConstants.MATERIAL_IMBALANCE_THEIRS[Piece.PAWN],
+                intArrayOf(3, 3, 0, 0, 0, 0),
                 true, 2, 3, 4, 5))
 
-            /*
             tuningObjects.add(PbilTunningObject(
                 "MATERIAL_IMBALANCE_THEIRS[KNIGHT]",
-                EvalConstants.MATERIAL_IMBALANCE_THEIRS[Piece.KNIGHT],
-                intArrayOf(4, 4, 4, 0, 0, 0),
+                TunableConstants.MATERIAL_IMBALANCE_THEIRS[Piece.KNIGHT],
+                intArrayOf(3, 3, 3, 0, 0, 0),
                 true, 3, 4, 5))
 
             tuningObjects.add(PbilTunningObject(
                 "MATERIAL_IMBALANCE_THEIRS[BISHOP]",
-                EvalConstants.MATERIAL_IMBALANCE_THEIRS[Piece.BISHOP],
-                intArrayOf(4, 4, 4, 4, 0, 0),
+                TunableConstants.MATERIAL_IMBALANCE_THEIRS[Piece.BISHOP],
+                intArrayOf(3, 3, 3, 3, 0, 0),
                 true, 4, 5))
 
             tuningObjects.add(PbilTunningObject(
                 "MATERIAL_IMBALANCE_THEIRS[ROOK]",
-                EvalConstants.MATERIAL_IMBALANCE_THEIRS[Piece.ROOK],
-                intArrayOf(4, 4, 4, 4, 4, 0),
+                TunableConstants.MATERIAL_IMBALANCE_THEIRS[Piece.ROOK],
+                intArrayOf(3, 3, 3, 3, 3, 0),
                 true, 5))
 
             tuningObjects.add(PbilTunningObject(
                 "MATERIAL_IMBALANCE_THEIRS[QUEEN]",
-                EvalConstants.MATERIAL_IMBALANCE_THEIRS[Piece.QUEEN],
-                intArrayOf(4, 4, 4, 4, 4, 0),
+                TunableConstants.MATERIAL_IMBALANCE_THEIRS[Piece.QUEEN],
+                intArrayOf(3, 3, 3, 3, 3, 0),
                 true, 5))
-                */
+            */
 
             return tuningObjects
         }
@@ -124,13 +292,14 @@ object PbilTunningApplication {
             var improving = false
             for (tuningObject in tuningObjects) {
                 var skipped = 0
+                TunableConstants.update()
                 val error = executeTest()
                 tuningObject.reportOriginal(error)
                 println("Starting " + tuningObject.name + " error " + error)
                 for (j in 0 until tuningObject.population) {
                     println("Population $j")
                     val population = tuningObject.nextPopulation()
-                    EvalConstants.update()
+                    TunableConstants.update()
                     if (population != null) {
                         tuningObject.reportCurrent(population, executeTest())
                     } else {
@@ -140,7 +309,7 @@ object PbilTunningApplication {
                 }
                 if (!improving &&
                     tuningObject.population - skipped > 2 &&
-                    skipped.toDouble() / (tuningObject.population - 1) < 0.9) {
+                    skipped.toDouble() / (tuningObject.population - 1) < 0.5) {
                     improving = true
                 }
                 println("Skip proportion " + (skipped.toDouble() / tuningObject.population))

@@ -3,11 +3,12 @@ package pirarucu.eval
 import pirarucu.board.Board
 import pirarucu.board.Color
 import pirarucu.board.Piece
+import pirarucu.tuning.TunableConstants
 import pirarucu.util.SplitValue
 
 object Evaluator {
     fun evaluate(board: Board): Int {
-        var score = EvalConstants.TEMPO + board.psqScore[Color.WHITE] - board.psqScore[Color.BLACK] +
+        var score = TunableConstants.TEMPO + board.psqScore[Color.WHITE] - board.psqScore[Color.BLACK] +
             board.materialScore[Color.WHITE] - board.materialScore[Color.BLACK]
 
         val independentScore = materialImbalance(board, Color.WHITE, Color.BLACK) -
@@ -18,8 +19,8 @@ object Evaluator {
 
         val phase = board.phase
 
-        return (mgScore * (EvalConstants.PHASE_MAX - phase) + egScore * phase) /
-            EvalConstants.PHASE_MAX + independentScore
+        return (mgScore * (TunableConstants.PHASE_MAX - phase) + egScore * phase) /
+            TunableConstants.PHASE_MAX + independentScore
     }
 
     private fun materialImbalance(board: Board, ourColor: Int, theirColor: Int): Int {
@@ -29,9 +30,9 @@ object Evaluator {
             if (board.pieceCountColorType[ourColor][piece] > 1) {
                 for (otherPiece in Piece.NONE..piece) {
                     result += board.pieceCountColorType[ourColor][piece] *
-                        (EvalConstants.MATERIAL_IMBALANCE_OURS[piece][otherPiece] *
+                        (TunableConstants.MATERIAL_IMBALANCE_OURS[piece][otherPiece] *
                             board.pieceCountColorType[ourColor][otherPiece] +
-                            EvalConstants.MATERIAL_IMBALANCE_THEIRS[piece][otherPiece] *
+                            TunableConstants.MATERIAL_IMBALANCE_THEIRS[piece][otherPiece] *
                             board.pieceCountColorType[theirColor][otherPiece])
                 }
             }

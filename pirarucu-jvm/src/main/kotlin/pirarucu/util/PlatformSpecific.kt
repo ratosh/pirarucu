@@ -1,6 +1,7 @@
 package pirarucu.util
 
 import pirarucu.eval.EvalConstants
+import pirarucu.tuning.TunableConstants
 import java.util.Arrays
 import java.util.Random
 
@@ -71,7 +72,7 @@ actual class PlatformSpecific actual constructor() {
     actual fun applyConfig(option: String, value: Int) {
         val optionList = option.split('-')
 
-        val field = EvalConstants::class.java.getDeclaredField(optionList[0])
+        val field = TunableConstants::class.java.getDeclaredField(optionList[0])
         var constant: IntArray? = null
         when (optionList.size) {
             1 -> {

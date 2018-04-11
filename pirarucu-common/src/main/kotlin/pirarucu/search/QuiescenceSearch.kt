@@ -11,6 +11,7 @@ import pirarucu.move.Move
 import pirarucu.move.MoveGenerator
 import pirarucu.move.MoveList
 import pirarucu.stats.Statistics
+import pirarucu.tuning.TunableConstants
 import kotlin.math.max
 
 /**
@@ -34,18 +35,20 @@ object QuiescenceSearch {
             return EvalConstants.SCORE_DRAW
         }
         val eval: Int
-        if (TranspositionTable.findEntry(board)) {
+        if (SearchConstants.ENABLE_Q_TT && TranspositionTable.findEntry(board)) {
             if (Statistics.ENABLED) {
                 Statistics.qTTEntry++
             }
             val foundInfo = TranspositionTable.foundInfo
-            eval = TranspositionTable.getScore(TranspositionTable.foundInfo, ply)
+            eval = TranspositionTable.getScore(TranspositionTable.foundScore, ply)
             when (TranspositionTable.getScoreType(foundInfo)) {
-                HashConstants.SCORE_TYPE_EXACT_SCORE -> return eval
-                HashConstants.SCORE_TYPE_FAIL_LOW -> if (eval >= beta) {
+                HashConstants.SCORE_TYPE_EXACT_SCORE -> {
                     return eval
                 }
-                HashConstants.SCORE_TYPE_FAIL_HIGH -> if (eval <= alpha) {
+                HashConstants.SCORE_TYPE_FAIL_LOW -> if (eval <= alpha) {
+                    return eval
+                }
+                HashConstants.SCORE_TYPE_FAIL_HIGH -> if (eval >= beta) {
                     return eval
                 }
             }
@@ -62,10 +65,8 @@ object QuiescenceSearch {
 
         var bestScore = max(alpha, eval)
 
-        /**
-         * Qsearch Futility
-         */
-        val futilityValue = eval + EvalConstants.QS_PIECE_VALUE[board.capturedPiece]
+        // Qsearch Futility
+        val futilityValue = eval + TunableConstants.QS_PIECE_VALUE[board.capturedPiece]
         if (futilityValue <= alpha) {
             if (Statistics.ENABLED) {
                 Statistics.qFutility++
