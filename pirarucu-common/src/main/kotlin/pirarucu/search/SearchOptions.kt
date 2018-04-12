@@ -6,8 +6,9 @@ import pirarucu.game.GameConstants
 object SearchOptions {
     private const val GAME_MOVES = 50
 
-    var searchTimeLimit = 0
+    var minSearchTimeLimit = 0
     var extraPanicTimeLimit = 0
+    var maxSearchTimeLimit = 0
 
     var depth = GameConstants.MAX_PLIES - 1
     var panicEnabled = true
@@ -21,6 +22,7 @@ object SearchOptions {
     var blackIncrement: Int = 0
 
     private const val PANIC_RATIO = 0.5f
+    private const val MAX_TIME_RATIO = 1f
 
     fun reset() {
         stop = false
@@ -34,7 +36,8 @@ object SearchOptions {
             blackTime / GAME_MOVES
         }
 
-        searchTimeLimit = totalTime
-        extraPanicTimeLimit = (searchTimeLimit * PANIC_RATIO).toInt()
+        minSearchTimeLimit = totalTime
+        extraPanicTimeLimit = (minSearchTimeLimit * PANIC_RATIO).toInt()
+        maxSearchTimeLimit = (totalTime * MAX_TIME_RATIO).toInt()
     }
 }

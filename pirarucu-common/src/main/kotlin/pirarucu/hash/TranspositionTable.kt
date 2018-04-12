@@ -169,8 +169,8 @@ object TranspositionTable {
 
     fun getScore(value: Int, ply: Int): Int {
         return when {
-            value > EvalConstants.SCORE_MATE -> EvalConstants.SCORE_MAX - ply
-            value < -EvalConstants.SCORE_MATE -> EvalConstants.SCORE_MIN + ply
+            value > EvalConstants.SCORE_MATE -> value - ply
+            value < -EvalConstants.SCORE_MATE -> value + ply
             else -> value
         }
     }

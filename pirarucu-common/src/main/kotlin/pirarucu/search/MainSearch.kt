@@ -23,8 +23,9 @@ object MainSearch {
 
     private val ttMoves = Array(GameConstants.MAX_PLIES) { IntArray(TranspositionTable.MAX_MOVES) }
 
-    private var searchTimeLimit: Long = 0L
-    private var panicTimeLimit: Long = 0L
+    private var minSearchTimeLimit: Long = 0L
+    private var panicSearchTimeLimit: Long = 0L
+    private var maxSearchTimeLimit: Long = 0L
 
     private const val PHASE_END = 0
     private const val PHASE_QUIET = 1
@@ -43,6 +44,11 @@ object MainSearch {
         }
 
         if (depth <= 0) {
+            val currentTime = Utils.specific.currentTimeMillis()
+            if (maxSearchTimeLimit < currentTime) {
+                SearchOptions.stop = true
+                return 0
+            }
             return QuiescenceSearch.search(board, moveList, ply, alpha, beta)
         }
 
@@ -126,8 +132,7 @@ object MainSearch {
                     if (Statistics.ENABLED) {
                         Statistics.razoring++
                     }
-                    val razorSearchValue = search(board, moveList, 0, ply + 1, razorAlpha,
-                        razorAlpha + 1)
+                    val razorSearchValue = search(board, moveList, 0, ply + 1, razorAlpha, razorAlpha + 1)
                     if (razorSearchValue <= razorAlpha) {
                         if (Statistics.ENABLED) {
                             Statistics.razoringHit++
@@ -168,6 +173,13 @@ object MainSearch {
         while (phase > PHASE_END) {
             when (phase) {
                 PHASE_TT -> {
+                    if (!ttEntry && depth >= 6) {
+                        val newDepth = 3 * depth / 4 - 2
+                        search(board, moveList, newDepth, ply, currentAlpha, currentBeta, true)
+                        if (TranspositionTable.findEntry(board)) {
+                            foundMoves = TranspositionTable.foundMoves
+                        }
+                    }
                     if (foundMoves != 0L) {
                         for (index in 0 until TranspositionTable.MAX_MOVES) {
                             val ttMove = TranspositionTable.getMove(foundMoves, index)
@@ -252,8 +264,9 @@ object MainSearch {
         var beta = EvalConstants.SCORE_MAX
         var score = EvalConstants.SCORE_MIN
         val startTime = Utils.specific.currentTimeMillis()
-        searchTimeLimit = startTime + SearchOptions.searchTimeLimit
-        panicTimeLimit = searchTimeLimit + SearchOptions.extraPanicTimeLimit
+        minSearchTimeLimit = startTime + SearchOptions.minSearchTimeLimit
+        panicSearchTimeLimit = minSearchTimeLimit + SearchOptions.extraPanicTimeLimit
+        maxSearchTimeLimit = startTime + SearchOptions.maxSearchTimeLimit
 
         while (PrincipalVariation.bestMove == Move.NONE || depth <= SearchOptions.depth) {
             if (SearchOptions.stop) {
@@ -274,8 +287,8 @@ object MainSearch {
                     SearchOptions.panicEnabled &&
                     abs(score) < EvalConstants.SCORE_MATE
 
-                if ((SearchOptions.panic && panicTimeLimit < currentTime) ||
-                    (!SearchOptions.panic && searchTimeLimit < currentTime)) {
+                if ((SearchOptions.panic && panicSearchTimeLimit < currentTime) ||
+                    (!SearchOptions.panic && minSearchTimeLimit < currentTime)) {
                     SearchOptions.stop = true
                     break
                 }
