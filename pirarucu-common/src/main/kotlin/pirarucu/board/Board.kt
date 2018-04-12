@@ -157,8 +157,9 @@ class Board {
     }
 
     fun doMove(move: Int) {
-        Statistics.moves++
         pushToHistory()
+        Statistics.moves++
+        rule50++
 
         val fromSquare = Move.getFromSquare(move)
         val toSquare = Move.getToSquare(move)
@@ -223,6 +224,7 @@ class Board {
                     pawnZobristKey = pawnZobristKey xor
                         Zobrist.PIECE_SQUARE_TABLE[ourColor][Piece.PAWN][toSquare]
                 }
+                rule50 = 0
             }
         }
 

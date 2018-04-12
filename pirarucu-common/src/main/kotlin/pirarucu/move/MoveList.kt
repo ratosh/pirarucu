@@ -1,6 +1,7 @@
 package pirarucu.move
 
 import pirarucu.game.GameConstants
+import pirarucu.stats.Statistics
 import pirarucu.util.Utils
 
 /**
@@ -38,6 +39,9 @@ class MoveList {
     }
 
     fun addMove(move: Int) {
+        if (Statistics.ENABLED) {
+            Statistics.gMoves++
+        }
         moves[nextToGenerate[currentPly]++] = move
     }
 

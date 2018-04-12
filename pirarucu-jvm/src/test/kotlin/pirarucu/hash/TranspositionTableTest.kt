@@ -13,6 +13,7 @@ class TranspositionTableTest {
     @BeforeTest
     fun setup() {
         TranspositionTable.reset()
+        TranspositionTable.baseDepth = 19
     }
 
     @Test
@@ -63,6 +64,17 @@ class TranspositionTableTest {
         assertTrue(TranspositionTable.findEntry(board))
         val info = TranspositionTable.foundInfo
         assertEquals(2, TranspositionTable.getDepth(info))
+    }
+
+    @Test
+    fun testBaseDepth() {
+        val board = BoardFactory.getBoard("4k3/8/8/8/8/8/8/4K3 b - -")
+        TranspositionTable.save(board, 0, HashConstants.SCORE_TYPE_EXACT_SCORE, 11, 0, 0)
+        assertTrue(TranspositionTable.findEntry(board))
+        val info = TranspositionTable.foundInfo
+        assertEquals(11, TranspositionTable.getDepth(info))
+        TranspositionTable.baseDepth += 2
+        assertEquals(9, TranspositionTable.getDepth(info))
     }
 
     @Test

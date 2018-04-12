@@ -21,8 +21,8 @@ object SearchOptions {
     var whiteIncrement: Int = 0
     var blackIncrement: Int = 0
 
-    private const val PANIC_RATIO = 0.5f
-    private const val MAX_TIME_RATIO = 1f
+    private const val PANIC_RATIO = 1.5f
+    private const val MAX_TIME_RATIO = 2f
 
     fun reset() {
         stop = false

@@ -4,7 +4,6 @@ import pirarucu.board.Bitboard
 import pirarucu.board.Board
 import pirarucu.board.Square
 import pirarucu.eval.EvalConstants
-import pirarucu.game.GameConstants
 import pirarucu.search.SearchOptions
 import pirarucu.stats.Statistics
 import pirarucu.util.Utils
@@ -22,9 +21,8 @@ import kotlin.math.min
  * Score - 16 Bits
  *
  * infos (ShortArray) (16 bits)
- * Depth - 8 bits
+ * Depth - 14 bits
  * Score type - 2 bits
- * Unused - 6
  *
  * moves (LongArray) (64 bits)
  * Move - 16 bits (4 entries)
@@ -34,6 +32,9 @@ import kotlin.math.min
  * 1k = 8 Entries
  */
 object TranspositionTable {
+
+    var baseDepth = 0
+
     var ttUsage = 0L
 
     var foundKey = 0
@@ -51,14 +52,14 @@ object TranspositionTable {
     private val moves = LongArray(tableLimit)
 
     private const val DEPTH_SHIFT = 0
-    private const val SCORE_TYPE_SHIFT = 8
+    private const val SCORE_TYPE_SHIFT = 14
     private const val MOVE_SHIFT = 16
     private const val MOVE_SHIFT_1 = MOVE_SHIFT * 0
     private const val MOVE_SHIFT_2 = MOVE_SHIFT * 1
     private const val MOVE_SHIFT_3 = MOVE_SHIFT * 2
     private const val MOVE_SHIFT_4 = MOVE_SHIFT * 3
 
-    private const val DEPTH_MASK = GameConstants.MAX_PLIES.toShort() - 1
+    private const val DEPTH_MASK = (1 shl SCORE_TYPE_SHIFT) - 1
     private const val SCORE_TYPE_MASK = 0x3
     private const val MOVE_MASK = 0xFFFF.toLong()
     private const val MOVE_MASK_1 = MOVE_MASK shl MOVE_SHIFT_1
@@ -70,6 +71,7 @@ object TranspositionTable {
 
     fun reset() {
         ttUsage = 0
+        baseDepth = 0
 
         Utils.specific.arrayFill(keys, 0)
         Utils.specific.arrayFill(scores, 0)
@@ -118,8 +120,8 @@ object TranspositionTable {
 
         val key = board.zobristKey.toInt()
 
-        var realDepth = depth
-        var replacedDepth = depth
+        var realDepth = depth + baseDepth
+        var replacedDepth = depth + baseDepth
         var oldMoves = 0L
 
         while (index < maxIndex) {
@@ -188,11 +190,11 @@ object TranspositionTable {
     }
 
     fun getDepth(value: Int): Int {
-        return value and DEPTH_MASK
+        return (value and DEPTH_MASK) - baseDepth
     }
 
     private fun buildInfo(depth: Int, scoreType: Int): Short {
-        return (depth or (scoreType shl SCORE_TYPE_SHIFT)).toShort()
+        return ((depth and DEPTH_MASK) or (scoreType shl SCORE_TYPE_SHIFT)).toShort()
     }
 
     private fun buildMoves(oldMoves: Long, move: Int): Long {

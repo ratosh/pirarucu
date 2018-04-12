@@ -44,11 +44,6 @@ object MainSearch {
         }
 
         if (depth <= 0) {
-            val currentTime = Utils.specific.currentTimeMillis()
-            if (maxSearchTimeLimit < currentTime) {
-                SearchOptions.stop = true
-                return 0
-            }
             return QuiescenceSearch.search(board, moveList, ply, alpha, beta)
         }
 
@@ -115,8 +110,7 @@ object MainSearch {
                 if (Statistics.ENABLED) {
                     Statistics.futility++
                 }
-                val futilityBase = eval - TunableConstants.FUTILITY_CHILD_MARGIN[depth]
-                if (futilityBase >= currentBeta) {
+                if (eval - TunableConstants.FUTILITY_CHILD_MARGIN[depth] >= currentBeta) {
                     if (Statistics.ENABLED) {
                         Statistics.futilityHit++
                     }
@@ -168,14 +162,17 @@ object MainSearch {
         moveList.startPly()
         var movesPerformed = 0
         var searchAlpha = currentAlpha
-        var phase =
+        var phase = if (SearchConstants.ENABLE_TT) {
             PHASE_TT
+        } else {
+            PHASE_ATTACK
+        }
         while (phase > PHASE_END) {
             when (phase) {
                 PHASE_TT -> {
                     if (!ttEntry && depth >= 6) {
                         val newDepth = 3 * depth / 4 - 2
-                        search(board, moveList, newDepth, ply, currentAlpha, currentBeta, true)
+                        search(board, moveList, newDepth, ply, currentAlpha, currentBeta, false)
                         if (TranspositionTable.findEntry(board)) {
                             foundMoves = TranspositionTable.foundMoves
                         }
@@ -259,13 +256,15 @@ object MainSearch {
 
         val moveList = MoveList()
 
+        TranspositionTable.baseDepth = board.moveNumber
+
         var depth = 1
         var alpha = EvalConstants.SCORE_MIN
         var beta = EvalConstants.SCORE_MAX
         var score = EvalConstants.SCORE_MIN
         val startTime = Utils.specific.currentTimeMillis()
         minSearchTimeLimit = startTime + SearchOptions.minSearchTimeLimit
-        panicSearchTimeLimit = minSearchTimeLimit + SearchOptions.extraPanicTimeLimit
+        panicSearchTimeLimit = startTime + SearchOptions.extraPanicTimeLimit
         maxSearchTimeLimit = startTime + SearchOptions.maxSearchTimeLimit
 
         while (PrincipalVariation.bestMove == Move.NONE || depth <= SearchOptions.depth) {

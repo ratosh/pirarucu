@@ -17,6 +17,7 @@ class MainSearchTest {
         BoardFactory.setBoard(fen, board)
         SearchOptions.minSearchTimeLimit = searchTime
         SearchOptions.extraPanicTimeLimit = searchTime
+        SearchOptions.maxSearchTimeLimit = searchTime * 2
         MainSearch.search(board)
     }
 
@@ -29,7 +30,7 @@ class MainSearchTest {
     }
 
     @AfterTest
-    fun tearDown(){
+    fun tearDown() {
         println(Statistics.toString())
     }
 
@@ -54,7 +55,6 @@ class MainSearchTest {
         assertEquals(EvalConstants.SCORE_MIN + 2, PrincipalVariation.bestScore)
     }
 
-
     @Ignore
     @Test
     fun testRandomPosition() {
@@ -76,6 +76,6 @@ class MainSearchTest {
     @Ignore
     @Test
     fun testRandomPosition5() {
-        testSearch("r1bk3r/2Npqppp/1pn2n2/p2Q4/2B4P/4P3/PPP2PP1/R1B1K2R w KQ -", 10000)
+        testSearch("1k6/7R/8/4K3/5r2/8/8/8 b - -", 10000)
     }
 }
