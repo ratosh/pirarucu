@@ -37,4 +37,6 @@ expect class PlatformSpecific() {
     fun exit(code: Int)
 
     fun gc()
+    
+    fun getVersion(): String
 }

@@ -17,7 +17,7 @@ object UciInput {
         val tokens = command.split(" ".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
         when (tokens[0]) {
             "uci" -> {
-                UciOutput.println("id name Pirarucu 1.0")
+                UciOutput.println("id name Pirarucu v" + Utils.specific.getVersion())
                 UciOutput.println("id author Raoni Campos")
                 UciOutput.println("uciok")
             }
