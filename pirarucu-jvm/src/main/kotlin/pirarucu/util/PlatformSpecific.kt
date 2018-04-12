@@ -105,4 +105,17 @@ actual class PlatformSpecific actual constructor() {
     actual fun gc() {
         System.gc()
     }
+
+    actual fun getVersion(): String {
+        var version: String? = null
+        val pkg = PlatformSpecific::class.java.`package`
+        if (pkg != null) {
+            version = pkg.implementationVersion
+            if (version == null) {
+                version = pkg.specificationVersion
+            }
+        }
+        version = if (version == null) "" else version.trim { it <= ' ' }
+        return if (version.isEmpty()) "v?" else version
+    }
 }
