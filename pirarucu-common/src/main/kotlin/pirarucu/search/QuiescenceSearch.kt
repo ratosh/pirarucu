@@ -1,8 +1,6 @@
 package pirarucu.search
 
-import pirarucu.board.Bitboard
 import pirarucu.board.Board
-import pirarucu.board.Piece
 import pirarucu.eval.DrawEvaluator
 import pirarucu.eval.EvalConstants
 import pirarucu.eval.Evaluator
@@ -12,31 +10,69 @@ import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
 import pirarucu.move.MoveGenerator
 import pirarucu.move.MoveList
-import pirarucu.move.MoveType
+import pirarucu.stats.Statistics
+import pirarucu.tuning.TunableConstants
 import kotlin.math.max
 
 /**
  * https://chessprogramming.wikispaces.com/Quiescence+Search
  */
 object QuiescenceSearch {
-    fun search(board: Board, moveList: MoveList,
-        ply: Int,
-        alpha: Int,
-        beta: Int,
-        materialGain: Int = 0): Int {
+
+    fun search(board: Board,
+               moveList: MoveList,
+               ply: Int,
+               alpha: Int,
+               beta: Int): Int {
+        if (Statistics.ENABLED) {
+            Statistics.qMaxPly = max(Statistics.qMaxPly, ply)
+            Statistics.qNodes++
+        }
         if (DrawEvaluator.isDrawByRules(board) || !DrawEvaluator.hasSufficientMaterial(board)) {
+            if (Statistics.ENABLED) {
+                Statistics.qDraw++
+            }
             return EvalConstants.SCORE_DRAW
         }
-        val eval = when {
-            TranspositionTable.findEntry(board) -> TranspositionTable.eval
-            else -> GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board)
+        val eval: Int
+        if (SearchConstants.ENABLE_Q_TT && TranspositionTable.findEntry(board)) {
+            if (Statistics.ENABLED) {
+                Statistics.qTTEntry++
+            }
+            val foundInfo = TranspositionTable.foundInfo
+            eval = TranspositionTable.getScore(TranspositionTable.foundScore, ply)
+            when (TranspositionTable.getScoreType(foundInfo)) {
+                HashConstants.SCORE_TYPE_EXACT_SCORE -> {
+                    return eval
+                }
+                HashConstants.SCORE_TYPE_FAIL_LOW -> if (eval <= alpha) {
+                    return eval
+                }
+                HashConstants.SCORE_TYPE_FAIL_HIGH -> if (eval >= beta) {
+                    return eval
+                }
+            }
+        } else {
+            eval = GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board)
         }
 
         if (eval >= beta) {
+            if (Statistics.ENABLED) {
+                Statistics.qStandpat++
+            }
             return eval
         }
 
         var bestScore = max(alpha, eval)
+
+        // Qsearch Futility
+        val futilityValue = eval + TunableConstants.QS_PIECE_VALUE[board.capturedPiece]
+        if (futilityValue <= alpha) {
+            if (Statistics.ENABLED) {
+                Statistics.qFutility++
+            }
+            return max(bestScore, futilityValue)
+        }
 
         if (!moveList.startPly()) {
             return bestScore
@@ -50,50 +86,25 @@ object QuiescenceSearch {
             val move = moveList.next()
             moveCount++
 
-            val toSquare = Move.getToSquare(move)
-            val moveType = Move.getMoveType(move)
-
-            val promotedPiece = MoveType.getPromotedPiece(moveType)
-
-            val materialDiff: Int = materialGain + if (promotedPiece != Piece.NONE) {
-                EvalConstants.QS_PIECE_VALUE[promotedPiece] +
-                    EvalConstants.QS_PIECE_VALUE[board.pieceTypeBoard[toSquare]] -
-                    EvalConstants.QS_PIECE_VALUE[Piece.PAWN]
-            } else {
-                EvalConstants.QS_PIECE_VALUE[board.pieceTypeBoard[toSquare]]
-            }
-
-            // Skip search if losing material, it should not produce a better evaluation
-            if (materialDiff < 0) {
-                continue
+            if (Statistics.ENABLED) {
+                Statistics.qRenodes++
             }
 
             board.doMove(move)
-            val innerScore = -search(board, moveList, ply, -beta, -bestScore, -materialDiff)
+            val innerScore = -search(board, moveList, ply + 1, -beta, -bestScore)
             board.undoMove(move)
 
             if (innerScore > bestScore) {
                 bestScore = innerScore
                 bestMove = move
-                if (bestScore >= beta) {
-                    break
-                }
             }
-        }
+            if (innerScore >= beta) {
+                if (Statistics.ENABLED) {
+                    Statistics.qFailHigh++
+                }
+                break
+            }
 
-        // No attack generated
-        if (moveCount == 0) {
-            MoveGenerator.legalMoves(board, moveList)
-            // No move generated
-            if (!moveList.hasNext()) {
-                bestScore = if (board.basicEvalInfo.checkBitboard[board.colorToMove] != Bitboard.EMPTY) {
-                    // Mated
-                    -EvalConstants.SCORE_MAX + ply
-                } else {
-                    // stale mate
-                    EvalConstants.SCORE_DRAW
-                }
-            }
         }
 
         moveList.endPly()
@@ -102,7 +113,7 @@ object QuiescenceSearch {
             bestScore >= beta -> HashConstants.SCORE_TYPE_FAIL_HIGH
             else -> HashConstants.SCORE_TYPE_EXACT_SCORE
         }
-        TranspositionTable.save(board, eval, bestScore, scoreType, 0, bestMove)
+        TranspositionTable.save(board, bestScore, scoreType, 0, ply, bestMove)
 
         return bestScore
     }

@@ -1,5 +1,7 @@
 package pirarucu.util
 
+import pirarucu.eval.EvalConstants
+import pirarucu.tuning.TunableConstants
 import java.util.Arrays
 import java.util.Random
 
@@ -65,6 +67,35 @@ actual class PlatformSpecific actual constructor() {
 
     actual fun formatString(source: String, vararg args: Any): String {
         return String.format(source, args)
+    }
+
+    actual fun applyConfig(option: String, value: Int) {
+        val optionList = option.split('-')
+
+        val field = TunableConstants::class.java.getDeclaredField(optionList[0])
+        var constant: IntArray? = null
+        when (optionList.size) {
+            1 -> {
+                field.isAccessible = true
+                field.set(EvalConstants::class.java, value)
+            }
+            2 -> {
+                field.isAccessible = true
+                constant = field.get(null) as IntArray
+            }
+            3 -> {
+                field.isAccessible = true
+                val arrayConstant = field.get(null) as Array<IntArray>
+                constant = arrayConstant[optionList[1].toInt()]
+            }
+        }
+        if (constant != null) {
+            updateArray(constant, optionList[optionList.size - 1].toInt(), value)
+        }
+    }
+
+    private fun updateArray(array: IntArray, position: Int, value: Int) {
+        array[position] = value
     }
 
     actual fun exit(code: Int) {

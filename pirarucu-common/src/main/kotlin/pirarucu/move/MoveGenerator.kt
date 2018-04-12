@@ -6,12 +6,12 @@ import pirarucu.board.CastlingRights
 import pirarucu.board.Color
 import pirarucu.board.Piece
 import pirarucu.board.Square
+import pirarucu.stats.Statistics
 
 object MoveGenerator {
 
     fun legalMoves(board: Board, moveList: MoveList) {
         var mask = board.emptyBitboard
-        legalKingMoves(board, moveList, mask)
         val ourColor = board.colorToMove
         val checkBitboard = board.basicEvalInfo.checkBitboard[ourColor]
         when {
@@ -24,15 +24,16 @@ object MoveGenerator {
             }
             Bitboard.oneElement(checkBitboard) -> {
                 val square = Square.getSquare(checkBitboard)
-                val betweenBitboard =
-                    BitboardMove.BETWEEN_BITBOARD[board.basicEvalInfo.kingSquare[ourColor]][square]
-                mask = mask and betweenBitboard
-                legalRookMoves(board, moveList, mask)
-                legalBishopMoves(board, moveList, mask)
-                legalKnightMoves(board, moveList, mask)
-                legalPawnMoves(board, moveList, mask)
+                val betweenMask =
+                    BitboardMove.BETWEEN_BITBOARD[board.basicEvalInfo.kingSquare[ourColor]][square] and
+                        mask
+                legalRookMoves(board, moveList, betweenMask)
+                legalBishopMoves(board, moveList, betweenMask)
+                legalKnightMoves(board, moveList, betweenMask)
+                legalPawnMoves(board, moveList, betweenMask)
             }
         }
+        legalKingMoves(board, moveList, mask)
     }
 
     private fun legalPawnMoves(board: Board, moveList: MoveList, maskBitboard: Long) {
@@ -194,7 +195,6 @@ object MoveGenerator {
         val ourColor = board.colorToMove
         val checkBitboard = board.basicEvalInfo.checkBitboard[ourColor]
 
-        legalKingMoves(board, moveList, theirBitboard)
         when {
             checkBitboard == Bitboard.EMPTY -> {
                 legalPawnEPCapture(board, moveList, theirBitboard)
@@ -211,6 +211,7 @@ object MoveGenerator {
                 legalRookMoves(board, moveList, checkBitboard)
             }
         }
+        legalKingMoves(board, moveList, theirBitboard)
     }
 
     private fun legalPawnEPCapture(board: Board, moveList: MoveList, maskBitboard: Long) {
@@ -277,7 +278,7 @@ object MoveGenerator {
     }
 
     private fun pathUnderAttack(path: Long, ourColor: Int, theirPieceBitboard: LongArray,
-        gameBitboard: Long): Boolean {
+                                gameBitboard: Long): Boolean {
         var tmpPath = path
         while (tmpPath != Bitboard.EMPTY) {
             val square = Square.getSquare(tmpPath)
@@ -290,21 +291,17 @@ object MoveGenerator {
     }
 
     private fun squareUnderAttack(square: Int, ourColor: Int, theirPieceBitboard: LongArray,
-        gameBitboard: Long): Boolean {
+                                  gameBitboard: Long): Boolean {
         val pawns = theirPieceBitboard[Piece.PAWN] and gameBitboard
         val knights = theirPieceBitboard[Piece.KNIGHT] and gameBitboard
         val bishops = (theirPieceBitboard[Piece.BISHOP] or
             theirPieceBitboard[Piece.QUEEN]) and gameBitboard
         val rooks = (theirPieceBitboard[Piece.ROOK] or theirPieceBitboard[Piece.QUEEN]) and
             gameBitboard
-        return (pawns != Bitboard.EMPTY &&
-            BitboardMove.PAWN_ATTACKS[ourColor][square] and pawns != Bitboard.EMPTY)
-            || (knights != Bitboard.EMPTY &&
-            BitboardMove.KNIGHT_MOVES[square] and knights != Bitboard.EMPTY)
-            || (bishops != Bitboard.EMPTY &&
-            BitboardMove.bishopMoves(square, gameBitboard) and bishops != Bitboard.EMPTY)
-            || (rooks != Bitboard.EMPTY &&
-            BitboardMove.rookMoves(square, gameBitboard) and rooks != Bitboard.EMPTY)
+        return (pawns and BitboardMove.PAWN_ATTACKS[ourColor][square] != Bitboard.EMPTY)
+            || (knights and BitboardMove.KNIGHT_MOVES[square] != Bitboard.EMPTY)
+            || (bishops and BitboardMove.bishopMoves(square, gameBitboard) != Bitboard.EMPTY)
+            || (rooks and BitboardMove.rookMoves(square, gameBitboard) != Bitboard.EMPTY)
             || BitboardMove.KING_MOVES[square] and theirPieceBitboard[Piece.KING] != Bitboard.EMPTY
     }
 }
