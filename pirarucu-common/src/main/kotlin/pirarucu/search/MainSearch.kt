@@ -2,6 +2,7 @@ package pirarucu.search
 
 import pirarucu.board.Bitboard
 import pirarucu.board.Board
+import pirarucu.board.Piece
 import pirarucu.eval.DrawEvaluator
 import pirarucu.eval.EvalConstants
 import pirarucu.eval.Evaluator
@@ -11,6 +12,7 @@ import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
 import pirarucu.move.MoveGenerator
 import pirarucu.move.MoveList
+import pirarucu.move.MoveType
 import pirarucu.stats.Statistics
 import pirarucu.tuning.TunableConstants
 import pirarucu.uci.UciOutput
@@ -38,7 +40,8 @@ object MainSearch {
                        ply: Int,
                        alpha: Int,
                        beta: Int,
-                       skipNullMove: Boolean = false): Int {
+                       pvNode: Boolean,
+                       skipEarlyPruning: Boolean = false): Int {
         if (SearchOptions.stop) {
             return 0
         }
@@ -59,8 +62,7 @@ object MainSearch {
         if (currentAlpha >= currentBeta) {
             return currentAlpha
         }
-        val pvSearch = currentBeta - currentAlpha != 1
-        if (pvSearch && Statistics.ENABLED) {
+        if (Statistics.ENABLED && pvNode) {
             Statistics.pvSearch++
         }
         val inCheck = board.basicEvalInfo.checkBitboard[board.colorToMove] != Bitboard.EMPTY
@@ -69,10 +71,14 @@ object MainSearch {
         val eval: Int
 
         var foundMoves = 0L
+        val rootNode = pvNode && ply == 1
 
-        val prunable = !pvSearch && !inCheck
+        val prunable = !inCheck && !skipEarlyPruning
 
         if (SearchConstants.ENABLE_TT && TranspositionTable.findEntry(board)) {
+            if (Statistics.ENABLED) {
+                Statistics.TTEntry++
+            }
             foundMoves = TranspositionTable.foundMoves
             val foundInfo = TranspositionTable.foundInfo
             val foundScore = TranspositionTable.foundScore
@@ -96,15 +102,19 @@ object MainSearch {
             eval = if (prunable) {
                 GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board)
             } else {
-                EvalConstants.SCORE_MIN
+                EvalConstants.SCORE_UNKNOWN
             }
         }
 
         // Prunes
         if (prunable) {
+            if (Statistics.ENABLED) {
+                Statistics.prunable++
+            }
 
             // Futility
             if (SearchConstants.ENABLE_SEARCH_FUTILITY &&
+                !rootNode &&
                 depth < TunableConstants.FUTILITY_CHILD_MARGIN.size &&
                 eval < EvalConstants.SCORE_KNOW_WIN) {
                 if (Statistics.ENABLED) {
@@ -120,13 +130,14 @@ object MainSearch {
 
             // Razoring
             if (SearchConstants.ENABLE_SEARCH_RAZORING &&
+                !pvNode &&
                 depth < TunableConstants.RAZOR_MARGIN.size) {
                 val razorAlpha = currentAlpha - TunableConstants.RAZOR_MARGIN[depth]
                 if (eval < razorAlpha) {
                     if (Statistics.ENABLED) {
                         Statistics.razoring++
                     }
-                    val razorSearchValue = search(board, moveList, 0, ply + 1, razorAlpha, razorAlpha + 1)
+                    val razorSearchValue = search(board, moveList, 0, ply + 1, razorAlpha, razorAlpha + 1, false)
                     if (razorSearchValue <= razorAlpha) {
                         if (Statistics.ENABLED) {
                             Statistics.razoringHit++
@@ -138,14 +149,14 @@ object MainSearch {
 
             // Null move pruning and mate threat detection
             if (SearchConstants.ENABLE_SEARCH_NULL_MOVE &&
-                !skipNullMove &&
+                !pvNode &&
                 eval >= currentBeta) {
                 if (Statistics.ENABLED) {
                     Statistics.nullMove++
                 }
                 board.doNullMove()
                 val reduction = 3 + depth / 3
-                val score = -search(board, moveList, depth - reduction, ply + 1, -currentBeta, -currentBeta + 1, true)
+                val score = -search(board, moveList, depth - reduction, ply + 1, -currentBeta, -currentBeta + 1, false, true)
                 board.undoNullMove()
                 if (score >= currentBeta && score < EvalConstants.SCORE_MATE) {
                     if (Statistics.ENABLED) {
@@ -159,7 +170,9 @@ object MainSearch {
         var bestMove = Move.NONE
         var bestScore = EvalConstants.SCORE_MIN
 
-        moveList.startPly()
+        if (!moveList.startPly()) {
+            return eval
+        }
         var movesPerformed = 0
         var searchAlpha = currentAlpha
         var phase = if (SearchConstants.ENABLE_TT) {
@@ -171,8 +184,7 @@ object MainSearch {
             when (phase) {
                 PHASE_TT -> {
                     if (!ttEntry && depth >= 6) {
-                        val newDepth = 3 * depth / 4 - 2
-                        search(board, moveList, newDepth, ply, currentAlpha, currentBeta, false)
+                        search(board, moveList, 3 * depth / 4 - 2, ply, currentAlpha, currentBeta, false)
                         if (TranspositionTable.findEntry(board)) {
                             foundMoves = TranspositionTable.foundMoves
                         }
@@ -200,13 +212,44 @@ object MainSearch {
                 if (ttEntry && phase != PHASE_TT && ttMoves[ply].contains(move)) {
                     continue
                 }
+                val moveType = Move.getMoveType(move)
 
                 movesPerformed++
 
-                val searchDepth = depth - 1
-
                 board.doMove(move)
-                val score = -search(board, moveList, searchDepth, ply + 1, -currentBeta, -searchAlpha)
+
+                val givesCheck = board.basicEvalInfo.checkBitboard[board.colorToMove] != Bitboard.EMPTY
+                val isCapture = board.capturedPiece != Piece.NONE
+                val isPromotion = MoveType.isPromotion(moveType)
+
+                var reduction = when {
+                    movesPerformed == 1 -> 1
+                    isCapture -> 0
+                    isPromotion -> 0
+                    givesCheck -> 0
+                    else -> 1
+                }
+
+                // Reductions
+                if (depth >= 3 &&
+                    movesPerformed > 1 &&
+                    !givesCheck) {
+                    reduction += 1 + depth / 6
+                }
+
+                val searchDepth = depth - reduction
+
+                var score = -search(board, moveList, searchDepth, ply + 1, -searchAlpha - 1, -searchAlpha, false)
+                if (Statistics.ENABLED) {
+                    Statistics.pvs++
+                    if (score <= alpha) {
+                        Statistics.pvsHits++
+                    }
+                }
+
+                if (score > alpha) {
+                    score = -search(board, moveList, searchDepth, ply + 1, -currentBeta, -searchAlpha, true, false)
+                }
                 board.undoMove(move)
 
                 searchAlpha = max(searchAlpha, score)
@@ -227,14 +270,14 @@ object MainSearch {
 
         if (movesPerformed == 0) {
             bestMove = Move.NONE
-            bestScore = if (board.basicEvalInfo.checkBitboard[board.colorToMove] == Bitboard.EMPTY) {
-                // STALEMATE
-                Statistics.stalemate++
-                EvalConstants.SCORE_DRAW
-            } else {
+            bestScore = if (inCheck) {
                 // MATED
                 Statistics.mate++
                 EvalConstants.SCORE_MIN + ply
+            } else {
+                // STALEMATE
+                Statistics.stalemate++
+                EvalConstants.SCORE_DRAW
             }
         }
         val scoreType = when {
@@ -275,7 +318,7 @@ object MainSearch {
 
             val previousScore = score
             while (true) {
-                score = search(board, moveList, depth, 1, alpha, beta)
+                score = search(board, moveList, depth, 1, alpha, beta, true)
 
                 PrincipalVariation.save(board)
 
