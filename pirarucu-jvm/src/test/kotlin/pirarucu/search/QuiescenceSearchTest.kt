@@ -80,7 +80,7 @@ class QuiescenceSearchTest {
 
     @Test
     fun testBadCapture() {
-        testSearch("1k2r3/8/8/4p3/8/8/8/2K1R3 w - -", 0, 0)
+        testSearch("1k2r3/8/8/4p3/8/8/8/2K1R3 w - -", -20, 20)
     }
 
     @Test

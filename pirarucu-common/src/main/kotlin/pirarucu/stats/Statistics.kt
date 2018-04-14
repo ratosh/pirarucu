@@ -23,18 +23,23 @@ object Statistics {
 
     var abSearch = 0L
     var pvSearch = 0L
+    var TTEntry = 0L
 
+    var prunable = 0L
     var futility = 0L
+
     var futilityHit = 0L
-
     var razoring = 0L
+
     var razoringHit = 0L
-
     var nullMove = 0L
-    var nullMoveHit = 0L
 
+    var nullMoveHit = 0L
     var mate = 0L
     var stalemate = 0L
+
+    var pvs = 0L
+    var pvsHits = 0L
 
     fun reset() {
         ttHits = 0
@@ -54,6 +59,9 @@ object Statistics {
 
         abSearch = 0
         pvSearch = 0
+        TTEntry = 0
+
+        prunable = 0L
 
         razoring = 0L
         razoringHit = 0L
@@ -66,6 +74,9 @@ object Statistics {
 
         mate = 0L
         stalemate = 0L
+
+        pvs = 0L
+        pvsHits = 0L
     }
 
     override fun toString(): String {
@@ -74,10 +85,17 @@ object Statistics {
         buffer.append("--- Main Search\n")
         buffer.append("MS abSearch: $abSearch\n")
         buffer.append("MS pvSearch: $pvSearch\n")
+        buffer.append("MS TTEntry: " + buildPercentage(TTEntry, abSearch) + "\n")
+
+        buffer.append("--- Pruning $prunable\n")
         buffer.append("MS futility: " + buildPercentage(futilityHit, futility) + "\n")
         buffer.append("MS razoring: " + buildPercentage(razoringHit, razoring) + "\n")
         buffer.append("MS nullMove: " + buildPercentage(nullMoveHit, nullMove) + "\n")
 
+        buffer.append("--- Other \n")
+        buffer.append("MS PVS: " + buildPercentage(pvsHits, pvs) + "\n")
+
+        buffer.append("--- End conditions \n")
         buffer.append("Mates: " + buildPercentage(mate, moves) + "\n")
         buffer.append("Stalemates: " + buildPercentage(stalemate, moves) + "\n")
 

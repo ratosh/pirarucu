@@ -66,7 +66,7 @@ object QuiescenceSearch {
         var bestScore = max(alpha, eval)
 
         // Qsearch Futility
-        val futilityValue = eval + TunableConstants.QS_PIECE_VALUE[board.capturedPiece]
+        val futilityValue = eval + TunableConstants.QS_FUTILITY_VALUE[board.capturedPiece]
         if (futilityValue <= alpha) {
             if (Statistics.ENABLED) {
                 Statistics.qFutility++
