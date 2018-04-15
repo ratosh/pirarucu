@@ -1,6 +1,8 @@
 package pirarucu.stats
 
 import pirarucu.hash.TranspositionTable
+import pirarucu.tuning.TunableConstants
+import pirarucu.util.Utils
 
 object Statistics {
 
@@ -26,15 +28,15 @@ object Statistics {
     var TTEntry = 0L
 
     var prunable = 0L
-    var futility = 0L
 
-    var futilityHit = 0L
+    var futility = LongArray(TunableConstants.FUTILITY_CHILD_MARGIN.size)
+    var futilityHit = LongArray(TunableConstants.FUTILITY_CHILD_MARGIN.size)
     var razoring = 0L
-
     var razoringHit = 0L
-    var nullMove = 0L
 
+    var nullMove = 0L
     var nullMoveHit = 0L
+
     var mate = 0L
     var stalemate = 0L
 
@@ -66,8 +68,8 @@ object Statistics {
         razoring = 0L
         razoringHit = 0L
 
-        futility = 0L
-        futilityHit = 0L
+        Utils.specific.arrayFill(futility, 0L)
+        Utils.specific.arrayFill(futilityHit, 0L)
 
         nullMove = 0L
         nullMoveHit = 0L
@@ -88,7 +90,9 @@ object Statistics {
         buffer.append("MS TTEntry: " + buildPercentage(TTEntry, abSearch) + "\n")
 
         buffer.append("--- Pruning $prunable\n")
-        buffer.append("MS futility: " + buildPercentage(futilityHit, futility) + "\n")
+        for (index in futility.indices) {
+            buffer.append("MS futility[$index]: " + buildPercentage(futilityHit[index], futility[index]) + "\n")
+        }
         buffer.append("MS razoring: " + buildPercentage(razoringHit, razoring) + "\n")
         buffer.append("MS nullMove: " + buildPercentage(nullMoveHit, nullMove) + "\n")
 

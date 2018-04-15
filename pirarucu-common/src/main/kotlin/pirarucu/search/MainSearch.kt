@@ -41,7 +41,7 @@ object MainSearch {
                        alpha: Int,
                        beta: Int,
                        pvNode: Boolean,
-                       skipEarlyPruning: Boolean = false): Int {
+                       skipNullMove: Boolean = false): Int {
         if (SearchOptions.stop) {
             return 0
         }
@@ -73,7 +73,7 @@ object MainSearch {
         var foundMoves = 0L
         val rootNode = pvNode && ply == 1
 
-        val prunable = !inCheck && !skipEarlyPruning
+        val prunable = !inCheck
 
         if (SearchConstants.ENABLE_TT && TranspositionTable.findEntry(board)) {
             if (Statistics.ENABLED) {
@@ -118,11 +118,11 @@ object MainSearch {
                 depth < TunableConstants.FUTILITY_CHILD_MARGIN.size &&
                 eval < EvalConstants.SCORE_KNOW_WIN) {
                 if (Statistics.ENABLED) {
-                    Statistics.futility++
+                    Statistics.futility[depth]++
                 }
                 if (eval - TunableConstants.FUTILITY_CHILD_MARGIN[depth] >= currentBeta) {
                     if (Statistics.ENABLED) {
-                        Statistics.futilityHit++
+                        Statistics.futilityHit[depth]++
                     }
                     return eval
                 }
@@ -149,6 +149,7 @@ object MainSearch {
 
             // Null move pruning and mate threat detection
             if (SearchConstants.ENABLE_SEARCH_NULL_MOVE &&
+                !skipNullMove &&
                 !pvNode &&
                 eval >= currentBeta) {
                 if (Statistics.ENABLED) {
@@ -183,7 +184,7 @@ object MainSearch {
         while (phase > PHASE_END) {
             when (phase) {
                 PHASE_TT -> {
-                    if (!ttEntry && depth >= 6) {
+                    if (!ttEntry && depth >= 5) {
                         search(board, moveList, 3 * depth / 4 - 2, ply, currentAlpha, currentBeta, false)
                         if (TranspositionTable.findEntry(board)) {
                             foundMoves = TranspositionTable.foundMoves
@@ -233,6 +234,9 @@ object MainSearch {
                 // Reductions
                 if (depth >= 3 &&
                     movesPerformed > 1 &&
+                    !inCheck &&
+                    !isCapture &&
+                    !isPromotion &&
                     !givesCheck) {
                     reduction += 1 + depth / 6
                 }
