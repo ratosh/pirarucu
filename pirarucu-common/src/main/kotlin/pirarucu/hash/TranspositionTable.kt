@@ -42,7 +42,7 @@ object TranspositionTable {
     var foundInfo = 0
     var foundMoves = 0L
 
-    private val tableBits = Square.getSquare(HashConstants.TRANSPOSITION_TABLE_SIZE) + 17
+    private val tableBits = Square.getSquare(HashConstants.TRANSPOSITION_TABLE_SIZE) + 16
     val tableLimit = Bitboard.getBitboard(tableBits).toInt()
     private val indexShift = 64 - tableBits
 

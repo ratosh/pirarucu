@@ -1,6 +1,8 @@
 package pirarucu.stats
 
 import pirarucu.hash.TranspositionTable
+import pirarucu.tuning.TunableConstants
+import pirarucu.util.Utils
 
 object Statistics {
 
@@ -23,10 +25,12 @@ object Statistics {
 
     var abSearch = 0L
     var pvSearch = 0L
+    var TTEntry = 0L
 
-    var futility = 0L
-    var futilityHit = 0L
+    var prunable = 0L
 
+    var futility = LongArray(TunableConstants.FUTILITY_CHILD_MARGIN.size)
+    var futilityHit = LongArray(TunableConstants.FUTILITY_CHILD_MARGIN.size)
     var razoring = 0L
     var razoringHit = 0L
 
@@ -35,6 +39,9 @@ object Statistics {
 
     var mate = 0L
     var stalemate = 0L
+
+    var pvs = 0L
+    var pvsHits = 0L
 
     fun reset() {
         ttHits = 0
@@ -54,18 +61,24 @@ object Statistics {
 
         abSearch = 0
         pvSearch = 0
+        TTEntry = 0
+
+        prunable = 0L
 
         razoring = 0L
         razoringHit = 0L
 
-        futility = 0L
-        futilityHit = 0L
+        Utils.specific.arrayFill(futility, 0L)
+        Utils.specific.arrayFill(futilityHit, 0L)
 
         nullMove = 0L
         nullMoveHit = 0L
 
         mate = 0L
         stalemate = 0L
+
+        pvs = 0L
+        pvsHits = 0L
     }
 
     override fun toString(): String {
@@ -74,10 +87,19 @@ object Statistics {
         buffer.append("--- Main Search\n")
         buffer.append("MS abSearch: $abSearch\n")
         buffer.append("MS pvSearch: $pvSearch\n")
-        buffer.append("MS futility: " + buildPercentage(futilityHit, futility) + "\n")
+        buffer.append("MS TTEntry: " + buildPercentage(TTEntry, abSearch) + "\n")
+
+        buffer.append("--- Pruning $prunable\n")
+        for (index in futility.indices) {
+            buffer.append("MS futility[$index]: " + buildPercentage(futilityHit[index], futility[index]) + "\n")
+        }
         buffer.append("MS razoring: " + buildPercentage(razoringHit, razoring) + "\n")
         buffer.append("MS nullMove: " + buildPercentage(nullMoveHit, nullMove) + "\n")
 
+        buffer.append("--- Other \n")
+        buffer.append("MS PVS: " + buildPercentage(pvsHits, pvs) + "\n")
+
+        buffer.append("--- End conditions \n")
         buffer.append("Mates: " + buildPercentage(mate, moves) + "\n")
         buffer.append("Stalemates: " + buildPercentage(stalemate, moves) + "\n")
 

@@ -8,7 +8,7 @@ import pirarucu.util.SplitValue
 
 object TunableConstants {
     val RAZOR_MARGIN = intArrayOf(0, 100, 150, 200, 250, 300, 350, 400)
-    val FUTILITY_CHILD_MARGIN = intArrayOf(0, 120, 220, 320, 420, 520, 620, 720)
+    val FUTILITY_CHILD_MARGIN = intArrayOf(0, 120, 180, 250, 330, 420, 520)
 
     val TEMPO = SplitValue.mergeParts(20, 15)
 
@@ -20,7 +20,7 @@ object TunableConstants {
         PHASE_PIECE_VALUE[Piece.ROOK] * 4 +
         PHASE_PIECE_VALUE[Piece.QUEEN] * 2
 
-    val QS_PIECE_VALUE = intArrayOf(0, 100, 330, 330, 550, 900, 10000)
+    val QS_FUTILITY_VALUE = intArrayOf(0, 100, 330, 330, 550, 900, 10000)
 
     val MATERIAL_SCORE_MG = intArrayOf(0, 100, 320, 330, 500, 900)
     val MATERIAL_SCORE_EG = intArrayOf(0, 100, 330, 350, 550, 950)
@@ -94,7 +94,7 @@ object TunableConstants {
             -30, -40, -40, -50,
             -20, -30, -30, -40,
             -10, -20, -20, -20,
-            20, 20, 0, 0,
+            20, 20, -5, -5,
             20, 30, 10, 0
         )
     )
