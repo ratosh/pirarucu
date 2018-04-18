@@ -6,8 +6,10 @@ import java.util.Arrays
 import java.util.BitSet
 
 class PbilTunningObject(val name: String, protected val elementList: IntArray, bitsPerValue: IntArray,
-    allowNegatives: Boolean, vararg ignoreElementArgs: Int) {
+                        allowNegatives: Boolean, vararg ignoreElementArgs: Int) {
 
+
+    val ignoredElements = ignoreElementArgs
     val population: Int
 
     private val generator: PbilGenerator
@@ -58,6 +60,9 @@ class PbilTunningObject(val name: String, protected val elementList: IntArray, b
             }
         }
         val elements = generator.generateElements(genes)
+        for (ignored in ignoredElements) {
+            elements[ignored] = bestElementList[ignored]
+        }
 
         Utils.specific.arrayCopy(elements, 0, elementList, 0, elementList.size)
 
@@ -82,7 +87,7 @@ class PbilTunningObject(val name: String, protected val elementList: IntArray, b
     }
 
     private fun printElements(elementList: IntArray) {
-        val sb = StringBuilder(name).append("\n")
+        val sb = StringBuilder(name).append(" AVG:").append(elementList.sum() / elementList.size).append("\n")
         sb.append("Result:").append(Arrays.toString(elementList)).append("\n")
         println(sb.toString())
     }

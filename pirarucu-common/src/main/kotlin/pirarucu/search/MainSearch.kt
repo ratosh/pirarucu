@@ -135,12 +135,12 @@ object MainSearch {
                 val razorAlpha = currentAlpha - TunableConstants.RAZOR_MARGIN[depth]
                 if (eval < razorAlpha) {
                     if (Statistics.ENABLED) {
-                        Statistics.razoring++
+                        Statistics.razoring[depth]++
                     }
                     val razorSearchValue = search(board, moveList, 0, ply + 1, razorAlpha, razorAlpha + 1, false)
                     if (razorSearchValue <= razorAlpha) {
                         if (Statistics.ENABLED) {
-                            Statistics.razoringHit++
+                            Statistics.razoringHit[depth]++
                         }
                         return razorSearchValue
                     }

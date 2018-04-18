@@ -1,6 +1,7 @@
 package pirarucu.eval
 
 import pirarucu.board.Color
+import pirarucu.tuning.TunableConstants
 import pirarucu.util.SplitValue
 
 object EvalDebug {
@@ -10,6 +11,10 @@ object EvalDebug {
     val psqScore = IntArray(Color.SIZE)
     val material = IntArray(Color.SIZE)
     val materialImbalance = IntArray(Color.SIZE)
+
+    var score = 0
+    var phase = 0
+    var result = 0
 
     override fun toString(): String {
         val buffer = StringBuilder()
@@ -31,6 +36,13 @@ object EvalDebug {
             " | " + SplitValue.getSecondPart(materialImbalance[Color.WHITE]) + "\n")
         buffer.append("BLACK: " + SplitValue.getFirstPart(materialImbalance[Color.BLACK]) +
             " | " + SplitValue.getSecondPart(materialImbalance[Color.BLACK]) + "\n")
+        buffer.append("--- \n")
+        buffer.append("Score: " + SplitValue.getFirstPart(score) +
+            " | " + SplitValue.getSecondPart(score) + "\n")
+
+        val phaseMax = TunableConstants.PHASE_MAX
+        buffer.append("--- Current phase ($phase|$phaseMax)\n")
+        buffer.append("Result: $result\n")
 
         return buffer.toString()
     }
