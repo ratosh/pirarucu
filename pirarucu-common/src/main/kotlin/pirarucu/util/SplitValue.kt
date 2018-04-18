@@ -6,12 +6,12 @@ object SplitValue {
     private const val LIMIT = 1 shl SCORE_BITS - 1
 
     fun mergeParts(firstPart: Int, secondPart: Int): Int {
-        return (firstPart shl 16) + secondPart
+        return (firstPart shl SCORE_BITS) + secondPart
     }
 
     fun turnIntoPart(value: Int, partNumber: Int): Int {
         when (partNumber) {
-            0 -> return value shl 16
+            0 -> return value shl SCORE_BITS
             1 -> return value
         }
         return 0

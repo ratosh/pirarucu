@@ -1,6 +1,5 @@
 package pirarucu.tuning.pbil
 
-import pirarucu.board.Piece
 import pirarucu.tuning.ErrorCalculator
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.EpdFileLoader
@@ -13,7 +12,7 @@ object PbilTunningApplication {
 
     private const val INTERACTIONS = 300
 
-    private const val numberOfThreads = 2
+    private const val numberOfThreads = 1
     private val workers = arrayOfNulls<ErrorCalculator>(numberOfThreads)
     private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
     private val epdFileLoader = EpdFileLoader("d:\\chess\\epds\\quiet_labeled_v6.epd")
@@ -21,6 +20,7 @@ object PbilTunningApplication {
     private val tuningObjects: List<PbilTunningObject>
         get() {
             val tuningObjects = ArrayList<PbilTunningObject>()
+
             /*
             tuningObjects.add(PbilTunningObject(
                 "PHASE",
@@ -29,6 +29,19 @@ object PbilTunningApplication {
                 false, 0, 6))
                 */
 
+            tuningObjects.add(PbilTunningObject(
+                "MATERIAL_SCORE_MG",
+                TunableConstants.MATERIAL_SCORE_MG,
+                intArrayOf(0, 8, 10, 10, 11, 12),
+                false, 0))
+
+            tuningObjects.add(PbilTunningObject(
+                "MATERIAL_SCORE_EG",
+                TunableConstants.MATERIAL_SCORE_EG,
+                intArrayOf(0, 8, 10, 10, 11, 12),
+                false, 0))
+
+            /*
             tuningObjects.add(PbilTunningObject(
                 "MG[PAWN]",
                 TunableConstants.MG_PSQT[Piece.PAWN],
@@ -56,7 +69,9 @@ object PbilTunningApplication {
                     0, 0, 0, 0
                 ),
                 true, 0, 1, 2, 3, 28, 29, 30, 31))
+                */
 
+            /*
             tuningObjects.add(PbilTunningObject(
                 "MG[KNIGHT]",
                 TunableConstants.MG_PSQT[Piece.KNIGHT],
@@ -196,6 +211,7 @@ object PbilTunningApplication {
                     6, 6, 6, 6
                 ),
                 true))
+            */
 
             /*
             tuningObjects.add(PbilTunningObject(

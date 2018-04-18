@@ -30,7 +30,6 @@ class EvaluatorTest {
     fun testPawnAdvantage1() {
         val board = BoardFactory.getBoard("4k3/4p3/8/8/8/8/8/4K3 b - -")
         val eval = Evaluator.evaluate(board)
-        println("Eval2 $eval")
         assertTrue(eval < 0)
     }
 
@@ -38,7 +37,6 @@ class EvaluatorTest {
     fun testPawnAdvantage2() {
         var board = BoardFactory.getBoard("4k3/4p3/8/8/8/8/3PP3/4K3 b - -")
         var eval = Evaluator.evaluate(board)
-        println("Eval1 $eval")
         assertTrue(eval > 0)
     }
 
@@ -46,7 +44,6 @@ class EvaluatorTest {
     fun testKnightVsPawn() {
         var board = BoardFactory.getBoard("4k3/3pp3/8/8/8/8/4N3/4K3 b - -")
         var eval = Evaluator.evaluate(board)
-        println("Eval1 $eval")
         assertTrue(eval > 0)
     }
 }

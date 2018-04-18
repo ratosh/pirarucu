@@ -31,8 +31,9 @@ object Statistics {
 
     var futility = LongArray(TunableConstants.FUTILITY_CHILD_MARGIN.size)
     var futilityHit = LongArray(TunableConstants.FUTILITY_CHILD_MARGIN.size)
-    var razoring = 0L
-    var razoringHit = 0L
+
+    var razoring = LongArray(TunableConstants.RAZOR_MARGIN.size)
+    var razoringHit = LongArray(TunableConstants.RAZOR_MARGIN.size)
 
     var nullMove = 0L
     var nullMoveHit = 0L
@@ -65,11 +66,11 @@ object Statistics {
 
         prunable = 0L
 
-        razoring = 0L
-        razoringHit = 0L
-
         Utils.specific.arrayFill(futility, 0L)
         Utils.specific.arrayFill(futilityHit, 0L)
+
+        Utils.specific.arrayFill(razoring, 0L)
+        Utils.specific.arrayFill(razoringHit, 0L)
 
         nullMove = 0L
         nullMoveHit = 0L
@@ -93,7 +94,9 @@ object Statistics {
         for (index in futility.indices) {
             buffer.append("MS futility[$index]: " + buildPercentage(futilityHit[index], futility[index]) + "\n")
         }
-        buffer.append("MS razoring: " + buildPercentage(razoringHit, razoring) + "\n")
+        for (index in razoring.indices) {
+            buffer.append("MS razoring[$index]: " + buildPercentage(razoringHit[index], razoring[index]) + "\n")
+        }
         buffer.append("MS nullMove: " + buildPercentage(nullMoveHit, nullMove) + "\n")
 
         buffer.append("--- Other \n")

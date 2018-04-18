@@ -18,16 +18,16 @@ class ErrorCalculator : Callable<Double> {
 
     override fun call(): Double? {
         if (!constantCalculated) {
-            constant = BEST_CONSTANT
+            constant = calculateConstant()
             constantCalculated = true
         }
         return calculateError(constant)
     }
 
     private fun calculateConstant(): Double {
-        val bestError = calculateError(BEST_CONSTANT)
-        var bestConstant = BEST_CONSTANT
-        println(String.format("Original best constant %f | %.10f", bestConstant, bestError))
+        var bestError = calculateError(ORIGINAL_CONSTANT)
+        var bestConstant = ORIGINAL_CONSTANT
+        println(String.format("Original constant %f | %.10f", bestConstant, bestError))
         var variation = INITIAL_VARIATION
         var bottomError = 0.0
         var topError = 1.0
@@ -40,8 +40,10 @@ class ErrorCalculator : Callable<Double> {
 
             if (bottomError < topError) {
                 bestConstant = bottomnConstant
+                bestError = bottomError
             } else if (topError < bottomError) {
                 bestConstant = topConstant
+                bestError = topError
             }
 
             variation /= 2.0
@@ -69,8 +71,8 @@ class ErrorCalculator : Callable<Double> {
 
     companion object {
 
-        const val MINIMUM_ERROR = 0.0000001
-        const val BEST_CONSTANT = 1.4
+        const val MINIMUM_ERROR = 0.000000001
+        const val ORIGINAL_CONSTANT = 0.7
         private const val INITIAL_VARIATION = 1.0
 
         fun calculateSigmoid(score: Int, constant: Double): Double {
