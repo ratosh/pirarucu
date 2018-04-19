@@ -14,6 +14,7 @@ object SearchOptions {
     var panicEnabled = true
 
     var stop = false
+    var running = false
     var panic = false
 
     var whiteTime: Int = 0
