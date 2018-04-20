@@ -26,7 +26,7 @@ class UciInputTest {
     @AfterTest
     fun tearDown() {
         var search = false
-        while (SearchOptions.running) {
+        while (!SearchOptions.stop) {
             search = true
             Thread.yield()
         }

@@ -10,18 +10,35 @@ import pirarucu.util.Utils
 
 class InputHandler : Runnable, IInputHandler {
 
-    private var thread: Thread? = null
+    private val thread: Thread = Thread(this)
 
     private val board = Board()
 
+    private val lock = java.lang.Object()
+
+    @Volatile
+    private var running = false
+
+    init {
+        thread.name = "Search"
+        thread.isDaemon = true
+        thread.priority = Thread.MAX_PRIORITY
+        thread.start()
+    }
+
     override fun run() {
-        SearchOptions.setTime(board.colorToMove)
-        MainSearch.search(board)
-        SearchOptions.running = false
+        while (true) {
+            synchronized(lock) {
+                lock.wait()
+            }
+            SearchOptions.setTime(board.colorToMove)
+            MainSearch.search(board)
+            running = false
+        }
     }
 
     override fun search(tokens: Array<String>) {
-        SearchOptions.running = true
+        running = true
         var index = 1
         while (index < tokens.size) {
             when (tokens[index]) {
@@ -32,14 +49,14 @@ class InputHandler : Runnable, IInputHandler {
             }
             index += 2
         }
-        thread = Thread(this)
-        thread!!.priority = Thread.MAX_PRIORITY
-        thread!!.start()
+        synchronized(lock) {
+            lock.notifyAll()
+        }
     }
 
     override fun stop() {
         SearchOptions.stop = true
-        while (SearchOptions.running) {
+        while (running) {
             Thread.sleep(10)
         }
     }
@@ -50,7 +67,6 @@ class InputHandler : Runnable, IInputHandler {
         TunableConstants.update()
     }
 
-    @Synchronized
     override fun position(tokens: Array<String>) {
         var index = 1
         var moves = false

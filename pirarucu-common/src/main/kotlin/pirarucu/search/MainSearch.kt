@@ -361,6 +361,7 @@ object MainSearch {
             }
             depth++
         }
+        SearchOptions.stop = true
 
         UciOutput.bestMove(PrincipalVariation.bestMove)
     }
