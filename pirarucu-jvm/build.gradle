@@ -23,3 +23,7 @@ jar {
         )
     }
 }
+
+distZip {
+    archiveName = "${project.name}.zip"
+}
