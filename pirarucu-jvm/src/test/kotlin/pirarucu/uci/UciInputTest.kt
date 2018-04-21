@@ -7,6 +7,7 @@ import pirarucu.stats.Statistics
 import pirarucu.tuning.TunableConstants
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -54,6 +55,7 @@ class UciInputTest {
         assertEquals(TunableConstants.MG_PSQT[1][0], 100)
     }
 
+    @Ignore
     @Test
     fun testGame() {
         uciInput.process("uci")
@@ -63,6 +65,7 @@ class UciInputTest {
         uciInput.process("go wtime 10000 btime 10000 winc 2000 binc 2000")
     }
 
+    @Ignore
     @Test
     fun testGame2() {
         uciInput.process("uci")
@@ -72,6 +75,7 @@ class UciInputTest {
         uciInput.process("go wtime 77485 btime 46895 winc 2000 binc 2000")
     }
 
+    @Ignore
     @Test
     fun testGame3() {
         uciInput.process("uci")
@@ -81,6 +85,7 @@ class UciInputTest {
         uciInput.process("go wtime 120000 btime 120000 winc 2000 binc 2000")
     }
 
+    @Ignore
     @Test
     fun testGame4() {
         uciInput.process("uci")
@@ -90,6 +95,7 @@ class UciInputTest {
         uciInput.process("go wtime 10000 btime 10000 winc 2000 binc 2000")
     }
 
+    @Ignore
     @Test
     fun testGame5() {
         uciInput.process("uci")
