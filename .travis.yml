@@ -12,7 +12,7 @@ script: ./gradlew clean build
 deploy:
   provider: releases
   file: pirarucu-jvm/build/distributions/*.zip
-  api_key: "$GITHUB_API_KEY"
+  api_key: $GITHUB_API_KEY
   skip_cleanup: true
   on:
     tags: true
