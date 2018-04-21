@@ -7,8 +7,6 @@ before_install:
 branches:
   only:
     - master
-stages:
-  - name: snapshot
 jobs:
   include:
     script: ./gradlew clean build
