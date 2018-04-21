@@ -7,7 +7,7 @@ before_install:
 branches:
   only:
     - master
-    - /v\d+\.\d+[a-z]/
+    - /v\d+\.\d+/
 jobs:
   include:
     script: ./gradlew clean build
