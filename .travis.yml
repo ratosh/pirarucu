@@ -1,11 +1,27 @@
 language: java
 jdk:
   - oraclejdk9
-script:
-  - ./gradlew clean build
 before_install:
   - chmod +x gradlew
   - chmod +x gradle/wrapper/gradle-wrapper.jar
 branches:
   only:
     - master
+stages:
+  - name: build
+  - name: snapshot
+    if: branch = master
+jobs:
+  include:
+    - stage: build
+      script: ./gradlew build
+    - stage: snapshot
+      script: ./gradlew build
+      script: echo "Deploying to GitHub releases ..."
+      deploy:
+        provider: releases
+        file: pirarucu-jvm/build/distributions/*.zip
+        api_key: "$GITHUB_OAUTH_TOKEN"
+        skip_cleanup: true
+        on:
+          tags: true
