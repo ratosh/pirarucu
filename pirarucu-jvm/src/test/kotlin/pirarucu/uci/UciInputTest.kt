@@ -7,7 +7,6 @@ import pirarucu.stats.Statistics
 import pirarucu.tuning.TunableConstants
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -26,9 +25,11 @@ class UciInputTest {
     @AfterTest
     fun tearDown() {
         var search = false
-        while (!SearchOptions.stop) {
-            search = true
-            Thread.yield()
+        if (SearchOptions.stop) {
+            while (!SearchOptions.stop) {
+                search = true
+                Thread.yield()
+            }
         }
         if (search) {
             println(Statistics.toString())
