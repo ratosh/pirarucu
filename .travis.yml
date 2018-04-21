@@ -8,13 +8,11 @@ branches:
   only:
     - master
     - /v\d+\.\d+/
-jobs:
-  include:
-    script: ./gradlew clean build
-    deploy:
-      provider: releases
-      file: pirarucu-jvm/build/distributions/*.zip
-      api_key: "$GITHUB_OAUTH_TOKEN"
-      skip_cleanup: true
-      on:
-        tags: true
+script: ./gradlew clean build
+deploy:
+  provider: releases
+  file: pirarucu-jvm/build/distributions/*.zip
+  api_key: "$GITHUB_API_KEY"
+  skip_cleanup: true
+  on:
+    tags: true
