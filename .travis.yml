@@ -4,9 +4,6 @@ jdk:
 before_install:
   - chmod +x gradlew
   - chmod +x gradle/wrapper/gradle-wrapper.jar
-
-script:
-  - ./gradlew clean build
 branches:
   only:
     - master
@@ -14,13 +11,11 @@ stages:
   - name: snapshot
 jobs:
   include:
-    - stage: snapshot
-      if: branch = master
-      script: echo "Deploying to GitHub releases ..."
-      deploy:
-        provider: releases
-        file: pirarucu-jvm/build/distributions/*.zip
-        api_key: "$GITHUB_OAUTH_TOKEN"
-        skip_cleanup: true
-        on:
-          tags: true
+    script: ./gradlew clean build
+    deploy:
+      provider: releases
+      file: pirarucu-jvm/build/distributions/*.zip
+      api_key: "$GITHUB_OAUTH_TOKEN"
+      skip_cleanup: true
+      on:
+        tags: true
