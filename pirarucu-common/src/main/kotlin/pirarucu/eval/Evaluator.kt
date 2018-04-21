@@ -18,22 +18,14 @@ object Evaluator {
 
         val phase = board.phase
 
-        val whiteMaterialImbalance = materialImbalance(board, Color.WHITE, Color.BLACK)
-        val blackMaterialImbalance = materialImbalance(board, Color.BLACK, Color.WHITE)
-
-        val independentScore = whiteMaterialImbalance - blackMaterialImbalance
-
         val result = (mgScore * phase + egScore * (TunableConstants.PHASE_MAX - phase)) /
-            TunableConstants.PHASE_MAX + independentScore
+            TunableConstants.PHASE_MAX
 
         if (EvalDebug.ENABLED) {
             EvalDebug.psqScore[Color.WHITE] = board.psqScore[Color.WHITE]
             EvalDebug.psqScore[Color.BLACK] = board.psqScore[Color.BLACK]
             EvalDebug.material[Color.WHITE] = board.materialScore[Color.WHITE]
             EvalDebug.material[Color.BLACK] = board.materialScore[Color.BLACK]
-
-            EvalDebug.materialImbalance[Color.WHITE] = whiteMaterialImbalance
-            EvalDebug.materialImbalance[Color.BLACK] = blackMaterialImbalance
         }
 
         return result
