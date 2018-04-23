@@ -45,6 +45,7 @@ class ErrorCalculator : Callable<Double> {
                 bestConstant = topConstant
                 bestError = topError
             }
+            println(String.format("Constant %f | %.10f", bestConstant, bestError))
 
             variation /= 2.0
         }

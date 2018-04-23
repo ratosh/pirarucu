@@ -174,9 +174,6 @@ object TunableConstants {
 
     val PSQT = Array(Piece.SIZE) { IntArray(Square.SIZE) }
 
-    init {
-        update()
-    }
 
     val MATERIAL_IMBALANCE_OURS = arrayOf(
         intArrayOf(0, 0, 0, 0, 0, 0),
@@ -195,6 +192,10 @@ object TunableConstants {
         intArrayOf(0, 0, 0, 0, 0, 0),
         intArrayOf(0, 0, 0, 0, 0, 0)
     )
+
+    init {
+        update()
+    }
 
     fun update() {
         PHASE_MAX = PHASE_PIECE_VALUE[Piece.PAWN] * 16 +

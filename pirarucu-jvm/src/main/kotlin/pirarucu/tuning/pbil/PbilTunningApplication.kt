@@ -1,6 +1,5 @@
 package pirarucu.tuning.pbil
 
-import pirarucu.board.Piece
 import pirarucu.tuning.ErrorCalculator
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.EpdFileLoader
@@ -216,6 +215,7 @@ object PbilTunningApplication {
                 true))
             */
 
+            /*
             tuningObjects.add(PbilTunningObject(
                 "MATERIAL_IMBALANCE_OURS[PAWN]",
                 TunableConstants.MATERIAL_IMBALANCE_OURS[Piece.PAWN],
@@ -275,6 +275,7 @@ object PbilTunningApplication {
                 TunableConstants.MATERIAL_IMBALANCE_THEIRS[Piece.QUEEN],
                 intArrayOf(0, 3, 3, 3, 3, 0),
                 true, 0, 5))
+            */
 
             return tuningObjects
         }
@@ -297,7 +298,7 @@ object PbilTunningApplication {
     }
 
     @Throws(ExecutionException::class, InterruptedException::class)
-    fun optimize(tuningObjects: List<PbilTunningObject>) {
+    private fun optimize(tuningObjects: List<PbilTunningObject>) {
         val bestError = executeTest()
         println("Starting error $bestError")
         for (tuningObject in tuningObjects) {

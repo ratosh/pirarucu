@@ -13,7 +13,7 @@ class BasicEvalInfo {
     var checkBitboard = LongArray(Color.SIZE)
         private set
 
-    var pinnersBitboard = LongArray(Color.SIZE)
+    var pinnerType = IntArray(Square.SIZE)
         private set
 
     var pinnedBitboard = LongArray(Color.SIZE)
@@ -32,7 +32,7 @@ class BasicEvalInfo {
                 Square.getSquare(board.pieceBitboard[ourColor][Piece.KING])
             kingSquare[ourColor] = kingSquarePosition
             pinnedBitboard[ourColor] = Bitboard.EMPTY
-            pinnersBitboard[theirColor] = Bitboard.EMPTY
+            pinnerType[theirColor] = Piece.NONE
             checkBitboard[ourColor] = Bitboard.EMPTY
 
             dangerBitboard[Piece.PAWN] = BitboardMove.PAWN_ATTACKS[ourColor][kingSquarePosition]
@@ -57,7 +57,7 @@ class BasicEvalInfo {
                             checkBitboard[ourColor] = checkBitboard[ourColor] or bitboard
                         } else if (Bitboard.oneElement(between)) {
                             pinnedBitboard[ourColor] = pinnedBitboard[ourColor] or between
-                            pinnersBitboard[theirColor] = pinnersBitboard[theirColor] or bitboard
+                            pinnerType[Square.getSquare(between)] = piece
                         }
                     } else {
                         checkBitboard[ourColor] = checkBitboard[ourColor] or bitboard
