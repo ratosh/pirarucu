@@ -1,5 +1,6 @@
 package pirarucu.board
 
+import pirarucu.eval.AttackInfo
 import pirarucu.eval.BasicEvalInfo
 import pirarucu.game.GameConstants
 import pirarucu.hash.Zobrist
@@ -27,6 +28,7 @@ class Board {
     var nextColorToMove = Color.BLACK
 
     var basicEvalInfo = BasicEvalInfo()
+    var attackInfo = AttackInfo()
 
     val pieceTypeBoard = IntArray(Square.SIZE)
     val pieceBitboard = Array(Color.SIZE) { LongArray(Piece.SIZE) }
@@ -259,6 +261,11 @@ class Board {
         gameBitboard = colorBitboard[Color.WHITE] or colorBitboard[Color.BLACK]
         emptyBitboard = gameBitboard.inv()
         basicEvalInfo.update(this)
+    }
+
+
+    fun updateAttackInfo(color: Int) {
+        attackInfo.update(this, color)
     }
 
     fun undoMove(move: Int) {
