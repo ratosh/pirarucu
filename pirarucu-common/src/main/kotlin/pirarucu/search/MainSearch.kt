@@ -246,12 +246,12 @@ object MainSearch {
                 var score = -search(board, moveList, searchDepth, ply + 1, -searchAlpha - 1, -searchAlpha, false)
                 if (Statistics.ENABLED) {
                     Statistics.pvs++
-                    if (score <= alpha) {
+                    if (score <= searchAlpha) {
                         Statistics.pvsHits++
                     }
                 }
 
-                if (score > alpha) {
+                if (score > searchAlpha) {
                     score = -search(board, moveList, searchDepth, ply + 1, -currentBeta, -searchAlpha, true, false)
                 }
                 board.undoMove(move)
