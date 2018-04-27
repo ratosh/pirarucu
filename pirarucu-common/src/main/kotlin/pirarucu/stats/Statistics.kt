@@ -16,9 +16,12 @@ object Statistics {
     var qDraw = 0L
     var qTTEntry = 0L
     var qStandpat = 0L
-    var qFutility = 0L
+    var qFutilityHit = 0L
     var qFailHigh = 0L
     var qMaxPly = 0
+
+    var seeNodes = 0L
+    var seeHits = 0L
 
     var gMoves = 0L
     var moves = 0L
@@ -53,9 +56,12 @@ object Statistics {
         qDraw = 0
         qTTEntry = 0
         qStandpat = 0
-        qFutility = 0
+        qFutilityHit = 0
         qFailHigh = 0
         qMaxPly = 0
+
+        seeNodes = 0
+        seeHits = 0
 
         gMoves = 0
         moves = 0
@@ -107,10 +113,11 @@ object Statistics {
         buffer.append("Stalemates: " + buildPercentage(stalemate, moves) + "\n")
 
         buffer.append("--- Quiescence Search\n")
+        buffer.append("QS SEE pruning: " + buildPercentage(seeHits, seeNodes) + " \n")
         buffer.append("QS Draw: " + buildPercentage(qDraw, qNodes) + " \n")
         buffer.append("QS TTEntry: " + buildPercentage(qTTEntry, qNodes) + " \n")
         buffer.append("QS Standpat: " + buildPercentage(qStandpat, qNodes) + " \n")
-        buffer.append("QS Futility: " + buildPercentage(qFutility, qNodes) + " \n")
+        buffer.append("QS Futility: " + buildPercentage(qFutilityHit, qRenodes) + " \n")
         buffer.append("QS FailHigh: " + buildPercentage(qFailHigh, qRenodes) + " \n")
         buffer.append("QS Nodes: $qNodes\n")
         buffer.append("QS Renodes: $qRenodes\n")

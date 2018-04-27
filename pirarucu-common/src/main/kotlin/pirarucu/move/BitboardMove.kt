@@ -30,6 +30,8 @@ object BitboardMove {
     val DOUBLE_PAWN_MOVES = Array(Color.SIZE) { LongArray(Square.SIZE) }
     val PAWN_ATTACKS = Array(Color.SIZE) { LongArray(Square.SIZE) }
     val KNIGHT_MOVES = LongArray(Square.SIZE)
+    val BISHOP_PSEUDO_MOVES = LongArray(Square.SIZE)
+    val ROOK_PSEUDO_MOVES = LongArray(Square.SIZE)
     val KING_MOVES = LongArray(Square.SIZE)
 
     val BETWEEN_BITBOARD = Array(Square.SIZE) { LongArray(Square.SIZE) }
@@ -214,12 +216,14 @@ object BitboardMove {
     private fun populateBishopMoves() {
         for (square in Square.A1 until Square.SIZE) {
             initMagics(square, Magic.BISHOP[square], BISHOP_MAGIC_SHIFT, BISHOP_MOVE_STEPS)
+            BISHOP_PSEUDO_MOVES[square] = bishopMoves(square, 0)
         }
     }
 
     private fun populateRookMoves() {
         for (square in Square.A1 until Square.SIZE) {
             initMagics(square, Magic.ROOK[square], ROOK_MAGIC_SHIFT, ROOK_MOVE_STEPS)
+            ROOK_PSEUDO_MOVES[square] = rookMoves(square, 0)
         }
     }
 

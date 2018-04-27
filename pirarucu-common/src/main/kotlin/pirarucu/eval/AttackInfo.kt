@@ -28,7 +28,6 @@ class AttackInfo {
         Utils.specific.arrayFill(attacksBitboard[color], 0)
         val checkBitboard = board.basicEvalInfo.checkBitboard[color]
 
-        kingMoves(board, color)
         when {
             checkBitboard == Bitboard.EMPTY -> {
                 val mask = Bitboard.ALL
@@ -48,6 +47,7 @@ class AttackInfo {
                 rookMoves(board, color, betweenMask)
             }
         }
+        kingMoves(board, color)
 
         attacksBitboard[color][Piece.NONE] = attacksBitboard[color][Piece.PAWN] or
             attacksBitboard[color][Piece.KNIGHT] or
@@ -82,7 +82,7 @@ class AttackInfo {
             board.basicEvalInfo.pinnedBitboard[color].inv()
         while (tmpPieces != Bitboard.EMPTY) {
             val fromSquare = Square.getSquare(tmpPieces)
-            var bitboard = BitboardMove.KNIGHT_MOVES[fromSquare] and mask
+            val bitboard = BitboardMove.KNIGHT_MOVES[fromSquare] and mask
 
             pieceMovement[color][fromSquare] = bitboard
             attacksBitboard[color][Piece.KNIGHT] = attacksBitboard[color][Piece.KNIGHT] or
@@ -94,7 +94,7 @@ class AttackInfo {
 
     private fun bishopMoves(board: Board, color: Int, mask: Long) {
         val kingSquare = board.basicEvalInfo.kingSquare[color]
-        var pieces = board.pieceBitboard[color][Piece.BISHOP] or
+        val pieces = board.pieceBitboard[color][Piece.BISHOP] or
             board.pieceBitboard[color][Piece.QUEEN]
         var tmpPieces = pieces
         while (tmpPieces != Bitboard.EMPTY) {
@@ -117,7 +117,7 @@ class AttackInfo {
 
     private fun rookMoves(board: Board, color: Int, mask: Long) {
         val kingSquare = board.basicEvalInfo.kingSquare[color]
-        var pieces = board.pieceBitboard[color][Piece.ROOK] or
+        val pieces = board.pieceBitboard[color][Piece.ROOK] or
             board.pieceBitboard[color][Piece.QUEEN]
         var tmpPieces = pieces
         while (tmpPieces != Bitboard.EMPTY) {
@@ -146,10 +146,11 @@ class AttackInfo {
         val theirColor = Color.invertColor(color)
         val gameBitboard = board.gameBitboard xor fromBitboard
         var bitboard = Bitboard.EMPTY
+
         while (moves != Bitboard.EMPTY) {
             val toSquare = Square.getSquare(moves)
-            if (!MoveGenerator.squareUnderAttack(toSquare, ourColor, board.pieceBitboard[theirColor],
-                    gameBitboard)) {
+            if (MoveGenerator.squareAttackedBitboard(toSquare, ourColor, board.pieceBitboard[theirColor], gameBitboard) ==
+                Bitboard.EMPTY) {
                 bitboard = bitboard or Bitboard.getBitboard(toSquare)
             }
             moves = moves and moves - 1

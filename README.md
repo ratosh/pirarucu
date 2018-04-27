@@ -20,15 +20,18 @@ Features
 
 - Bitboard representation
 - Magic bitboard
-- Material imbalance
 - Transposition table
 - Quiescence search
+    - Static Exchange Evaluation
 - Alpha-beta search
     - Aspiration window
     - Interactive deepening
     - Null move reductions
     - Razoring pruning
     - Futility pruning
+- Evaluation
+    - Piece square table
+    - Tapered evaluation
 
 Contributions
 =============

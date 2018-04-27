@@ -6,14 +6,17 @@ import pirarucu.board.Color
 import pirarucu.board.Piece
 import pirarucu.board.Square
 import pirarucu.move.BitboardMove
+import pirarucu.move.MoveGenerator
 
 class BasicEvalInfo {
-    private val dangerBitboard = LongArray(Piece.SIZE)
 
     var checkBitboard = LongArray(Color.SIZE)
         private set
 
-    var pinnerType = IntArray(Square.SIZE)
+    var pinnerBitboard = LongArray(Color.SIZE)
+        private set
+
+    var discoveryBitboard = LongArray(Color.SIZE)
         private set
 
     var pinnedBitboard = LongArray(Color.SIZE)
@@ -24,47 +27,61 @@ class BasicEvalInfo {
 
     fun update(board: Board) {
         for (ourColor in Color.WHITE until Color.SIZE) {
-            val ourColorBitboard = board.colorBitboard[ourColor]
+            kingSquare[ourColor] = Square.getSquare(board.pieceBitboard[ourColor][Piece.KING])
             val theirColor = Color.invertColor(ourColor)
-            val theirColorBitboard = board.colorBitboard[theirColor]
+            val theirPieceBitboard = board.pieceBitboard[theirColor]
+            val kingSquarePosition = kingSquare[ourColor]
 
-            val kingSquarePosition =
-                Square.getSquare(board.pieceBitboard[ourColor][Piece.KING])
             kingSquare[ourColor] = kingSquarePosition
-            pinnedBitboard[ourColor] = Bitboard.EMPTY
-            pinnerType[theirColor] = Piece.NONE
-            checkBitboard[ourColor] = Bitboard.EMPTY
 
-            dangerBitboard[Piece.PAWN] = BitboardMove.PAWN_ATTACKS[ourColor][kingSquarePosition]
-            dangerBitboard[Piece.KNIGHT] = BitboardMove.KNIGHT_MOVES[kingSquarePosition]
-            dangerBitboard[Piece.BISHOP] = BitboardMove.bishopMoves(kingSquarePosition,
-                theirColorBitboard)
-            dangerBitboard[Piece.ROOK] = BitboardMove.rookMoves(kingSquarePosition,
-                theirColorBitboard)
-            dangerBitboard[Piece.QUEEN] = dangerBitboard[Piece.BISHOP] or dangerBitboard[Piece.ROOK]
+            checkBitboard[ourColor] = MoveGenerator.squareAttackedBitboard(kingSquare[ourColor],
+                ourColor,
+                theirPieceBitboard,
+                board.gameBitboard)
 
-            for (piece in Piece.PAWN until Piece.KING) {
-                var possibleCheck = dangerBitboard[piece] and
-                    board.pieceBitboard[theirColor][piece]
-                while (possibleCheck != Bitboard.EMPTY) {
-                    val checkSquare = Square.getSquare(possibleCheck)
-                    val bitboard = Bitboard.getBitboard(checkSquare)
-                    if (piece == Piece.BISHOP || piece == Piece.ROOK || piece == Piece.QUEEN) {
-                        val between =
-                            BitboardMove.BETWEEN_BITBOARD[checkSquare][kingSquarePosition] and
-                                ourColorBitboard
-                        if (between == Bitboard.EMPTY) {
-                            checkBitboard[ourColor] = checkBitboard[ourColor] or bitboard
-                        } else if (Bitboard.oneElement(between)) {
-                            pinnedBitboard[ourColor] = pinnedBitboard[ourColor] or between
-                            pinnerType[Square.getSquare(between)] = piece
-                        }
-                    } else {
-                        checkBitboard[ourColor] = checkBitboard[ourColor] or bitboard
-                    }
-                    possibleCheck = possibleCheck and possibleCheck - 1
-                }
-            }
+            setPinnedDiscovery(kingSquarePosition,
+                ourColor,
+                theirColor,
+                theirPieceBitboard,
+                board.colorBitboard)
         }
+    }
+
+    /**
+     * Updates pinnedBitboard, pinnerBitboard and discoveryBitboard
+     */
+    private fun setPinnedDiscovery(kingSquare: Int,
+                                   ourColor: Int,
+                                   theirColor: Int,
+                                   theirPieceBitboard: LongArray,
+                                   colorBitboard: LongArray) {
+        var pinned = 0L
+        var pinner = 0L
+        var discovery = 0L
+
+        val ourColorBitboard = colorBitboard[ourColor]
+        val theirColorBitboard = colorBitboard[theirColor]
+        val gameBitboard = ourColorBitboard or theirColorBitboard
+
+        var piece = ((theirPieceBitboard[Piece.BISHOP] or theirPieceBitboard[Piece.QUEEN]) and
+            BitboardMove.BISHOP_PSEUDO_MOVES[kingSquare]) or
+            ((theirPieceBitboard[Piece.ROOK] or theirPieceBitboard[Piece.QUEEN]) and
+                BitboardMove.ROOK_PSEUDO_MOVES[kingSquare])
+
+        while (piece != 0L) {
+            val square = Square.getSquare(piece)
+            val betweenPiece = BitboardMove.BETWEEN_BITBOARD[kingSquare][square] and gameBitboard
+            if (Bitboard.oneElement(betweenPiece)) {
+                val bitboard = Bitboard.getBitboard(square)
+                pinner = pinner or bitboard
+                discovery = discovery or (betweenPiece and theirColorBitboard)
+                pinned = pinned or (betweenPiece and ourColorBitboard)
+            }
+
+            piece = piece and piece - 1
+        }
+        pinnedBitboard[ourColor] = pinned
+        pinnerBitboard[theirColor] = pinner
+        discoveryBitboard[theirColor] = discovery
     }
 }
