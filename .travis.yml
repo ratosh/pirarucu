@@ -7,7 +7,7 @@ before_install:
 branches:
   only:
     - master
-    - /v\d+\.\d+/
+    - /v\d+\.\d+\.\d+/
 script: ./gradlew clean build
 deploy:
   provider: releases

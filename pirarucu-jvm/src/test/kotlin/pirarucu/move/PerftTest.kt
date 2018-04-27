@@ -184,31 +184,31 @@ class PerftTest {
 
     @Test
     fun testPosition5() {
-        val moveInfoList = Array(4) { MoveInfo() }
+        val moveInfoList = Array(5) { MoveInfo() }
         val board = BoardFactory.getBoard("rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ -")
 
-        recursive(board, moveInfoList, 4)
+        recursive(board, moveInfoList, 5)
 
         assertEquals(44, moveInfoList[0].moveCount)
         assertEquals(1486, moveInfoList[1].moveCount)
         assertEquals(62379, moveInfoList[2].moveCount)
         assertEquals(2103487, moveInfoList[3].moveCount)
-        //assertEquals(89941194, moveInfoList[4].moveCount)
+        assertEquals(89941194, moveInfoList[4].moveCount)
     }
 
     @Test
     fun testPosition6() {
-        val moveInfoList = Array(4) { MoveInfo() }
+        val moveInfoList = Array(5) { MoveInfo() }
         val board = BoardFactory.getBoard(
             "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - -")
 
-        recursive(board, moveInfoList, 4)
+        recursive(board, moveInfoList, 5)
 
         assertEquals(46, moveInfoList[0].moveCount)
         assertEquals(2079, moveInfoList[1].moveCount)
         assertEquals(89890, moveInfoList[2].moveCount)
         assertEquals(3894594, moveInfoList[3].moveCount)
-        //assertEquals(164075551, moveInfoList[4].moveCount)
+        assertEquals(164075551, moveInfoList[4].moveCount)
     }
 
     fun divide(board: Board,
@@ -227,6 +227,7 @@ class PerftTest {
 
             board.doMove(move)
             recursive(board, moveList, moveInfoArray, 1, wantedDepth - 1)
+            println("Move " + Move.toString(move))
             println(getString(moveInfoArray))
             board.undoMove(move)
         }

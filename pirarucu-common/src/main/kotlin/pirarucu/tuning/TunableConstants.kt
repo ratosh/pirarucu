@@ -20,7 +20,8 @@ object TunableConstants {
         PHASE_PIECE_VALUE[Piece.ROOK] * 4 +
         PHASE_PIECE_VALUE[Piece.QUEEN] * 2
 
-    val QS_FUTILITY_VALUE = intArrayOf(0, 100, 330, 330, 550, 900, 10000)
+    val QS_FUTILITY_VALUE = intArrayOf(0, 100, 325, 330, 550, 900, 10000)
+    val SEE_VALUE = intArrayOf(0, 100, 325, 330, 550, 900, 10000)
 
     val MATERIAL_SCORE_MG = intArrayOf(0, 100, 450, 480, 750, 1460)
     val MATERIAL_SCORE_EG = intArrayOf(0, 100, 350, 370, 570, 1110)

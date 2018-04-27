@@ -11,7 +11,7 @@ object MoveGenerator {
 
     fun legalMoves(board: Board, moveList: MoveList) {
         board.updateAttackInfo(board.colorToMove)
-        var mask = board.emptyBitboard
+        val mask = board.emptyBitboard
         val ourColor = board.colorToMove
         val checkBitboard = board.basicEvalInfo.checkBitboard[ourColor]
         when {
@@ -28,7 +28,7 @@ object MoveGenerator {
                 val betweenMask =
                     BitboardMove.BETWEEN_BITBOARD[board.basicEvalInfo.kingSquare[ourColor]][square] and
                         mask
-                legalQueenMoves(board, moveList, mask)
+                legalQueenMoves(board, moveList, betweenMask)
                 legalRookMoves(board, moveList, betweenMask)
                 legalBishopMoves(board, moveList, betweenMask)
                 legalKnightMoves(board, moveList, betweenMask)
@@ -218,7 +218,7 @@ object MoveGenerator {
         val epSquare = board.epSquare
         if (epSquare != Square.NONE) {
             val theirColor = board.nextColorToMove
-            var epPawnBitboard = BitboardMove.PAWN_MOVES[theirColor][epSquare] and
+            val epPawnBitboard = BitboardMove.PAWN_MOVES[theirColor][epSquare] and
                 maskBitboard
             if (epPawnBitboard != Bitboard.EMPTY) {
                 val ourColor = board.colorToMove
@@ -233,8 +233,8 @@ object MoveGenerator {
                     val tmpBitboard = gameBitboard xor fromBitboard xor
                         Bitboard.getBitboard(epSquare)
 
-                    if (!squareUnderAttack(ourKingSquare, ourColor, theirPieceBitboard,
-                            tmpBitboard)) {
+                    if (squareAttackedBitboard(ourKingSquare, ourColor, theirPieceBitboard, tmpBitboard) ==
+                        Bitboard.EMPTY) {
                         moveList.addMove(Move.createPassantMove(fromSquare, epSquare))
                     }
                     tmpPieces = tmpPieces and tmpPieces - 1
@@ -277,7 +277,7 @@ object MoveGenerator {
         var tmpPath = path
         while (tmpPath != Bitboard.EMPTY) {
             val square = Square.getSquare(tmpPath)
-            if (squareUnderAttack(square, ourColor, theirPieceBitboard, gameBitboard)) {
+            if (squareAttackedBitboard(square, ourColor, theirPieceBitboard, gameBitboard) != Bitboard.EMPTY) {
                 return true
             }
             tmpPath = tmpPath and tmpPath - 1
@@ -285,18 +285,24 @@ object MoveGenerator {
         return false
     }
 
-    fun squareUnderAttack(square: Int, ourColor: Int, theirPieceBitboard: LongArray,
-                          gameBitboard: Long): Boolean {
+    fun squareAttackedBitboard(square: Int, ourColor: Int, theirPieceBitboard: LongArray,
+                               gameBitboard: Long): Long {
         val pawns = theirPieceBitboard[Piece.PAWN] and gameBitboard
         val knights = theirPieceBitboard[Piece.KNIGHT] and gameBitboard
         val bishops = (theirPieceBitboard[Piece.BISHOP] or
             theirPieceBitboard[Piece.QUEEN]) and gameBitboard
         val rooks = (theirPieceBitboard[Piece.ROOK] or theirPieceBitboard[Piece.QUEEN]) and
             gameBitboard
-        return (pawns and BitboardMove.PAWN_ATTACKS[ourColor][square] != Bitboard.EMPTY)
-            || (knights and BitboardMove.KNIGHT_MOVES[square] != Bitboard.EMPTY)
-            || (bishops and BitboardMove.bishopMoves(square, gameBitboard) != Bitboard.EMPTY)
-            || (rooks and BitboardMove.rookMoves(square, gameBitboard) != Bitboard.EMPTY)
-            || BitboardMove.KING_MOVES[square] and theirPieceBitboard[Piece.KING] != Bitboard.EMPTY
+        var result = (pawns and BitboardMove.PAWN_ATTACKS[ourColor][square]) or
+            (knights and BitboardMove.KNIGHT_MOVES[square]) or
+            (BitboardMove.KING_MOVES[square] and theirPieceBitboard[Piece.KING])
+
+        if (bishops != Bitboard.EMPTY) {
+            result = result or (bishops and BitboardMove.bishopMoves(square, gameBitboard))
+        }
+        if (rooks != Bitboard.EMPTY) {
+            result = result or (rooks and BitboardMove.rookMoves(square, gameBitboard))
+        }
+        return result
     }
 }
