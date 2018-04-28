@@ -71,7 +71,7 @@ class BasicEvalInfo {
         while (piece != 0L) {
             val square = Square.getSquare(piece)
             val betweenPiece = BitboardMove.BETWEEN_BITBOARD[kingSquare][square] and gameBitboard
-            if (Bitboard.oneElement(betweenPiece)) {
+            if (betweenPiece != 0L && Bitboard.oneElement(betweenPiece)) {
                 val bitboard = Bitboard.getBitboard(square)
                 pinner = pinner or bitboard
                 discovery = discovery or (betweenPiece and theirColorBitboard)
