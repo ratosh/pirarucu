@@ -314,8 +314,8 @@ object MainSearch {
         panicSearchTimeLimit = startTime + SearchOptions.extraPanicTimeLimit
         maxSearchTimeLimit = startTime + SearchOptions.maxSearchTimeLimit
 
-        while (PrincipalVariation.bestMove == Move.NONE || depth <= SearchOptions.depth) {
-            if (SearchOptions.stop) {
+        while (depth <= SearchOptions.depth) {
+            if (SearchOptions.stop && PrincipalVariation.bestMove != Move.NONE ) {
                 break
             }
             var aspirationWindow = SearchConstants.ASPIRATION_WINDOW_SIZE
@@ -330,7 +330,6 @@ object MainSearch {
                 UciOutput.searchInfo(depth, currentTime - startTime)
 
                 SearchOptions.panic = score < previousScore - SearchConstants.PANIC_WINDOW &&
-                    SearchOptions.panicEnabled &&
                     abs(score) < EvalConstants.SCORE_MATE
 
                 if ((SearchOptions.panic && panicSearchTimeLimit < currentTime) ||
