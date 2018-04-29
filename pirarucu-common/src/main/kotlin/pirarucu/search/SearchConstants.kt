@@ -2,7 +2,6 @@ package pirarucu.search
 
 object SearchConstants {
     const val ASPIRATION_WINDOW_SIZE = 20
-    const val PANIC_WINDOW = 100
 
     const val ENABLE_Q_TT = true
 
