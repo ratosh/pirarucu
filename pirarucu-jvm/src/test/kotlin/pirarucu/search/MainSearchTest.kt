@@ -16,7 +16,6 @@ class MainSearchTest {
         val board = BoardFactory.getBoard(fen)
         BoardFactory.setBoard(fen, board)
         SearchOptions.minSearchTimeLimit = searchTime
-        SearchOptions.extraPanicTimeLimit = searchTime
         SearchOptions.maxSearchTimeLimit = searchTime * 2
         MainSearch.search(board)
     }
@@ -77,5 +76,11 @@ class MainSearchTest {
     @Test
     fun testRandomPosition5() {
         testSearch("1k6/7R/8/4K3/5r2/8/8/8 b - -", 10000)
+    }
+
+    @Ignore
+    @Test
+    fun testRandomPosition6() {
+        testSearch("8/8/2k5/8/8/n4K2/8/6B1 b - -", 1000)
     }
 }

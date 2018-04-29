@@ -1,12 +1,10 @@
 [![Build Status](https://travis-ci.org/ratosh/pirarucu.svg?branch=master)](https://travis-ci.org/ratosh/pirarucu)
 
-Pirarucu
-========
+#Pirarucu
 
 A Kotlin Chess Engine with UCI protocol support.
 
-Concepts
-========
+## Concepts
 
 - Color represents chess colors.
 - Piece represents chess piece type.
@@ -15,8 +13,7 @@ Concepts
 - File represents a board file index.
 - Rank represents a board rank index.
 
-Features
-========
+## Features
 
 - Bitboard representation
 - Magic bitboard
@@ -32,13 +29,23 @@ Features
 - Evaluation
     - Piece square table
     - Tapered evaluation
+    
+## How to use
 
-Contributions
-=============
+### Requirements
 
-You are welcome to contribute. Create an issue to discuss a feature before sending a Pull Request.
+The engine runs on JRE (Java Runtime Environment) version 8 and above.
 
-Author
-======
+###  Running
+
+- Download the latest [release](https://github.com/ratosh/pirarucu/releases/latest).
+- Uncompress the downloaded file in a empty directory.
+- Run the bash file in bin directory. 
+
+## Contributions
+
+You are welcome to contribute, please follow the [instructions](CONTRIBUTING.md).
+
+## Author
 
 - Raoni Campos

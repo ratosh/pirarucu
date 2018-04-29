@@ -1,22 +1,19 @@
 package pirarucu.tuning.pbil
 
 import java.security.SecureRandom
-import java.util.Arrays
-import java.util.BitSet
+import java.util.*
 
 class PbilGenerator(private val bitsPerValue: IntArray,
-    private val totalBits: Int,
-    private val allowNegatives: Boolean,
-    vararg ignoreElementList: Int) {
+                    private val totalBits: Int,
+                    private val allowNegatives: Boolean,
+                    private vararg val ignoreElementList: Int) {
 
     private val random: SecureRandom = SecureRandom()
 
     private val probability: DoubleArray
 
-    private val ignoreElementList: IntArray = ignoreElementList
-
     init {
-        Arrays.sort(this.ignoreElementList)
+        Arrays.sort(ignoreElementList)
         probability = DoubleArray(totalBits)
         Arrays.fill(probability, 0.5)
     }
@@ -97,12 +94,12 @@ class PbilGenerator(private val bitsPerValue: IntArray,
 
     companion object {
 
-        private val LEARN_RATE = 0.1
+        private const val LEARN_RATE = 0.1
 
-        private val NEG_LEARN_RATE = 0.075
+        private const val NEG_LEARN_RATE = 0.075
 
-        private val MUTATION_PROBABILITY = 0.02
+        private const val MUTATION_PROBABILITY = 0.02
 
-        private val MUTATION_PROBABILITY_SHIFT = 0.05
+        private const val MUTATION_PROBABILITY_SHIFT = 0.05
     }
 }

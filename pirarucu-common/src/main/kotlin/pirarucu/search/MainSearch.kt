@@ -25,10 +25,6 @@ object MainSearch {
 
     private val ttMoves = Array(GameConstants.MAX_PLIES) { IntArray(TranspositionTable.MAX_MOVES) }
 
-    private var minSearchTimeLimit: Long = 0L
-    private var panicSearchTimeLimit: Long = 0L
-    private var maxSearchTimeLimit: Long = 0L
-
     private const val PHASE_END = 0
     private const val PHASE_QUIET = 1
     private const val PHASE_ATTACK = 2
@@ -49,10 +45,13 @@ object MainSearch {
         if (depth <= 0) {
             return QuiescenceSearch.search(board, moveList, ply, alpha, beta)
         }
+        val rootNode = pvNode && ply == 1
 
-        if (DrawEvaluator.isDrawByRules(board) || !DrawEvaluator.hasSufficientMaterial(board)) {
+        if (!rootNode &&
+            (DrawEvaluator.isDrawByRules(board) || !DrawEvaluator.hasSufficientMaterial(board))) {
             return EvalConstants.SCORE_DRAW
         }
+
         if (Statistics.ENABLED) {
             Statistics.abSearch++
         }
@@ -71,7 +70,6 @@ object MainSearch {
         val eval: Int
 
         var foundMoves = 0L
-        val rootNode = pvNode && ply == 1
 
         val prunable = !inCheck
 
@@ -310,18 +308,20 @@ object MainSearch {
         var beta = EvalConstants.SCORE_MAX
         var score = EvalConstants.SCORE_MIN
         val startTime = Utils.specific.currentTimeMillis()
-        minSearchTimeLimit = startTime + SearchOptions.minSearchTimeLimit
-        panicSearchTimeLimit = startTime + SearchOptions.extraPanicTimeLimit
-        maxSearchTimeLimit = startTime + SearchOptions.maxSearchTimeLimit
+        var searchTimeLimit = startTime + SearchOptions.minSearchTimeLimit
+        var minSearchTimeLimit = startTime + SearchOptions.minSearchTimeLimit
+        val maxSearchTimeLimit = startTime + SearchOptions.maxSearchTimeLimit
+
+        val searchTimeIncrement = SearchOptions.searchTimeIncrement
 
         while (depth <= SearchOptions.depth) {
-            if (SearchOptions.stop && PrincipalVariation.bestMove != Move.NONE ) {
+            if (SearchOptions.stop && PrincipalVariation.bestMove != Move.NONE) {
                 break
             }
             var aspirationWindow = SearchConstants.ASPIRATION_WINDOW_SIZE
 
-            val previousScore = score
             while (true) {
+                val previousScore = score
                 score = search(board, moveList, depth, 1, alpha, beta, true)
 
                 PrincipalVariation.save(board)
@@ -329,11 +329,18 @@ object MainSearch {
                 val currentTime = Utils.specific.currentTimeMillis()
                 UciOutput.searchInfo(depth, currentTime - startTime)
 
-                SearchOptions.panic = score < previousScore - SearchConstants.PANIC_WINDOW &&
-                    abs(score) < EvalConstants.SCORE_MATE
+                if (score < previousScore &&
+                    searchTimeLimit < maxSearchTimeLimit &&
+                    abs(score) < EvalConstants.SCORE_MATE) {
+                    searchTimeLimit += searchTimeIncrement
+                }
+                if (score > previousScore &&
+                    searchTimeLimit > minSearchTimeLimit &&
+                    abs(score) < EvalConstants.SCORE_MATE) {
+                    searchTimeLimit -= searchTimeIncrement
+                }
 
-                if ((SearchOptions.panic && panicSearchTimeLimit < currentTime) ||
-                    (!SearchOptions.panic && minSearchTimeLimit < currentTime)) {
+                if (searchTimeLimit < currentTime) {
                     SearchOptions.stop = true
                     break
                 }
