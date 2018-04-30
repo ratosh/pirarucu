@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/ratosh/pirarucu.svg?branch=master)](https://travis-ci.org/ratosh/pirarucu)
 
-#Pirarucu
+# Pirarucu
 
 A Kotlin Chess Engine with UCI protocol support.
 
