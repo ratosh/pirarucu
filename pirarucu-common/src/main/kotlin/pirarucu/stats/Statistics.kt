@@ -44,6 +44,9 @@ object Statistics {
     var mate = 0L
     var stalemate = 0L
 
+    var lmr = 0L
+    var lmrHits = 0L
+
     var pvs = 0L
     var pvsHits = 0L
 
@@ -84,6 +87,9 @@ object Statistics {
         mate = 0L
         stalemate = 0L
 
+        lmr = 0L
+        lmrHits = 0L
+
         pvs = 0L
         pvsHits = 0L
     }
@@ -106,6 +112,7 @@ object Statistics {
         buffer.append("MS nullMove: " + buildPercentage(nullMoveHit, nullMove) + "\n")
 
         buffer.append("--- Other \n")
+        buffer.append("MS LMR: " + buildPercentage(lmrHits, lmr) + "\n")
         buffer.append("MS PVS: " + buildPercentage(pvsHits, pvs) + "\n")
 
         buffer.append("--- End conditions \n")

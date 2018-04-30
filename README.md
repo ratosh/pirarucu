@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/ratosh/pirarucu.svg?branch=master)](https://travis-ci.org/ratosh/pirarucu)
 
-#Pirarucu
+# Pirarucu
 
 A Kotlin Chess Engine with UCI protocol support.
 
@@ -23,9 +23,10 @@ A Kotlin Chess Engine with UCI protocol support.
 - Alpha-beta search
     - Aspiration window
     - Interactive deepening
-    - Null move reductions
+    - Null move reduction
     - Razoring pruning
     - Futility pruning
+    - Late Move Reduction
 - Evaluation
     - Piece square table
     - Tapered evaluation
