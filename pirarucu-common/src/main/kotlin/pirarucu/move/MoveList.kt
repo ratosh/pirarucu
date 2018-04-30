@@ -17,7 +17,7 @@ class MoveList {
         private set
 
     fun startPly(): Boolean {
-        if (currentPly >= GameConstants.MAX_PLIES) {
+        if (currentPly >= GameConstants.MAX_PLIES - 1) {
             return false
         }
         nextToGenerate[currentPly + 1] = nextToGenerate[currentPly]

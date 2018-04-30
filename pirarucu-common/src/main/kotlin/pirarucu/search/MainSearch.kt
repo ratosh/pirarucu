@@ -66,7 +66,6 @@ object MainSearch {
         }
         val inCheck = board.basicEvalInfo.checkBitboard[board.colorToMove] != Bitboard.EMPTY
 
-        val ttEntry: Boolean
         val eval: Int
 
         var foundMoves = 0L
@@ -80,9 +79,8 @@ object MainSearch {
             foundMoves = TranspositionTable.foundMoves
             val foundInfo = TranspositionTable.foundInfo
             val foundScore = TranspositionTable.foundScore
-            ttEntry = foundMoves != 0L
             eval = TranspositionTable.getScore(foundScore, ply)
-            if (ttEntry && TranspositionTable.getDepth(foundInfo) >= depth) {
+            if (foundMoves != 0L && TranspositionTable.getDepth(foundInfo) >= depth) {
                 when (TranspositionTable.getScoreType(foundInfo)) {
                     HashConstants.SCORE_TYPE_EXACT_SCORE -> {
                         return eval
@@ -96,7 +94,6 @@ object MainSearch {
                 }
             }
         } else {
-            ttEntry = false
             eval = if (prunable) {
                 GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board)
             } else {
@@ -182,7 +179,7 @@ object MainSearch {
         while (phase > PHASE_END) {
             when (phase) {
                 PHASE_TT -> {
-                    if (!ttEntry && depth >= 5) {
+                    if (foundMoves == 0L && depth >= 5) {
                         search(board, moveList, 3 * depth / 4 - 2, ply, currentAlpha, currentBeta, false)
                         if (TranspositionTable.findEntry(board)) {
                             foundMoves = TranspositionTable.foundMoves
@@ -197,7 +194,6 @@ object MainSearch {
                             ttMoves[ply][index] = ttMove
                         }
                     }
-
                 }
                 PHASE_ATTACK -> {
                     MoveGenerator.legalAttacks(board, moveList)
@@ -208,7 +204,7 @@ object MainSearch {
             }
             while (moveList.hasNext()) {
                 val move = moveList.next()
-                if (ttEntry && phase != PHASE_TT && ttMoves[ply].contains(move)) {
+                if (foundMoves != 0L && phase != PHASE_TT && ttMoves[ply].contains(move)) {
                     continue
                 }
                 val moveType = Move.getMoveType(move)
@@ -217,35 +213,45 @@ object MainSearch {
 
                 board.doMove(move)
 
-                val givesCheck = board.basicEvalInfo.checkBitboard[board.colorToMove] != Bitboard.EMPTY
                 val isCapture = board.capturedPiece != Piece.NONE
                 val isPromotion = MoveType.isPromotion(moveType)
 
                 var reduction = when {
-                    movesPerformed == 1 -> 1
-                    isCapture -> 0
-                    isPromotion -> 0
-                    givesCheck -> 0
+                    inCheck -> 0
                     else -> 1
-                }
-
-                // Reductions
-                if (depth >= 3 &&
-                    movesPerformed > 1 &&
-                    !inCheck &&
-                    !isCapture &&
-                    !isPromotion &&
-                    !givesCheck) {
-                    reduction += 1 + depth / 6
                 }
 
                 val searchDepth = depth - reduction
 
-                var score = -search(board, moveList, searchDepth, ply + 1, -searchAlpha - 1, -searchAlpha, false)
-                if (Statistics.ENABLED) {
-                    Statistics.pvs++
-                    if (score <= searchAlpha) {
-                        Statistics.pvsHits++
+                // Reductions
+                if (depth >= 3 &&
+                    movesPerformed > 1 &&
+                    !isCapture &&
+                    !isPromotion) {
+                    reduction += 1 + depth / 6
+                }
+
+                val reducedDepth = depth - reduction
+
+                var score = EvalConstants.SCORE_MAX
+
+                if (reducedDepth < searchDepth) {
+                    score = -search(board, moveList, reducedDepth, ply + 1, -searchAlpha - 1, -searchAlpha, false)
+                    if (Statistics.ENABLED) {
+                        Statistics.lmr++
+                        if (score <= searchAlpha) {
+                            Statistics.lmrHits++
+                        }
+                    }
+                }
+
+                if (reducedDepth >= searchDepth || score > searchAlpha) {
+                    score = -search(board, moveList, searchDepth, ply + 1, -searchAlpha - 1, -searchAlpha, false)
+                    if (Statistics.ENABLED) {
+                        Statistics.pvs++
+                        if (score <= searchAlpha) {
+                            Statistics.pvsHits++
+                        }
                     }
                 }
 
