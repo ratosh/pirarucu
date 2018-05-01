@@ -23,8 +23,8 @@ object TunableConstants {
     val QS_FUTILITY_VALUE = intArrayOf(0, 100, 325, 330, 550, 900, 10000)
     val SEE_VALUE = intArrayOf(0, 100, 325, 330, 550, 900, 10000)
 
-    val MATERIAL_SCORE_MG = intArrayOf(0, 100, 450, 480, 750, 1460)
-    val MATERIAL_SCORE_EG = intArrayOf(0, 100, 350, 370, 570, 1110)
+    val MATERIAL_SCORE_MG = intArrayOf(0, 144, 608, 642, 799, 1765)
+    val MATERIAL_SCORE_EG = intArrayOf(0, 174, 384, 421, 766, 1366)
     val MATERIAL_SCORE = IntArray(Piece.SIZE)
 
     val MG_PSQT = arrayOf(

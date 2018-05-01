@@ -1,9 +1,10 @@
 package pirarucu.tuning.pbil
 
+import pirarucu.board.Piece
 import pirarucu.tuning.ErrorCalculator
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.EpdFileLoader
-import java.util.ArrayList
+import java.util.*
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
@@ -12,10 +13,10 @@ object PbilTunningApplication {
 
     private const val INTERACTIONS = 300
 
-    private const val numberOfThreads = 1
+    private const val numberOfThreads = 2
     private val workers = arrayOfNulls<ErrorCalculator>(numberOfThreads)
     private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
-    private val epdFileLoader = EpdFileLoader("d:\\chess\\epds\\quiet_labeled_v6.epd")
+    private val epdFileLoader = EpdFileLoader("/mnt/d/chess/epds/quiet_labeled_v6.epd")
 
     private val tuningObjects: List<PbilTunningObject>
         get() {
@@ -30,20 +31,20 @@ object PbilTunningApplication {
                 */
 
             /*
+
             tuningObjects.add(PbilTunningObject(
                 "MATERIAL_SCORE_MG",
                 TunableConstants.MATERIAL_SCORE_MG,
-                intArrayOf(0, 8, 9, 9, 10, 11),
+                intArrayOf(0, 8, 10, 10, 10, 11),
                 false, 0))
 
             tuningObjects.add(PbilTunningObject(
                 "MATERIAL_SCORE_EG",
                 TunableConstants.MATERIAL_SCORE_EG,
-                intArrayOf(0, 8, 9, 9, 10, 11),
+                intArrayOf(0, 8, 10, 10, 10, 11),
                 false, 0))
                 */
 
-            /*
             tuningObjects.add(PbilTunningObject(
                 "MG[PAWN]",
                 TunableConstants.MG_PSQT[Piece.PAWN],
@@ -71,7 +72,6 @@ object PbilTunningApplication {
                     0, 0, 0, 0
                 ),
                 true, 0, 1, 2, 3, 28, 29, 30, 31))
-                */
 
             /*
             tuningObjects.add(PbilTunningObject(
