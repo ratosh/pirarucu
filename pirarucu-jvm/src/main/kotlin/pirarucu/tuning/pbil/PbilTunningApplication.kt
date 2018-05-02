@@ -59,6 +59,7 @@ object PbilTunningApplication {
                 ),
                 true, 0, 1, 2, 3, 28, 29, 30, 31))
 
+            /*
             tuningObjects.add(PbilTunningObject(
                 "EG[PAWN]",
                 TunableConstants.EG_PSQT[Piece.PAWN],
@@ -72,6 +73,7 @@ object PbilTunningApplication {
                     0, 0, 0, 0
                 ),
                 true, 0, 1, 2, 3, 28, 29, 30, 31))
+                */
 
             /*
             tuningObjects.add(PbilTunningObject(
