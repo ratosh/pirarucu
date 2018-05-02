@@ -7,7 +7,7 @@ import pirarucu.board.Square
 import pirarucu.util.SplitValue
 
 object TunableConstants {
-    val RAZOR_MARGIN = intArrayOf(0, 100, 150, 200, 250, 300, 350, 400)
+    val RAZOR_MARGIN = intArrayOf(0, 280, 300, 320)
     val FUTILITY_CHILD_MARGIN = intArrayOf(0, 120, 180, 250, 330, 420, 520)
 
     val TEMPO = SplitValue.mergeParts(20, 15)
