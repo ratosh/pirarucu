@@ -14,54 +14,66 @@ import kotlin.math.max
 object StaticExchangeEvaluator {
 
 
-    private fun getSmallestAttackSquare(board: Board,
-                                        colorToMove: Int,
-                                        toSquare: Int,
-                                        allPieces: Long): Int {
+    private fun getSmallestAttackBitboard(board: Board,
+                                          colorToMove: Int,
+                                          toSquare: Int,
+                                          allPieces: Long): Long {
         var attackBitboard = allPieces and
             board.pieceBitboard[colorToMove][Piece.PAWN] and
             BitboardMove.PAWN_ATTACKS[Color.invertColor(colorToMove)][toSquare]
 
-        if (attackBitboard == Bitboard.EMPTY) {
-            attackBitboard = allPieces and
-                board.pieceBitboard[colorToMove][Piece.KNIGHT] and
-                BitboardMove.KNIGHT_MOVES[toSquare]
+        if (attackBitboard != Bitboard.EMPTY) {
+            return attackBitboard
         }
 
-        if (attackBitboard == Bitboard.EMPTY) {
-            val bishops = allPieces and board.pieceBitboard[colorToMove][Piece.BISHOP]
+        attackBitboard = allPieces and
+            board.pieceBitboard[colorToMove][Piece.KNIGHT] and
+            BitboardMove.KNIGHT_MOVES[toSquare]
+
+        if (attackBitboard != Bitboard.EMPTY) {
+            return attackBitboard
+        }
+
+        val pseudoBishops = allPieces and BitboardMove.BISHOP_PSEUDO_MOVES[toSquare]
+        if (pseudoBishops != Bitboard.EMPTY) {
+            val bishops = pseudoBishops and board.pieceBitboard[colorToMove][Piece.BISHOP]
             if (bishops != Bitboard.EMPTY) {
                 attackBitboard = bishops and BitboardMove.bishopMoves(toSquare, allPieces)
             }
         }
 
+        if (attackBitboard != Bitboard.EMPTY) {
+            return attackBitboard
+        }
 
-        if (attackBitboard == Bitboard.EMPTY) {
-            val rooks = allPieces and board.pieceBitboard[colorToMove][Piece.ROOK]
+        val pseudoRooks = allPieces and BitboardMove.ROOK_PSEUDO_MOVES[toSquare]
+        if (pseudoRooks != Bitboard.EMPTY) {
+            val rooks = pseudoRooks and board.pieceBitboard[colorToMove][Piece.ROOK]
             if (rooks != Bitboard.EMPTY) {
                 attackBitboard = rooks and BitboardMove.rookMoves(toSquare, allPieces)
             }
         }
 
-        if (attackBitboard == Bitboard.EMPTY) {
-            val queens = allPieces and board.pieceBitboard[colorToMove][Piece.QUEEN]
+        if (attackBitboard != Bitboard.EMPTY) {
+            return attackBitboard
+        }
+
+        val pseudoQueen = pseudoBishops or pseudoRooks
+        if (pseudoQueen != Bitboard.EMPTY) {
+            val queens = pseudoQueen and board.pieceBitboard[colorToMove][Piece.QUEEN]
             if (queens != Bitboard.EMPTY) {
                 attackBitboard = queens and
                     (BitboardMove.bishopMoves(toSquare, allPieces) or BitboardMove.rookMoves(toSquare, allPieces))
             }
         }
 
-        if (attackBitboard == Bitboard.EMPTY) {
-            attackBitboard = allPieces and
-                board.pieceBitboard[colorToMove][Piece.KING] and
-                BitboardMove.KING_MOVES[toSquare]
+        if (attackBitboard != Bitboard.EMPTY) {
+            return attackBitboard
         }
 
-        if (attackBitboard == Bitboard.EMPTY) {
-            return Square.NONE
-        }
-
-        return Square.getSquare(attackBitboard)
+        return allPieces and
+            board.pieceBitboard[colorToMove][Piece.KING] and
+            BitboardMove.KING_MOVES[toSquare]
     }
 
     fun getSeeCaptureScore(board: Board, move: Int): Int {
@@ -88,10 +100,11 @@ object StaticExchangeEvaluator {
                 break
             }
             occupied = occupied xor fromBitboard
-            fromSquare = getSmallestAttackSquare(board, colorToMove, toSquare, occupied)
-            if (fromSquare == Square.NONE) {
+            fromBitboard = getSmallestAttackBitboard(board, colorToMove, toSquare, occupied)
+            if (fromBitboard == Bitboard.EMPTY) {
                 break
             }
+            fromSquare = Square.getSquare(fromBitboard)
             fromBitboard = Bitboard.getBitboard(fromSquare)
             attackingPiece = board.pieceTypeBoard[fromSquare]
             colorToMove = Color.invertColor(colorToMove)
