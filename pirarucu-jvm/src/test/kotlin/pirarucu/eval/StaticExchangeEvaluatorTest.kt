@@ -55,15 +55,15 @@ class StaticExchangeEvaluatorTest {
             TunableConstants.QS_FUTILITY_VALUE[Piece.KNIGHT], seeValue)
     }
 
+    @Test
+    fun testExhangeQuiet() {
+        val seeValue = testSee("8/8/1p1k4/1P6/8/3p3P/1r4P1/5K2 w - -", "g2g4")
+        assertEquals(0, seeValue)
+    }
 
     @Test
-    fun testOperator() {
-        assertEquals(0L, 0L and full())
+    fun testExhangeQuietLosing() {
+        val seeValue = testSee("8/8/1p1k4/1P6/3p4/1r5P/6P1/5K2 w - -", "g2g3")
+        assertEquals(-TunableConstants.QS_FUTILITY_VALUE[Piece.PAWN], seeValue)
     }
-
-    fun full(): Long {
-        println("CALLED")
-        return 0L
-    }
-
 }
