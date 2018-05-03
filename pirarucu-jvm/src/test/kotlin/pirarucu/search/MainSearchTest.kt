@@ -81,6 +81,6 @@ class MainSearchTest {
     @Ignore
     @Test
     fun testRandomPosition6() {
-        testSearch("8/8/2k5/8/8/n4K2/8/6B1 b - -", 1000)
+        testSearch("2b5/1p3k2/7R/4p1rP/1qpnR3/8/P4PP1/3Q2K1 w - -", 60000)
     }
 }
