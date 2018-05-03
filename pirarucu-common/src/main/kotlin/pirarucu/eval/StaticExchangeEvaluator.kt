@@ -71,11 +71,9 @@ object StaticExchangeEvaluator {
             return attackBitboard
         }
 
-        attackBitboard = allPieces and
+        return allPieces and
             board.pieceBitboard[colorToMove][Piece.KING] and
             BitboardMove.KING_MOVES[toSquare]
-
-        return attackBitboard
     }
 
     fun getSeeCaptureScore(board: Board, move: Int): Int {
