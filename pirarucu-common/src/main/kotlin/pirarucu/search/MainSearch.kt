@@ -6,6 +6,7 @@ import pirarucu.board.Piece
 import pirarucu.eval.DrawEvaluator
 import pirarucu.eval.EvalConstants
 import pirarucu.eval.Evaluator
+import pirarucu.eval.StaticExchangeEvaluator
 import pirarucu.game.GameConstants
 import pirarucu.hash.HashConstants
 import pirarucu.hash.TranspositionTable
@@ -66,7 +67,7 @@ object MainSearch {
         }
         val inCheck = board.basicEvalInfo.checkBitboard[board.colorToMove] != Bitboard.EMPTY
 
-        val eval: Int
+        var eval: Int
 
         var foundMoves = 0L
 
@@ -113,11 +114,11 @@ object MainSearch {
                 depth < TunableConstants.FUTILITY_CHILD_MARGIN.size &&
                 eval < EvalConstants.SCORE_KNOW_WIN) {
                 if (Statistics.ENABLED) {
-                    Statistics.futility[depth]++
+                    Statistics.childFutility[depth]++
                 }
                 if (eval - TunableConstants.FUTILITY_CHILD_MARGIN[depth] >= currentBeta) {
                     if (Statistics.ENABLED) {
-                        Statistics.futilityHit[depth]++
+                        Statistics.childFutilityHit[depth]++
                     }
                     return eval
                 }
@@ -208,13 +209,34 @@ object MainSearch {
                     continue
                 }
                 val moveType = Move.getMoveType(move)
+                val isPromotion = MoveType.isPromotion(moveType)
+                val toSquare = Move.getToSquare(move)
+                val capturedPiece = board.pieceTypeBoard[toSquare]
+
+                val isCapture = capturedPiece != Piece.NONE
+
+                if (prunable &&
+                    !rootNode &&
+                    !isPromotion &&
+                    movesPerformed > 0) {
+
+                    if (SearchConstants.ENABLE_NEGATIVE_SEE_PRUNING &&
+                        depth < SearchConstants.NEGATIVE_SEE_DEPTH) {
+                        if (Statistics.ENABLED) {
+                            Statistics.negativeSee++
+                        }
+                        if (StaticExchangeEvaluator.getSeeCaptureScore(board, move) < 0) {
+                            if (Statistics.ENABLED) {
+                                Statistics.negativeSeeHit++
+                            }
+                            continue
+                        }
+                    }
+                }
 
                 movesPerformed++
 
                 board.doMove(move)
-
-                val isCapture = board.capturedPiece != Piece.NONE
-                val isPromotion = MoveType.isPromotion(moveType)
 
                 var reduction = when {
                     inCheck -> 0
@@ -240,7 +262,7 @@ object MainSearch {
                     if (Statistics.ENABLED) {
                         Statistics.lmr++
                         if (score <= searchAlpha) {
-                            Statistics.lmrHits++
+                            Statistics.lmrHit++
                         }
                     }
                 }
@@ -250,13 +272,13 @@ object MainSearch {
                     if (Statistics.ENABLED) {
                         Statistics.pvs++
                         if (score <= searchAlpha) {
-                            Statistics.pvsHits++
+                            Statistics.pvsHit++
                         }
                     }
                 }
 
                 if (score > searchAlpha) {
-                    score = -search(board, moveList, searchDepth, ply + 1, -currentBeta, -searchAlpha, true, false)
+                    score = -search(board, moveList, searchDepth, ply + 1, -currentBeta, -searchAlpha, true)
                 }
                 board.undoMove(move)
 
