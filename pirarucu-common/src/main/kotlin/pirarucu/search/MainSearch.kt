@@ -220,6 +220,25 @@ object MainSearch {
                     !isPromotion &&
                     movesPerformed > 0) {
 
+                    if (SearchConstants.ENABLE_SEARCH_PARENT_FUTILITY &&
+                        !isCapture &&
+                        depth < TunableConstants.FUTILITY_PARENT_MARGIN.size) {
+                        if (Statistics.ENABLED) {
+                            Statistics.parentFutility++
+                        }
+                        val futilityValue = eval + TunableConstants.FUTILITY_PARENT_MARGIN[depth]
+                        if (futilityValue <= alpha) {
+                            if (Statistics.ENABLED) {
+                                Statistics.parentFutilityHit++
+                            }
+                            if (futilityValue > bestScore) {
+                                bestScore = futilityValue
+                                bestMove = move
+                            }
+                            continue
+                        }
+                    }
+
                     if (SearchConstants.ENABLE_NEGATIVE_SEE_PRUNING &&
                         depth < SearchConstants.NEGATIVE_SEE_DEPTH) {
                         if (Statistics.ENABLED) {
