@@ -1,6 +1,5 @@
 package pirarucu.tuning.pbil
 
-import pirarucu.board.Piece
 import pirarucu.tuning.ErrorCalculator
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.EpdFileLoader
@@ -30,8 +29,6 @@ object PbilTunningApplication {
                 false, 0, 6))
                 */
 
-            /*
-
             tuningObjects.add(PbilTunningObject(
                 "MATERIAL_SCORE_MG",
                 TunableConstants.MATERIAL_SCORE_MG,
@@ -43,8 +40,8 @@ object PbilTunningApplication {
                 TunableConstants.MATERIAL_SCORE_EG,
                 intArrayOf(0, 8, 10, 10, 10, 11),
                 false, 0))
-                */
 
+            /*
             tuningObjects.add(PbilTunningObject(
                 "MG[PAWN]",
                 TunableConstants.MG_PSQT[Piece.PAWN],
@@ -58,6 +55,7 @@ object PbilTunningApplication {
                     0, 0, 0, 0
                 ),
                 true, 0, 1, 2, 3, 28, 29, 30, 31))
+                */
 
             /*
             tuningObjects.add(PbilTunningObject(

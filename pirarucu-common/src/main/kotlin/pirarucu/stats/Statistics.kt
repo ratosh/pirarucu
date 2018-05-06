@@ -32,8 +32,8 @@ object Statistics {
 
     var prunable = 0L
 
-    var futility = LongArray(TunableConstants.FUTILITY_CHILD_MARGIN.size)
-    var futilityHit = LongArray(TunableConstants.FUTILITY_CHILD_MARGIN.size)
+    var childFutility = LongArray(TunableConstants.FUTILITY_CHILD_MARGIN.size)
+    var childFutilityHit = LongArray(TunableConstants.FUTILITY_CHILD_MARGIN.size)
 
     var razoring = LongArray(TunableConstants.RAZOR_MARGIN.size)
     var razoringHit = LongArray(TunableConstants.RAZOR_MARGIN.size)
@@ -44,11 +44,17 @@ object Statistics {
     var mate = 0L
     var stalemate = 0L
 
+    var parentFutility = 0L
+    var parentFutilityHit = 0L
+
+    var negativeSee = 0L
+    var negativeSeeHit = 0L
+
     var lmr = 0L
-    var lmrHits = 0L
+    var lmrHit = 0L
 
     var pvs = 0L
-    var pvsHits = 0L
+    var pvsHit = 0L
 
     fun reset() {
         ttHits = 0
@@ -75,8 +81,8 @@ object Statistics {
 
         prunable = 0L
 
-        Utils.specific.arrayFill(futility, 0L)
-        Utils.specific.arrayFill(futilityHit, 0L)
+        Utils.specific.arrayFill(childFutility, 0L)
+        Utils.specific.arrayFill(childFutilityHit, 0L)
 
         Utils.specific.arrayFill(razoring, 0L)
         Utils.specific.arrayFill(razoringHit, 0L)
@@ -87,11 +93,17 @@ object Statistics {
         mate = 0L
         stalemate = 0L
 
+        parentFutility = 0L
+        parentFutilityHit = 0L
+
+        negativeSee = 0L
+        negativeSeeHit = 0L
+
         lmr = 0L
-        lmrHits = 0L
+        lmrHit = 0L
 
         pvs = 0L
-        pvsHits = 0L
+        pvsHit = 0L
     }
 
     override fun toString(): String {
@@ -103,8 +115,8 @@ object Statistics {
         buffer.append("MS TTEntry: " + buildPercentage(TTEntry, abSearch) + "\n")
 
         buffer.append("--- Pruning $prunable\n")
-        for (index in futility.indices) {
-            buffer.append("MS futility[$index]: " + buildPercentage(futilityHit[index], futility[index]) + "\n")
+        for (index in childFutility.indices) {
+            buffer.append("MS C FUT[$index]: " + buildPercentage(childFutilityHit[index], childFutility[index]) + "\n")
         }
         for (index in razoring.indices) {
             buffer.append("MS razoring[$index]: " + buildPercentage(razoringHit[index], razoring[index]) + "\n")
@@ -112,8 +124,10 @@ object Statistics {
         buffer.append("MS nullMove: " + buildPercentage(nullMoveHit, nullMove) + "\n")
 
         buffer.append("--- Other \n")
-        buffer.append("MS LMR: " + buildPercentage(lmrHits, lmr) + "\n")
-        buffer.append("MS PVS: " + buildPercentage(pvsHits, pvs) + "\n")
+        buffer.append("MS P FUT: " + buildPercentage(parentFutilityHit, parentFutility) + "\n")
+        buffer.append("MS NSEE: " + buildPercentage(negativeSeeHit, negativeSee) + "\n")
+        buffer.append("MS LMR: " + buildPercentage(lmrHit, lmr) + "\n")
+        buffer.append("MS PVS: " + buildPercentage(pvsHit, pvs) + "\n")
 
         buffer.append("--- End conditions \n")
         buffer.append("Mates: " + buildPercentage(mate, moves) + "\n")
