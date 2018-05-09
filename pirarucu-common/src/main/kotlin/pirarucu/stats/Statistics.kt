@@ -56,6 +56,12 @@ object Statistics {
     var pvs = 0L
     var pvsHit = 0L
 
+    var killer1 = 0L
+    var killer1Hit = 0L
+
+    var killer2 = 0L
+    var killer2Hit = 0L
+
     fun reset() {
         ttHits = 0
         ttMisses = 0
@@ -104,6 +110,12 @@ object Statistics {
 
         pvs = 0L
         pvsHit = 0L
+
+        killer1 = 0L
+        killer1Hit = 0L
+
+        killer2 = 0L
+        killer2Hit = 0L
     }
 
     override fun toString(): String {
@@ -122,12 +134,14 @@ object Statistics {
             buffer.append("MS razoring[$index]: " + buildPercentage(razoringHit[index], razoring[index]) + "\n")
         }
         buffer.append("MS nullMove: " + buildPercentage(nullMoveHit, nullMove) + "\n")
-
-        buffer.append("--- Other \n")
         buffer.append("MS P FUT: " + buildPercentage(parentFutilityHit, parentFutility) + "\n")
         buffer.append("MS NSEE: " + buildPercentage(negativeSeeHit, negativeSee) + "\n")
+
+        buffer.append("--- Other \n")
         buffer.append("MS LMR: " + buildPercentage(lmrHit, lmr) + "\n")
         buffer.append("MS PVS: " + buildPercentage(pvsHit, pvs) + "\n")
+        buffer.append("MS K1: " + buildPercentage(killer1Hit, killer1) + "\n")
+        buffer.append("MS K2: " + buildPercentage(killer2Hit, killer2) + "\n")
 
         buffer.append("--- End conditions \n")
         buffer.append("Mates: " + buildPercentage(mate, moves) + "\n")

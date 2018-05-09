@@ -70,7 +70,8 @@ object QuiescenceSearch {
         if (!moveList.startPly()) {
             return bestScore
         }
-        MoveGenerator.legalAttacks(board, moveList)
+        val currentNode = SearchInfo.plyInfoList[ply]
+        MoveGenerator.legalAttacks(board, currentNode.attackInfo, moveList)
 
         var moveCount = 0
         var bestMove = Move.NONE

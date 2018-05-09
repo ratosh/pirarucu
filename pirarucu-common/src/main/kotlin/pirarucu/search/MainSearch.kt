@@ -24,12 +24,12 @@ import kotlin.math.min
 
 object MainSearch {
 
-    private val ttMoves = Array(GameConstants.MAX_PLIES) { IntArray(TranspositionTable.MAX_MOVES) }
-
     private const val PHASE_END = 0
     private const val PHASE_QUIET = 1
-    private const val PHASE_ATTACK = 2
-    private const val PHASE_TT = 3
+    private const val PHASE_KILLER_2 = 2
+    private const val PHASE_KILLER_1 = 3
+    private const val PHASE_ATTACK = 4
+    private const val PHASE_TT = 5
 
     private fun search(board: Board,
                        moveList: MoveList,
@@ -46,7 +46,7 @@ object MainSearch {
         if (depth <= 0) {
             return QuiescenceSearch.search(board, moveList, ply, alpha, beta)
         }
-        val rootNode = pvNode && ply == 1
+        val rootNode = pvNode && ply == 0
 
         if (!rootNode &&
             (DrawEvaluator.isDrawByRules(board) || !DrawEvaluator.hasSufficientMaterial(board))) {
@@ -58,7 +58,7 @@ object MainSearch {
         }
 
         val currentAlpha = max(alpha, EvalConstants.SCORE_MIN + ply)
-        val currentBeta = min(beta, EvalConstants.SCORE_MAX - ply + 1)
+        val currentBeta = min(beta, EvalConstants.SCORE_MAX - (ply + 1))
         if (currentAlpha >= currentBeta) {
             return currentAlpha
         }
@@ -133,7 +133,7 @@ object MainSearch {
                     if (Statistics.ENABLED) {
                         Statistics.razoring[depth]++
                     }
-                    val razorSearchValue = search(board, moveList, 0, ply + 1, razorAlpha, razorAlpha + 1, false)
+                    val razorSearchValue = search(board, moveList, 0, ply, razorAlpha, razorAlpha + 1, false)
                     if (razorSearchValue <= razorAlpha) {
                         if (Statistics.ENABLED) {
                             Statistics.razoringHit[depth]++
@@ -167,6 +167,8 @@ object MainSearch {
         var bestMove = Move.NONE
         var bestScore = EvalConstants.SCORE_MIN
 
+        val currentNode = SearchInfo.plyInfoList[ply]
+
         if (!moveList.startPly()) {
             return eval
         }
@@ -192,20 +194,51 @@ object MainSearch {
                             if (ttMove != Move.NONE) {
                                 moveList.addMove(ttMove)
                             }
-                            ttMoves[ply][index] = ttMove
+                            currentNode.addTTMove(index, ttMove)
                         }
                     }
                 }
                 PHASE_ATTACK -> {
-                    MoveGenerator.legalAttacks(board, moveList)
+                    MoveGenerator.legalAttacks(board, currentNode.attackInfo, moveList)
+                }
+                PHASE_KILLER_1 -> {
+                    val killerMove = currentNode.killerMove1
+                    if (Statistics.ENABLED) {
+                        Statistics.killer1++
+                    }
+                    if (killerMove != Move.NONE &&
+                        !currentNode.isTTMove(killerMove) &&
+                        MoveGenerator.isLegalQuietMove(board, currentNode.attackInfo, killerMove)) {
+                        moveList.addMove(killerMove)
+                        if (Statistics.ENABLED) {
+                            Statistics.killer1Hit++
+                        }
+                    }
+                }
+                PHASE_KILLER_2 -> {
+                    val killerMove = currentNode.killerMove2
+                    if (Statistics.ENABLED) {
+                        Statistics.killer2++
+                    }
+                    if (killerMove != Move.NONE &&
+                        !currentNode.isTTMove(killerMove) &&
+                        MoveGenerator.isLegalQuietMove(board, currentNode.attackInfo, killerMove)) {
+                        moveList.addMove(killerMove)
+                        if (Statistics.ENABLED) {
+                            Statistics.killer2Hit++
+                        }
+                    }
                 }
                 PHASE_QUIET -> {
-                    MoveGenerator.legalMoves(board, moveList)
+                    MoveGenerator.legalMoves(board, currentNode.attackInfo, moveList)
                 }
             }
             while (moveList.hasNext()) {
                 val move = moveList.next()
-                if (foundMoves != 0L && phase != PHASE_TT && ttMoves[ply].contains(move)) {
+                if (foundMoves != 0L && phase != PHASE_TT && currentNode.isTTMove(move)) {
+                    continue
+                }
+                if (phase == PHASE_QUIET && currentNode.isKillerMove(move)) {
                     continue
                 }
                 val moveType = Move.getMoveType(move)
@@ -309,6 +342,10 @@ object MainSearch {
                 }
 
                 if (searchAlpha >= currentBeta) {
+                    val isNormal = Move.getMoveType(bestMove) == MoveType.TYPE_NORMAL
+                    if (!isCapture && isNormal) {
+                        currentNode.addKillerMove(move)
+                    }
                     phase = PHASE_END
                     break
                 }
@@ -322,7 +359,7 @@ object MainSearch {
             bestScore = if (inCheck) {
                 // MATED
                 Statistics.mate++
-                EvalConstants.SCORE_MIN + ply
+                currentAlpha
             } else {
                 // STALEMATE
                 Statistics.stalemate++
@@ -342,6 +379,7 @@ object MainSearch {
 
     // Interactive deepening with aspiration window
     fun search(board: Board) {
+        SearchInfo.reset()
         SearchOptions.reset()
         PrincipalVariation.reset()
         Statistics.reset()
@@ -369,7 +407,7 @@ object MainSearch {
 
             while (true) {
                 val previousScore = score
-                score = search(board, moveList, depth, 1, alpha, beta, true)
+                score = search(board, moveList, depth, 0, alpha, beta, true)
 
                 PrincipalVariation.save(board)
 

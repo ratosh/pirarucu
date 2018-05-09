@@ -40,7 +40,7 @@ object BoardUtil {
         while (bitboard != 0L) {
             val square = Square.getSquare(bitboard)
             if (board.pieceTypeBoard[square] == Piece.NONE) {
-                println("piece type not set")
+                println("piece type not set " + Square.toString(square))
                 return false
             }
             bitboard = bitboard and bitboard - 1
@@ -48,7 +48,7 @@ object BoardUtil {
         for (square in Square.H1 until Square.SIZE) {
             if (board.pieceTypeBoard[square] != Piece.NONE &&
                 Bitboard.getBitboard(square) and board.gameBitboard == Bitboard.EMPTY) {
-                println("game bitboard not set")
+                println("game bitboard not set " + Square.toString(square))
                 return false
             }
         }
@@ -68,8 +68,12 @@ object BoardUtil {
             return false
         }
 
-        return board.colorBitboard[Color.WHITE] and board.colorBitboard[Color.BLACK] ==
-            Bitboard.EMPTY
+        if (board.colorBitboard[Color.WHITE] and board.colorBitboard[Color.BLACK] !=
+            Bitboard.EMPTY) {
+            println("OVERLAPPING COLOR BITBOARD")
+            return false
+        }
+        return true
     }
 
     fun calculatePsqtScore(board: Board): Int {
