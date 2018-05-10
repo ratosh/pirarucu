@@ -149,7 +149,8 @@ class AttackInfo {
 
         while (moves != Bitboard.EMPTY) {
             val toSquare = Square.getSquare(moves)
-            if (MoveGenerator.squareAttackedBitboard(toSquare, ourColor, board.pieceBitboard[theirColor], gameBitboard) ==
+            if (MoveGenerator
+                    .squareAttackedBitboard(toSquare, ourColor, board.pieceBitboard[theirColor], gameBitboard) ==
                 Bitboard.EMPTY) {
                 bitboard = bitboard or Bitboard.getBitboard(toSquare)
             }

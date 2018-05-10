@@ -4,10 +4,12 @@ import pirarucu.board.Board
 import pirarucu.board.Color
 import pirarucu.board.Piece
 import pirarucu.board.factory.BoardFactory
+import pirarucu.eval.AttackInfo
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class PerftTest {
+    val attackInfo = AttackInfo()
 
     @Test
     fun testInitialPosition() {
@@ -215,8 +217,8 @@ class PerftTest {
                wantedDepth: Int) {
         val moveList = MoveList()
         moveList.startPly()
-        MoveGenerator.legalAttacks(board, moveList)
-        MoveGenerator.legalMoves(board, moveList)
+        MoveGenerator.legalAttacks(board, attackInfo, moveList)
+        MoveGenerator.legalMoves(board, attackInfo, moveList)
         while (moveList.hasNext()) {
             val moveInfoArray = Array(wantedDepth) { MoveInfo() }
             val move = moveList.next()
@@ -251,8 +253,8 @@ class PerftTest {
         }
 
         moveList.startPly()
-        MoveGenerator.legalAttacks(board, moveList)
-        MoveGenerator.legalMoves(board, moveList)
+        MoveGenerator.legalAttacks(board, attackInfo, moveList)
+        MoveGenerator.legalMoves(board, attackInfo, moveList)
 
         var totalMove = 0
         while (moveList.hasNext()) {

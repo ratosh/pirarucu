@@ -6,11 +6,12 @@ import pirarucu.board.CastlingRights
 import pirarucu.board.Color
 import pirarucu.board.Piece
 import pirarucu.board.Square
+import pirarucu.eval.AttackInfo
 
 object MoveGenerator {
 
-    fun legalMoves(board: Board, moveList: MoveList) {
-        board.updateAttackInfo(board.colorToMove)
+    fun legalMoves(board: Board, attackInfo: AttackInfo, moveList: MoveList) {
+        attackInfo.update(board, board.colorToMove)
         val ourColor = board.colorToMove
         val checkBitboard = board.basicEvalInfo.checkBitboard[ourColor]
         val mask = when {
@@ -19,23 +20,20 @@ object MoveGenerator {
                 board.emptyBitboard
             }
             Bitboard.oneElement(checkBitboard) -> {
-                val square = Square.getSquare(checkBitboard)
-                val betweenMask =
-                    BitboardMove.BETWEEN_BITBOARD[board.basicEvalInfo.kingSquare[ourColor]][square]
-                betweenMask
+                BitboardMove.BETWEEN_BITBOARD[board.basicEvalInfo.kingSquare[ourColor]][Square.getSquare(checkBitboard)]
             }
             else -> {
                 Bitboard.EMPTY
             }
         }
         if (mask != Bitboard.EMPTY) {
-            generateMoves(board, moveList, Piece.QUEEN, mask)
-            generateMoves(board, moveList, Piece.ROOK, mask)
-            generateMoves(board, moveList, Piece.BISHOP, mask)
-            generateMoves(board, moveList, Piece.KNIGHT, mask)
+            generateMoves(board, attackInfo, moveList, Piece.QUEEN, mask)
+            generateMoves(board, attackInfo, moveList, Piece.ROOK, mask)
+            generateMoves(board, attackInfo, moveList, Piece.BISHOP, mask)
+            generateMoves(board, attackInfo, moveList, Piece.KNIGHT, mask)
             legalPawnMoves(board, moveList, mask)
         }
-        generateMoves(board, moveList, Piece.KING, board.emptyBitboard)
+        generateMoves(board, attackInfo, moveList, Piece.KING, board.emptyBitboard)
     }
 
     private fun legalPawnMoves(board: Board, moveList: MoveList, maskBitboard: Long) {
@@ -49,8 +47,8 @@ object MoveGenerator {
             var bitboard = BitboardMove.PAWN_MOVES[ourColor][fromSquare] and emptyBitboard
 
             if (bitboard != Bitboard.EMPTY) {
-                bitboard = bitboard or BitboardMove.DOUBLE_PAWN_MOVES[ourColor][fromSquare] and
-                    emptyBitboard
+                bitboard = bitboard or (BitboardMove.DOUBLE_PAWN_MOVES[ourColor][fromSquare] and
+                    emptyBitboard)
             }
 
             if (fromBitboard and board.basicEvalInfo.pinnedBitboard[ourColor] != Bitboard.EMPTY) {
@@ -81,6 +79,7 @@ object MoveGenerator {
     }
 
     private fun generateMoves(board: Board,
+                              attackInfo: AttackInfo,
                               moveList: MoveList,
                               movedPiece: Int,
                               maskBitboard: Long) {
@@ -91,7 +90,7 @@ object MoveGenerator {
         var tmpPieces = board.pieceBitboard[ourColor][movedPiece]
         while (tmpPieces != Bitboard.EMPTY) {
             val fromSquare = Square.getSquare(tmpPieces)
-            var bitboard = board.attackInfo.pieceMovement[ourColor][fromSquare] and maskBitboard
+            var bitboard = attackInfo.pieceMovement[ourColor][fromSquare] and maskBitboard
 
             while (bitboard != Bitboard.EMPTY) {
                 val toSquare = Square.getSquare(bitboard)
@@ -129,13 +128,13 @@ object MoveGenerator {
         }
     }
 
-    fun legalAttacks(board: Board, moveList: MoveList) {
+    fun legalAttacks(board: Board, attackInfo: AttackInfo, moveList: MoveList) {
         val theirColor = board.nextColorToMove
         val theirBitboard = board.colorBitboard[theirColor]
         val ourColor = board.colorToMove
         val checkBitboard = board.basicEvalInfo.checkBitboard[ourColor]
 
-        board.updateAttackInfo(ourColor)
+        attackInfo.update(board, ourColor)
 
         val mask = when {
             checkBitboard == Bitboard.EMPTY -> {
@@ -151,20 +150,20 @@ object MoveGenerator {
         if (mask != Bitboard.EMPTY) {
             for (capturedPiece in Piece.QUEEN downTo Piece.PAWN) {
                 for (movedPiece in Piece.PAWN until Piece.KING) {
-                    generateAttacks(board, moveList, movedPiece, capturedPiece, board.pieceBitboard[theirColor],
-                        mask)
+                    generateAttacks(board, attackInfo, moveList, movedPiece, capturedPiece,
+                        board.pieceBitboard[theirColor], mask)
                 }
             }
             legalPawnEPCapture(board, moveList, mask)
 
         }
-        legalKingMoves(board, moveList, theirBitboard)
+        legalKingMoves(board, attackInfo, moveList, theirBitboard)
     }
 
-    private fun legalKingMoves(board: Board, moveList: MoveList, maskBitboard: Long) {
+    private fun legalKingMoves(board: Board, attackInfo: AttackInfo, moveList: MoveList, maskBitboard: Long) {
         val ourColor = board.colorToMove
         val fromSquare = board.basicEvalInfo.kingSquare[ourColor]
-        var bitboard = board.attackInfo.pieceMovement[ourColor][fromSquare] and maskBitboard
+        var bitboard = attackInfo.pieceMovement[ourColor][fromSquare] and maskBitboard
         while (bitboard != Bitboard.EMPTY) {
             val toSquare = Square.getSquare(bitboard)
             moveList.addMove(Move.createMove(fromSquare, toSquare))
@@ -173,6 +172,7 @@ object MoveGenerator {
     }
 
     private fun generateAttacks(board: Board,
+                                attackInfo: AttackInfo,
                                 moveList: MoveList,
                                 movedPiece: Int,
                                 capturedPiece: Int,
@@ -186,7 +186,7 @@ object MoveGenerator {
         var tmpPieces = board.pieceBitboard[ourColor][movedPiece]
         while (tmpPieces != Bitboard.EMPTY) {
             val fromSquare = Square.getSquare(tmpPieces)
-            var bitboard = board.attackInfo.pieceMovement[ourColor][fromSquare] and pieceMask
+            var bitboard = attackInfo.pieceMovement[ourColor][fromSquare] and pieceMask
 
             while (bitboard != Bitboard.EMPTY) {
                 val toSquare = Square.getSquare(bitboard)
@@ -275,5 +275,62 @@ object MoveGenerator {
             result = result or (rooks and BitboardMove.rookMoves(square, gameBitboard))
         }
         return result
+    }
+
+    fun isLegalQuietMove(board: Board, attackInfo: AttackInfo, move: Int): Boolean {
+        val fromSquare = Move.getFromSquare(move)
+        val toSquare = Move.getToSquare(move)
+        if (board.pieceTypeBoard[toSquare] != Piece.NONE) {
+            return false
+        }
+        val ourColor = board.colorToMove
+        val fromBitboard = Bitboard.getBitboard(fromSquare)
+        if (board.colorBitboard[ourColor] and fromBitboard == Bitboard.EMPTY) {
+            return false
+        }
+        when (board.pieceTypeBoard[fromSquare]) {
+            Piece.NONE -> {
+                return false
+            }
+            Piece.PAWN -> {
+                val checkBitboard = board.basicEvalInfo.checkBitboard[ourColor]
+                val mask = when {
+                    checkBitboard == Bitboard.EMPTY -> {
+                        board.emptyBitboard
+                    }
+                    Bitboard.oneElement(checkBitboard) -> {
+                        val square = Square.getSquare(checkBitboard)
+                        BitboardMove.BETWEEN_BITBOARD[board.basicEvalInfo.kingSquare[ourColor]][square]
+                    }
+                    else -> {
+                        return false
+                    }
+                }
+                var bitboard = BitboardMove.PAWN_MOVES[ourColor][fromSquare] and mask
+
+                if (bitboard != Bitboard.EMPTY) {
+                    bitboard = bitboard or (BitboardMove.DOUBLE_PAWN_MOVES[ourColor][fromSquare] and
+                        mask)
+                }
+
+                if (fromBitboard and board.basicEvalInfo.pinnedBitboard[ourColor] != Bitboard.EMPTY) {
+                    val kingSquare = board.basicEvalInfo.kingSquare[ourColor]
+                    bitboard = bitboard and BitboardMove.PINNED_MOVE_MASK[kingSquare][fromSquare]
+                }
+
+                val toBitboard = Bitboard.getBitboard(toSquare)
+                return (toBitboard and bitboard != Bitboard.EMPTY)
+            }
+            else -> {
+                attackInfo.update(board, ourColor)
+
+                val moveBitboard = attackInfo.pieceMovement[ourColor][fromSquare]
+                if (moveBitboard != Bitboard.EMPTY) {
+                    val toBitboard = Bitboard.getBitboard(toSquare)
+                    return moveBitboard and toBitboard != Bitboard.EMPTY
+                }
+            }
+        }
+        return false
     }
 }

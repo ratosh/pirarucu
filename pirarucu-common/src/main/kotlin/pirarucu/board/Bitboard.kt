@@ -163,7 +163,7 @@ object Bitboard {
         val buffer = StringBuilder()
         buffer.append("  abcdefgh\n")
         for (rank in Rank.RANK_8 downTo Rank.RANK_1) {
-            buffer.append(rank).append('-')
+            buffer.append(Rank.toString(rank)).append('-')
             for (file in File.FILE_A until File.SIZE) {
                 val square = Square.getSquare(file, rank)
                 buffer.append(if (bitboard and getBitboard(square) != Bitboard.EMPTY) "1" else "0")

@@ -1,6 +1,7 @@
 package pirarucu.board
 
 import pirarucu.board.factory.BoardFactory
+import pirarucu.eval.AttackInfo
 import pirarucu.move.Move
 import pirarucu.move.MoveGenerator
 import pirarucu.move.MoveList
@@ -238,7 +239,7 @@ class BoardTest {
         board.doMove(Move.createMove(Square.A2, Square.A4))
         assertNotEquals(zobristKey, board.zobristKey)
         val moveList = MoveList()
-        MoveGenerator.legalAttacks(board, moveList)
+        MoveGenerator.legalAttacks(board, AttackInfo(), moveList)
         while (moveList.hasNext()) {
             val move = moveList.next()
             zobristKey = board.zobristKey

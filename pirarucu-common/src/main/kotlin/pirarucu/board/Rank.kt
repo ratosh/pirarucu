@@ -1,7 +1,7 @@
 package pirarucu.board
 
 object Rank {
-    const val RANK_1_TOKEN = '1'
+    private const val RANK_1_TOKEN = '1'
     const val RANK_SHIFT = 3
 
     const val RANK_1 = 0
@@ -33,5 +33,9 @@ object Rank {
 
     fun isValid(rank: Int): Boolean {
         return rank in RANK_1 until SIZE
+    }
+
+    fun toString(rank: Int): Char {
+        return RANK_1_TOKEN + rank
     }
 }
