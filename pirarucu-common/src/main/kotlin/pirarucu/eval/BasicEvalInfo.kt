@@ -10,7 +10,7 @@ import pirarucu.move.MoveGenerator
 
 class BasicEvalInfo {
 
-    var checkBitboard = LongArray(Color.SIZE)
+    var checkBitboard = 0L
         private set
 
     var pinnerBitboard = LongArray(Color.SIZE)
@@ -34,17 +34,19 @@ class BasicEvalInfo {
 
             kingSquare[ourColor] = kingSquarePosition
 
-            checkBitboard[ourColor] = MoveGenerator.squareAttackedBitboard(kingSquare[ourColor],
-                ourColor,
-                theirPieceBitboard,
-                board.gameBitboard)
-
             setPinnedDiscovery(kingSquarePosition,
                 ourColor,
                 theirColor,
                 theirPieceBitboard,
                 board.colorBitboard)
         }
+
+        val ourColor = board.colorToMove
+        val theirColor = board.nextColorToMove
+        checkBitboard = MoveGenerator.squareAttackedBitboard(kingSquare[ourColor],
+            ourColor,
+            board.pieceBitboard[theirColor],
+            board.gameBitboard)
     }
 
     /**

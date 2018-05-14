@@ -13,7 +13,7 @@ object MoveGenerator {
     fun legalMoves(board: Board, attackInfo: AttackInfo, moveList: MoveList) {
         attackInfo.update(board, board.colorToMove)
         val ourColor = board.colorToMove
-        val checkBitboard = board.basicEvalInfo.checkBitboard[ourColor]
+        val checkBitboard = board.basicEvalInfo.checkBitboard
         val mask = when {
             checkBitboard == Bitboard.EMPTY -> {
                 castlingMoves(board, moveList)
@@ -132,7 +132,7 @@ object MoveGenerator {
         val theirColor = board.nextColorToMove
         val theirBitboard = board.colorBitboard[theirColor]
         val ourColor = board.colorToMove
-        val checkBitboard = board.basicEvalInfo.checkBitboard[ourColor]
+        val checkBitboard = board.basicEvalInfo.checkBitboard
 
         attackInfo.update(board, ourColor)
 
@@ -243,8 +243,8 @@ object MoveGenerator {
         }
     }
 
-    private fun pathUnderAttack(path: Long, ourColor: Int, theirPieceBitboard: LongArray,
-                                gameBitboard: Long): Boolean {
+    fun pathUnderAttack(path: Long, ourColor: Int, theirPieceBitboard: LongArray,
+                        gameBitboard: Long): Boolean {
         var tmpPath = path
         while (tmpPath != Bitboard.EMPTY) {
             val square = Square.getSquare(tmpPath)
@@ -293,7 +293,7 @@ object MoveGenerator {
                 return false
             }
             Piece.PAWN -> {
-                val checkBitboard = board.basicEvalInfo.checkBitboard[ourColor]
+                val checkBitboard = board.basicEvalInfo.checkBitboard
                 val mask = when {
                     checkBitboard == Bitboard.EMPTY -> {
                         board.emptyBitboard

@@ -1,20 +1,23 @@
 package pirarucu.move
 
+import pirarucu.board.Bitboard
 import pirarucu.board.Board
-import pirarucu.board.Color
 import pirarucu.board.Piece
 import pirarucu.board.factory.BoardFactory
 import pirarucu.eval.AttackInfo
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class PerftTest {
-    val attackInfo = AttackInfo()
+class MoveGeneratorPerftTest {
+    private val attackInfo = AttackInfo()
 
+    @Ignore
     @Test
     fun testInitialPosition() {
         val moveInfoList = Array(5) { MoveInfo() }
         val board = BoardFactory.getBoard()
+        divide(board, 4)
 
         recursive(board, moveInfoList, 5)
 
@@ -54,12 +57,13 @@ class PerftTest {
         assertEquals(27351, moveInfoList[4].checks)
     }
 
+    @Ignore
     @Test
     fun testKiwiPete() {
-        val moveInfoList = Array(4) { MoveInfo() }
+        val moveInfoList = Array(5) { MoveInfo() }
         val board = BoardFactory.getBoard("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -")
 
-        recursive(board, moveInfoList, 4)
+        recursive(board, moveInfoList, 5)
 
         assertEquals(48, moveInfoList[0].moveCount)
         assertEquals(8, moveInfoList[0].captures)
@@ -88,8 +92,16 @@ class PerftTest {
         assertEquals(128013, moveInfoList[3].castles)
         assertEquals(15172, moveInfoList[3].promotions)
         assertEquals(25523, moveInfoList[3].checks)
+
+        assertEquals(193690690, moveInfoList[4].moveCount)
+        assertEquals(35043416, moveInfoList[4].captures)
+        assertEquals(73365, moveInfoList[4].passantCaptures)
+        assertEquals(4993637, moveInfoList[4].castles)
+        assertEquals(8392, moveInfoList[4].promotions)
+        assertEquals(3309887, moveInfoList[4].checks)
     }
 
+    @Ignore
     @Test
     fun testPosition3() {
         val moveInfoList = Array(6) { MoveInfo() }
@@ -140,6 +152,7 @@ class PerftTest {
         assertEquals(452473, moveInfoList[5].checks)
     }
 
+    @Ignore
     @Test
     fun testPosition4() {
         val moveInfoList = Array(5) { MoveInfo() }
@@ -184,6 +197,7 @@ class PerftTest {
         assertEquals(200568, moveInfoList[4].checks)
     }
 
+    @Ignore
     @Test
     fun testPosition5() {
         val moveInfoList = Array(5) { MoveInfo() }
@@ -198,6 +212,7 @@ class PerftTest {
         assertEquals(89941194, moveInfoList[4].moveCount)
     }
 
+    @Ignore
     @Test
     fun testPosition6() {
         val moveInfoList = Array(5) { MoveInfo() }
@@ -223,14 +238,12 @@ class PerftTest {
             val moveInfoArray = Array(wantedDepth) { MoveInfo() }
             val move = moveList.next()
 
-            if (!board.possibleMove(move)) {
-                continue
-            }
-
             board.doMove(move)
             recursive(board, moveList, moveInfoArray, 1, wantedDepth - 1)
             println("Move " + Move.toString(move))
-            println(getString(moveInfoArray))
+            if (wantedDepth > 1) {
+                println(getString(moveInfoArray))
+            }
             board.undoMove(move)
         }
         moveList.endPly()
@@ -261,10 +274,6 @@ class PerftTest {
             val move = moveList.next()
             moveInfoList[depth].moveCount++
 
-            if (!board.possibleMove(move)) {
-                continue
-            }
-
             board.doMove(move)
 
             val moveType = Move.getMoveType(move)
@@ -280,8 +289,7 @@ class PerftTest {
             if (MoveType.isPromotion(moveType)) {
                 moveInfoList[depth].promotions++
             }
-            if (board.basicEvalInfo.checkBitboard[Color.WHITE] or
-                board.basicEvalInfo.checkBitboard[Color.BLACK] != 0L) {
+            if (board.basicEvalInfo.checkBitboard != Bitboard.EMPTY) {
                 moveInfoList[depth].checks++
             }
 

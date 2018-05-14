@@ -128,7 +128,7 @@ class BoardTest {
         val zobristKey = board.zobristKey
         board.doMove(move)
         assertEquals(board.colorToMove, Color.BLACK)
-        assertEquals(board.basicEvalInfo.checkBitboard[Color.BLACK], Bitboard.G1)
+        assertEquals(board.basicEvalInfo.checkBitboard, Bitboard.G1)
         assertNotEquals(zobristKey, board.zobristKey)
         BoardTestUtil.testBoard(board)
     }

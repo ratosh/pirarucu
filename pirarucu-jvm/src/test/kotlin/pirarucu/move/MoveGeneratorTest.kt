@@ -89,7 +89,8 @@ class MoveGeneratorTest {
         val board = BoardFactory.getBoard("5k2/8/8/3b4/8/8/6B1/7K w - -")
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
-        assertEquals(moveList.movesLeft(), 4)
+        MoveGenerator.legalAttacks(board, attackInfo, moveList)
+        assertEquals(moveList.movesLeft(), 5)
     }
 
     @Test
@@ -105,7 +106,8 @@ class MoveGeneratorTest {
         val board = BoardFactory.getBoard("5k2/5r2/8/8/8/8/5R2/5K2 w - -")
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
-        assertEquals(moveList.movesLeft(), 8)
+        MoveGenerator.legalAttacks(board, attackInfo, moveList)
+        assertEquals(moveList.movesLeft(), 9)
     }
 
     @Test
@@ -121,7 +123,8 @@ class MoveGeneratorTest {
         val board = BoardFactory.getBoard("5k2/5r2/8/8/8/8/5Q2/5K2 w - -")
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
-        assertEquals(moveList.movesLeft(), 8)
+        MoveGenerator.legalAttacks(board, attackInfo, moveList)
+        assertEquals(moveList.movesLeft(), 9)
     }
 
     @Test
@@ -160,72 +163,81 @@ class MoveGeneratorTest {
     fun testEpCapture() {
         val board = BoardFactory.getBoard("5k2/8/8/3Pp3/8/8/8/4K3 w - e6")
         val moveList = MoveList()
+        MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        assertEquals(moveList.movesLeft(), 1)
+        assertEquals(moveList.movesLeft(), 7)
     }
 
     @Test
     fun testEpCapturePinned() {
         val board = BoardFactory.getBoard("5kb1/8/8/3Pp3/2K5/8/8/8 w - e6")
         val moveList = MoveList()
+        MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        assertEquals(moveList.movesLeft(), 1)
+        assertEquals(moveList.movesLeft(), 7)
     }
 
     @Test
     fun testNoEpCapturePinned() {
         val board = BoardFactory.getBoard("2r2k2/8/8/2P1p3/2K5/8/8/8 w - e6")
         val moveList = MoveList()
+        MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        assertEquals(moveList.movesLeft(), 0)
+        assertEquals(moveList.movesLeft(), 7)
     }
 
     @Test
     fun testCapturePromotion() {
         val board = BoardFactory.getBoard("3r1k2/2P5/8/8/8/8/8/5K2 w - -")
         val moveList = MoveList()
+        MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        assertEquals(moveList.movesLeft(), 4)
+        assertEquals(moveList.movesLeft(), 13)
     }
 
     @Test
     fun testKnightCapture() {
         val board = BoardFactory.getBoard("3r1k2/8/2N5/8/8/8/8/5K2 w - -")
         val moveList = MoveList()
+        MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        assertEquals(moveList.movesLeft(), 1)
+        assertEquals(moveList.movesLeft(), 13)
     }
 
     @Test
     fun testBishopCapture() {
         val board = BoardFactory.getBoard("3r1k2/8/1B6/8/8/8/8/5K2 w - -")
         val moveList = MoveList()
+        MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        assertEquals(moveList.movesLeft(), 1)
+        assertEquals(moveList.movesLeft(), 14)
     }
 
     @Test
     fun testRookCapture() {
         val board = BoardFactory.getBoard("3r1k2/8/8/3R4/8/8/8/5K2 w - -")
         val moveList = MoveList()
+        MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        assertEquals(moveList.movesLeft(), 1)
+        assertEquals(moveList.movesLeft(), 19)
     }
 
     @Test
     fun testQueenCapture() {
         val board = BoardFactory.getBoard("3r1k2/8/8/3Q4/8/8/8/5K2 w - -")
         val moveList = MoveList()
+        MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        assertEquals(moveList.movesLeft(), 1)
+        assertEquals(moveList.movesLeft(), 32)
     }
 
     @Test
     fun testKingCapture() {
         val board = BoardFactory.getBoard("5k2/8/8/8/8/8/8/4qK2 w - -")
         val moveList = MoveList()
+        MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        assertEquals(moveList.movesLeft(), 1)
+        assertEquals(moveList.movesLeft(), 2)
     }
 
     @Test

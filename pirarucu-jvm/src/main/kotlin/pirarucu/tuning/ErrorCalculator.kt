@@ -39,11 +39,15 @@ class ErrorCalculator : Callable<Double> {
             topError = calculateError(topConstant)
 
             if (bottomError < topError) {
-                bestConstant = bottomnConstant
-                bestError = bottomError
+                if (bestError > bottomError) {
+                    bestConstant = bottomnConstant
+                    bestError = bottomError
+                }
             } else if (topError < bottomError) {
-                bestConstant = topConstant
-                bestError = topError
+                if (bestError > topError) {
+                    bestConstant = topConstant
+                    bestError = topError
+                }
             }
             println(String.format("Constant %f | %.10f", bestConstant, bestError))
 

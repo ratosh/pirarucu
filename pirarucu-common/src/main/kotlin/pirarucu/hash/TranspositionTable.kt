@@ -185,6 +185,17 @@ object TranspositionTable {
         return ((value ushr (MOVE_SHIFT * position)) and MOVE_MASK).toInt()
     }
 
+    fun hasMove(value: Long, move: Int): Boolean {
+        val move1 = (move.toLong() and MOVE_MASK) shl MOVE_SHIFT_1
+        val move2 = (move.toLong() and MOVE_MASK) shl MOVE_SHIFT_2
+        val move3 = (move.toLong() and MOVE_MASK) shl MOVE_SHIFT_3
+        val move4 = (move.toLong() and MOVE_MASK) shl MOVE_SHIFT_4
+        return move1 and value == move1 ||
+            move2 and value == move2 ||
+            move3 and value == move3 ||
+            move4 and value == move4
+    }
+
     fun getScoreType(value: Int): Int {
         return (value ushr SCORE_TYPE_SHIFT) and SCORE_TYPE_MASK
     }

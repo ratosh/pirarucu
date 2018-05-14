@@ -17,6 +17,8 @@ class AttackInfo {
     var pieceMovement = Array(Color.SIZE) { LongArray(Square.SIZE) }
         private set
 
+    var movementMask = LongArray(Color.SIZE)
+
     var zobristKey = LongArray(Color.SIZE)
 
     fun update(board: Board, color: Int) {
@@ -26,28 +28,30 @@ class AttackInfo {
         zobristKey[color] = board.zobristKey
         Utils.specific.arrayFill(pieceMovement[color], 0)
         Utils.specific.arrayFill(attacksBitboard[color], 0)
-        val checkBitboard = board.basicEvalInfo.checkBitboard[color]
+        val checkBitboard = board.basicEvalInfo.checkBitboard
 
-        when {
+        val mask = when {
             checkBitboard == Bitboard.EMPTY -> {
-                val mask = Bitboard.ALL
-                pawnAttacks(board, color, mask)
-                knightMoves(board, color, mask)
-                bishopMoves(board, color, mask)
-                rookMoves(board, color, mask)
+                Bitboard.ALL
             }
             Bitboard.oneElement(checkBitboard) -> {
                 val square = Square.getSquare(checkBitboard)
                 val kingSquare = board.basicEvalInfo.kingSquare[color]
-                val betweenMask = BitboardMove.BETWEEN_BITBOARD[kingSquare][square] or
-                    checkBitboard
-                pawnAttacks(board, color, betweenMask)
-                knightMoves(board, color, betweenMask)
-                bishopMoves(board, color, betweenMask)
-                rookMoves(board, color, betweenMask)
+                BitboardMove.BETWEEN_BITBOARD[kingSquare][square] or checkBitboard
+            }
+            else -> {
+                Bitboard.EMPTY
             }
         }
+        if (mask != Bitboard.EMPTY) {
+            pawnAttacks(board, color, mask)
+            knightMoves(board, color, mask)
+            bishopMoves(board, color, mask)
+            rookMoves(board, color, mask)
+        }
         kingMoves(board, color)
+
+        movementMask[color] = mask
 
         attacksBitboard[color][Piece.NONE] = attacksBitboard[color][Piece.PAWN] or
             attacksBitboard[color][Piece.KNIGHT] or
@@ -63,6 +67,7 @@ class AttackInfo {
         while (tmpPieces != Bitboard.EMPTY) {
             val fromSquare = Square.getSquare(tmpPieces)
             val fromBitboard = Bitboard.getBitboard(fromSquare)
+
 
             var bitboard = BitboardMove.PAWN_ATTACKS[color][fromSquare] and mask
             if (fromBitboard and board.basicEvalInfo.pinnedBitboard[color] != Bitboard.EMPTY) {

@@ -65,7 +65,7 @@ object MainSearch {
         if (Statistics.ENABLED && pvNode) {
             Statistics.pvSearch++
         }
-        val inCheck = board.basicEvalInfo.checkBitboard[board.colorToMove] != Bitboard.EMPTY
+        val inCheck = board.basicEvalInfo.checkBitboard != Bitboard.EMPTY
 
         var eval: Int
 
@@ -379,7 +379,6 @@ object MainSearch {
 
     // Interactive deepening with aspiration window
     fun search(board: Board) {
-        SearchInfo.reset()
         SearchOptions.reset()
         PrincipalVariation.reset()
         Statistics.reset()
