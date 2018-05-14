@@ -27,6 +27,7 @@ A Kotlin Chess Engine with UCI protocol support.
     - Razoring pruning
     - Futility pruning
     - Late Move Reduction
+    - Killer moves
 - Evaluation
     - Piece square table
     - Tapered evaluation
