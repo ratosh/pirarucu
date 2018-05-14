@@ -131,10 +131,6 @@ class Board {
         capturedPiece = historyCapturedPiece[moveNumber]
     }
 
-    fun possibleMove(move: Int): Boolean {
-        return pieceTypeBoard[Move.getToSquare(move)] != Piece.KING
-    }
-
     fun doNullMove() {
         pushToHistory()
 

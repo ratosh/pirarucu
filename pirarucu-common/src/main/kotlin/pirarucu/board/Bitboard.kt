@@ -131,6 +131,7 @@ object Bitboard {
     val QUEEN_SIDE = FILE_A or FILE_B or FILE_C
 
     val PROMOTION_BITBOARD = RANK_1 or RANK_8
+    val FROM_PROMOTION_BITBOARD = longArrayOf(RANK_7, RANK_2)
     val DOUBLE_MOVEMENT_BITBOARD = arrayOf(RANK_2, RANK_7)
 
     fun mirrorVertical(bitboard: Long): Long {
