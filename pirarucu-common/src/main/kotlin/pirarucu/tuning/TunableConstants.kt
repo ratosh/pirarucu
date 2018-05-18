@@ -5,6 +5,7 @@ import pirarucu.board.Piece
 import pirarucu.board.Rank
 import pirarucu.board.Square
 import pirarucu.util.SplitValue
+import kotlin.math.min
 
 object TunableConstants {
     val RAZOR_MARGIN = intArrayOf(0, 280, 300, 320)
@@ -21,12 +22,18 @@ object TunableConstants {
         PHASE_PIECE_VALUE[Piece.ROOK] * 4 +
         PHASE_PIECE_VALUE[Piece.QUEEN] * 2
 
-    val QS_FUTILITY_VALUE = intArrayOf(0, 100, 325, 330, 550, 900, 10000)
-    val SEE_VALUE = intArrayOf(0, 100, 325, 330, 550, 900, 10000)
-
     val MATERIAL_SCORE_MG = intArrayOf(0, 144, 608, 642, 799, 1765)
     val MATERIAL_SCORE_EG = intArrayOf(0, 174, 384, 421, 766, 1366)
     val MATERIAL_SCORE = IntArray(Piece.SIZE)
+
+    val QS_FUTILITY_VALUE = intArrayOf(0,
+        min(MATERIAL_SCORE_MG[1], MATERIAL_SCORE_EG[1]),
+        min(MATERIAL_SCORE_MG[2], MATERIAL_SCORE_EG[2]),
+        min(MATERIAL_SCORE_MG[3], MATERIAL_SCORE_EG[3]),
+        min(MATERIAL_SCORE_MG[4], MATERIAL_SCORE_EG[4]),
+        min(MATERIAL_SCORE_MG[5], MATERIAL_SCORE_EG[5]))
+
+    val SEE_VALUE = intArrayOf(0, 100, 325, 330, 550, 900, 10000)
 
     val MG_PSQT = arrayOf(
         intArrayOf(

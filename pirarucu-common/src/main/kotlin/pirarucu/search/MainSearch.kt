@@ -344,7 +344,7 @@ object MainSearch {
                 if (searchAlpha >= currentBeta) {
                     val isNormal = Move.getMoveType(bestMove) == MoveType.TYPE_NORMAL
                     if (!isCapture && isNormal) {
-                        currentNode.addKillerMove(move)
+                        currentNode.addKillerMove(bestMove)
                     }
                     phase = PHASE_END
                     break
