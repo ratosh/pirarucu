@@ -38,7 +38,7 @@ class StaticExchangeEvaluatorTest {
     @Test
     fun testExhange4() {
         val seeValue = testSee("1k1r3q/1ppn3p/p4b2/4p3/8/P2N2P1/1PP1R1BP/2K1Q3 w - -", "d3e5")
-        assertEquals(TunableConstants.QS_FUTILITY_VALUE[Piece.PAWN] -
+        assertEquals(TunableConstants.SEE_VALUE[Piece.PAWN] -
             TunableConstants.SEE_VALUE[Piece.KNIGHT], seeValue)
     }
 
