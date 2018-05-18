@@ -1,6 +1,7 @@
 package pirarucu.search
 
 import pirarucu.board.Board
+import pirarucu.board.Piece
 import pirarucu.eval.DrawEvaluator
 import pirarucu.eval.EvalConstants
 import pirarucu.eval.Evaluator
@@ -67,6 +68,16 @@ object QuiescenceSearch {
 
         var bestScore = max(alpha, eval)
 
+        if (SearchConstants.ENABLE_QSEARCH_FUTILITY) {
+            val futilityValue = eval + TunableConstants.QS_FUTILITY_VALUE[Piece.QUEEN]
+            if (futilityValue <= bestScore) {
+                if (Statistics.ENABLED) {
+                    Statistics.qFutilityHit1++
+                }
+                return futilityValue
+            }
+        }
+
         if (!moveList.startPly()) {
             return bestScore
         }
@@ -84,7 +95,6 @@ object QuiescenceSearch {
                 Statistics.qRenodes++
             }
 
-
             val moveType = Move.getMoveType(move)
 
             if (MoveType.isPromotion(moveType) && moveType != MoveType.TYPE_PROMOTION_QUEEN) {
@@ -95,9 +105,9 @@ object QuiescenceSearch {
             if (SearchConstants.ENABLE_QSEARCH_FUTILITY) {
                 val capturedPiece = board.pieceTypeBoard[Move.getToSquare(move)]
                 val futilityValue = eval + TunableConstants.QS_FUTILITY_VALUE[capturedPiece]
-                if (futilityValue <= alpha) {
+                if (futilityValue <= bestScore) {
                     if (Statistics.ENABLED) {
-                        Statistics.qFutilityHit++
+                        Statistics.qFutilityHit2++
                     }
                     if (bestScore < futilityValue) {
                         bestScore = futilityValue
