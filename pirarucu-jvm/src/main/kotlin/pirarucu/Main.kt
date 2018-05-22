@@ -6,9 +6,9 @@ import pirarucu.uci.UciInput
 fun main(args: Array<String>) {
     val uciInput = UciInput(InputHandler())
     while (true) {
-        val line = readLine()
-        line ?: return
         try {
+            val line = readLine()
+            line ?: return
             uciInput.process(line)
         } catch (e: Exception) {
             e.printStackTrace()

@@ -15,6 +15,8 @@ class UciInputTest {
 
     private val uciInput = UciInput(InputHandler())
 
+    private var search = false
+
     @BeforeTest
     fun setup() {
         TranspositionTable.reset()
@@ -25,12 +27,8 @@ class UciInputTest {
 
     @AfterTest
     fun tearDown() {
-        var search = false
-        if (SearchOptions.stop) {
-            while (!SearchOptions.stop) {
-                search = true
-                Thread.yield()
-            }
+        while (search && !SearchOptions.stop) {
+            Thread.yield()
         }
         if (search) {
             println(Statistics.toString())
@@ -58,6 +56,7 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame() {
+        search = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
@@ -68,6 +67,7 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame2() {
+        search = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
@@ -78,6 +78,7 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame3() {
+        search = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
@@ -88,6 +89,7 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame4() {
+        search = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
@@ -98,11 +100,23 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame5() {
+        search = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
         uciInput.process("position fen 1n1qkb1r/rp2pppp/p1p2n2/3p1b2/2PP4/1QN1PN2/PP3PPP/R1B1KB1R w KQk - 0 1 moves c4d5 c6d5 e1d2 b8c6 f1d3 f5g4 f3e5 c6d4 e3d4 a7a8 c3d5 d8d5 b3d5 f6d5 e5g4 e7e6 g4e5 f8b4 d2e2 e8g8 h1d1 b4d6 a1b1 d6e5 d4e5 f7f6 e5f6 f8f6 d3a6 b7a6 c1g5 f6g6 g5h4 g6g2 e2f3 g2g6 h4g3 g6g5 b1c1 a8d8 c1c5 d8f8 f3e4 d5f6 e4d4 f8d8 d4e3 g5g3 h2g3 d8d1 c5c8 g8f7 c8c7 d1d7 c7d7 f6d7 e3f3 d7c5 a2a3 c5d3 b2b3 d3e1 f3e4 e1c2 a3a4 c2a1 f2f3 a1b3 e4e3 b3c5 f3f4 c5a4 e3f2 a4b2 g3g4 b2d3 f2e3 d3b4 f4f5 e6f5 g4f5 b4c6 e3e4 c6e7 e4d4 e7f5 d4c5 f5e3 c5b6 h7h5 b6a6 h5h4 a6a5 h4h3 a5a4 h3h2 a4a3 h2h1q a3a2 e3d1 a2a1 d1f2")
         uciInput.process("go wtime 10000 btime 10000 winc 2000 binc 2000")
+    }
+
+    @Ignore
+    @Test
+    fun testGame6() {
+        search = true
+        uciInput.process("uci")
+        uciInput.process("ucinewgame")
+        uciInput.process("isready")
+        uciInput.process("position fen rnbqkbnr/pppp1pp1/4p3/7p/8/2P1P3/PP1P1PPP/RNBQKBNR w KQkq - 0 1 moves d2d4 b8c6 g1f3 g8f6 f1b5 a7a6 b5c6 d7c6 b1d2 f8e7 e1g1 e8f8 e3e4 f8g8 e4e5 f6d7 d2c4 c6c5 c1e3 d7b6 c4b6 c7b6 d4c5 d8d1 a1d1 b6c5 c3c4 h5h4 h2h3 f7f6 e3f4 f6e5 f4e5 h8h5 f1e1 a6a5 a2a3 a8a6 e1e4 h5h7 e4g4 a6b6 f3g5 h7h5 g5f3 h5h7 f3g5 h7h5 f2f4 h5h6 g5e4 g7g6 e5d6 e7d6 d1d6 b6d6 e4d6 c8d7 d6b7 e6e5 g4g5 e5f4 g1f2 g8g7 b7c5 d7f5 f2f3 h6h8 f3f4 h8f8 g2g4 f5d3 f4e3 d3c4 c5e4 f8b8 g5a5 b8b2 a5a7 g7g8 a7a8 g8g7 a8a7 g7g8 e4f6 g8f8 f6d7 f8g8 d7f6 g8f8 f6d7 f8g8 d7e5 c4f1 e5g6 f1h3 e3f4 b2g2 g6e5 g2e2 a7a8 g8g7 a8a7 g7g8 e5d7 h3g2 d7f6 g8f8 f6h7 f8e8 h7f6 e8d8 g4g5 h4h3 f6g4 e2e4 f4g3 e4e6 g4f2 e6e3 g3h2 e3f3 f2g4 f3f5 g4h6 f5f2 h6g4 f2f5 g4h6 f5f2 g5g6 g2e4 h2h3 e4g6 h3g3 f2f1 h6g4 g6e4 g4e5 d8e8 a7a4 e4d5 a4a5 d5e4 a5a4 e4d5 a4a5 d5e4 a5a7 f1f5 e5c4 f5f6 g3g4 e8d8 c4e5 d8e8 a7a4 e4d5 a4a7 f6f2 a7c7 f2a2 c7a7 a2f2 e5g6 f2f6 g6f4 d5e4 a7a4 e4c6 a4a7 c6e4 a7a4 e4c6 a4b4 e8e7 b4d4 f6f7 g4g3 f7f5 g3f2 f5a5 d4d3 a5a4 f4e2 e7f7 f2e3 a4e4 e3f2 e4a4 f2e3 a4e4 e3d2 e4a4 d3d6 c6e8 d6d3 e8c6 d3b3 c6d5 b3e3 d5c6 e3c3 c6d5 d2e3 a4e4 e3f2 f7e6 c3c5 d5b3 c5c3 b3d5 c3c5 d5b3 e2c3 e4e5 c5e5 e6e5 f2e3 b3c4 c3e4 c4e6 e4c5 e6f5 c5b3 e5d5 b3d2 f5e6 e3d3 e6f7 d2b3 f7g6 d3c3 d5e4 a3a4 e4d5 b3d4 g6b1 d4f3 d5c5 f3d4 b1a2 d4b3 c5c6 b3d2 c6d5 d2b3 a2b1 a4a5 b1a2 b3d4 d5c5 a5a6 c5b6 d4b3 a2b1 b3d4 b6a6")
+        uciInput.process("go wtime 1542 btime 1682 winc 50 binc 50")
     }
 }
 
