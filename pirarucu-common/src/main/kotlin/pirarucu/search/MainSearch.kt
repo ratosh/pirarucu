@@ -398,6 +398,7 @@ object MainSearch {
 
         val searchTimeIncrement = SearchOptions.searchTimeIncrement
 
+        var currentTime = startTime
         while (depth <= SearchOptions.depth) {
             if (SearchOptions.stop && PrincipalVariation.bestMove != Move.NONE) {
                 break
@@ -406,11 +407,13 @@ object MainSearch {
 
             while (true) {
                 val previousScore = score
+                val previousTime = currentTime
+
                 score = search(board, moveList, depth, 0, alpha, beta, true)
 
                 PrincipalVariation.save(board)
 
-                val currentTime = Utils.specific.currentTimeMillis()
+                currentTime = Utils.specific.currentTimeMillis()
                 UciOutput.searchInfo(depth, currentTime - startTime)
 
                 if (score < previousScore &&
@@ -423,8 +426,10 @@ object MainSearch {
                     abs(score) < EvalConstants.SCORE_MATE) {
                     searchTimeLimit -= searchTimeIncrement
                 }
+                val timeDiff = currentTime - previousTime
+                val nextIterationTime = currentTime + (timeDiff shl 2)
 
-                if (searchTimeLimit < currentTime) {
+                if (searchTimeLimit < currentTime || maxSearchTimeLimit < nextIterationTime) {
                     SearchOptions.stop = true
                     break
                 }

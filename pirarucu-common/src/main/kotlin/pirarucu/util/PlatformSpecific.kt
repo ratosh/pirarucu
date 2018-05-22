@@ -2,10 +2,6 @@ package pirarucu.util
 
 expect class PlatformSpecific() {
 
-    fun randomFloat(): Float
-
-    fun randomInt(bound: Int): Int
-
     fun randomLong(): Long
 
     fun currentTimeMillis(): Long

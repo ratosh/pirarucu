@@ -5,8 +5,6 @@ import pirarucu.util.Utils
 
 class UciInput(private val inputHandler: IInputHandler) {
 
-    private val lock = Any()
-
     fun process(command: String) {
         val tokens = command.split(" ".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
         when (tokens[0]) {

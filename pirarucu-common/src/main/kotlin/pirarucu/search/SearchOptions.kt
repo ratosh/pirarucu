@@ -5,10 +5,10 @@ import pirarucu.game.GameConstants
 import kotlin.math.max
 
 object SearchOptions {
-    private const val MAX_GAME_MOVES = 50
-    private const val MIN_GAME_MOVES = 30
+    private const val MAX_GAME_MOVES = 45
+    private const val MIN_GAME_MOVES = 20
 
-    private const val INCREMENT_RATIO = 20
+    private const val INCREMENT_RATIO = 10
 
     var minSearchTimeLimit = 0
     var maxSearchTimeLimit = 0

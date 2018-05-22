@@ -12,13 +12,6 @@ class InputHandler : Runnable, IInputHandler {
 
     private val thread: Thread = Thread(this)
 
-    private val board = Board()
-
-    private val lock = java.lang.Object()
-
-    @Volatile
-    private var running = false
-
     init {
         thread.name = "Search"
         thread.isDaemon = true
@@ -29,16 +22,17 @@ class InputHandler : Runnable, IInputHandler {
     override fun run() {
         while (true) {
             synchronized(lock) {
-                lock.wait()
+                while (!running) {
+                    lock.wait()
+                }
             }
+            running = false
             SearchOptions.setTime(board.colorToMove)
             MainSearch.search(board)
-            running = false
         }
     }
 
     override fun search(tokens: Array<String>) {
-        running = true
         var index = 1
         while (index < tokens.size) {
             when (tokens[index]) {
@@ -50,7 +44,8 @@ class InputHandler : Runnable, IInputHandler {
             index += 2
         }
         synchronized(lock) {
-            lock.notifyAll()
+            running = true
+            lock.notify()
         }
     }
 
@@ -97,5 +92,15 @@ class InputHandler : Runnable, IInputHandler {
 
     override fun isReady() {
         UciOutput.println("readyok")
+    }
+
+    companion object {
+
+        val lock = java.lang.Object()
+
+        @Volatile
+        var running = false
+
+        val board = Board()
     }
 }
