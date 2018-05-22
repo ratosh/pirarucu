@@ -2,20 +2,12 @@ package pirarucu.util
 
 import pirarucu.eval.EvalConstants
 import pirarucu.tuning.TunableConstants
-import java.util.Arrays
-import java.util.Random
+import java.security.SecureRandom
+import java.util.*
 
 actual class PlatformSpecific actual constructor() {
 
-    private val random = Random()
-
-    actual fun randomFloat(): Float {
-        return random.nextFloat()
-    }
-
-    actual fun randomInt(bound: Int): Int {
-        return random.nextInt(bound)
-    }
+    private val random = SecureRandom()
 
     actual fun randomLong(): Long {
         return random.nextLong()
