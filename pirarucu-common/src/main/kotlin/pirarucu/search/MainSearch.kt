@@ -24,6 +24,8 @@ import kotlin.math.min
 
 object MainSearch {
 
+    private var maxSearchTimeLimit = 0L
+
     private const val PHASE_END = 0
     private const val PHASE_QUIET = 1
     private const val PHASE_KILLER_2 = 2
@@ -46,15 +48,23 @@ object MainSearch {
         if (depth <= 0) {
             return QuiescenceSearch.search(board, moveList, ply, alpha, beta)
         }
-        val rootNode = pvNode && ply == 0
+        val rootNode = ply == 0
 
         if (!rootNode &&
             (DrawEvaluator.isDrawByRules(board) || !DrawEvaluator.hasSufficientMaterial(board))) {
             return EvalConstants.SCORE_DRAW
         }
 
+        Statistics.searchNodes++
+        if (!rootNode &&
+            Statistics.searchNodes and 0xFFFL == 0xFFFL &&
+            maxSearchTimeLimit < Utils.specific.currentTimeMillis()) {
+            SearchOptions.stop = true
+            return 0
+        }
+
         if (Statistics.ENABLED) {
-            Statistics.abSearch++
+            Statistics.abNodes++
         }
 
         val currentAlpha = max(alpha, EvalConstants.SCORE_MIN + ply)
@@ -67,39 +77,38 @@ object MainSearch {
         }
         val inCheck = board.basicEvalInfo.checkBitboard != Bitboard.EMPTY
 
-        var eval: Int
+        var ttScore = EvalConstants.SCORE_UNKNOWN
 
-        var foundMoves = 0L
+        var foundInfo = TranspositionTable.EMPTY_INFO
 
         val prunable = !inCheck
 
-        if (SearchConstants.ENABLE_TT && TranspositionTable.findEntry(board)) {
-            if (Statistics.ENABLED) {
-                Statistics.TTEntry++
-            }
-            foundMoves = TranspositionTable.foundMoves
-            val foundInfo = TranspositionTable.foundInfo
-            val foundScore = TranspositionTable.foundScore
-            eval = TranspositionTable.getScore(foundScore, ply)
-            if (foundMoves != 0L && TranspositionTable.getDepth(foundInfo) >= depth) {
-                when (TranspositionTable.getScoreType(foundInfo)) {
-                    HashConstants.SCORE_TYPE_EXACT_SCORE -> {
-                        return eval
-                    }
-                    HashConstants.SCORE_TYPE_FAIL_LOW -> if (eval <= currentAlpha) {
-                        return eval
-                    }
-                    HashConstants.SCORE_TYPE_FAIL_HIGH -> if (eval >= currentBeta) {
-                        return eval
+        if (SearchConstants.ENABLE_TT) {
+            foundInfo = TranspositionTable.findEntry(board)
+            if (foundInfo != TranspositionTable.EMPTY_INFO) {
+                if (Statistics.ENABLED) {
+                    Statistics.TTEntry++
+                }
+                ttScore = TranspositionTable.getScore(foundInfo, ply)
+                if (TranspositionTable.getDepth(foundInfo) >= depth) {
+                    when (TranspositionTable.getScoreType(foundInfo)) {
+                        HashConstants.SCORE_TYPE_EXACT_SCORE -> {
+                            return ttScore
+                        }
+                        HashConstants.SCORE_TYPE_FAIL_LOW -> if (ttScore <= currentAlpha) {
+                            return ttScore
+                        }
+                        HashConstants.SCORE_TYPE_FAIL_HIGH -> if (ttScore >= currentBeta) {
+                            return ttScore
+                        }
                     }
                 }
             }
-        } else {
-            eval = if (prunable) {
-                GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board)
-            } else {
-                EvalConstants.SCORE_UNKNOWN
-            }
+        }
+
+        val eval = when {
+            ttScore != EvalConstants.SCORE_UNKNOWN -> ttScore
+            else -> GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board)
         }
 
         // Prunes
@@ -167,11 +176,12 @@ object MainSearch {
         var bestMove = Move.NONE
         var bestScore = EvalConstants.SCORE_MIN
 
-        val currentNode = SearchInfo.plyInfoList[ply]
-
         if (!moveList.startPly()) {
             return eval
         }
+
+        val currentNode = SearchInfo.plyInfoList[ply]
+
         var movesPerformed = 0
         var searchAlpha = currentAlpha
         var phase = if (SearchConstants.ENABLE_TT) {
@@ -182,21 +192,18 @@ object MainSearch {
         while (phase > PHASE_END) {
             when (phase) {
                 PHASE_TT -> {
-                    if (foundMoves == 0L && depth >= 5) {
-                        search(board, moveList, 3 * depth / 4 - 2, ply, currentAlpha, currentBeta, false)
-                        if (TranspositionTable.findEntry(board)) {
-                            foundMoves = TranspositionTable.foundMoves
-                        }
+                    if (pvNode && foundInfo == 0L && depth > 10) {
+                        search(board, moveList, depth / 2, ply, currentAlpha, currentBeta, false)
+                        foundInfo = TranspositionTable.findEntry(board)
                     }
-                    if (foundMoves != 0L) {
-                        for (index in 0 until TranspositionTable.MAX_MOVES) {
-                            val ttMove = TranspositionTable.getMove(foundMoves, index)
-                            if (ttMove != Move.NONE) {
-                                moveList.addMove(ttMove)
-                            }
-                            currentNode.addTTMove(index, ttMove)
+                    if (foundInfo != TranspositionTable.EMPTY_INFO) {
+                        val ttMove = TranspositionTable.getMove(foundInfo)
+                        if (ttMove != Move.NONE) {
+                            moveList.addMove(ttMove)
                         }
+                        currentNode.setTTMove(ttMove)
                     }
+
                 }
                 PHASE_ATTACK -> {
                     MoveGenerator.legalAttacks(board, currentNode.attackInfo, moveList)
@@ -235,7 +242,7 @@ object MainSearch {
             }
             while (moveList.hasNext()) {
                 val move = moveList.next()
-                if (foundMoves != 0L && phase != PHASE_TT && currentNode.isTTMove(move)) {
+                if (foundInfo != TranspositionTable.EMPTY_INFO && phase != PHASE_TT && currentNode.isTTMove(move)) {
                     continue
                 }
                 if (phase == PHASE_QUIET && currentNode.isKillerMove(move)) {
@@ -298,8 +305,8 @@ object MainSearch {
                 val searchDepth = depth - reduction
 
                 // Reductions
-                if (depth >= 3 &&
-                    movesPerformed > 1 &&
+                if (depth > SearchConstants.LMR_MIN_DEPTH &&
+                    movesPerformed > SearchConstants.LMR_MIN_MOVES &&
                     !isCapture &&
                     !isPromotion) {
                     reduction += 1 + depth / 6
@@ -329,7 +336,7 @@ object MainSearch {
                     }
                 }
 
-                if (score > searchAlpha) {
+                if (pvNode && score > searchAlpha) {
                     score = -search(board, moveList, searchDepth, ply + 1, -currentBeta, -searchAlpha, true)
                 }
                 board.undoMove(move)
@@ -379,7 +386,6 @@ object MainSearch {
 
     // Interactive deepening with aspiration window
     fun search(board: Board) {
-        SearchOptions.reset()
         PrincipalVariation.reset()
         Statistics.reset()
 
@@ -393,12 +399,11 @@ object MainSearch {
         var score = EvalConstants.SCORE_MIN
         val startTime = Utils.specific.currentTimeMillis()
         var searchTimeLimit = startTime + SearchOptions.minSearchTimeLimit
-        var minSearchTimeLimit = startTime + SearchOptions.minSearchTimeLimit
-        val maxSearchTimeLimit = startTime + SearchOptions.maxSearchTimeLimit
+        val minSearchTimeLimit = startTime + SearchOptions.minSearchTimeLimit
+        maxSearchTimeLimit = startTime + SearchOptions.maxSearchTimeLimit
 
         val searchTimeIncrement = SearchOptions.searchTimeIncrement
 
-        var currentTime = startTime
         while (depth <= SearchOptions.depth) {
             if (SearchOptions.stop && PrincipalVariation.bestMove != Move.NONE) {
                 break
@@ -407,13 +412,12 @@ object MainSearch {
 
             while (true) {
                 val previousScore = score
-                val previousTime = currentTime
 
                 score = search(board, moveList, depth, 0, alpha, beta, true)
 
                 PrincipalVariation.save(board)
 
-                currentTime = Utils.specific.currentTimeMillis()
+                val currentTime = Utils.specific.currentTimeMillis()
                 UciOutput.searchInfo(depth, currentTime - startTime)
 
                 if (score < previousScore &&
@@ -426,10 +430,8 @@ object MainSearch {
                     abs(score) < EvalConstants.SCORE_MATE) {
                     searchTimeLimit -= searchTimeIncrement
                 }
-                val timeDiff = currentTime - previousTime
-                val nextIterationTime = currentTime + (timeDiff shl 2)
 
-                if (searchTimeLimit < currentTime || maxSearchTimeLimit < nextIterationTime) {
+                if (searchTimeLimit < currentTime) {
                     SearchOptions.stop = true
                     break
                 }

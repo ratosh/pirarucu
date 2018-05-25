@@ -22,6 +22,7 @@ class MainSearchTest {
 
     @BeforeTest
     fun setup() {
+        SearchOptions.stop = false
         TranspositionTable.reset()
         PrincipalVariation.reset()
         Statistics.ENABLED = true

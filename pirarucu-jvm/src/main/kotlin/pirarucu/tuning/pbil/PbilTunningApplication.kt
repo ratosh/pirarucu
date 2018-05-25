@@ -1,5 +1,6 @@
 package pirarucu.tuning.pbil
 
+import pirarucu.board.Piece
 import pirarucu.tuning.ErrorCalculator
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.EpdFileLoader
@@ -15,7 +16,7 @@ object PbilTunningApplication {
     private const val numberOfThreads = 2
     private val workers = arrayOfNulls<ErrorCalculator>(numberOfThreads)
     private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
-    private val epdFileLoader = EpdFileLoader("/mnt/d/chess/epds/quiet_labeled_v6.epd")
+    private val epdFileLoader = EpdFileLoader("/mnt/d/chess/epds/ruy_tune_quiescent_positions.epd")
 
     private val tuningObjects: List<PbilTunningObject>
         get() {
@@ -29,6 +30,7 @@ object PbilTunningApplication {
                 false, 0, 6))
                 */
 
+            /*
             tuningObjects.add(PbilTunningObject(
                 "MATERIAL_SCORE_MG",
                 TunableConstants.MATERIAL_SCORE_MG,
@@ -40,6 +42,7 @@ object PbilTunningApplication {
                 TunableConstants.MATERIAL_SCORE_EG,
                 intArrayOf(0, 8, 10, 10, 10, 11),
                 false, 0))
+                */
 
             /*
             tuningObjects.add(PbilTunningObject(
@@ -185,6 +188,7 @@ object PbilTunningApplication {
                     6, 6, 6, 6
                 ),
                 true))
+                */
 
             tuningObjects.add(PbilTunningObject(
                 "MG[KING]",
@@ -213,69 +217,6 @@ object PbilTunningApplication {
                     6, 6, 6, 6
                 ),
                 true))
-            */
-
-            /*
-            tuningObjects.add(PbilTunningObject(
-                "MATERIAL_IMBALANCE_OURS[PAWN]",
-                TunableConstants.MATERIAL_IMBALANCE_OURS[Piece.PAWN],
-                intArrayOf(0, 3, 0, 0, 0, 0),
-                true, 0, 2, 3, 4, 5))
-
-            tuningObjects.add(PbilTunningObject(
-                "MATERIAL_IMBALANCE_OURS[KNIGHT]",
-                TunableConstants.MATERIAL_IMBALANCE_OURS[Piece.KNIGHT],
-                intArrayOf(0, 3, 3, 0, 0, 0),
-                true, 0, 3, 4, 5))
-
-            tuningObjects.add(PbilTunningObject(
-                "MATERIAL_IMBALANCE_OURS[BISHOP]",
-                TunableConstants.MATERIAL_IMBALANCE_OURS[Piece.BISHOP],
-                intArrayOf(0, 3, 3, 3, 0, 0),
-                true, 0, 4, 5))
-
-            tuningObjects.add(PbilTunningObject(
-                "MATERIAL_IMBALANCE_OURS[ROOK]",
-                TunableConstants.MATERIAL_IMBALANCE_OURS[Piece.ROOK],
-                intArrayOf(0, 3, 3, 3, 3, 0),
-                true, 0, 5))
-
-            tuningObjects.add(PbilTunningObject(
-                "MATERIAL_IMBALANCE_OURS[QUEEN]",
-                TunableConstants.MATERIAL_IMBALANCE_OURS[Piece.QUEEN],
-                intArrayOf(0, 3, 3, 3, 3, 0),
-                true, 0, 5))
-
-            tuningObjects.add(PbilTunningObject(
-                "MATERIAL_IMBALANCE_THEIRS[PAWN]",
-                TunableConstants.MATERIAL_IMBALANCE_THEIRS[Piece.PAWN],
-                intArrayOf(0, 3, 0, 0, 0, 0),
-                true, 0, 2, 3, 4, 5))
-
-            tuningObjects.add(PbilTunningObject(
-                "MATERIAL_IMBALANCE_THEIRS[KNIGHT]",
-                TunableConstants.MATERIAL_IMBALANCE_THEIRS[Piece.KNIGHT],
-                intArrayOf(0, 3, 3, 0, 0, 0),
-                true, 0, 3, 4, 5))
-
-            tuningObjects.add(PbilTunningObject(
-                "MATERIAL_IMBALANCE_THEIRS[BISHOP]",
-                TunableConstants.MATERIAL_IMBALANCE_THEIRS[Piece.BISHOP],
-                intArrayOf(0, 3, 3, 3, 0, 0),
-                true, 0, 4, 5))
-
-            tuningObjects.add(PbilTunningObject(
-                "MATERIAL_IMBALANCE_THEIRS[ROOK]",
-                TunableConstants.MATERIAL_IMBALANCE_THEIRS[Piece.ROOK],
-                intArrayOf(0, 3, 3, 3, 3, 0),
-                true, 0, 5))
-
-            tuningObjects.add(PbilTunningObject(
-                "MATERIAL_IMBALANCE_THEIRS[QUEEN]",
-                TunableConstants.MATERIAL_IMBALANCE_THEIRS[Piece.QUEEN],
-                intArrayOf(0, 3, 3, 3, 3, 0),
-                true, 0, 5))
-            */
 
             return tuningObjects
         }

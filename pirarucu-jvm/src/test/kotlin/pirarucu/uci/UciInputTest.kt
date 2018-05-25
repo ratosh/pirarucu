@@ -118,5 +118,16 @@ class UciInputTest {
         uciInput.process("position fen rnbqkbnr/pppp1pp1/4p3/7p/8/2P1P3/PP1P1PPP/RNBQKBNR w KQkq - 0 1 moves d2d4 b8c6 g1f3 g8f6 f1b5 a7a6 b5c6 d7c6 b1d2 f8e7 e1g1 e8f8 e3e4 f8g8 e4e5 f6d7 d2c4 c6c5 c1e3 d7b6 c4b6 c7b6 d4c5 d8d1 a1d1 b6c5 c3c4 h5h4 h2h3 f7f6 e3f4 f6e5 f4e5 h8h5 f1e1 a6a5 a2a3 a8a6 e1e4 h5h7 e4g4 a6b6 f3g5 h7h5 g5f3 h5h7 f3g5 h7h5 f2f4 h5h6 g5e4 g7g6 e5d6 e7d6 d1d6 b6d6 e4d6 c8d7 d6b7 e6e5 g4g5 e5f4 g1f2 g8g7 b7c5 d7f5 f2f3 h6h8 f3f4 h8f8 g2g4 f5d3 f4e3 d3c4 c5e4 f8b8 g5a5 b8b2 a5a7 g7g8 a7a8 g8g7 a8a7 g7g8 e4f6 g8f8 f6d7 f8g8 d7f6 g8f8 f6d7 f8g8 d7e5 c4f1 e5g6 f1h3 e3f4 b2g2 g6e5 g2e2 a7a8 g8g7 a8a7 g7g8 e5d7 h3g2 d7f6 g8f8 f6h7 f8e8 h7f6 e8d8 g4g5 h4h3 f6g4 e2e4 f4g3 e4e6 g4f2 e6e3 g3h2 e3f3 f2g4 f3f5 g4h6 f5f2 h6g4 f2f5 g4h6 f5f2 g5g6 g2e4 h2h3 e4g6 h3g3 f2f1 h6g4 g6e4 g4e5 d8e8 a7a4 e4d5 a4a5 d5e4 a5a4 e4d5 a4a5 d5e4 a5a7 f1f5 e5c4 f5f6 g3g4 e8d8 c4e5 d8e8 a7a4 e4d5 a4a7 f6f2 a7c7 f2a2 c7a7 a2f2 e5g6 f2f6 g6f4 d5e4 a7a4 e4c6 a4a7 c6e4 a7a4 e4c6 a4b4 e8e7 b4d4 f6f7 g4g3 f7f5 g3f2 f5a5 d4d3 a5a4 f4e2 e7f7 f2e3 a4e4 e3f2 e4a4 f2e3 a4e4 e3d2 e4a4 d3d6 c6e8 d6d3 e8c6 d3b3 c6d5 b3e3 d5c6 e3c3 c6d5 d2e3 a4e4 e3f2 f7e6 c3c5 d5b3 c5c3 b3d5 c3c5 d5b3 e2c3 e4e5 c5e5 e6e5 f2e3 b3c4 c3e4 c4e6 e4c5 e6f5 c5b3 e5d5 b3d2 f5e6 e3d3 e6f7 d2b3 f7g6 d3c3 d5e4 a3a4 e4d5 b3d4 g6b1 d4f3 d5c5 f3d4 b1a2 d4b3 c5c6 b3d2 c6d5 d2b3 a2b1 a4a5 b1a2 b3d4 d5c5 a5a6 c5b6 d4b3 a2b1 b3d4 b6a6")
         uciInput.process("go wtime 1542 btime 1682 winc 50 binc 50")
     }
+
+    @Ignore
+    @Test
+    fun testGame7() {
+        search = true
+        uciInput.process("uci")
+        uciInput.process("ucinewgame")
+        uciInput.process("isready")
+        uciInput.process("position startpos moves e2e4 e7e6 d2d4 d7d5 b1c3 f8b4 e4e5 c7c5 d1g4 g8e7 g1f3 b8c6 f1b5 c5d4 f3d4 e8g8 d4c6 b4c3 b2c3 b7c6 b5d3 d8c7 g4h5 e7g6 f2f4 c6c5 e1g1 c5c4 d3g6 c7b6 g1h1 h7g6 h5d1 b6a5 f1f3 c8b7 d1e1 a5a4")
+        uciInput.process("go wtime 853844 btime 1026222 movestogo 5")
+    }
 }
 

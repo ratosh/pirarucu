@@ -7,30 +7,9 @@ import pirarucu.search.MainSearch
 import pirarucu.search.SearchOptions
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.Utils
+import kotlin.jvm.Volatile
 
-class InputHandler : Runnable, IInputHandler {
-
-    private val thread: Thread = Thread(this)
-
-    init {
-        thread.name = "Search"
-        thread.isDaemon = true
-        thread.priority = Thread.MAX_PRIORITY
-        thread.start()
-    }
-
-    override fun run() {
-        while (true) {
-            synchronized(lock) {
-                while (!running) {
-                    lock.wait()
-                }
-            }
-            running = false
-            SearchOptions.setTime(board.colorToMove)
-            MainSearch.search(board)
-        }
-    }
+class InputHandler : IInputHandler {
 
     override fun search(tokens: Array<String>) {
         var index = 1
@@ -40,12 +19,16 @@ class InputHandler : Runnable, IInputHandler {
                 "btime" -> SearchOptions.blackTime = tokens[index + 1].toInt()
                 "winc" -> SearchOptions.whiteIncrement = tokens[index + 1].toInt()
                 "binc" -> SearchOptions.blackIncrement = tokens[index + 1].toInt()
+                "movestogo" -> SearchOptions.movesToGo = tokens[index + 1].toInt()
             }
             index += 2
         }
+        SearchOptions.setTime(board.colorToMove)
         synchronized(lock) {
             running = true
-            lock.notify()
+            UciOutput.info("Before notify $running")
+            lock.notifyAll()
+            UciOutput.info("After notify $running")
         }
     }
 
@@ -94,13 +77,41 @@ class InputHandler : Runnable, IInputHandler {
         UciOutput.println("readyok")
     }
 
+    class SearchThread : Runnable {
+
+        override fun run() {
+            while (true) {
+                synchronized(lock) {
+                    while (!running) {
+                        UciOutput.info("Before wait $running")
+                        lock.wait()
+                        UciOutput.info("After wait $running")
+                    }
+                }
+                SearchOptions.stop = false
+                UciOutput.info("start searching $running")
+                running = false
+                MainSearch.search(board)
+            }
+        }
+    }
+
     companion object {
 
-        val lock = java.lang.Object()
+        private val lock = java.lang.Object()
 
         @Volatile
-        var running = false
+        private var running = false
 
-        val board = Board()
+        private val board = Board()
+
+        private val searchThread = Thread(SearchThread())
+
+        init {
+            searchThread.name = "Search"
+            searchThread.isDaemon = true
+            searchThread.priority = Thread.MAX_PRIORITY
+            searchThread.start()
+        }
     }
 }

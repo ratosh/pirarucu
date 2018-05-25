@@ -5,10 +5,10 @@ import pirarucu.game.GameConstants
 import kotlin.math.max
 
 object SearchOptions {
-    private const val MAX_GAME_MOVES = 45
-    private const val MIN_GAME_MOVES = 20
+    private const val MAX_TIME_RATIO = 2.5
+    private const val GAME_MOVES = 40
 
-    private const val INCREMENT_RATIO = 10
+    private const val INCREMENT_RATIO = 20
 
     var minSearchTimeLimit = 0
     var maxSearchTimeLimit = 0
@@ -18,14 +18,12 @@ object SearchOptions {
 
     var stop = false
 
-    var whiteTime: Int = 0
-    var blackTime: Int = 0
-    var whiteIncrement: Int = 0
-    var blackIncrement: Int = 0
+    var movesToGo = 0
 
-    fun reset() {
-        stop = false
-    }
+    var whiteTime = 0
+    var blackTime = 0
+    var whiteIncrement = 0
+    var blackIncrement = 0
 
     fun setTime(color: Int) {
         val totalTime = if (color == Color.WHITE) {
@@ -33,9 +31,17 @@ object SearchOptions {
         } else {
             blackTime
         }
+        val moves = when {
+            movesToGo != 0 -> movesToGo * 2
+            else -> GAME_MOVES
+        }
 
-        minSearchTimeLimit = totalTime / MAX_GAME_MOVES
-        maxSearchTimeLimit = totalTime / MIN_GAME_MOVES
+        minSearchTimeLimit = totalTime / moves
+        maxSearchTimeLimit = when (movesToGo) {
+            1 -> (totalTime - 1000)
+            else -> (minSearchTimeLimit * MAX_TIME_RATIO).toInt()
+        }
+
         searchTimeIncrement = max(1, (maxSearchTimeLimit - minSearchTimeLimit) / INCREMENT_RATIO)
     }
 }

@@ -1,9 +1,7 @@
 package pirarucu.search
 
 import pirarucu.eval.AttackInfo
-import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
-import pirarucu.util.Utils
 
 class SearchPlyInfo(val ply: Int) {
 
@@ -12,14 +10,14 @@ class SearchPlyInfo(val ply: Int) {
     var killerMove1 = Move.NONE
     var killerMove2 = Move.NONE
 
-    var ttMoves = IntArray(TranspositionTable.MAX_MOVES)
+    var ttMove = Move.NONE
 
     init {
         clear()
     }
 
     fun clear() {
-        Utils.specific.arrayFill(ttMoves, Move.NONE)
+        ttMove = Move.NONE
 
         killerMove1 = Move.NONE
         killerMove2 = Move.NONE
@@ -32,12 +30,12 @@ class SearchPlyInfo(val ply: Int) {
         }
     }
 
-    fun addTTMove(index: Int, move: Int) {
-        ttMoves[index] = move
+    fun setTTMove(move: Int) {
+        ttMove = move
     }
 
     fun isTTMove(move: Int): Boolean {
-        return ttMoves.contains(move)
+        return ttMove == move
     }
 
     fun isKillerMove(move: Int): Boolean {
