@@ -1,5 +1,6 @@
 package pirarucu.uci
 
+
 import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
 import pirarucu.search.PrincipalVariation
@@ -11,13 +12,17 @@ object UciOutput {
         kotlin.io.println(line)
     }
 
+    fun info(line: String) {
+        println("info $line")
+    }
+
     fun bestMove(move: Int) {
         println("bestmove " + Move.toString(move))
     }
 
     fun searchInfo(depth: Int, time: Long) {
-        val nps = if (Statistics.moves > 0 && time > 0) {
-            " nps " + Statistics.moves * 1000 / time
+        val nps = if (Statistics.searchNodes > 0 && time > 0) {
+            " nps " + Statistics.searchNodes * 1000 / time
         } else {
             " nps 0"
         }
@@ -25,9 +30,8 @@ object UciOutput {
             " time " + time +
             " score cp " + PrincipalVariation.bestScore +
             nps +
-            " nodes " + Statistics.moves +
+            " nodes " + Statistics.searchNodes +
             " hashfull " + TranspositionTable.ttUsage * 1000 / TranspositionTable.tableLimit +
             " pv " + PrincipalVariation.toString())
     }
-
 }

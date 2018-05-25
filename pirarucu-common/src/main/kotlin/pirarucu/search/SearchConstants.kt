@@ -18,4 +18,7 @@ object SearchConstants {
 
     const val ENABLE_QSEARCH_FUTILITY = true
     const val ENABLE_QSEARCH_SEE = true
+
+    const val LMR_MIN_DEPTH = 2
+    const val LMR_MIN_MOVES = 1
 }

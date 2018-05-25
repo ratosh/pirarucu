@@ -27,36 +27,41 @@ object QuiescenceSearch {
                ply: Int,
                alpha: Int,
                beta: Int): Int {
-        if (Statistics.ENABLED) {
-            Statistics.qMaxPly = max(Statistics.qMaxPly, ply)
-            Statistics.qNodes++
-        }
         if (DrawEvaluator.isDrawByRules(board) || !DrawEvaluator.hasSufficientMaterial(board)) {
             if (Statistics.ENABLED) {
                 Statistics.qDraw++
             }
             return EvalConstants.SCORE_DRAW
         }
-        val eval: Int
-        if (SearchConstants.ENABLE_Q_TT && TranspositionTable.findEntry(board)) {
-            if (Statistics.ENABLED) {
-                Statistics.qTTEntry++
+        Statistics.searchNodes++
+        if (Statistics.ENABLED) {
+            Statistics.qMaxPly = max(Statistics.qMaxPly, ply)
+            Statistics.qNodes++
+        }
+        var ttScore = EvalConstants.SCORE_UNKNOWN
+        if (SearchConstants.ENABLE_Q_TT) {
+            val foundInfo = TranspositionTable.findEntry(board)
+            if (foundInfo != TranspositionTable.EMPTY_INFO) {
+                if (Statistics.ENABLED) {
+                    Statistics.qTTEntry++
+                }
+                ttScore = TranspositionTable.getScore(foundInfo, ply)
+                when (TranspositionTable.getScoreType(foundInfo)) {
+                    HashConstants.SCORE_TYPE_EXACT_SCORE -> {
+                        return ttScore
+                    }
+                    HashConstants.SCORE_TYPE_FAIL_LOW -> if (ttScore <= alpha) {
+                        return ttScore
+                    }
+                    HashConstants.SCORE_TYPE_FAIL_HIGH -> if (ttScore >= beta) {
+                        return ttScore
+                    }
+                }
             }
-            val foundInfo = TranspositionTable.foundInfo
-            eval = TranspositionTable.getScore(TranspositionTable.foundScore, ply)
-            when (TranspositionTable.getScoreType(foundInfo)) {
-                HashConstants.SCORE_TYPE_EXACT_SCORE -> {
-                    return eval
-                }
-                HashConstants.SCORE_TYPE_FAIL_LOW -> if (eval <= alpha) {
-                    return eval
-                }
-                HashConstants.SCORE_TYPE_FAIL_HIGH -> if (eval >= beta) {
-                    return eval
-                }
-            }
-        } else {
-            eval = GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board)
+        }
+        val eval = when {
+            ttScore != EvalConstants.SCORE_UNKNOWN -> ttScore
+            else -> GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board)
         }
 
         if (eval >= beta) {

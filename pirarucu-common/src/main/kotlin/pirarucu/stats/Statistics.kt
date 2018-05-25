@@ -8,6 +8,8 @@ object Statistics {
 
     var ENABLED = false
 
+    var searchNodes = 0L
+
     var ttHits = 0L
     var ttMisses = 0L
 
@@ -27,7 +29,7 @@ object Statistics {
     var gMoves = 0L
     var moves = 0L
 
-    var abSearch = 0L
+    var abNodes = 0L
     var pvSearch = 0L
     var TTEntry = 0L
 
@@ -64,6 +66,7 @@ object Statistics {
     var killer2Hit = 0L
 
     fun reset() {
+        searchNodes = 0L
         ttHits = 0
         ttMisses = 0
 
@@ -83,7 +86,7 @@ object Statistics {
         gMoves = 0
         moves = 0
 
-        abSearch = 0
+        abNodes = 0
         pvSearch = 0
         TTEntry = 0
 
@@ -124,9 +127,9 @@ object Statistics {
         val buffer = StringBuilder()
 
         buffer.append("--- Main Search\n")
-        buffer.append("MS abSearch: $abSearch\n")
+        buffer.append("MS abNodes: $abNodes\n")
         buffer.append("MS pvSearch: $pvSearch\n")
-        buffer.append("MS TTEntry: " + buildPercentage(TTEntry, abSearch) + "\n")
+        buffer.append("MS TTEntry: " + buildPercentage(TTEntry, abNodes) + "\n")
 
         buffer.append("--- Pruning $prunable\n")
         for (index in childFutility.indices) {

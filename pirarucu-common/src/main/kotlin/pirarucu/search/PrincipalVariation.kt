@@ -14,21 +14,23 @@ object PrincipalVariation {
     var bestScore = 0
 
     fun reset() {
-        Utils.Companion.specific.arrayFill(bestMoveList, 0)
+        Utils.specific.arrayFill(bestMoveList, 0)
         bestMove = Move.NONE
         bestScore = 0
     }
 
     fun save(board: Board) {
         var ply = 0
-        while (ply < PV_DEPTH && TranspositionTable.findEntry(board)) {
-            val moves = TranspositionTable.foundMoves
-            val score = TranspositionTable.foundScore
-            val firstMove = TranspositionTable.getFirstMove(moves)
+        while (ply < PV_DEPTH) {
+            val info = TranspositionTable.findEntry(board)
+            if (info == TranspositionTable.EMPTY_INFO) {
+                break
+            }
+            val firstMove = TranspositionTable.getMove(info)
             if (firstMove != Move.NONE) {
                 if (ply == 0) {
                     bestMove = firstMove
-                    bestScore = score
+                    bestScore = TranspositionTable.getScore(info, ply)
                 }
                 bestMoveList[ply] = firstMove
                 board.doMove(firstMove)
