@@ -17,7 +17,6 @@ class MoveGeneratorPerftTest {
     fun testInitialPosition() {
         val moveInfoList = Array(5) { MoveInfo() }
         val board = BoardFactory.getBoard()
-        divide(board, 4)
 
         recursive(board, moveInfoList, 5)
 

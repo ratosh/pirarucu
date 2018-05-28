@@ -35,7 +35,7 @@ object TunableConstants {
 
     val SEE_VALUE = intArrayOf(0, 100, 325, 330, 550, 900, 10000)
 
-    val MG_PSQT = arrayOf(
+    val PSQT_MG = arrayOf(
         intArrayOf(
             0, 0, 0, 0,
             0, 0, 0, 0,
@@ -108,7 +108,7 @@ object TunableConstants {
         )
     )
 
-    val EG_PSQT = arrayOf(
+    val PSQT_EG = arrayOf(
         intArrayOf(
             0, 0, 0, 0,
             0, 0, 0, 0,
@@ -183,25 +183,6 @@ object TunableConstants {
 
     val PSQT = Array(Piece.SIZE) { IntArray(Square.SIZE) }
 
-
-    val MATERIAL_IMBALANCE_OURS = arrayOf(
-        intArrayOf(0, 0, 0, 0, 0, 0),
-        intArrayOf(0, 0, 0, 0, 0, 0),
-        intArrayOf(0, 0, 0, 0, 0, 0),
-        intArrayOf(0, 0, 0, 0, 0, 0),
-        intArrayOf(0, 0, 0, 0, 0, 0),
-        intArrayOf(0, 0, 0, 0, 0, 0)
-    )
-
-    val MATERIAL_IMBALANCE_THEIRS = arrayOf(
-        intArrayOf(0, 0, 0, 0, 0, 0),
-        intArrayOf(0, 0, 0, 0, 0, 0),
-        intArrayOf(0, 0, 0, 0, 0, 0),
-        intArrayOf(0, 0, 0, 0, 0, 0),
-        intArrayOf(0, 0, 0, 0, 0, 0),
-        intArrayOf(0, 0, 0, 0, 0, 0)
-    )
-
     init {
         update()
     }
@@ -222,7 +203,7 @@ object TunableConstants {
             for (rank in Rank.RANK_1 until Rank.SIZE) {
                 for (file in File.FILE_A until File.SIZE / 2) {
                     val square = Square.getSquare(file, Rank.invertRank(rank))
-                    val psqtValue = SplitValue.mergeParts(MG_PSQT[piece][psqPosition], EG_PSQT[piece][psqPosition])
+                    val psqtValue = SplitValue.mergeParts(PSQT_MG[piece][psqPosition], PSQT_EG[piece][psqPosition])
                     PSQT[piece][square] = psqtValue
                     PSQT[piece][Square.flipHorizontal(square)] = psqtValue
                     psqPosition++

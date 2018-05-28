@@ -1,7 +1,9 @@
 package pirarucu.tuning.pbil
 
 import pirarucu.util.Utils
-import java.util.*
+import java.util.ArrayList
+import java.util.Arrays
+import java.util.BitSet
 
 class PbilTunningObject(val name: String, protected val elementList: IntArray, bitsPerValue: IntArray,
                         allowNegatives: Boolean, vararg ignoreElementArgs: Int) {

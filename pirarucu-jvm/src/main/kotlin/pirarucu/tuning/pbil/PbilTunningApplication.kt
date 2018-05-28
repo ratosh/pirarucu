@@ -1,22 +1,21 @@
 package pirarucu.tuning.pbil
 
-import pirarucu.board.Piece
 import pirarucu.tuning.ErrorCalculator
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.EpdFileLoader
-import java.util.*
+import java.util.ArrayList
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 
 object PbilTunningApplication {
 
-    private const val INTERACTIONS = 300
+    private const val INTERACTIONS = 1000
 
     private const val numberOfThreads = 2
     private val workers = arrayOfNulls<ErrorCalculator>(numberOfThreads)
     private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
-    private val epdFileLoader = EpdFileLoader("/mnt/d/chess/epds/ruy_tune_quiescent_positions.epd")
+    private val epdFileLoader = EpdFileLoader("/mnt/d/chess/epds/quiet-labeled.epd")
 
     private val tuningObjects: List<PbilTunningObject>
         get() {
@@ -47,7 +46,7 @@ object PbilTunningApplication {
             /*
             tuningObjects.add(PbilTunningObject(
                 "MG[PAWN]",
-                TunableConstants.MG_PSQT[Piece.PAWN],
+                TunableConstants.PSQT_MG[Piece.PAWN],
                 intArrayOf(0, 0, 0, 0,
                     6, 6, 6, 6,
                     6, 6, 6, 6,
@@ -63,7 +62,7 @@ object PbilTunningApplication {
             /*
             tuningObjects.add(PbilTunningObject(
                 "EG[PAWN]",
-                TunableConstants.EG_PSQT[Piece.PAWN],
+                TunableConstants.PSQT_EG[Piece.PAWN],
                 intArrayOf(0, 0, 0, 0,
                     6, 6, 6, 6,
                     6, 6, 6, 6,
@@ -79,7 +78,7 @@ object PbilTunningApplication {
             /*
             tuningObjects.add(PbilTunningObject(
                 "MG[KNIGHT]",
-                TunableConstants.MG_PSQT[Piece.KNIGHT],
+                TunableConstants.PSQT_MG[Piece.KNIGHT],
                 intArrayOf(6, 6, 6, 6,
                     6, 6, 6, 6,
                     6, 6, 6, 6,
@@ -93,7 +92,7 @@ object PbilTunningApplication {
 
             tuningObjects.add(PbilTunningObject(
                 "EG[KNIGHT]",
-                TunableConstants.EG_PSQT[Piece.KNIGHT],
+                TunableConstants.PSQT_EG[Piece.KNIGHT],
                 intArrayOf(6, 6, 6, 6,
                     6, 6, 6, 6,
                     6, 6, 6, 6,
@@ -107,7 +106,7 @@ object PbilTunningApplication {
 
             tuningObjects.add(PbilTunningObject(
                 "MG[BISHOP]",
-                TunableConstants.MG_PSQT[Piece.BISHOP],
+                TunableConstants.PSQT_MG[Piece.BISHOP],
                 intArrayOf(6, 6, 6, 6,
                     6, 6, 6, 6,
                     6, 6, 6, 6,
@@ -121,7 +120,7 @@ object PbilTunningApplication {
 
             tuningObjects.add(PbilTunningObject(
                 "EG[BISHOP]",
-                TunableConstants.EG_PSQT[Piece.BISHOP],
+                TunableConstants.PSQT_EG[Piece.BISHOP],
                 intArrayOf(6, 6, 6, 6,
                     6, 6, 6, 6,
                     6, 6, 6, 6,
@@ -135,7 +134,7 @@ object PbilTunningApplication {
 
             tuningObjects.add(PbilTunningObject(
                 "MG[ROOK]",
-                TunableConstants.MG_PSQT[Piece.ROOK],
+                TunableConstants.PSQT_MG[Piece.ROOK],
                 intArrayOf(6, 6, 6, 6,
                     6, 6, 6, 6,
                     6, 6, 6, 6,
@@ -149,7 +148,7 @@ object PbilTunningApplication {
 
             tuningObjects.add(PbilTunningObject(
                 "EG[ROOK]",
-                TunableConstants.EG_PSQT[Piece.ROOK],
+                TunableConstants.PSQT_EG[Piece.ROOK],
                 intArrayOf(6, 6, 6, 6,
                     6, 6, 6, 6,
                     6, 6, 6, 6,
@@ -163,7 +162,7 @@ object PbilTunningApplication {
 
             tuningObjects.add(PbilTunningObject(
                 "MG[QUEEN]",
-                TunableConstants.MG_PSQT[Piece.QUEEN],
+                TunableConstants.PSQT_MG[Piece.QUEEN],
                 intArrayOf(6, 6, 6, 6,
                     6, 6, 6, 6,
                     6, 6, 6, 6,
@@ -177,7 +176,7 @@ object PbilTunningApplication {
 
             tuningObjects.add(PbilTunningObject(
                 "EG[QUEEN]",
-                TunableConstants.EG_PSQT[Piece.QUEEN],
+                TunableConstants.PSQT_EG[Piece.QUEEN],
                 intArrayOf(6, 6, 6, 6,
                     6, 6, 6, 6,
                     6, 6, 6, 6,
@@ -190,9 +189,10 @@ object PbilTunningApplication {
                 true))
                 */
 
+            /*
             tuningObjects.add(PbilTunningObject(
                 "MG[KING]",
-                TunableConstants.MG_PSQT[Piece.KING],
+                TunableConstants.PSQT_MG[Piece.KING],
                 intArrayOf(6, 6, 6, 6,
                     6, 6, 6, 6,
                     6, 6, 6, 6,
@@ -206,7 +206,7 @@ object PbilTunningApplication {
 
             tuningObjects.add(PbilTunningObject(
                 "EG[KING]",
-                TunableConstants.EG_PSQT[Piece.KING],
+                TunableConstants.PSQT_EG[Piece.KING],
                 intArrayOf(6, 6, 6, 6,
                     6, 6, 6, 6,
                     6, 6, 6, 6,
@@ -217,6 +217,7 @@ object PbilTunningApplication {
                     6, 6, 6, 6
                 ),
                 true))
+                */
 
             return tuningObjects
         }

@@ -4,7 +4,9 @@ import pirarucu.board.CastlingRights
 import pirarucu.board.Color
 import pirarucu.board.Piece
 import pirarucu.board.Square
-import pirarucu.util.Utils
+import pirarucu.board.File
+import pirarucu.board.Rank
+import pirarucu.util.XorShiftRandom
 
 object Zobrist {
 
@@ -18,21 +20,25 @@ object Zobrist {
         for (color in 0 until Color.SIZE) {
             for (piece in 1 until Piece.SIZE) {
                 for (square in 0 until Square.SIZE) {
-                    PIECE_SQUARE_TABLE[color][piece][square] = Utils.specific.randomLong()
+                    PIECE_SQUARE_TABLE[color][piece][square] = XorShiftRandom.nextLong()
                 }
             }
         }
 
-        for (square in 0 until Square.SIZE) {
-            PASSANT_SQUARE[square] = Utils.specific.randomLong()
+        for (file in 0 until File.SIZE) {
+            val random = XorShiftRandom.nextLong()
+            for (rank in 0 until Rank.SIZE) {
+                val square = Square.getSquare(file, rank)
+                PASSANT_SQUARE[square] = random
+            }
         }
 
 
         // skip first item: contains only zeros, default value and has no effect when xorring
         for (castlingRight in 1 until CastlingRights.SIZE) {
-            CASTLING_RIGHT[castlingRight] = Utils.specific.randomLong()
+            CASTLING_RIGHT[castlingRight] = XorShiftRandom.nextLong()
         }
 
-        SIDE = Utils.specific.randomLong()
+        SIDE = XorShiftRandom.nextLong()
     }
 }

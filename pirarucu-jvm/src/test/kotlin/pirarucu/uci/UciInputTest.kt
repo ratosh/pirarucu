@@ -49,8 +49,8 @@ class UciInputTest {
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
-        uciInput.process("setoption name MG_PSQT-1-0 value 100")
-        assertEquals(TunableConstants.MG_PSQT[1][0], 100)
+        uciInput.process("setoption name PSQT_MG-1-0 value 100")
+        assertEquals(TunableConstants.PSQT_MG[1][0], 100)
     }
 
     @Ignore

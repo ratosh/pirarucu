@@ -10,12 +10,10 @@ class EvaluatorTest {
 
     @BeforeTest
     fun setup() {
-        EvalDebug.ENABLED = true
     }
 
     @AfterTest
     fun tearDown() {
-        println(EvalDebug.toString())
     }
 
     @Test
