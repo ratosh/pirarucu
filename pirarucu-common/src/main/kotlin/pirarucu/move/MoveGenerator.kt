@@ -14,18 +14,11 @@ object MoveGenerator {
         attackInfo.update(board, board.colorToMove)
         val ourColor = board.colorToMove
         val checkBitboard = board.basicEvalInfo.checkBitboard
-        val mask = when {
-            checkBitboard == Bitboard.EMPTY -> {
-                castlingMoves(board, moveList)
-                board.emptyBitboard
-            }
-            Bitboard.oneElement(checkBitboard) -> {
-                BitboardMove.BETWEEN_BITBOARD[board.basicEvalInfo.kingSquare[ourColor]][Square.getSquare(checkBitboard)]
-            }
-            else -> {
-                Bitboard.EMPTY
-            }
+        if (checkBitboard == Bitboard.EMPTY) {
+            castlingMoves(board, moveList)
         }
+
+        val mask = attackInfo.movementMask[ourColor] and board.emptyBitboard
         if (mask != Bitboard.EMPTY) {
             generateMoves(board, attackInfo, moveList, Piece.QUEEN, mask)
             generateMoves(board, attackInfo, moveList, Piece.ROOK, mask)
@@ -132,21 +125,10 @@ object MoveGenerator {
         val theirColor = board.nextColorToMove
         val theirBitboard = board.colorBitboard[theirColor]
         val ourColor = board.colorToMove
-        val checkBitboard = board.basicEvalInfo.checkBitboard
 
         attackInfo.update(board, ourColor)
 
-        val mask = when {
-            checkBitboard == Bitboard.EMPTY -> {
-                theirBitboard
-            }
-            Bitboard.oneElement(checkBitboard) -> {
-                checkBitboard
-            }
-            else -> {
-                Bitboard.EMPTY
-            }
-        }
+        val mask = attackInfo.movementMask[ourColor] and theirBitboard
         if (mask != Bitboard.EMPTY) {
             for (capturedPiece in Piece.QUEEN downTo Piece.PAWN) {
                 for (movedPiece in Piece.PAWN until Piece.KING) {
