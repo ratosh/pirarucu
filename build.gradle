@@ -3,10 +3,18 @@ task wrapper(type: Wrapper) {
 }
 
 allprojects {
-
     group = "${group}"
     version = "${version}"
 
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+}
+
+subprojects {
     buildscript {
         repositories {
             mavenCentral()
@@ -19,11 +27,46 @@ allprojects {
             classpath "gradle.plugin.io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${detekt_version}"
         }
     }
+}
 
+buildscript {
     repositories {
-        mavenCentral()
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
+        jcenter()
     }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
+    }
+}
+
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+mainClassName = "pirarucu.MainKt"
+
+dependencies {
+    compile project('pirarucu-jvm')
+}
+
+shadowDistZip {
+    baseName = project.name
+    version = ''
+}
+
+shadowDistTar {
+    baseName = project.name + '-jvm'
+}
+
+jar {
+    manifest {
+        attributes("Implementation-Title": "Gradle",
+                "Implementation-Version": version,
+                "Main-Class": "pirarucu.MainKt"
+        )
+    }
+}
+
+shadowJar {
+    baseName = project.name
+    classifier = ''
+    version = ''
 }
