@@ -29,7 +29,6 @@ object PbilTunningApplication {
                 false, 0, 6))
                 */
 
-            /*
             tuningObjects.add(PbilTunningObject(
                 "MATERIAL_SCORE_MG",
                 TunableConstants.MATERIAL_SCORE_MG,
@@ -41,7 +40,6 @@ object PbilTunningApplication {
                 TunableConstants.MATERIAL_SCORE_EG,
                 intArrayOf(0, 8, 10, 10, 10, 11),
                 false, 0))
-                */
 
             /*
             tuningObjects.add(PbilTunningObject(

@@ -12,7 +12,9 @@ object TunableConstants {
     val FUTILITY_CHILD_MARGIN = intArrayOf(0, 120, 180, 250, 330, 420, 520)
     val FUTILITY_PARENT_MARGIN = intArrayOf(0, 100, 200, 310, 430, 550, 660)
 
-    val TEMPO = SplitValue.mergeParts(20, 15)
+    val TEMPO_MG = intArrayOf(10, -10)
+    val TEMPO_EG = intArrayOf(2, -2)
+    val TEMPO = IntArray(TEMPO_MG.size)
 
     val PHASE_PIECE_VALUE = intArrayOf(0, 1, 9, 10, 20, 40, 0)
 
@@ -210,6 +212,10 @@ object TunableConstants {
                 }
             }
         }
+        for (index in 0 until TEMPO.size) {
+            TEMPO[index] = SplitValue.mergeParts(TEMPO_MG[index], TEMPO_EG[index])
+        }
+
     }
 }
 

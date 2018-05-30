@@ -8,7 +8,7 @@ import pirarucu.util.SplitValue
 object Evaluator {
 
     fun evaluate(board: Board): Int {
-        var score = TunableConstants.TEMPO +
+        var score = TunableConstants.TEMPO[board.colorToMove] +
             board.psqScore[Color.WHITE] - board.psqScore[Color.BLACK] +
             board.materialScore[Color.WHITE] - board.materialScore[Color.BLACK]
 
