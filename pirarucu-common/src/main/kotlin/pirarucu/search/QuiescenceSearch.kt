@@ -59,9 +59,10 @@ object QuiescenceSearch {
                 }
             }
         }
+        val currentNode = SearchInfo.plyInfoList[ply]
         val eval = when {
             ttScore != EvalConstants.SCORE_UNKNOWN -> ttScore
-            else -> GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board)
+            else -> GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board, currentNode.attackInfo)
         }
 
         if (eval >= beta) {
@@ -86,7 +87,6 @@ object QuiescenceSearch {
         if (!moveList.startPly()) {
             return bestScore
         }
-        val currentNode = SearchInfo.plyInfoList[ply]
         MoveGenerator.legalAttacks(board, currentNode.attackInfo, moveList)
 
         var moveCount = 0

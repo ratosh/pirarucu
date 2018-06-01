@@ -1,6 +1,7 @@
 package pirarucu.search
 
 import pirarucu.board.factory.BoardFactory
+import pirarucu.eval.AttackInfo
 import pirarucu.eval.EvalConstants
 import pirarucu.eval.Evaluator
 import pirarucu.game.GameConstants
@@ -14,7 +15,7 @@ class QuiescenceSearchTest {
 
     private fun testSearch(fen: String, minDiff: Int, maxDiff: Int) {
         val board = BoardFactory.getBoard(fen)
-        val evalValue = Evaluator.evaluate(board) * GameConstants.COLOR_FACTOR[board.colorToMove]
+        val evalValue = Evaluator.evaluate(board, AttackInfo()) * GameConstants.COLOR_FACTOR[board.colorToMove]
         val searchValue = QuiescenceSearch.search(board,
             MoveList(),
             0,
