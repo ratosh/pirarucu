@@ -2,7 +2,9 @@ package pirarucu.tuning
 
 import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory
+import pirarucu.eval.AttackInfo
 import pirarucu.eval.Evaluator
+import pirarucu.util.Utils
 import java.util.concurrent.Callable
 
 class ErrorCalculator : Callable<Double> {
@@ -11,6 +13,8 @@ class ErrorCalculator : Callable<Double> {
 
     private val fens = HashMap<String, Double>()
     private var board: Board = Board()
+
+    private val attackInfo = AttackInfo()
 
     fun addFenWithScore(fen: String, score: Double) {
         fens[fen] = score
@@ -59,17 +63,22 @@ class ErrorCalculator : Callable<Double> {
     }
 
     private fun calculateError(currentConstant: Double): Double {
+        val startTime = Utils.specific.currentTimeMillis()
         var error = 0.0
         for ((key, value) in fens) {
             BoardFactory.setBoard(key, board)
             try {
-                val entryError = Math.pow(value - calculateSigmoid(Evaluator.evaluate(board),
+                val entryError = Math.pow(value - calculateSigmoid(Evaluator.evaluate(board, attackInfo),
                     currentConstant), 2.0)
                 error += entryError
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
+
+        val timeTaken = Utils.specific.currentTimeMillis() - startTime
+
+        println("Error calculation in $timeTaken millis")
 
         return error / fens.size
     }

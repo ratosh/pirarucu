@@ -8,6 +8,8 @@ import kotlin.test.assertTrue
 
 class EvaluatorTest {
 
+    val attackInfo = AttackInfo()
+
     @BeforeTest
     fun setup() {
     }
@@ -19,7 +21,7 @@ class EvaluatorTest {
     @Test
     fun testEqualKing() {
         val board = BoardFactory.getBoard("4k3/8/8/8/8/8/8/4K3 b - -")
-        val eval = Evaluator.evaluate(board)
+        val eval = Evaluator.evaluate(board, attackInfo)
         println("eval $eval")
         assertTrue(eval < 0)
     }
@@ -27,7 +29,7 @@ class EvaluatorTest {
     @Test
     fun testPawnAdvantage1() {
         val board = BoardFactory.getBoard("4k3/4p3/8/8/8/8/8/4K3 b - -")
-        val eval = Evaluator.evaluate(board)
+        val eval = Evaluator.evaluate(board, attackInfo)
         println("eval $eval")
         assertTrue(eval < 0)
     }
@@ -35,7 +37,7 @@ class EvaluatorTest {
     @Test
     fun testPawnAdvantage2() {
         var board = BoardFactory.getBoard("4k3/4p3/8/8/8/8/3PP3/4K3 b - -")
-        var eval = Evaluator.evaluate(board)
+        var eval = Evaluator.evaluate(board, attackInfo)
         println("eval $eval")
         assertTrue(eval > 0)
     }
@@ -43,7 +45,7 @@ class EvaluatorTest {
     @Test
     fun testKnightVsPawn() {
         var board = BoardFactory.getBoard("4k3/3pp3/8/8/8/8/4N3/4K3 b - -")
-        var eval = Evaluator.evaluate(board)
+        var eval = Evaluator.evaluate(board, attackInfo)
         println("eval $eval")
         assertTrue(eval > 0)
     }

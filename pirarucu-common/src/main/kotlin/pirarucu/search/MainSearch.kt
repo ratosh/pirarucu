@@ -106,9 +106,11 @@ object MainSearch {
             }
         }
 
+        val currentNode = SearchInfo.plyInfoList[ply]
+
         val eval = when {
             ttScore != EvalConstants.SCORE_UNKNOWN -> ttScore
-            else -> GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board)
+            else -> GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board, currentNode.attackInfo)
         }
 
         // Prunes
@@ -179,8 +181,6 @@ object MainSearch {
         if (!moveList.startPly()) {
             return eval
         }
-
-        val currentNode = SearchInfo.plyInfoList[ply]
 
         var movesPerformed = 0
         var searchAlpha = currentAlpha

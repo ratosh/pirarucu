@@ -185,6 +185,31 @@ object TunableConstants {
 
     val PSQT = Array(Piece.SIZE) { IntArray(Square.SIZE) }
 
+    val MOBILITY_MG = arrayOf(
+        intArrayOf(),
+        intArrayOf(),
+        intArrayOf(-41, -16, -6, -15, -8, 0, 16, 13, 62),
+        intArrayOf(-32, -23, 0, 4, 7, 8, 12, 8, 14, 18, 36, 94, 43, 59),
+        intArrayOf(-62, -62, -64, -56, -39, -27, -15, -8, 13, 20, 49, 45, 97, 15, 15),
+        intArrayOf(-32, -54, -37, -30, -20, -3, -1, 0, 9, 15, 23, 28, 22, 32, 48, 31, 46, 47, 55, 76, 31, 0, 112, 111,
+            90, 123, 59, 69, -40),
+        intArrayOf())
+
+    val MOBILITY_EG = arrayOf(
+        intArrayOf(),
+        intArrayOf(),
+        intArrayOf(-64, -31, -6, 15, 16, 33, 19, 32, -5),
+        intArrayOf(-58, -63, -27, -2, 14, 23, 32, 31, 38, 27, 13, 6, 1, -4),
+        intArrayOf(-80, -70, -11, 4, 6, 19, 25, 31, 41, 39, 35, 48, 29, 64, 64),
+        intArrayOf(-76, -127, -113, -121, -104, -125, -96, -70, -72, -31, -17, -4, 23, 32, 28, 64, 64, 64, 63, 72, 117,
+            123, 62, 85, 81, 71, 82, 107, 57),
+        intArrayOf())
+    val MOBILITY = Array(Piece.SIZE) { IntArray(32) }
+
+    val OUTPOST_MG = intArrayOf(0, 0, 30, 15, 0, 0, 0)
+    val OUTPOST_EG = intArrayOf(0, 0, 10, 5, 0, 0, 0)
+    val OUTPOST = IntArray(Piece.SIZE)
+
     init {
         update()
     }
@@ -212,8 +237,19 @@ object TunableConstants {
                 }
             }
         }
+
+        for (piece in 0 until MOBILITY.size) {
+            for (index in 0 until MOBILITY_MG[piece].size) {
+                MOBILITY[piece][index] = SplitValue.mergeParts(MOBILITY_MG[piece][index], MOBILITY_EG[piece][index])
+            }
+        }
+
         for (index in 0 until TEMPO.size) {
             TEMPO[index] = SplitValue.mergeParts(TEMPO_MG[index], TEMPO_EG[index])
+        }
+
+        for (index in 0 until OUTPOST.size) {
+            OUTPOST[index] = SplitValue.mergeParts(OUTPOST_MG[index], OUTPOST_EG[index])
         }
 
     }

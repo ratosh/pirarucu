@@ -134,6 +134,8 @@ object Bitboard {
     val FROM_PROMOTION_BITBOARD = longArrayOf(RANK_7, RANK_2)
     val DOUBLE_MOVEMENT_BITBOARD = arrayOf(RANK_2, RANK_7)
 
+    val OUTPOST = longArrayOf(RANK_4 or RANK_5 or RANK_6, RANK_3 or RANK_4 or RANK_5)
+
     fun mirrorVertical(bitboard: Long): Long {
         return Utils.specific.reverseBytes(bitboard)
     }

@@ -31,6 +31,7 @@ A Kotlin Chess Engine with UCI protocol support.
 - Evaluation
     - Piece square table
     - Tapered evaluation
+    - Mobility
     
 ## How to use
 

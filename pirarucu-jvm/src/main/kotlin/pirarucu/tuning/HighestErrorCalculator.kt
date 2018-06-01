@@ -2,6 +2,7 @@ package pirarucu.tuning
 
 import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory
+import pirarucu.eval.AttackInfo
 import pirarucu.eval.Evaluator
 import java.util.concurrent.Callable
 
@@ -11,6 +12,8 @@ class HighestErrorCalculator(size: Int) : Callable<Double> {
 
     private val fens = HashMap<String, Double>()
     private var board: Board = Board()
+
+    private val attackInfo = AttackInfo()
 
     private val largestError = DoubleArray(size)
     private val largestErrorFen = Array(size, { "" })
@@ -33,7 +36,7 @@ class HighestErrorCalculator(size: Int) : Callable<Double> {
         for ((key, value) in fens) {
             BoardFactory.setBoard(key, board)
             try {
-                val entryError = Math.pow(value - calculateSigmoid(Evaluator.evaluate(board),
+                val entryError = Math.pow(value - calculateSigmoid(Evaluator.evaluate(board, attackInfo),
                     currentConstant), 2.0)
 
                 if (error < entryError) {
