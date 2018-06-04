@@ -1,6 +1,8 @@
 package pirarucu.board
 
+import pirarucu.eval.AttackInfo
 import pirarucu.eval.BasicEvalInfo
+import pirarucu.eval.EvalInfo
 import pirarucu.game.GameConstants
 import pirarucu.hash.Zobrist
 import pirarucu.move.BitboardMove
@@ -27,6 +29,7 @@ class Board {
     var nextColorToMove = Color.BLACK
 
     var basicEvalInfo = BasicEvalInfo()
+    var evalInfo = EvalInfo()
 
     val pieceTypeBoard = IntArray(Square.SIZE)
     val pieceBitboard = Array(Color.SIZE) { LongArray(Piece.SIZE) }
@@ -247,6 +250,10 @@ class Board {
             }
         }
         return buffer.toString()
+    }
+
+    fun updateEval(attackInfo: AttackInfo) {
+        evalInfo.update(this, attackInfo)
     }
 
     fun updateBasicInfo() {

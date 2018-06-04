@@ -13,6 +13,9 @@ object Statistics {
     var ttHits = 0L
     var ttMisses = 0L
 
+    var pawnCache = 0L
+    var pawnCacheHit = 0L
+
     var qNodes = 0L
     var qRenodes = 0L
     var qDraw = 0L
@@ -67,8 +70,12 @@ object Statistics {
 
     fun reset() {
         searchNodes = 0L
+
         ttHits = 0
         ttMisses = 0
+
+        pawnCache = 0L
+        pawnCacheHit = 0L
 
         qNodes = 0
         qRenodes = 0

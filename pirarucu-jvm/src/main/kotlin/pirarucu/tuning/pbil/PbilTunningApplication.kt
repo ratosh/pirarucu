@@ -1,6 +1,6 @@
 package pirarucu.tuning.pbil
 
-import pirarucu.board.Piece
+import pirarucu.eval.EvalConstants
 import pirarucu.tuning.ErrorCalculator
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.EpdFileLoader
@@ -58,9 +58,7 @@ object PbilTunningApplication {
                     0, 0, 0, 0
                 ),
                 true, 0, 1, 2, 3, 28, 29, 30, 31))
-                */
 
-            /*
             tuningObjects.add(PbilTunningObject(
                 "PSQT_EG[PAWN]",
                 TunableConstants.PSQT_EG[Piece.PAWN],
@@ -74,9 +72,7 @@ object PbilTunningApplication {
                     0, 0, 0, 0
                 ),
                 true, 0, 1, 2, 3, 28, 29, 30, 31))
-                */
 
-            /*
             tuningObjects.add(PbilTunningObject(
                 "PSQT_MG[KNIGHT]",
                 TunableConstants.PSQT_MG[Piece.KNIGHT],
@@ -220,6 +216,7 @@ object PbilTunningApplication {
                 true))
             */
 
+            /*
             tuningObjects.add(PbilTunningObject(
                 "MOBILITY_MG[KNIGHT]",
                 TunableConstants.MOBILITY_MG[Piece.KNIGHT],
@@ -267,6 +264,45 @@ object PbilTunningApplication {
                 TunableConstants.MOBILITY_EG[Piece.QUEEN],
                 intArrayOf(7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7),
                 true))
+                */
+
+            /*
+            tuningObjects.add(PbilTunningObject(
+                "OUTPOST_MG[0]",
+                TunableConstants.OUTPOST_MG[0],
+                intArrayOf(0, 0, 7, 7, 0, 0, 0),
+                true, 0, 1, 5, 6))
+
+            tuningObjects.add(PbilTunningObject(
+                "OUTPOST_MG[1]",
+                TunableConstants.OUTPOST_MG[1],
+                intArrayOf(0, 0, 7, 7, 0, 0, 0),
+                true, 0, 1, 5, 6))
+
+            tuningObjects.add(PbilTunningObject(
+                "OUTPOST_EG[0]",
+                TunableConstants.OUTPOST_EG[0],
+                intArrayOf(0, 0, 7, 7, 0, 0, 0),
+                true, 0, 1, 5, 6))
+
+            tuningObjects.add(PbilTunningObject(
+                "OUTPOST_EG[1]",
+                TunableConstants.OUTPOST_EG[1],
+                intArrayOf(0, 0, 7, 7, 0, 0, 0),
+                true, 0, 1, 5, 6))
+                */
+
+            tuningObjects.add(PbilTunningObject(
+                "PASSED_PAWN_MG",
+                TunableConstants.PASSED_PAWN_MG,
+                intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
+                true, 0, 7))
+
+            tuningObjects.add(PbilTunningObject(
+                "PASSED_PAWN_EG",
+                TunableConstants.PASSED_PAWN_EG,
+                intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
+                true, 0, 7))
 
             return tuningObjects
         }
@@ -274,6 +310,8 @@ object PbilTunningApplication {
     @Throws(ExecutionException::class, InterruptedException::class)
     @JvmStatic
     fun main(args: Array<String>) {
+        EvalConstants.PAWN_EVAL_CACHE = false
+
         // setup
         for (i in workers.indices) {
             workers[i] = ErrorCalculator()
