@@ -25,11 +25,11 @@ class TranspositionTableTest {
     @Test
     fun testSave() {
         val board = BoardFactory.getBoard("4k3/8/8/8/8/8/8/4K3 b - -")
-        TranspositionTable.save(board, 5, HashConstants.SCORE_TYPE_FAIL_HIGH, 7, 9, 11)
+        TranspositionTable.save(board, 5, HashConstants.SCORE_TYPE_BOUND_UPPER, 7, 9, 11)
         val info = TranspositionTable.findEntry(board)
         assertNotEquals(TranspositionTable.EMPTY_INFO, info)
         assertEquals(5, TranspositionTable.getScore(info, 0))
-        assertEquals(HashConstants.SCORE_TYPE_FAIL_HIGH, TranspositionTable.getScoreType(info))
+        assertEquals(HashConstants.SCORE_TYPE_BOUND_UPPER, TranspositionTable.getScoreType(info))
         assertEquals(7, TranspositionTable.getDepth(info))
         assertEquals(11, TranspositionTable.getMove(info))
     }
@@ -37,7 +37,7 @@ class TranspositionTableTest {
     @Test
     fun testSaveMateScore() {
         val board = BoardFactory.getBoard("4k3/8/8/8/8/8/8/4K3 b - -")
-        TranspositionTable.save(board, EvalConstants.SCORE_MAX, HashConstants.SCORE_TYPE_FAIL_HIGH, 0, 0, 0)
+        TranspositionTable.save(board, EvalConstants.SCORE_MAX, HashConstants.SCORE_TYPE_BOUND_UPPER, 0, 0, 0)
         val info = TranspositionTable.findEntry(board)
         assertNotEquals(TranspositionTable.EMPTY_INFO, info)
         assertEquals(EvalConstants.SCORE_MAX, TranspositionTable.getScore(info, 0))
@@ -47,8 +47,8 @@ class TranspositionTableTest {
     @Test
     fun testUpdateScore() {
         val board = BoardFactory.getBoard("4k3/8/8/8/8/8/8/4K3 b - -")
-        TranspositionTable.save(board, 3, HashConstants.SCORE_TYPE_FAIL_HIGH, 0, 0, 0)
-        TranspositionTable.save(board, 5, HashConstants.SCORE_TYPE_FAIL_HIGH, 0, 0, 0)
+        TranspositionTable.save(board, 3, HashConstants.SCORE_TYPE_BOUND_UPPER, 0, 0, 0)
+        TranspositionTable.save(board, 5, HashConstants.SCORE_TYPE_BOUND_UPPER, 0, 0, 0)
         val info = TranspositionTable.findEntry(board)
         assertNotEquals(TranspositionTable.EMPTY_INFO, info)
         assertEquals(5, TranspositionTable.getScore(info, 0))
@@ -67,7 +67,7 @@ class TranspositionTableTest {
     @Test
     fun testBaseDepth() {
         val board = BoardFactory.getBoard("4k3/8/8/8/8/8/8/4K3 b - -")
-        TranspositionTable.save(board, 0, HashConstants.SCORE_TYPE_FAIL_HIGH, 11, 0, 0)
+        TranspositionTable.save(board, 0, HashConstants.SCORE_TYPE_BOUND_UPPER, 11, 0, 0)
         val info = TranspositionTable.findEntry(board)
         assertNotEquals(TranspositionTable.EMPTY_INFO, info)
         assertEquals(11, TranspositionTable.getDepth(info))
@@ -78,9 +78,9 @@ class TranspositionTableTest {
     @Test
     fun testUpdateMove() {
         val board = BoardFactory.getBoard("4k3/8/8/8/8/8/8/4K3 b - -")
-        TranspositionTable.save(board, 0, HashConstants.SCORE_TYPE_FAIL_HIGH, 0, 0, Move.NULL)
-        TranspositionTable.save(board, 0, HashConstants.SCORE_TYPE_FAIL_HIGH, 0, 0, Move.NULL)
-        TranspositionTable.save(board, 0, HashConstants.SCORE_TYPE_FAIL_HIGH, 0, 0, 1)
+        TranspositionTable.save(board, 0, HashConstants.SCORE_TYPE_BOUND_UPPER, 0, 0, Move.NULL)
+        TranspositionTable.save(board, 0, HashConstants.SCORE_TYPE_BOUND_UPPER, 0, 0, Move.NULL)
+        TranspositionTable.save(board, 0, HashConstants.SCORE_TYPE_BOUND_UPPER, 0, 0, 1)
         val info = TranspositionTable.findEntry(board)
         assertNotEquals(TranspositionTable.EMPTY_INFO, info)
         assertEquals(1, TranspositionTable.getMove(info))
