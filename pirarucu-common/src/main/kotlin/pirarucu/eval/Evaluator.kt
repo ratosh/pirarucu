@@ -12,19 +12,24 @@ import pirarucu.util.Utils
 object Evaluator {
 
     fun evaluate(board: Board, attackInfo: AttackInfo): Int {
-        initializeEval(board, attackInfo)
+        board.updateEval(attackInfo)
         var score = TunableConstants.TEMPO[board.colorToMove] +
             board.psqScore[Color.WHITE] - board.psqScore[Color.BLACK] +
             board.materialScore[Color.WHITE] - board.materialScore[Color.BLACK]
 
-        score += evalKnight(board, attackInfo, Color.WHITE, Color.BLACK) -
-            evalKnight(board, attackInfo, Color.BLACK, Color.WHITE) +
-            evalBishop(board, attackInfo, Color.WHITE, Color.BLACK) -
-            evalBishop(board, attackInfo, Color.BLACK, Color.WHITE) +
-            evalRook(board, attackInfo, Color.WHITE, Color.BLACK) -
-            evalRook(board, attackInfo, Color.BLACK, Color.WHITE) +
-            evalQueen(board, attackInfo, Color.WHITE, Color.BLACK) -
-            evalQueen(board, attackInfo, Color.BLACK, Color.WHITE)
+        score += PawnEvaluator.evaluate(board, attackInfo)
+
+        score += evalKnight(board, attackInfo, Color.WHITE) -
+            evalKnight(board, attackInfo, Color.BLACK)
+
+        score += evalBishop(board, attackInfo, Color.WHITE) -
+            evalBishop(board, attackInfo, Color.BLACK)
+
+        score += evalRook(board, attackInfo, Color.WHITE) -
+            evalRook(board, attackInfo, Color.BLACK)
+
+        score += evalQueen(board, attackInfo, Color.WHITE) -
+            evalQueen(board, attackInfo, Color.BLACK)
 
         val mgScore = SplitValue.getFirstPart(score)
         val egScore = SplitValue.getSecondPart(score)
@@ -38,13 +43,13 @@ object Evaluator {
     /**
      * Evaluate knights
      */
-    private fun evalKnight(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
+    private fun evalKnight(board: Board, attackInfo: AttackInfo, ourColor: Int): Int {
         var tmpPieces = board.pieceBitboard[ourColor][Piece.KNIGHT]
 
         // Outpost not attacked squares
-        val mobilityBitboard = attackInfo.attacksBitboard[theirColor][Piece.PAWN].inv() and
-            (board.emptyBitboard or board.colorBitboard[theirColor])
-        val outpostBitboard = Bitboard.OUTPOST[ourColor] and mobilityBitboard
+        val mobilityBitboard = board.evalInfo.mobilityArea[ourColor]
+        val outpostProtectedBitboard = board.evalInfo.protectedOutpost[ourColor]
+        val outpostUnprotectedBitboard = board.evalInfo.unprotectedOutpost[ourColor]
 
         var result = 0
 
@@ -54,8 +59,11 @@ object Evaluator {
 
             val attackBitboard = attackInfo.pieceMovement[ourColor][square]
             // A knight is in an outpost square
-            if (bitboard and outpostBitboard != Bitboard.EMPTY) {
-                result += TunableConstants.OUTPOST[Piece.KNIGHT]
+            if (bitboard and outpostProtectedBitboard != Bitboard.EMPTY) {
+                result += TunableConstants.OUTPOST[0][Piece.KNIGHT]
+            }
+            if (bitboard and outpostUnprotectedBitboard != Bitboard.EMPTY) {
+                result += TunableConstants.OUTPOST[1][Piece.KNIGHT]
             }
             val pieceMobilityBitboard = attackBitboard and mobilityBitboard
             result += TunableConstants.MOBILITY[Piece.KNIGHT][Utils.specific.bitCount(pieceMobilityBitboard)]
@@ -68,13 +76,13 @@ object Evaluator {
     /**
      * Evaluate bishops
      */
-    private fun evalBishop(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
+    private fun evalBishop(board: Board, attackInfo: AttackInfo, ourColor: Int): Int {
         var tmpPieces = board.pieceBitboard[ourColor][Piece.BISHOP]
 
         // Outpost not attacked squares
-        val mobilityBitboard = attackInfo.attacksBitboard[theirColor][Piece.PAWN].inv() and
-            (board.emptyBitboard or board.colorBitboard[theirColor])
-        val outpostBitboard = Bitboard.OUTPOST[ourColor] and mobilityBitboard
+        val mobilityBitboard = board.evalInfo.mobilityArea[ourColor]
+        val outpostProtectedBitboard = board.evalInfo.protectedOutpost[ourColor]
+        val outpostUnprotectedBitboard = board.evalInfo.unprotectedOutpost[ourColor]
 
         var result = 0
 
@@ -84,8 +92,11 @@ object Evaluator {
 
             val attackBitboard = attackInfo.pieceMovement[ourColor][square]
             // A bishop is in an outpost square
-            if (bitboard and outpostBitboard != Bitboard.EMPTY) {
-                result += TunableConstants.OUTPOST[Piece.BISHOP]
+            if (bitboard and outpostProtectedBitboard != Bitboard.EMPTY) {
+                result += TunableConstants.OUTPOST[0][Piece.BISHOP]
+            }
+            if (bitboard and outpostUnprotectedBitboard != Bitboard.EMPTY) {
+                result += TunableConstants.OUTPOST[1][Piece.BISHOP]
             }
             val pieceMobilityBitboard = attackBitboard and mobilityBitboard
             result += TunableConstants.MOBILITY[Piece.BISHOP][Utils.specific.bitCount(pieceMobilityBitboard)]
@@ -98,11 +109,10 @@ object Evaluator {
     /**
      * Evaluate rooks
      */
-    private fun evalRook(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
+    private fun evalRook(board: Board, attackInfo: AttackInfo, ourColor: Int): Int {
         var tmpPieces = board.pieceBitboard[ourColor][Piece.ROOK]
 
-        val mobilityBitboard = attackInfo.attacksBitboard[theirColor][Piece.PAWN].inv() and
-            (board.emptyBitboard or board.colorBitboard[theirColor])
+        val mobilityBitboard = board.evalInfo.mobilityArea[ourColor]
 
         var result = 0
 
@@ -121,11 +131,10 @@ object Evaluator {
     /**
      * Evaluate rooks
      */
-    private fun evalQueen(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
+    private fun evalQueen(board: Board, attackInfo: AttackInfo, ourColor: Int): Int {
         var tmpPieces = board.pieceBitboard[ourColor][Piece.QUEEN]
 
-        val mobilityBitboard = attackInfo.attacksBitboard[theirColor][Piece.PAWN].inv() and
-            (board.emptyBitboard or board.colorBitboard[theirColor])
+        val mobilityBitboard = board.evalInfo.mobilityArea[ourColor]
 
         var result = 0
 
@@ -139,10 +148,5 @@ object Evaluator {
             tmpPieces = tmpPieces and tmpPieces - 1
         }
         return result
-    }
-
-    private fun initializeEval(board: Board, attackInfo: AttackInfo) {
-        attackInfo.update(board, Color.WHITE)
-        attackInfo.update(board, Color.BLACK)
     }
 }

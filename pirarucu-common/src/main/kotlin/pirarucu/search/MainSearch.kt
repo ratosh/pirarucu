@@ -90,15 +90,15 @@ object MainSearch {
                     Statistics.TTEntry++
                 }
                 ttScore = TranspositionTable.getScore(foundInfo, ply)
-                if (TranspositionTable.getDepth(foundInfo) >= depth) {
+                if (TranspositionTable.getDepth(foundInfo) >= depth && !pvNode) {
                     when (TranspositionTable.getScoreType(foundInfo)) {
                         HashConstants.SCORE_TYPE_EXACT_SCORE -> {
                             return ttScore
                         }
-                        HashConstants.SCORE_TYPE_FAIL_LOW -> if (ttScore <= currentAlpha) {
+                        HashConstants.SCORE_TYPE_BOUND_LOWER -> if (ttScore >= currentBeta) {
                             return ttScore
                         }
-                        HashConstants.SCORE_TYPE_FAIL_HIGH -> if (ttScore >= currentBeta) {
+                        HashConstants.SCORE_TYPE_BOUND_UPPER -> if (ttScore <= currentAlpha) {
                             return ttScore
                         }
                     }
@@ -374,8 +374,8 @@ object MainSearch {
             }
         }
         val scoreType = when {
-            bestScore <= currentAlpha -> HashConstants.SCORE_TYPE_FAIL_LOW
-            bestScore >= currentBeta -> HashConstants.SCORE_TYPE_FAIL_HIGH
+            bestScore >= beta -> HashConstants.SCORE_TYPE_BOUND_LOWER
+            bestScore <= alpha -> HashConstants.SCORE_TYPE_BOUND_UPPER
             else -> HashConstants.SCORE_TYPE_EXACT_SCORE
         }
 

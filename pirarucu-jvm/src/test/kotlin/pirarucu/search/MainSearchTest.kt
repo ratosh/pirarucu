@@ -55,6 +55,13 @@ class MainSearchTest {
         assertEquals(EvalConstants.SCORE_MIN + 2, PrincipalVariation.bestScore)
     }
 
+    @Test
+    fun testFine70() {
+        testSearch("8/k7/3p4/p2P1p2/P2P1P2/8/8/K7 w - -", 10000)
+        println(PrincipalVariation.toString())
+        //assertEquals(Move.createMove(Square.A1, Square.B1), PrincipalVariation.bestMove)
+    }
+
     @Ignore
     @Test
     fun testRandomPosition() {

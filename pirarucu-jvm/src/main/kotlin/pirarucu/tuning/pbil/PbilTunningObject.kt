@@ -34,7 +34,7 @@ class PbilTunningObject(val name: String, protected val elementList: IntArray, b
             }
         }
         val totalBits = bitsPerValue.sum()
-        this.population = max(10, elementList.size)
+        this.population = max(8, totalBits ushr 4)
 
         this.generator = PbilGenerator(bitsPerValue, totalBits, allowNegatives,
             *ignoreElementArgs)

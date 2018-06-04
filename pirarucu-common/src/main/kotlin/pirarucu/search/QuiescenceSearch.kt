@@ -46,17 +46,6 @@ object QuiescenceSearch {
                     Statistics.qTTEntry++
                 }
                 ttScore = TranspositionTable.getScore(foundInfo, ply)
-                when (TranspositionTable.getScoreType(foundInfo)) {
-                    HashConstants.SCORE_TYPE_EXACT_SCORE -> {
-                        return ttScore
-                    }
-                    HashConstants.SCORE_TYPE_FAIL_LOW -> if (ttScore <= alpha) {
-                        return ttScore
-                    }
-                    HashConstants.SCORE_TYPE_FAIL_HIGH -> if (ttScore >= beta) {
-                        return ttScore
-                    }
-                }
             }
         }
         val currentNode = SearchInfo.plyInfoList[ply]
@@ -150,8 +139,8 @@ object QuiescenceSearch {
         moveList.endPly()
         if (bestMove != Move.NONE) {
             val scoreType = when {
-                bestScore <= alpha -> HashConstants.SCORE_TYPE_FAIL_LOW
-                bestScore >= beta -> HashConstants.SCORE_TYPE_FAIL_HIGH
+                bestScore >= beta -> HashConstants.SCORE_TYPE_BOUND_LOWER
+                bestScore <= alpha -> HashConstants.SCORE_TYPE_BOUND_UPPER
                 else -> HashConstants.SCORE_TYPE_EXACT_SCORE
             }
             TranspositionTable.save(board, bestScore, scoreType, 0, ply, bestMove)

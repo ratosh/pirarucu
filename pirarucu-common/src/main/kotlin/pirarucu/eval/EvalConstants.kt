@@ -15,5 +15,5 @@ object EvalConstants {
 
     const val SCORE_KNOW_WIN = 10000
 
-    const val PAWN_EVAL_CACHE = true
+    var PAWN_EVAL_CACHE = true
 }
