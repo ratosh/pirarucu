@@ -99,18 +99,43 @@ object PawnEvaluator {
 
     private fun evaluatePawn(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
         var tmpPieces = board.pieceBitboard[ourColor][Piece.PAWN]
+        val ourPawns = board.pieceBitboard[ourColor][Piece.PAWN]
         val theirPawns = board.pieceBitboard[theirColor][Piece.PAWN]
         var result = 0
         while (tmpPieces != Bitboard.EMPTY) {
             val pawnSquare = Square.getSquare(tmpPieces)
             val relativeRank = Rank.getRelativeRank(ourColor, Rank.getRank(pawnSquare))
 
-            val passedMask = PASSED_MASK[ourColor][pawnSquare]
-            val blockingPassedBitboard = passedMask and theirPawns
-            val passed = blockingPassedBitboard == Bitboard.EMPTY
+            val passed = PASSED_MASK[ourColor][pawnSquare] and theirPawns == Bitboard.EMPTY
+
+            val isolated = NEIGHBOURS_MASK[pawnSquare] and ourPawns == Bitboard.EMPTY
+            val phalanx = BitboardMove.NEIGHBOURS[pawnSquare] and ourPawns != Bitboard.EMPTY
+            val supported = BitboardMove.PAWN_ATTACKS[theirColor][pawnSquare] and ourPawns != Bitboard.EMPTY
+            val stacked = FRONTSPAN_MASK[ourColor][pawnSquare] and ourPawns != Bitboard.EMPTY
+            val backward = PASSED_MASK[theirColor][pawnSquare] and ourPawns != Bitboard.EMPTY
+
+            if (supported) {
+                result += TunableConstants.PAWN_BONUS[TunableConstants.PAWN_BONUS_SUPPORTED]
+            }
+
+            if (phalanx) {
+                result += TunableConstants.PAWN_BONUS[TunableConstants.PAWN_BONUS_PHALANX]
+            }
+
+            if (isolated) {
+                result += TunableConstants.PAWN_BONUS[TunableConstants.PAWN_BONUS_ISOLATED]
+            }
+
+            if (stacked) {
+                result += TunableConstants.PAWN_BONUS[TunableConstants.PAWN_BONUS_STACKED]
+            }
+
+            if (backward) {
+                result += TunableConstants.PAWN_BONUS[TunableConstants.PAWN_BONUS_BACKWARD]
+            }
 
             if (passed) {
-                result += TunableConstants.PASSED_PAWN[relativeRank]
+                result += TunableConstants.PAWN_PASSED[relativeRank]
             }
 
             tmpPieces = tmpPieces and tmpPieces - 1

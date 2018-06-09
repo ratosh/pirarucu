@@ -216,9 +216,19 @@ object TunableConstants {
     )
     val OUTPOST = Array(2) { IntArray(Piece.SIZE) }
 
-    val PASSED_PAWN_MG = intArrayOf(0, 13, 0, 0, -1, 18, 39, 0)
-    val PASSED_PAWN_EG = intArrayOf(0, -31, -19, 11, 47, 155, 225, 0)
-    val PASSED_PAWN = IntArray(Rank.SIZE)
+    const val PAWN_BONUS_SUPPORTED = 0
+    const val PAWN_BONUS_PHALANX = 1
+    const val PAWN_BONUS_ISOLATED = 2
+    const val PAWN_BONUS_STACKED = 3
+    const val PAWN_BONUS_BACKWARD = 4
+
+    val PAWN_BONUS_MG = intArrayOf(24, 11, -21, -2, -5)
+    val PAWN_BONUS_EG = intArrayOf(1, -6, -7, -31, -7)
+    val PAWN_BONUS = IntArray(PAWN_BONUS_EG.size)
+
+    val PAWN_PASSED_MG = intArrayOf(0, 17, 3, 0, 17, 40, 56, 0)
+    val PAWN_PASSED_EG = intArrayOf(0, -31, -19, 11, 47, 155, 225, 0)
+    val PAWN_PASSED = IntArray(Rank.SIZE)
 
     init {
         update()
@@ -263,10 +273,13 @@ object TunableConstants {
             OUTPOST[1][index] = SplitValue.mergeParts(OUTPOST_MG[1][index], OUTPOST_EG[1][index])
         }
 
-        for (index in 0 until PASSED_PAWN.size) {
-            PASSED_PAWN[index] = SplitValue.mergeParts(PASSED_PAWN_MG[index], PASSED_PAWN_EG[index])
+        for (index in 0 until PAWN_BONUS.size) {
+            PAWN_BONUS[index] = SplitValue.mergeParts(PAWN_BONUS_MG[index], PAWN_BONUS_EG[index])
         }
 
+        for (index in 0 until PAWN_PASSED.size) {
+            PAWN_PASSED[index] = SplitValue.mergeParts(PAWN_PASSED_MG[index], PAWN_PASSED_EG[index])
+        }
     }
 }
 

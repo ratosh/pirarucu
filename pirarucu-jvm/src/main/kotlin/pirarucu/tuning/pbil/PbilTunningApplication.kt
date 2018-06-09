@@ -293,14 +293,26 @@ object PbilTunningApplication {
                 */
 
             tuningObjects.add(PbilTunningObject(
-                "PASSED_PAWN_MG",
-                TunableConstants.PASSED_PAWN_MG,
+                "PAWN_BONUS_MG",
+                TunableConstants.PAWN_BONUS_MG,
+                intArrayOf(8, 8, 8, 8, 8),
+                true))
+
+            tuningObjects.add(PbilTunningObject(
+                "PAWN_BONUS_EG",
+                TunableConstants.PAWN_BONUS_EG,
+                intArrayOf(8, 8, 8, 8, 8),
+                true))
+
+            tuningObjects.add(PbilTunningObject(
+                "PAWN_PASSED_MG",
+                TunableConstants.PAWN_PASSED_MG,
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
                 true, 0, 7))
 
             tuningObjects.add(PbilTunningObject(
-                "PASSED_PAWN_EG",
-                TunableConstants.PASSED_PAWN_EG,
+                "PAWN_PASSED_EG",
+                TunableConstants.PAWN_PASSED_EG,
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
                 true, 0, 7))
 

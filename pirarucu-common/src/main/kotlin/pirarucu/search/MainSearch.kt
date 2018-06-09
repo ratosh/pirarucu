@@ -81,7 +81,7 @@ object MainSearch {
 
         var foundInfo = TranspositionTable.EMPTY_INFO
 
-        val prunable = !inCheck
+        val prunable = !inCheck && !pvNode
 
         if (SearchConstants.ENABLE_TT) {
             foundInfo = TranspositionTable.findEntry(board)
@@ -121,7 +121,6 @@ object MainSearch {
 
             // Futility
             if (SearchConstants.ENABLE_SEARCH_FUTILITY &&
-                !rootNode &&
                 depth < TunableConstants.FUTILITY_CHILD_MARGIN.size &&
                 eval < EvalConstants.SCORE_KNOW_WIN) {
                 if (Statistics.ENABLED) {
@@ -137,7 +136,6 @@ object MainSearch {
 
             // Razoring
             if (SearchConstants.ENABLE_SEARCH_RAZORING &&
-                !pvNode &&
                 depth < TunableConstants.RAZOR_MARGIN.size) {
                 val razorAlpha = currentAlpha - TunableConstants.RAZOR_MARGIN[depth]
                 if (eval < razorAlpha) {
@@ -157,7 +155,6 @@ object MainSearch {
             // Null move pruning and mate threat detection
             if (SearchConstants.ENABLE_SEARCH_NULL_MOVE &&
                 !skipNullMove &&
-                !pvNode &&
                 eval >= currentBeta) {
                 if (Statistics.ENABLED) {
                     Statistics.nullMove++
@@ -256,7 +253,6 @@ object MainSearch {
                 val isCapture = capturedPiece != Piece.NONE
 
                 if (prunable &&
-                    !rootNode &&
                     !isPromotion &&
                     movesPerformed > 0) {
 
