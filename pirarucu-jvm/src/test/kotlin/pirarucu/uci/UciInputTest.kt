@@ -22,7 +22,6 @@ class UciInputTest {
         TranspositionTable.reset()
         PrincipalVariation.reset()
         Statistics.reset()
-        Statistics.ENABLED = true
     }
 
     @AfterTest
@@ -128,6 +127,17 @@ class UciInputTest {
         uciInput.process("isready")
         uciInput.process("position startpos moves e2e4 e7e6 d2d4 d7d5 b1c3 f8b4 e4e5 c7c5 d1g4 g8e7 g1f3 b8c6 f1b5 c5d4 f3d4 e8g8 d4c6 b4c3 b2c3 b7c6 b5d3 d8c7 g4h5 e7g6 f2f4 c6c5 e1g1 c5c4 d3g6 c7b6 g1h1 h7g6 h5d1 b6a5 f1f3 c8b7 d1e1 a5a4")
         uciInput.process("go wtime 853844 btime 1026222 movestogo 5")
+    }
+
+    @Ignore
+    @Test
+    fun testGame8() {
+        search = true
+        uciInput.process("uci")
+        uciInput.process("ucinewgame")
+        uciInput.process("isready")
+        uciInput.process("position fen rn1qkbnr/ppp1pppp/8/3p4/6b1/3P2P1/PPP1PP1P/RNBQKBNR w KQkq - 0 1 moves h2h3 g4f5 g3g4 f5e6 g1f3 b8c6 c1f4 f7f6 e2e3 g7g5 f4h2 e6f7 d3d4 e7e6 b1c3 a7a6 a2a3 h7h5 f1d3 h5g4 h3g4 e6e5 d3f1 e5d4 f3d4 c6d4 d1d4 f8d6 f2f4 g5f4 e3f4 d8e7 f1e2 c7c5 d4f2 d5d4 c3a4 b7b5 f2g2 a8b8 a4c5 d6c5 b2b4 c5b6 f4f5 b8c8 e1d1 e7d7 h2f4 f7d5 e2f3 c8c2 h1e1 g8e7")
+        uciInput.process("go wtime 4429 btime 5086 winc 100 binc 100")
     }
 }
 

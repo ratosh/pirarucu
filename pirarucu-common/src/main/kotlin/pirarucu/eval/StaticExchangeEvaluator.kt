@@ -77,9 +77,6 @@ object StaticExchangeEvaluator {
     }
 
     fun getSeeCaptureScore(board: Board, move: Int): Int {
-        if (Statistics.ENABLED) {
-            Statistics.seeNodes++
-        }
         val gain = IntArray(32)
         var depth = 0
 

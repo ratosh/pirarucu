@@ -129,7 +129,7 @@ object Evaluator {
     }
 
     /**
-     * Evaluate rooks
+     * Evaluate queens
      */
     private fun evalQueen(board: Board, attackInfo: AttackInfo, ourColor: Int): Int {
         var tmpPieces = board.pieceBitboard[ourColor][Piece.QUEEN]

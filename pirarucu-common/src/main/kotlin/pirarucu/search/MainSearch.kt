@@ -39,7 +39,6 @@ object MainSearch {
                        ply: Int,
                        alpha: Int,
                        beta: Int,
-                       pvNode: Boolean,
                        skipNullMove: Boolean = false): Int {
         if (SearchOptions.stop) {
             return 0
@@ -63,42 +62,35 @@ object MainSearch {
             return 0
         }
 
-        if (Statistics.ENABLED) {
-            Statistics.abNodes++
-        }
-
         val currentAlpha = max(alpha, EvalConstants.SCORE_MIN + ply)
         val currentBeta = min(beta, EvalConstants.SCORE_MAX - (ply + 1))
         if (currentAlpha >= currentBeta) {
             return currentAlpha
         }
-        if (Statistics.ENABLED && pvNode) {
-            Statistics.pvSearch++
-        }
+        val pvNode = (alpha != beta - 1)
         val inCheck = board.basicEvalInfo.checkBitboard != Bitboard.EMPTY
-
-        var ttScore = EvalConstants.SCORE_UNKNOWN
-
-        var foundInfo = TranspositionTable.EMPTY_INFO
 
         val prunable = !inCheck && !pvNode
 
-        if (SearchConstants.ENABLE_TT) {
-            foundInfo = TranspositionTable.findEntry(board)
-            if (foundInfo != TranspositionTable.EMPTY_INFO) {
-                if (Statistics.ENABLED) {
-                    Statistics.TTEntry++
-                }
-                ttScore = TranspositionTable.getScore(foundInfo, ply)
-                if (TranspositionTable.getDepth(foundInfo) >= depth && !pvNode) {
-                    when (TranspositionTable.getScoreType(foundInfo)) {
-                        HashConstants.SCORE_TYPE_EXACT_SCORE -> {
+        var eval = EvalConstants.SCORE_UNKNOWN
+
+        var foundInfo = TranspositionTable.findEntry(board)
+        if (foundInfo != TranspositionTable.EMPTY_INFO) {
+            eval = TranspositionTable.getEval(foundInfo)
+            if (!pvNode && TranspositionTable.getDepth(foundInfo) >= depth) {
+                val ttScore = TranspositionTable.getScore(foundInfo, ply)
+                val ttScoreType = TranspositionTable.getScoreType(foundInfo)
+                when (ttScoreType) {
+                    HashConstants.SCORE_TYPE_EXACT_SCORE -> {
+                        return ttScore
+                    }
+                    HashConstants.SCORE_TYPE_BOUND_LOWER -> {
+                        if (ttScore >= currentBeta) {
                             return ttScore
                         }
-                        HashConstants.SCORE_TYPE_BOUND_LOWER -> if (ttScore >= currentBeta) {
-                            return ttScore
-                        }
-                        HashConstants.SCORE_TYPE_BOUND_UPPER -> if (ttScore <= currentAlpha) {
+                    }
+                    HashConstants.SCORE_TYPE_BOUND_UPPER -> {
+                        if (ttScore <= currentAlpha) {
                             return ttScore
                         }
                     }
@@ -108,65 +100,40 @@ object MainSearch {
 
         val currentNode = SearchInfo.plyInfoList[ply]
 
-        val eval = when {
-            ttScore != EvalConstants.SCORE_UNKNOWN -> ttScore
-            else -> GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board, currentNode.attackInfo)
-        }
-
         // Prunes
         if (prunable) {
-            if (Statistics.ENABLED) {
-                Statistics.prunable++
+            if (eval == EvalConstants.SCORE_UNKNOWN) {
+                eval = GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board, currentNode.attackInfo)
             }
 
-            // Futility
-            if (SearchConstants.ENABLE_SEARCH_FUTILITY &&
-                depth < TunableConstants.FUTILITY_CHILD_MARGIN.size &&
+            // Futility pruning
+            if (depth < TunableConstants.FUTILITY_CHILD_MARGIN.size &&
                 eval < EvalConstants.SCORE_KNOW_WIN) {
-                if (Statistics.ENABLED) {
-                    Statistics.childFutility[depth]++
-                }
                 if (eval - TunableConstants.FUTILITY_CHILD_MARGIN[depth] >= currentBeta) {
-                    if (Statistics.ENABLED) {
-                        Statistics.childFutilityHit[depth]++
-                    }
                     return eval
                 }
             }
 
             // Razoring
-            if (SearchConstants.ENABLE_SEARCH_RAZORING &&
-                depth < TunableConstants.RAZOR_MARGIN.size) {
+            if (depth < TunableConstants.RAZOR_MARGIN.size) {
                 val razorAlpha = currentAlpha - TunableConstants.RAZOR_MARGIN[depth]
                 if (eval < razorAlpha) {
-                    if (Statistics.ENABLED) {
-                        Statistics.razoring[depth]++
-                    }
                     val razorSearchValue = search(board, moveList, 0, ply, razorAlpha, razorAlpha + 1, false)
                     if (razorSearchValue <= razorAlpha) {
-                        if (Statistics.ENABLED) {
-                            Statistics.razoringHit[depth]++
-                        }
                         return razorSearchValue
                     }
                 }
             }
 
-            // Null move pruning and mate threat detection
-            if (SearchConstants.ENABLE_SEARCH_NULL_MOVE &&
-                !skipNullMove &&
-                eval >= currentBeta) {
-                if (Statistics.ENABLED) {
-                    Statistics.nullMove++
-                }
+            // Null move pruning
+            if (!skipNullMove &&
+                eval >= currentBeta &&
+                board.hasNonPawnMaterial(board.colorToMove)) {
                 board.doNullMove()
                 val reduction = 3 + depth / 3
-                val score = -search(board, moveList, depth - reduction, ply + 1, -currentBeta, -currentBeta + 1, false, true)
+                val score = -search(board, moveList, depth - reduction, ply + 1, -currentBeta, -currentBeta + 1, true)
                 board.undoNullMove()
-                if (score >= currentBeta && score < EvalConstants.SCORE_MATE) {
-                    if (Statistics.ENABLED) {
-                        Statistics.nullMoveHit++
-                    }
+                if (score >= currentBeta) {
                     return score
                 }
             }
@@ -181,16 +148,12 @@ object MainSearch {
 
         var movesPerformed = 0
         var searchAlpha = currentAlpha
-        var phase = if (SearchConstants.ENABLE_TT) {
-            PHASE_TT
-        } else {
-            PHASE_ATTACK
-        }
+        var phase = PHASE_TT
         while (phase > PHASE_END) {
             when (phase) {
                 PHASE_TT -> {
-                    if (pvNode && foundInfo == 0L && depth > 10) {
-                        search(board, moveList, depth / 2, ply, currentAlpha, currentBeta, false)
+                    if (pvNode && foundInfo == TranspositionTable.EMPTY_INFO && depth > SearchConstants.IID_DEPTH) {
+                        search(board, moveList, depth - SearchConstants.IID_DEPTH, ply, currentAlpha, currentBeta, false)
                         foundInfo = TranspositionTable.findEntry(board)
                     }
                     if (foundInfo != TranspositionTable.EMPTY_INFO) {
@@ -207,30 +170,18 @@ object MainSearch {
                 }
                 PHASE_KILLER_1 -> {
                     val killerMove = currentNode.killerMove1
-                    if (Statistics.ENABLED) {
-                        Statistics.killer1++
-                    }
                     if (killerMove != Move.NONE &&
                         !currentNode.isTTMove(killerMove) &&
                         MoveGenerator.isLegalQuietMove(board, currentNode.attackInfo, killerMove)) {
                         moveList.addMove(killerMove)
-                        if (Statistics.ENABLED) {
-                            Statistics.killer1Hit++
-                        }
                     }
                 }
                 PHASE_KILLER_2 -> {
                     val killerMove = currentNode.killerMove2
-                    if (Statistics.ENABLED) {
-                        Statistics.killer2++
-                    }
                     if (killerMove != Move.NONE &&
                         !currentNode.isTTMove(killerMove) &&
                         MoveGenerator.isLegalQuietMove(board, currentNode.attackInfo, killerMove)) {
                         moveList.addMove(killerMove)
-                        if (Statistics.ENABLED) {
-                            Statistics.killer2Hit++
-                        }
                     }
                 }
                 PHASE_QUIET -> {
@@ -256,17 +207,10 @@ object MainSearch {
                     !isPromotion &&
                     movesPerformed > 0) {
 
-                    if (SearchConstants.ENABLE_SEARCH_PARENT_FUTILITY &&
-                        !isCapture &&
+                    if (!isCapture &&
                         depth < TunableConstants.FUTILITY_PARENT_MARGIN.size) {
-                        if (Statistics.ENABLED) {
-                            Statistics.parentFutility++
-                        }
                         val futilityValue = eval + TunableConstants.FUTILITY_PARENT_MARGIN[depth]
-                        if (futilityValue <= alpha) {
-                            if (Statistics.ENABLED) {
-                                Statistics.parentFutilityHit++
-                            }
+                        if (futilityValue <= searchAlpha) {
                             if (futilityValue > bestScore) {
                                 bestScore = futilityValue
                                 bestMove = move
@@ -275,15 +219,8 @@ object MainSearch {
                         }
                     }
 
-                    if (SearchConstants.ENABLE_NEGATIVE_SEE_PRUNING &&
-                        depth < SearchConstants.NEGATIVE_SEE_DEPTH) {
-                        if (Statistics.ENABLED) {
-                            Statistics.negativeSee++
-                        }
+                    if (depth < SearchConstants.NEGATIVE_SEE_DEPTH) {
                         if (StaticExchangeEvaluator.getSeeCaptureScore(board, move) < 0) {
-                            if (Statistics.ENABLED) {
-                                Statistics.negativeSeeHit++
-                            }
                             continue
                         }
                     }
@@ -293,48 +230,49 @@ object MainSearch {
 
                 board.doMove(move)
 
-                var reduction = when {
-                    inCheck -> 0
-                    else -> 1
+                val givesCheck = board.basicEvalInfo.checkBitboard != Bitboard.EMPTY
+
+                // In check extension
+                val extension = when {
+                    givesCheck && !inCheck -> 1
+                    else -> 0
                 }
 
-                val searchDepth = depth - reduction
-
                 // Reductions
+                var reduction = 1
                 if (depth > SearchConstants.LMR_MIN_DEPTH &&
                     movesPerformed > SearchConstants.LMR_MIN_MOVES &&
                     !isCapture &&
                     !isPromotion) {
+
                     reduction += 1 + depth / 6
+                    if (!pvNode) {
+                        reduction += 1
+                    }
                 }
 
-                val reducedDepth = depth - reduction
+                val searchDepth = depth + extension
+
+                val newDepth = searchDepth - 1
 
                 var score = EvalConstants.SCORE_MAX
 
-                if (reducedDepth < searchDepth) {
-                    score = -search(board, moveList, reducedDepth, ply + 1, -searchAlpha - 1, -searchAlpha, false)
-                    if (Statistics.ENABLED) {
-                        Statistics.lmr++
-                        if (score <= searchAlpha) {
-                            Statistics.lmrHit++
-                        }
-                    }
+                // LMR Search
+                if (reduction != 1) {
+                    score = -search(board, moveList, searchDepth - reduction, ply + 1, -searchAlpha - 1, -searchAlpha, false)
                 }
 
-                if (reducedDepth >= searchDepth || score > searchAlpha) {
-                    score = -search(board, moveList, searchDepth, ply + 1, -searchAlpha - 1, -searchAlpha, false)
-                    if (Statistics.ENABLED) {
-                        Statistics.pvs++
-                        if (score <= searchAlpha) {
-                            Statistics.pvsHit++
-                        }
-                    }
+                // PVS Search
+                if ((reduction == 1 && (!pvNode || movesPerformed != 1)) || (reduction != 1 && score > searchAlpha)) {
+                    score = -search(board, moveList, newDepth, ply + 1, -searchAlpha - 1, -searchAlpha, false)
                 }
 
+                // Normal search for nodes with similar score on previous search
+                // Only pvNodes or it will be equal to PVS
                 if (pvNode && score > searchAlpha) {
-                    score = -search(board, moveList, searchDepth, ply + 1, -currentBeta, -searchAlpha, true)
+                    score = -search(board, moveList, newDepth, ply + 1, -currentBeta, -searchAlpha, false)
                 }
+
                 board.undoMove(move)
 
                 searchAlpha = max(searchAlpha, score)
@@ -369,13 +307,14 @@ object MainSearch {
                 EvalConstants.SCORE_DRAW
             }
         }
+
         val scoreType = when {
             bestScore >= beta -> HashConstants.SCORE_TYPE_BOUND_LOWER
             bestScore <= alpha -> HashConstants.SCORE_TYPE_BOUND_UPPER
             else -> HashConstants.SCORE_TYPE_EXACT_SCORE
         }
 
-        TranspositionTable.save(board, bestScore, scoreType, depth, ply, bestMove)
+        TranspositionTable.save(board, eval, bestScore, scoreType, depth, ply, bestMove)
 
         return bestScore
     }
