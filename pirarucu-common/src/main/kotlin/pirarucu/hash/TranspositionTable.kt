@@ -6,7 +6,6 @@ import pirarucu.board.Square
 import pirarucu.eval.EvalConstants
 import pirarucu.search.SearchOptions
 import pirarucu.util.Utils
-import kotlin.math.max
 import kotlin.math.min
 
 /**
@@ -109,7 +108,11 @@ object TranspositionTable {
             // Update entry
             if (keys[index] == wantedKey) {
                 usedIndex = index
-                realDepth = max(savedDepth, realDepth)
+                val savedScoreType = getScoreType(info)
+                if ((savedScoreType == scoreType || scoreType != HashConstants.SCORE_TYPE_EXACT_SCORE) &&
+                    savedDepth > realDepth) {
+                    return
+                }
                 break
             }
 
