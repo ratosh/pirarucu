@@ -39,9 +39,6 @@ class MoveList {
     }
 
     fun addMove(move: Int) {
-        if (Statistics.ENABLED) {
-            Statistics.gMoves++
-        }
         moves[nextToGenerate[currentPly]++] = move
     }
 

@@ -14,7 +14,7 @@ class PrincipalVariationTest {
     private fun testSearch(fen: String, expectedMoveList: IntArray) {
         val board = BoardFactory.getBoard(fen)
         for (expectedMove in expectedMoveList) {
-            TranspositionTable.save(board, 1, HashConstants.SCORE_TYPE_EXACT_SCORE, 0, 0, expectedMove)
+            TranspositionTable.save(board, 23, 1, HashConstants.SCORE_TYPE_EXACT_SCORE, 0, 0, expectedMove)
             board.doMove(expectedMove)
         }
         BoardFactory.setBoard(fen, board)

@@ -6,7 +6,7 @@ import pirarucu.util.Utils
 
 object Statistics {
 
-    var ENABLED = false
+    const val ENABLED = false
 
     var searchNodes = 0L
 

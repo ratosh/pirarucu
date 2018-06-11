@@ -26,9 +26,7 @@ class InputHandler : IInputHandler {
         SearchOptions.setTime(board.colorToMove)
         synchronized(lock) {
             running = true
-            UciOutput.info("Before notify $running")
             lock.notifyAll()
-            UciOutput.info("After notify $running")
         }
     }
 
@@ -83,13 +81,10 @@ class InputHandler : IInputHandler {
             while (true) {
                 synchronized(lock) {
                     while (!running) {
-                        UciOutput.info("Before wait $running")
                         lock.wait()
-                        UciOutput.info("After wait $running")
                     }
                 }
                 SearchOptions.stop = false
-                UciOutput.info("start searching $running")
                 running = false
                 MainSearch.search(board)
             }

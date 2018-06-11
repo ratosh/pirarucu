@@ -1,8 +1,10 @@
 package pirarucu.search
 
+import pirarucu.board.Square
 import pirarucu.board.factory.BoardFactory
 import pirarucu.eval.EvalConstants
 import pirarucu.hash.TranspositionTable
+import pirarucu.move.Move
 import pirarucu.stats.Statistics
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -25,7 +27,6 @@ class MainSearchTest {
         SearchOptions.stop = false
         TranspositionTable.reset()
         PrincipalVariation.reset()
-        Statistics.ENABLED = true
         Statistics.reset()
     }
 
@@ -58,7 +59,6 @@ class MainSearchTest {
     @Test
     fun testFine70() {
         testSearch("8/k7/3p4/p2P1p2/P2P1P2/8/8/K7 w - -", 10000)
-        println(PrincipalVariation.toString())
         //assertEquals(Move.createMove(Square.A1, Square.B1), PrincipalVariation.bestMove)
     }
 
@@ -90,5 +90,11 @@ class MainSearchTest {
     @Test
     fun testRandomPosition6() {
         testSearch("2b5/1p3k2/7R/4p1rP/1qpnR3/8/P4PP1/3Q2K1 w - -", 60000)
+    }
+
+    @Ignore
+    @Test
+    fun testRandomPosition7() {
+        testSearch("r4k1r/3nbp1p/p1b1Nn2/q3p1B1/Np2P3/1Q3B2/PPP3PP/2KRR3 b - -", 60000)
     }
 }

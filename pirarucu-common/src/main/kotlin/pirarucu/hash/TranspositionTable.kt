@@ -5,7 +5,6 @@ import pirarucu.board.Board
 import pirarucu.board.Square
 import pirarucu.eval.EvalConstants
 import pirarucu.search.SearchOptions
-import pirarucu.stats.Statistics
 import pirarucu.util.Utils
 import kotlin.math.max
 import kotlin.math.min
@@ -19,10 +18,10 @@ import kotlin.math.min
  *
  * infos (LongArray) (64 bits)
  * ttMove - 16 bits
+ * Eval - 16 bits
  * Score - 16 bits
  * Depth - 14 bits
  * Score type - 2 bits
- * Unused - 16 bits
  *
  * Total bits - 128 bits
  *
@@ -44,11 +43,13 @@ object TranspositionTable {
     private val infos = LongArray(tableLimit)
 
     private const val MOVE_SHIFT = 0
+    private const val EVAL_SHIFT = 16
     private const val SCORE_SHIFT = 32
     private const val DEPTH_SHIFT = 48
     private const val SCORE_TYPE_SHIFT = 62
 
     private const val MOVE_MASK = 0xFFFFL
+    private const val EVAL_MASK = 0xFFFFL
     private const val SCORE_MASK = 0xFFFFL
     private const val DEPTH_MASK = 0x3FFL
     private const val SCORE_TYPE_MASK = 0x3L
@@ -73,20 +74,14 @@ object TranspositionTable {
                 break
             }
             if (wantedKey == key) {
-                if (Statistics.ENABLED) {
-                    Statistics.ttHits++
-                }
                 return infos[index]
             }
             index++
         }
-        if (Statistics.ENABLED) {
-            Statistics.ttMisses++
-        }
         return EMPTY_INFO
     }
 
-    fun save(board: Board, score: Int, scoreType: Int, depth: Int, ply: Int, bestMove: Int) {
+    fun save(board: Board, eval: Int, score: Int, scoreType: Int, depth: Int, ply: Int, bestMove: Int) {
         if (SearchOptions.stop) {
             return
         }
@@ -133,7 +128,7 @@ object TranspositionTable {
         }
 
         keys[usedIndex] = wantedKey
-        infos[usedIndex] = buildInfo(bestMove, realScore, realDepth, scoreType)
+        infos[usedIndex] = buildInfo(bestMove, eval, realScore, realDepth, scoreType)
     }
 
     private fun getIndex(board: Board): Int {
@@ -153,6 +148,10 @@ object TranspositionTable {
         }
     }
 
+    fun getEval(value: Long): Int {
+        return ((value ushr EVAL_SHIFT) and EVAL_MASK).toShort().toInt()
+    }
+
     fun getMove(value: Long): Int {
         return ((value ushr MOVE_SHIFT) and MOVE_MASK).toInt()
     }
@@ -165,8 +164,9 @@ object TranspositionTable {
         return (((value ushr DEPTH_SHIFT) and DEPTH_MASK) - baseDepth).toInt()
     }
 
-    private fun buildInfo(bestMove: Int, score: Int, depth: Int, scoreType: Int): Long {
+    private fun buildInfo(bestMove: Int, eval: Int, score: Int, depth: Int, scoreType: Int): Long {
         return (bestMove.toLong() and MOVE_MASK) or
+            ((eval.toLong() and EVAL_MASK) shl EVAL_SHIFT) or
             ((score.toLong() and SCORE_MASK) shl SCORE_SHIFT) or
             (depth.toLong() shl DEPTH_SHIFT) or
             (scoreType.toLong() shl SCORE_TYPE_SHIFT)

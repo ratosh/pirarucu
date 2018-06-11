@@ -407,4 +407,8 @@ class Board {
         psqScore[color] -= TunableConstants.PSQT[piece][relativeFromSquare]
         psqScore[color] += TunableConstants.PSQT[piece][relativeToSquare]
     }
+
+    fun hasNonPawnMaterial(color: Int): Boolean {
+        return pieceCountColorType[color][Piece.PAWN] + 1 < pieceCountColorType[color][Piece.NONE]
+    }
 }

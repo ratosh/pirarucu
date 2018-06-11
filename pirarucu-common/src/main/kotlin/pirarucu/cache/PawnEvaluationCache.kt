@@ -4,7 +4,6 @@ import pirarucu.board.Bitboard
 import pirarucu.board.Board
 import pirarucu.board.Square
 import pirarucu.eval.EvalConstants
-import pirarucu.stats.Statistics
 import pirarucu.util.Utils
 
 /**
@@ -17,25 +16,19 @@ class PawnEvaluationCache(sizeMb: Int) {
     private val indexShift = 64 - tableBits
 
     private val keys = LongArray(tableLimit)
-    val values = ShortArray(tableLimit)
+    private val values = ShortArray(tableLimit)
 
     fun reset() {
         Utils.specific.arrayFill(keys, 0)
     }
 
     fun findEntry(board: Board): Int {
-        if (Statistics.ENABLED) {
-            Statistics.pawnCache++
-        }
         val wantedKey = getKey(board)
         val index = getIndex(wantedKey)
         if (keys[index] == wantedKey) {
-            if (Statistics.ENABLED) {
-                Statistics.pawnCacheHit++
-            }
-            return index
+            return values[index].toInt()
         }
-        return -1
+        return EvalConstants.SCORE_UNKNOWN
     }
 
     fun saveEntry(board: Board, value: Int) {

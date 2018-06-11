@@ -27,50 +27,34 @@ object QuiescenceSearch {
                ply: Int,
                alpha: Int,
                beta: Int): Int {
-        if (DrawEvaluator.isDrawByRules(board) || !DrawEvaluator.hasSufficientMaterial(board)) {
-            if (Statistics.ENABLED) {
-                Statistics.qDraw++
-            }
+        if (!DrawEvaluator.hasSufficientMaterial(board)) {
             return EvalConstants.SCORE_DRAW
         }
         Statistics.searchNodes++
-        if (Statistics.ENABLED) {
-            Statistics.qMaxPly = max(Statistics.qMaxPly, ply)
-            Statistics.qNodes++
+
+        var eval = EvalConstants.SCORE_UNKNOWN
+
+        val foundInfo = TranspositionTable.findEntry(board)
+        if (foundInfo != TranspositionTable.EMPTY_INFO) {
+            eval = TranspositionTable.getEval(foundInfo)
         }
-        var ttScore = EvalConstants.SCORE_UNKNOWN
-        if (SearchConstants.ENABLE_Q_TT) {
-            val foundInfo = TranspositionTable.findEntry(board)
-            if (foundInfo != TranspositionTable.EMPTY_INFO) {
-                if (Statistics.ENABLED) {
-                    Statistics.qTTEntry++
-                }
-                ttScore = TranspositionTable.getScore(foundInfo, ply)
-            }
-        }
+
         val currentNode = SearchInfo.plyInfoList[ply]
-        val eval = when {
-            ttScore != EvalConstants.SCORE_UNKNOWN -> ttScore
-            else -> GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board, currentNode.attackInfo)
+
+        if (eval == EvalConstants.SCORE_UNKNOWN) {
+            eval = GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board, currentNode.attackInfo)
         }
 
         if (eval >= beta) {
-            if (Statistics.ENABLED) {
-                Statistics.qStandpat++
-            }
             return eval
         }
 
         var bestScore = max(alpha, eval)
 
-        if (SearchConstants.ENABLE_QSEARCH_FUTILITY) {
-            val futilityValue = eval + TunableConstants.QS_FUTILITY_VALUE[Piece.QUEEN]
-            if (futilityValue <= bestScore) {
-                if (Statistics.ENABLED) {
-                    Statistics.qFutilityHit1++
-                }
-                return futilityValue
-            }
+
+        val futilityQueenValue = eval + TunableConstants.QS_FUTILITY_VALUE[Piece.QUEEN]
+        if (futilityQueenValue <= bestScore) {
+            return futilityQueenValue
         }
 
         if (!moveList.startPly()) {
@@ -85,10 +69,6 @@ object QuiescenceSearch {
             val move = moveList.next()
             moveCount++
 
-            if (Statistics.ENABLED) {
-                Statistics.qRenodes++
-            }
-
             val moveType = Move.getMoveType(move)
 
             if (MoveType.isPromotion(moveType) && moveType != MoveType.TYPE_PROMOTION_QUEEN) {
@@ -96,28 +76,14 @@ object QuiescenceSearch {
             }
 
             // Qsearch Futility
-            if (SearchConstants.ENABLE_QSEARCH_FUTILITY) {
-                val capturedPiece = board.pieceTypeBoard[Move.getToSquare(move)]
-                val futilityValue = eval + TunableConstants.QS_FUTILITY_VALUE[capturedPiece]
-                if (futilityValue <= bestScore) {
-                    if (Statistics.ENABLED) {
-                        Statistics.qFutilityHit2++
-                    }
-                    if (bestScore < futilityValue) {
-                        bestScore = futilityValue
-                        bestMove = move
-                    }
-                    continue
-                }
+            val capturedPiece = board.pieceTypeBoard[Move.getToSquare(move)]
+            val futilityValue = eval + TunableConstants.QS_FUTILITY_VALUE[capturedPiece]
+            if (futilityValue <= bestScore) {
+                continue
             }
 
-            if (SearchConstants.ENABLE_QSEARCH_SEE) {
-                if (StaticExchangeEvaluator.getSeeCaptureScore(board, move) <= 0) {
-                    if (Statistics.ENABLED) {
-                        Statistics.seeHits++
-                    }
-                    continue
-                }
+            if (StaticExchangeEvaluator.getSeeCaptureScore(board, move) <= 0) {
+                continue
             }
 
             board.doMove(move)
@@ -129,21 +95,19 @@ object QuiescenceSearch {
                 bestMove = move
             }
             if (innerScore >= beta) {
-                if (Statistics.ENABLED) {
-                    Statistics.qFailHigh++
-                }
                 break
             }
         }
 
         moveList.endPly()
+
         if (bestMove != Move.NONE) {
             val scoreType = when {
                 bestScore >= beta -> HashConstants.SCORE_TYPE_BOUND_LOWER
                 bestScore <= alpha -> HashConstants.SCORE_TYPE_BOUND_UPPER
                 else -> HashConstants.SCORE_TYPE_EXACT_SCORE
             }
-            TranspositionTable.save(board, bestScore, scoreType, 0, ply, bestMove)
+            TranspositionTable.save(board, eval, bestScore, scoreType, 0, ply, bestMove)
         }
 
         return bestScore

@@ -83,9 +83,9 @@ object PawnEvaluator {
 
     fun evaluate(board: Board, attackInfo: AttackInfo): Int {
         if (EvalConstants.PAWN_EVAL_CACHE) {
-            val index = pawnEvalCache.findEntry(board)
-            if (index >= 0) {
-                return pawnEvalCache.values[index].toInt()
+            val info = pawnEvalCache.findEntry(board)
+            if (info != EvalConstants.SCORE_UNKNOWN) {
+                return info
             }
         }
 
