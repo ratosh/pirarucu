@@ -43,8 +43,17 @@ object MainSearch {
         if (SearchOptions.stop) {
             return 0
         }
+        val inCheck = board.basicEvalInfo.checkBitboard != Bitboard.EMPTY
 
-        if (depth <= 0) {
+        // Search extension
+        val extension = when {
+            inCheck -> 1
+            else -> 0
+        }
+
+        val newDepth = depth + extension
+
+        if (newDepth <= 0) {
             return QuiescenceSearch.search(board, moveList, ply, alpha, beta)
         }
         val rootNode = ply == 0
@@ -68,7 +77,6 @@ object MainSearch {
             return currentAlpha
         }
         val pvNode = (alpha != beta - 1)
-        val inCheck = board.basicEvalInfo.checkBitboard != Bitboard.EMPTY
 
         val prunable = !inCheck && !pvNode
 
@@ -77,7 +85,7 @@ object MainSearch {
         var foundInfo = TranspositionTable.findEntry(board)
         if (foundInfo != TranspositionTable.EMPTY_INFO) {
             eval = TranspositionTable.getEval(foundInfo)
-            if (!pvNode && TranspositionTable.getDepth(foundInfo) >= depth) {
+            if (!pvNode && TranspositionTable.getDepth(foundInfo) >= newDepth) {
                 val ttScore = TranspositionTable.getScore(foundInfo, ply)
                 val ttScoreType = TranspositionTable.getScoreType(foundInfo)
                 when (ttScoreType) {
@@ -107,16 +115,16 @@ object MainSearch {
             }
 
             // Futility pruning
-            if (depth < TunableConstants.FUTILITY_CHILD_MARGIN.size &&
+            if (newDepth < TunableConstants.FUTILITY_CHILD_MARGIN.size &&
                 eval < EvalConstants.SCORE_KNOW_WIN) {
-                if (eval - TunableConstants.FUTILITY_CHILD_MARGIN[depth] >= currentBeta) {
+                if (eval - TunableConstants.FUTILITY_CHILD_MARGIN[newDepth] >= currentBeta) {
                     return eval
                 }
             }
 
             // Razoring
-            if (depth < TunableConstants.RAZOR_MARGIN.size) {
-                val razorAlpha = currentAlpha - TunableConstants.RAZOR_MARGIN[depth]
+            if (newDepth < TunableConstants.RAZOR_MARGIN.size) {
+                val razorAlpha = currentAlpha - TunableConstants.RAZOR_MARGIN[newDepth]
                 if (eval < razorAlpha) {
                     val razorSearchValue = search(board, moveList, 0, ply, razorAlpha, razorAlpha + 1, false)
                     if (razorSearchValue <= razorAlpha) {
@@ -130,8 +138,9 @@ object MainSearch {
                 eval >= currentBeta &&
                 board.hasNonPawnMaterial(board.colorToMove)) {
                 board.doNullMove()
-                val reduction = 3 + depth / 3
-                val score = -search(board, moveList, depth - reduction, ply + 1, -currentBeta, -currentBeta + 1, true)
+                val reduction = 3 + newDepth / 3
+                val score = -search(board, moveList, newDepth - reduction, ply + 1, -currentBeta, -currentBeta + 1,
+                    true)
                 board.undoNullMove()
                 if (score >= currentBeta) {
                     return score
@@ -152,8 +161,9 @@ object MainSearch {
         while (phase > PHASE_END) {
             when (phase) {
                 PHASE_TT -> {
-                    if (pvNode && foundInfo == TranspositionTable.EMPTY_INFO && depth > SearchConstants.IID_DEPTH) {
-                        search(board, moveList, depth - SearchConstants.IID_DEPTH, ply, currentAlpha, currentBeta, false)
+                    if (pvNode && foundInfo == TranspositionTable.EMPTY_INFO && newDepth > SearchConstants.IID_DEPTH) {
+                        search(board, moveList, newDepth - SearchConstants.IID_DEPTH, ply, currentAlpha,
+                            currentBeta, false)
                         foundInfo = TranspositionTable.findEntry(board)
                     }
                     if (foundInfo != TranspositionTable.EMPTY_INFO) {
@@ -208,8 +218,8 @@ object MainSearch {
                     movesPerformed > 0) {
 
                     if (!isCapture &&
-                        depth < TunableConstants.FUTILITY_PARENT_MARGIN.size) {
-                        val futilityValue = eval + TunableConstants.FUTILITY_PARENT_MARGIN[depth]
+                        newDepth < TunableConstants.FUTILITY_PARENT_MARGIN.size) {
+                        val futilityValue = eval + TunableConstants.FUTILITY_PARENT_MARGIN[newDepth]
                         if (futilityValue <= searchAlpha) {
                             if (futilityValue > bestScore) {
                                 bestScore = futilityValue
@@ -219,7 +229,7 @@ object MainSearch {
                         }
                     }
 
-                    if (depth < SearchConstants.NEGATIVE_SEE_DEPTH) {
+                    if (newDepth < SearchConstants.NEGATIVE_SEE_DEPTH) {
                         if (StaticExchangeEvaluator.getSeeCaptureScore(board, move) < 0) {
                             continue
                         }
@@ -230,47 +240,39 @@ object MainSearch {
 
                 board.doMove(move)
 
-                val givesCheck = board.basicEvalInfo.checkBitboard != Bitboard.EMPTY
-
-                // In check extension
-                val extension = when {
-                    givesCheck && !inCheck -> 1
-                    else -> 0
-                }
-
                 // Reductions
                 var reduction = 1
-                if (depth > SearchConstants.LMR_MIN_DEPTH &&
+                if (newDepth > SearchConstants.LMR_MIN_DEPTH &&
                     movesPerformed > SearchConstants.LMR_MIN_MOVES &&
                     !isCapture &&
                     !isPromotion) {
 
-                    reduction += 1 + depth / 6
+                    reduction += 1 + newDepth / 6
                     if (!pvNode) {
                         reduction += 1
                     }
                 }
 
-                val searchDepth = depth + extension
-
-                val newDepth = searchDepth - 1
+                val searchDepth = newDepth - 1
 
                 var score = EvalConstants.SCORE_MAX
 
                 // LMR Search
                 if (reduction != 1) {
-                    score = -search(board, moveList, searchDepth - reduction, ply + 1, -searchAlpha - 1, -searchAlpha, false)
+                    score = -search(board, moveList, newDepth - reduction, ply + 1, -searchAlpha - 1,
+                        -searchAlpha, false)
                 }
+
 
                 // PVS Search
                 if ((reduction == 1 && (!pvNode || movesPerformed != 1)) || (reduction != 1 && score > searchAlpha)) {
-                    score = -search(board, moveList, newDepth, ply + 1, -searchAlpha - 1, -searchAlpha, false)
+                    score = -search(board, moveList, searchDepth, ply + 1, -searchAlpha - 1, -searchAlpha, false)
                 }
 
                 // Normal search for nodes with similar score on previous search
                 // Only pvNodes or it will be equal to PVS
                 if (pvNode && score > searchAlpha) {
-                    score = -search(board, moveList, newDepth, ply + 1, -currentBeta, -searchAlpha, false)
+                    score = -search(board, moveList, searchDepth, ply + 1, -currentBeta, -searchAlpha, false)
                 }
 
                 board.undoMove(move)
@@ -314,7 +316,7 @@ object MainSearch {
             else -> HashConstants.SCORE_TYPE_EXACT_SCORE
         }
 
-        TranspositionTable.save(board, eval, bestScore, scoreType, depth, ply, bestMove)
+        TranspositionTable.save(board, eval, bestScore, scoreType, newDepth, ply, bestMove)
 
         return bestScore
     }

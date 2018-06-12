@@ -6,7 +6,6 @@ import pirarucu.board.Square
 import pirarucu.eval.EvalConstants
 import pirarucu.search.SearchOptions
 import pirarucu.util.Utils
-import kotlin.math.max
 import kotlin.math.min
 
 /**
@@ -93,8 +92,7 @@ object TranspositionTable {
 
         val wantedKey = board.zobristKey
 
-        var realDepth = depth + baseDepth
-        var replacedDepth = depth + baseDepth
+        var replacedDepth = depth
 
         while (index < maxIndex) {
             // Unpopulated entry
@@ -109,7 +107,9 @@ object TranspositionTable {
             // Update entry
             if (keys[index] == wantedKey) {
                 usedIndex = index
-                realDepth = max(savedDepth, realDepth)
+                if (savedDepth > depth && scoreType != HashConstants.SCORE_TYPE_EXACT_SCORE) {
+                    return
+                }
                 break
             }
 
@@ -128,7 +128,7 @@ object TranspositionTable {
         }
 
         keys[usedIndex] = wantedKey
-        infos[usedIndex] = buildInfo(bestMove, eval, realScore, realDepth, scoreType)
+        infos[usedIndex] = buildInfo(bestMove, eval, realScore, depth + baseDepth, scoreType)
     }
 
     private fun getIndex(board: Board): Int {
