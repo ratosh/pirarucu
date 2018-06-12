@@ -92,8 +92,7 @@ object TranspositionTable {
 
         val wantedKey = board.zobristKey
 
-        var realDepth = depth + baseDepth
-        var replacedDepth = depth + baseDepth
+        var replacedDepth = depth
 
         while (index < maxIndex) {
             // Unpopulated entry
@@ -108,9 +107,7 @@ object TranspositionTable {
             // Update entry
             if (keys[index] == wantedKey) {
                 usedIndex = index
-                val savedScoreType = getScoreType(info)
-                if ((savedScoreType == scoreType || scoreType != HashConstants.SCORE_TYPE_EXACT_SCORE) &&
-                    savedDepth > realDepth) {
+                if (savedDepth > depth && scoreType != HashConstants.SCORE_TYPE_EXACT_SCORE) {
                     return
                 }
                 break
@@ -131,7 +128,7 @@ object TranspositionTable {
         }
 
         keys[usedIndex] = wantedKey
-        infos[usedIndex] = buildInfo(bestMove, eval, realScore, realDepth, scoreType)
+        infos[usedIndex] = buildInfo(bestMove, eval, realScore, depth + baseDepth, scoreType)
     }
 
     private fun getIndex(board: Board): Int {
