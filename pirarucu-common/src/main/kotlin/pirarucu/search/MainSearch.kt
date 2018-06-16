@@ -334,8 +334,8 @@ object MainSearch {
         var alpha = EvalConstants.SCORE_MIN
         var beta = EvalConstants.SCORE_MAX
         var score = EvalConstants.SCORE_MIN
-        val startTime = Utils.specific.currentTimeMillis()
-        var searchTimeLimit = startTime + SearchOptions.minSearchTimeLimit
+        val startTime: Long = Utils.specific.currentTimeMillis()
+        var searchTimeLimit: Long = startTime + SearchOptions.minSearchTimeLimit
         val minSearchTimeLimit = startTime + SearchOptions.minSearchTimeLimit
         maxSearchTimeLimit = startTime + SearchOptions.maxSearchTimeLimit
 

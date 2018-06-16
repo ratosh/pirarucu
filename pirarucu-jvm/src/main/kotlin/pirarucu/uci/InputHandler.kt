@@ -15,11 +15,11 @@ class InputHandler : IInputHandler {
         var index = 1
         while (index < tokens.size) {
             when (tokens[index]) {
-                "wtime" -> SearchOptions.whiteTime = tokens[index + 1].toInt()
-                "btime" -> SearchOptions.blackTime = tokens[index + 1].toInt()
-                "winc" -> SearchOptions.whiteIncrement = tokens[index + 1].toInt()
-                "binc" -> SearchOptions.blackIncrement = tokens[index + 1].toInt()
-                "movestogo" -> SearchOptions.movesToGo = tokens[index + 1].toInt()
+                "wtime" -> SearchOptions.whiteTime = tokens[index + 1].toLong()
+                "btime" -> SearchOptions.blackTime = tokens[index + 1].toLong()
+                "winc" -> SearchOptions.whiteIncrement = tokens[index + 1].toLong()
+                "binc" -> SearchOptions.blackIncrement = tokens[index + 1].toLong()
+                "movestogo" -> SearchOptions.movesToGo = tokens[index + 1].toLong()
             }
             index += 2
         }

@@ -63,7 +63,6 @@ object QuiescenceSearch {
         MoveGenerator.legalAttacks(board, currentNode.attackInfo, moveList)
 
         var moveCount = 0
-        var bestMove = Move.NONE
 
         while (moveList.hasNext()) {
             val move = moveList.next()
@@ -92,24 +91,14 @@ object QuiescenceSearch {
 
             if (innerScore > bestScore) {
                 bestScore = innerScore
-                bestMove = move
             }
             if (innerScore >= beta) {
+                TranspositionTable.save(board, eval, bestScore, HashConstants.SCORE_TYPE_BOUND_LOWER, 0, ply, move)
                 break
             }
         }
 
         moveList.endPly()
-
-        if (bestMove != Move.NONE) {
-            val scoreType = when {
-                bestScore >= beta -> HashConstants.SCORE_TYPE_BOUND_LOWER
-                bestScore <= alpha -> HashConstants.SCORE_TYPE_BOUND_UPPER
-                else -> HashConstants.SCORE_TYPE_EXACT_SCORE
-            }
-            TranspositionTable.save(board, eval, bestScore, scoreType, 0, ply, bestMove)
-        }
-
         return bestScore
     }
 }

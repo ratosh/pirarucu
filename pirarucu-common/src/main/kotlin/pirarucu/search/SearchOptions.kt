@@ -6,24 +6,24 @@ import kotlin.math.max
 
 object SearchOptions {
     private const val MAX_TIME_RATIO = 2.5
-    private const val GAME_MOVES = 40
+    private const val GAME_MOVES = 40L
 
     private const val INCREMENT_RATIO = 20
 
-    var minSearchTimeLimit = 0
-    var maxSearchTimeLimit = 0
-    var searchTimeIncrement = 0
+    var minSearchTimeLimit = 0L
+    var maxSearchTimeLimit = 0L
+    var searchTimeIncrement = 0L
 
     var depth = GameConstants.MAX_PLIES - 1
 
     var stop = false
 
-    var movesToGo = 0
+    var movesToGo = 0L
 
-    var whiteTime = 0
-    var blackTime = 0
-    var whiteIncrement = 0
-    var blackIncrement = 0
+    var whiteTime = 0L
+    var blackTime = 0L
+    var whiteIncrement = 0L
+    var blackIncrement = 0L
 
     fun setTime(color: Int) {
         val totalTime = if (color == Color.WHITE) {
@@ -32,14 +32,14 @@ object SearchOptions {
             blackTime
         }
         val moves = when {
-            movesToGo != 0 -> movesToGo * 2
+            movesToGo != 0L -> movesToGo * 2
             else -> GAME_MOVES
         }
 
         minSearchTimeLimit = totalTime / moves
         maxSearchTimeLimit = when (movesToGo) {
-            1 -> (totalTime - 1000)
-            else -> (minSearchTimeLimit * MAX_TIME_RATIO).toInt()
+            1L -> (totalTime - 1000)
+            else -> (minSearchTimeLimit * MAX_TIME_RATIO).toLong()
         }
 
         searchTimeIncrement = max(1, (maxSearchTimeLimit - minSearchTimeLimit) / INCREMENT_RATIO)
