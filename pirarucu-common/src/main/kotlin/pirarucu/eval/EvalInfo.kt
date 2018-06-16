@@ -22,10 +22,10 @@ class EvalInfo {
             return
         }
 
-        mobilityArea[Color.WHITE] = (board.emptyBitboard or board.colorBitboard[Color.BLACK]) and
-            attackInfo.attacksBitboard[Color.BLACK][Piece.PAWN].inv()
-        mobilityArea[Color.BLACK] = (board.emptyBitboard or board.colorBitboard[Color.WHITE]) and
-            attackInfo.attacksBitboard[Color.WHITE][Piece.PAWN].inv()
+        mobilityArea[Color.WHITE] = (board.colorBitboard[Color.WHITE] or
+            attackInfo.attacksBitboard[Color.BLACK][Piece.PAWN]).inv()
+        mobilityArea[Color.BLACK] = (board.colorBitboard[Color.BLACK] or
+            attackInfo.attacksBitboard[Color.WHITE][Piece.PAWN]).inv()
 
         protectedOutpost[Color.WHITE] = Bitboard.OUTPOST[Color.WHITE] and
             attackInfo.attacksBitboard[Color.WHITE][Piece.PAWN]
