@@ -4,7 +4,6 @@ import pirarucu.util.Utils
 import java.util.ArrayList
 import java.util.Arrays
 import java.util.BitSet
-import kotlin.math.max
 
 class PbilTunningObject(val name: String, protected val elementList: IntArray, bitsPerValue: IntArray,
                         allowNegatives: Boolean, vararg ignoreElementArgs: Int) {
@@ -34,7 +33,7 @@ class PbilTunningObject(val name: String, protected val elementList: IntArray, b
             }
         }
         val totalBits = bitsPerValue.sum()
-        this.population = max(8, totalBits ushr 4)
+        this.population = totalBits ushr 3
 
         this.generator = PbilGenerator(bitsPerValue, totalBits, allowNegatives,
             *ignoreElementArgs)

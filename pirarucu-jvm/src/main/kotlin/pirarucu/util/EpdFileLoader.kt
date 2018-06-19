@@ -1,5 +1,9 @@
 package pirarucu.util
 
+import pirarucu.board.factory.BoardFactory
+import pirarucu.eval.AttackInfo
+import pirarucu.move.MoveGenerator
+import pirarucu.move.MoveList
 import pirarucu.util.factory.EpdInfoFactory
 import java.io.File
 import java.util.HashMap
@@ -18,7 +22,15 @@ class EpdFileLoader(location: String) {
                 lines++
                 val line = scanner.nextLine()
                 val epdInfo = EpdInfoFactory.getEpdInfo(line)
-                save(epdInfo)
+                val moveList = MoveList()
+                val attackInfo = AttackInfo()
+
+                val board = BoardFactory.getBoard(epdInfo.fenPosition)
+                MoveGenerator.legalMoves(board, attackInfo, moveList)
+                MoveGenerator.legalAttacks(board, attackInfo, moveList)
+                if (moveList.hasNext()) {
+                    save(epdInfo)
+                }
             }
             println(String.format("Found %d good positions in %d possibilities.", epdInfoList.size,
                 lines))

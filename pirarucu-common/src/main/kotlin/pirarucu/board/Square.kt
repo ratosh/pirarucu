@@ -83,6 +83,8 @@ object Square {
     const val SIZE = 64
 
     val SQUARE_DISTANCE = Array(Square.SIZE) { IntArray(Square.SIZE) }
+    val FILE_DISTANCE = Array(Square.SIZE) { IntArray(Square.SIZE) }
+    val RANK_DISTANCE = Array(Square.SIZE) { IntArray(Square.SIZE) }
 
     private val CHARACTER = arrayOf(
         "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1",
@@ -176,11 +178,17 @@ object Square {
 
     private fun populateDistance() {
         for (square1 in 0 until Square.SIZE) {
+            val file1 = File.getFile(square1)
+            val rank1 = Rank.getRank(square1)
             for (square2 in 0 until Square.SIZE) {
                 if (square1 == square2) {
                     continue
                 }
+                val file2 = File.getFile(square2)
+                val rank2 = Rank.getRank(square2)
                 SQUARE_DISTANCE[square1][square2] = calculateDistance(square1, square2)
+                FILE_DISTANCE[square1][square2] = abs(file1 - file2)
+                RANK_DISTANCE[square1][square2] = abs(rank1 - rank2)
             }
         }
     }

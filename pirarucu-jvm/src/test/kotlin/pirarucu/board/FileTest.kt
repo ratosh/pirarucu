@@ -29,6 +29,18 @@ class FileTest {
     }
 
     @Test
+    fun testFlipFile() {
+        assertEquals(File.flipFile(File.FILE_A), File.FILE_H)
+        assertEquals(File.flipFile(File.FILE_H), File.FILE_A)
+        assertEquals(File.flipFile(File.FILE_B), File.FILE_G)
+        assertEquals(File.flipFile(File.FILE_G), File.FILE_B)
+        assertEquals(File.flipFile(File.FILE_C), File.FILE_F)
+        assertEquals(File.flipFile(File.FILE_F), File.FILE_C)
+        assertEquals(File.flipFile(File.FILE_D), File.FILE_E)
+        assertEquals(File.flipFile(File.FILE_E), File.FILE_D)
+    }
+
+    @Test
     fun testIsValid() {
         assertTrue(File.isValid(File.FILE_A))
         assertTrue(File.isValid(File.FILE_B))

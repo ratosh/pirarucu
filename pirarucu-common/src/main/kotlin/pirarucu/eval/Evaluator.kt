@@ -3,11 +3,13 @@ package pirarucu.eval
 import pirarucu.board.Bitboard
 import pirarucu.board.Board
 import pirarucu.board.Color
+import pirarucu.board.File
 import pirarucu.board.Piece
 import pirarucu.board.Square
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.SplitValue
 import pirarucu.util.Utils
+import kotlin.math.min
 
 object Evaluator {
 
@@ -30,6 +32,9 @@ object Evaluator {
 
         score += evalQueen(board, attackInfo, Color.WHITE) -
             evalQueen(board, attackInfo, Color.BLACK)
+
+        score += evalKing(board, attackInfo, Color.WHITE) -
+            evalKing(board, attackInfo, Color.BLACK)
 
         val mgScore = SplitValue.getFirstPart(score)
         val egScore = SplitValue.getSecondPart(score)
@@ -144,6 +149,30 @@ object Evaluator {
             val attackBitboard = attackInfo.pieceMovement[ourColor][square]
             val pieceMobilityBitboard = attackBitboard and mobilityBitboard
             result += TunableConstants.MOBILITY[Piece.QUEEN][Utils.specific.bitCount(pieceMobilityBitboard)]
+
+            tmpPieces = tmpPieces and tmpPieces - 1
+        }
+        return result
+    }
+
+    /**
+     * Evaluate king
+     */
+    private fun evalKing(board: Board, attackInfo: AttackInfo, ourColor: Int): Int {
+        val kingSquare = board.basicEvalInfo.kingSquare[ourColor]
+
+        var result = 0
+
+        var tmpPieces = board.pieceBitboard[ourColor][Piece.PAWN] and
+            EvalConstants.PAWN_SHIELD_MASK[kingSquare]
+        while (tmpPieces != Bitboard.EMPTY) {
+            val square = Square.getSquare(tmpPieces)
+            val file = File.getFile(square)
+            val fileBorderDistance = min(file, File.flipFile(file))
+            val fileDistance = Square.FILE_DISTANCE[kingSquare][square]
+            val rankDistance = Square.RANK_DISTANCE[kingSquare][square]
+
+            result += TunableConstants.PAWN_SHIELD[fileDistance][fileBorderDistance][rankDistance]
 
             tmpPieces = tmpPieces and tmpPieces - 1
         }
