@@ -13,10 +13,10 @@ object PbilTunningApplication {
 
     private const val INTERACTIONS = 1000
 
-    private const val numberOfThreads = 2
+    private const val numberOfThreads = 4
     private val workers = arrayOfNulls<ErrorCalculator>(numberOfThreads)
     private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
-    private val epdFileLoader = EpdFileLoader("/mnt/d/chess/epds/quiet-labeled.epd")
+    private val epdFileLoader = EpdFileLoader("G:/chess/epds/quiet_labeled.epd")
 
     private val tuningObjects: List<PbilTunningObject>
         get() {
@@ -49,12 +49,12 @@ object PbilTunningApplication {
                 "PSQT_MG[PAWN]",
                 TunableConstants.PSQT_MG[Piece.PAWN],
                 intArrayOf(0, 0, 0, 0,
-                    6, 6, 6, 6,
-                    6, 6, 6, 6,
-                    6, 6, 6, 6,
-                    6, 6, 6, 6,
-                    6, 6, 6, 6,
-                    6, 6, 6, 6,
+                    8, 8, 8, 8,
+                    8, 8, 8, 8,
+                    8, 8, 8, 8,
+                    8, 8, 8, 8,
+                    8, 8, 8, 8,
+                    8, 8, 8, 8,
                     0, 0, 0, 0
                 ),
                 true, 0, 1, 2, 3, 28, 29, 30, 31))
@@ -63,16 +63,18 @@ object PbilTunningApplication {
                 "PSQT_EG[PAWN]",
                 TunableConstants.PSQT_EG[Piece.PAWN],
                 intArrayOf(0, 0, 0, 0,
-                    6, 6, 6, 6,
-                    6, 6, 6, 6,
-                    6, 6, 6, 6,
-                    6, 6, 6, 6,
-                    6, 6, 6, 6,
-                    6, 6, 6, 6,
+                    8, 8, 8, 8,
+                    8, 8, 8, 8,
+                    8, 8, 8, 8,
+                    8, 8, 8, 8,
+                    8, 8, 8, 8,
+                    8, 8, 8, 8,
                     0, 0, 0, 0
                 ),
                 true, 0, 1, 2, 3, 28, 29, 30, 31))
+                */
 
+            /*
             tuningObjects.add(PbilTunningObject(
                 "PSQT_MG[KNIGHT]",
                 TunableConstants.PSQT_MG[Piece.KNIGHT],
@@ -291,19 +293,21 @@ object PbilTunningApplication {
                 intArrayOf(0, 0, 7, 7, 0, 0, 0),
                 true, 0, 1, 5, 6))
                 */
-
+            /*
             tuningObjects.add(PbilTunningObject(
                 "PAWN_BONUS_MG",
                 TunableConstants.PAWN_BONUS_MG,
-                intArrayOf(8, 8, 8, 8, 8),
+                intArrayOf(6, 6, 6, 6, 6),
                 true))
 
             tuningObjects.add(PbilTunningObject(
                 "PAWN_BONUS_EG",
                 TunableConstants.PAWN_BONUS_EG,
-                intArrayOf(8, 8, 8, 8, 8),
+                intArrayOf(6, 6, 6, 6, 6),
                 true))
+                */
 
+            /*
             tuningObjects.add(PbilTunningObject(
                 "PAWN_PASSED_MG",
                 TunableConstants.PAWN_PASSED_MG,
@@ -315,6 +319,109 @@ object PbilTunningApplication {
                 TunableConstants.PAWN_PASSED_EG,
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
                 true, 0, 7))
+                */
+
+            tuningObjects.add(PbilTunningObject(
+                "PAWN_SHIELD_MG[0][0]",
+                TunableConstants.PAWN_SHIELD_MG[0][0],
+                intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
+                true, 0, 7))
+
+            tuningObjects.add(PbilTunningObject(
+                "PAWN_SHIELD_MG[0][1]",
+                TunableConstants.PAWN_SHIELD_MG[0][1],
+                intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
+                true, 0, 7))
+
+            tuningObjects.add(PbilTunningObject(
+                "PAWN_SHIELD_MG[0][2]",
+                TunableConstants.PAWN_SHIELD_MG[0][2],
+                intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
+                true, 0, 7))
+
+            tuningObjects.add(PbilTunningObject(
+                "PAWN_SHIELD_MG[0][3]",
+                TunableConstants.PAWN_SHIELD_MG[0][3],
+                intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
+                true, 0, 7))
+
+            /*
+            tuningObjects.add(PbilTunningObject(
+                "PAWN_SHIELD_MG[1][0]",
+                TunableConstants.PAWN_SHIELD_MG[1][0],
+                intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
+                true, 7))
+
+            tuningObjects.add(PbilTunningObject(
+                "PAWN_SHIELD_MG[1][1]",
+                TunableConstants.PAWN_SHIELD_MG[1][1],
+                intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
+                true, 7))
+
+            tuningObjects.add(PbilTunningObject(
+                "PAWN_SHIELD_MG[1][2]",
+                TunableConstants.PAWN_SHIELD_MG[1][2],
+                intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
+                true, 7))
+
+            tuningObjects.add(PbilTunningObject(
+                "PAWN_SHIELD_MG[1][3]",
+                TunableConstants.PAWN_SHIELD_MG[1][3],
+                intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
+                true, 7))
+                */
+
+            /*
+            tuningObjects.add(PbilTunningObject(
+                "PAWN_SHIELD_EG[0][0]",
+                TunableConstants.PAWN_SHIELD_EG[0][0],
+                intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
+                true, 0, 7))
+
+            tuningObjects.add(PbilTunningObject(
+                "PAWN_SHIELD_EG[0][1]",
+                TunableConstants.PAWN_SHIELD_EG[0][1],
+                intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
+                true, 0, 7))
+
+            tuningObjects.add(PbilTunningObject(
+                "PAWN_SHIELD_EG[0][2]",
+                TunableConstants.PAWN_SHIELD_EG[0][2],
+                intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
+                true, 0, 7))
+
+            tuningObjects.add(PbilTunningObject(
+                "PAWN_SHIELD_EG[0][3]",
+                TunableConstants.PAWN_SHIELD_EG[0][3],
+                intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
+                true, 0, 7))
+                */
+
+            /*
+            tuningObjects.add(PbilTunningObject(
+                "PAWN_SHIELD_EG[1][0]",
+                TunableConstants.PAWN_SHIELD_EG[1][0],
+                intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
+                true, 7))
+
+            tuningObjects.add(PbilTunningObject(
+                "PAWN_SHIELD_EG[1][1]",
+                TunableConstants.PAWN_SHIELD_EG[1][1],
+                intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
+                true, 7))
+
+            tuningObjects.add(PbilTunningObject(
+                "PAWN_SHIELD_EG[1][2]",
+                TunableConstants.PAWN_SHIELD_EG[1][2],
+                intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
+                true, 7))
+
+            tuningObjects.add(PbilTunningObject(
+                "PAWN_SHIELD_EG[1][3]",
+                TunableConstants.PAWN_SHIELD_EG[1][3],
+                intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
+                true, 7))
+                */
 
             return tuningObjects
         }
@@ -340,7 +447,7 @@ object PbilTunningApplication {
 
     @Throws(ExecutionException::class, InterruptedException::class)
     private fun optimize(tuningObjects: List<PbilTunningObject>) {
-        val bestError = executeTest()
+        var bestError = executeTest()
         println("Starting error $bestError")
         for (tuningObject in tuningObjects) {
             tuningObject.reportOriginal(bestError)
@@ -352,15 +459,18 @@ object PbilTunningApplication {
             for (tuningObject in tuningObjects) {
                 var skipped = 0
                 TunableConstants.update()
-                val error = executeTest()
-                tuningObject.reportOriginal(error)
-                println("Starting " + tuningObject.name + " error " + error)
+                tuningObject.reportOriginal(bestError)
+                println("Starting " + tuningObject.name + " error " + bestError)
                 for (j in 0 until tuningObject.population) {
                     println("Population $j")
                     val population = tuningObject.nextPopulation()
                     TunableConstants.update()
                     if (population != null) {
-                        tuningObject.reportCurrent(population, executeTest())
+                        val error = executeTest()
+                        tuningObject.reportCurrent(population, error)
+                        if (error < bestError) {
+                            bestError = error
+                        }
                     } else {
                         skipped++
                         println("Skipped")

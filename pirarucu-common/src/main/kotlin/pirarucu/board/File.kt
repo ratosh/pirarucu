@@ -25,6 +25,10 @@ object File {
         return square and FILE_H
     }
 
+    fun flipFile(file: Int): Int {
+        return file xor FILE_H
+    }
+
     fun isValid(file: Int): Boolean {
         return file in FILE_A until SIZE
     }

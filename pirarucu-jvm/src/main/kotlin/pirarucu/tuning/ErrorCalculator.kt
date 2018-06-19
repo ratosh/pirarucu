@@ -8,7 +8,7 @@ import java.util.concurrent.Callable
 
 class ErrorCalculator : Callable<Double> {
     private var constantCalculated: Boolean = false
-    private var constant: Double = 0.toDouble()
+    private var constant: Double = ORIGINAL_CONSTANT
 
     private val fens = HashMap<String, Double>()
     private var board: Board = Board()
@@ -21,7 +21,7 @@ class ErrorCalculator : Callable<Double> {
 
     override fun call(): Double? {
         if (!constantCalculated) {
-            constant = calculateConstant()
+            //constant = calculateConstant()
             constantCalculated = true
         }
         return calculateError(constant)
