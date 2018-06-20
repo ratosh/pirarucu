@@ -15,10 +15,10 @@ class MoveGeneratorPerftTest {
     @Ignore
     @Test
     fun testInitialPosition() {
-        val moveInfoList = Array(5) { MoveInfo() }
+        val moveInfoList = Array(6) { MoveInfo() }
         val board = BoardFactory.getBoard()
 
-        recursive(board, moveInfoList, 5)
+        recursive(board, moveInfoList, 6)
 
         assertEquals(20, moveInfoList[0].moveCount)
         assertEquals(0, moveInfoList[0].captures)
@@ -54,6 +54,13 @@ class MoveGeneratorPerftTest {
         assertEquals(0, moveInfoList[4].castles)
         assertEquals(0, moveInfoList[4].promotions)
         assertEquals(27351, moveInfoList[4].checks)
+
+        assertEquals(119060324, moveInfoList[5].moveCount)
+        assertEquals(2812008, moveInfoList[5].captures)
+        assertEquals(5248, moveInfoList[5].passantCaptures)
+        assertEquals(0, moveInfoList[5].castles)
+        assertEquals(0, moveInfoList[5].promotions)
+        assertEquals(809099, moveInfoList[5].checks)
     }
 
     @Ignore
@@ -103,10 +110,10 @@ class MoveGeneratorPerftTest {
     @Ignore
     @Test
     fun testPosition3() {
-        val moveInfoList = Array(6) { MoveInfo() }
+        val moveInfoList = Array(7) { MoveInfo() }
         val board = BoardFactory.getBoard("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -")
 
-        recursive(board, moveInfoList, 6)
+        recursive(board, moveInfoList, 7)
 
         assertEquals(14, moveInfoList[0].moveCount)
         assertEquals(1, moveInfoList[0].captures)
@@ -149,16 +156,23 @@ class MoveGeneratorPerftTest {
         assertEquals(0, moveInfoList[5].castles)
         assertEquals(7552, moveInfoList[5].promotions)
         assertEquals(452473, moveInfoList[5].checks)
+
+        assertEquals(178633661, moveInfoList[6].moveCount)
+        assertEquals(14519036, moveInfoList[6].captures)
+        assertEquals(294874, moveInfoList[6].passantCaptures)
+        assertEquals(0, moveInfoList[6].castles)
+        assertEquals(140024, moveInfoList[6].promotions)
+        assertEquals(12797406, moveInfoList[6].checks)
     }
 
     @Ignore
     @Test
     fun testPosition4() {
-        val moveInfoList = Array(5) { MoveInfo() }
+        val moveInfoList = Array(6) { MoveInfo() }
         val board = BoardFactory
             .getBoard("r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq -")
 
-        recursive(board, moveInfoList, 5)
+        recursive(board, moveInfoList, 6)
 
         assertEquals(6, moveInfoList[0].moveCount)
         assertEquals(0, moveInfoList[0].captures)
@@ -194,6 +208,13 @@ class MoveGeneratorPerftTest {
         assertEquals(0, moveInfoList[4].castles)
         assertEquals(329464, moveInfoList[4].promotions)
         assertEquals(200568, moveInfoList[4].checks)
+
+        assertEquals(706045033, moveInfoList[5].moveCount)
+        assertEquals(210369132, moveInfoList[5].captures)
+        assertEquals(212, moveInfoList[5].passantCaptures)
+        assertEquals(10882006, moveInfoList[5].castles)
+        assertEquals(81102984, moveInfoList[5].promotions)
+        assertEquals(26973664, moveInfoList[5].checks)
     }
 
     @Ignore
@@ -316,8 +337,8 @@ class MoveGeneratorPerftTest {
         return buffer.toString()
     }
 
-    data class MoveInfo(var moveCount: Int = 0, var captures: Int = 0, var passantCaptures: Int = 0,
-                        var castles: Int = 0, var promotions: Int = 0, var checks: Int = 0) {
+    data class MoveInfo(var moveCount: Long = 0, var captures: Long = 0, var passantCaptures: Long = 0,
+                        var castles: Long = 0, var promotions: Long = 0, var checks: Long = 0) {
 
         override fun toString(): String {
             return ("MoveInfo{"
