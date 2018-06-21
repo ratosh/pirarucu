@@ -9,10 +9,11 @@ class EvalInfo {
 
     var zobristKey = 0L
 
-    var mobilityArea = LongArray(Color.SIZE)
+    val mobilityArea = LongArray(Color.SIZE)
+    val kingArea = LongArray(Color.SIZE)
 
-    var protectedOutpost = LongArray(Color.SIZE)
-    var unprotectedOutpost = LongArray(Color.SIZE)
+    val protectedOutpost = LongArray(Color.SIZE)
+    val unprotectedOutpost = LongArray(Color.SIZE)
 
 
     fun update(board: Board, attackInfo: AttackInfo) {
@@ -37,7 +38,8 @@ class EvalInfo {
         unprotectedOutpost[Color.BLACK] = Bitboard.OUTPOST[Color.BLACK] and
             attackInfo.attacksBitboard[Color.BLACK][Piece.PAWN].inv()
 
-
+        kingArea[Color.WHITE] = EvalConstants.KING_AREA_MASK[Color.WHITE][board.basicEvalInfo.kingSquare[Color.WHITE]]
+        kingArea[Color.BLACK] = EvalConstants.KING_AREA_MASK[Color.BLACK][board.basicEvalInfo.kingSquare[Color.BLACK]]
     }
 
 }
