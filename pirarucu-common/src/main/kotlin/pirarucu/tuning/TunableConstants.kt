@@ -256,6 +256,10 @@ object TunableConstants {
     )
     val PAWN_SHIELD = Array(2) { Array(File.SIZE / 2) { IntArray(Rank.SIZE) } }
 
+    val KING_THREAT_MG = intArrayOf(0, 0, 5, 15, 7, 16, 0)
+    val KING_THREAT_EG = intArrayOf(0, 0, 1, 1, 2, 11, 0)
+    val KING_THREAT = IntArray(Piece.SIZE)
+
     init {
         update()
     }
@@ -315,6 +319,10 @@ object TunableConstants {
                         PAWN_SHIELD_EG[index][index2][index3])
                 }
             }
+        }
+
+        for (index in 0 until KING_THREAT.size) {
+            KING_THREAT[index] = SplitValue.mergeParts(KING_THREAT_MG[index], KING_THREAT_EG[index])
         }
     }
 }

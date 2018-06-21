@@ -13,7 +13,7 @@ object PbilTunningApplication {
 
     private const val INTERACTIONS = 1000
 
-    private const val numberOfThreads = 4
+    private const val numberOfThreads = 6
     private val workers = arrayOfNulls<ErrorCalculator>(numberOfThreads)
     private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
     private val epdFileLoader = EpdFileLoader("G:/chess/epds/quiet_labeled.epd")
@@ -273,25 +273,25 @@ object PbilTunningApplication {
                 "OUTPOST_MG[0]",
                 TunableConstants.OUTPOST_MG[0],
                 intArrayOf(0, 0, 7, 7, 0, 0, 0),
-                true, 0, 1, 5, 6))
+                true, 0, 1, 4, 5, 6))
 
             tuningObjects.add(PbilTunningObject(
                 "OUTPOST_MG[1]",
                 TunableConstants.OUTPOST_MG[1],
                 intArrayOf(0, 0, 7, 7, 0, 0, 0),
-                true, 0, 1, 5, 6))
+                true, 0, 1, 4, 5, 6))
 
             tuningObjects.add(PbilTunningObject(
                 "OUTPOST_EG[0]",
                 TunableConstants.OUTPOST_EG[0],
                 intArrayOf(0, 0, 7, 7, 0, 0, 0),
-                true, 0, 1, 5, 6))
+                true, 0, 1, 4, 5, 6))
 
             tuningObjects.add(PbilTunningObject(
                 "OUTPOST_EG[1]",
                 TunableConstants.OUTPOST_EG[1],
                 intArrayOf(0, 0, 7, 7, 0, 0, 0),
-                true, 0, 1, 5, 6))
+                true, 0, 1, 4, 5, 6))
                 */
             /*
             tuningObjects.add(PbilTunningObject(
@@ -321,6 +321,7 @@ object PbilTunningApplication {
                 true, 0, 7))
                 */
 
+            /*
             tuningObjects.add(PbilTunningObject(
                 "PAWN_SHIELD_MG[0][0]",
                 TunableConstants.PAWN_SHIELD_MG[0][0],
@@ -344,6 +345,7 @@ object PbilTunningApplication {
                 TunableConstants.PAWN_SHIELD_MG[0][3],
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
                 true, 0, 7))
+                */
 
             /*
             tuningObjects.add(PbilTunningObject(
@@ -422,6 +424,18 @@ object PbilTunningApplication {
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
                 true, 7))
                 */
+
+            tuningObjects.add(PbilTunningObject(
+                "KING_THREAT_MG",
+                TunableConstants.KING_THREAT_MG,
+                intArrayOf(0, 0, 8, 8, 8, 8, 0),
+                false, 0, 1, 6))
+
+            tuningObjects.add(PbilTunningObject(
+                "KING_THREAT_EG",
+                TunableConstants.KING_THREAT_EG,
+                intArrayOf(0, 0, 8, 8, 8, 8, 0),
+                false, 0, 1, 6))
 
             return tuningObjects
         }

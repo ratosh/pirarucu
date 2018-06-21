@@ -21,17 +21,17 @@ object Evaluator {
 
         score += PawnEvaluator.evaluate(board, attackInfo)
 
-        score += evalKnight(board, attackInfo, Color.WHITE) -
-            evalKnight(board, attackInfo, Color.BLACK)
+        score += evalKnight(board, attackInfo, Color.WHITE, Color.BLACK) -
+            evalKnight(board, attackInfo, Color.BLACK, Color.WHITE)
 
-        score += evalBishop(board, attackInfo, Color.WHITE) -
-            evalBishop(board, attackInfo, Color.BLACK)
+        score += evalBishop(board, attackInfo, Color.WHITE, Color.BLACK) -
+            evalBishop(board, attackInfo, Color.BLACK, Color.WHITE)
 
-        score += evalRook(board, attackInfo, Color.WHITE) -
-            evalRook(board, attackInfo, Color.BLACK)
+        score += evalRook(board, attackInfo, Color.WHITE, Color.BLACK) -
+            evalRook(board, attackInfo, Color.BLACK, Color.WHITE)
 
-        score += evalQueen(board, attackInfo, Color.WHITE) -
-            evalQueen(board, attackInfo, Color.BLACK)
+        score += evalQueen(board, attackInfo, Color.WHITE, Color.BLACK) -
+            evalQueen(board, attackInfo, Color.BLACK, Color.WHITE)
 
         score += evalKing(board, attackInfo, Color.WHITE) -
             evalKing(board, attackInfo, Color.BLACK)
@@ -48,7 +48,7 @@ object Evaluator {
     /**
      * Evaluate knights
      */
-    private fun evalKnight(board: Board, attackInfo: AttackInfo, ourColor: Int): Int {
+    private fun evalKnight(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
         var tmpPieces = board.pieceBitboard[ourColor][Piece.KNIGHT]
 
         // Outpost not attacked squares
@@ -73,6 +73,11 @@ object Evaluator {
             val pieceMobilityBitboard = attackBitboard and mobilityBitboard
             result += TunableConstants.MOBILITY[Piece.KNIGHT][Utils.specific.bitCount(pieceMobilityBitboard)]
 
+            val kingAreaAttacks = attackBitboard and board.evalInfo.kingArea[theirColor]
+            if (kingAreaAttacks != Bitboard.EMPTY) {
+                result += Utils.specific.bitCount(kingAreaAttacks) * TunableConstants.KING_THREAT[Piece.KNIGHT]
+            }
+
             tmpPieces = tmpPieces and tmpPieces - 1
         }
         return result
@@ -81,7 +86,7 @@ object Evaluator {
     /**
      * Evaluate bishops
      */
-    private fun evalBishop(board: Board, attackInfo: AttackInfo, ourColor: Int): Int {
+    private fun evalBishop(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
         var tmpPieces = board.pieceBitboard[ourColor][Piece.BISHOP]
 
         // Outpost not attacked squares
@@ -106,6 +111,11 @@ object Evaluator {
             val pieceMobilityBitboard = attackBitboard and mobilityBitboard
             result += TunableConstants.MOBILITY[Piece.BISHOP][Utils.specific.bitCount(pieceMobilityBitboard)]
 
+            val kingAreaAttacks = attackBitboard and board.evalInfo.kingArea[theirColor]
+            if (kingAreaAttacks != Bitboard.EMPTY) {
+                result += Utils.specific.bitCount(kingAreaAttacks) * TunableConstants.KING_THREAT[Piece.BISHOP]
+            }
+
             tmpPieces = tmpPieces and tmpPieces - 1
         }
         return result
@@ -114,7 +124,7 @@ object Evaluator {
     /**
      * Evaluate rooks
      */
-    private fun evalRook(board: Board, attackInfo: AttackInfo, ourColor: Int): Int {
+    private fun evalRook(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
         var tmpPieces = board.pieceBitboard[ourColor][Piece.ROOK]
 
         val mobilityBitboard = board.evalInfo.mobilityArea[ourColor]
@@ -128,6 +138,11 @@ object Evaluator {
             val pieceMobilityBitboard = attackBitboard and mobilityBitboard
             result += TunableConstants.MOBILITY[Piece.ROOK][Utils.specific.bitCount(pieceMobilityBitboard)]
 
+            val kingAreaAttacks = attackBitboard and board.evalInfo.kingArea[theirColor]
+            if (kingAreaAttacks != Bitboard.EMPTY) {
+                result += Utils.specific.bitCount(kingAreaAttacks) * TunableConstants.KING_THREAT[Piece.ROOK]
+            }
+
             tmpPieces = tmpPieces and tmpPieces - 1
         }
         return result
@@ -136,7 +151,7 @@ object Evaluator {
     /**
      * Evaluate queens
      */
-    private fun evalQueen(board: Board, attackInfo: AttackInfo, ourColor: Int): Int {
+    private fun evalQueen(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
         var tmpPieces = board.pieceBitboard[ourColor][Piece.QUEEN]
 
         val mobilityBitboard = board.evalInfo.mobilityArea[ourColor]
@@ -149,6 +164,11 @@ object Evaluator {
             val attackBitboard = attackInfo.pieceMovement[ourColor][square]
             val pieceMobilityBitboard = attackBitboard and mobilityBitboard
             result += TunableConstants.MOBILITY[Piece.QUEEN][Utils.specific.bitCount(pieceMobilityBitboard)]
+
+            val kingAreaAttacks = attackBitboard and board.evalInfo.kingArea[theirColor]
+            if (kingAreaAttacks != Bitboard.EMPTY) {
+                result += Utils.specific.bitCount(kingAreaAttacks) * TunableConstants.KING_THREAT[Piece.QUEEN]
+            }
 
             tmpPieces = tmpPieces and tmpPieces - 1
         }
@@ -165,6 +185,8 @@ object Evaluator {
 
         var tmpPieces = board.pieceBitboard[ourColor][Piece.PAWN] and
             EvalConstants.PAWN_SHIELD_MASK[kingSquare]
+
+        // Calculate bonus for pawns near the king file
         while (tmpPieces != Bitboard.EMPTY) {
             val square = Square.getSquare(tmpPieces)
             val file = File.getFile(square)
@@ -173,6 +195,12 @@ object Evaluator {
             val rankDistance = Square.RANK_DISTANCE[kingSquare][square]
 
             result += TunableConstants.PAWN_SHIELD[fileDistance][fileBorderDistance][rankDistance]
+
+            /*
+            val attackBitboard = attackInfo.pieceMovement[ourColor][square]
+            val mobilityArea = attackBitboard and board.evalInfo.mobilityArea[ourColor]
+            result += TunableConstants.MOBILITY[Piece.KING][Utils.specific.bitCount(mobilityArea)]
+            */
 
             tmpPieces = tmpPieces and tmpPieces - 1
         }
