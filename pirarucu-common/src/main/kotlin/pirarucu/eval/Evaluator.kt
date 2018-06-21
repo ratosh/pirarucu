@@ -196,12 +196,6 @@ object Evaluator {
 
             result += TunableConstants.PAWN_SHIELD[fileDistance][fileBorderDistance][rankDistance]
 
-            /*
-            val attackBitboard = attackInfo.pieceMovement[ourColor][square]
-            val mobilityArea = attackBitboard and board.evalInfo.mobilityArea[ourColor]
-            result += TunableConstants.MOBILITY[Piece.KING][Utils.specific.bitCount(mobilityArea)]
-            */
-
             tmpPieces = tmpPieces and tmpPieces - 1
         }
         return result
