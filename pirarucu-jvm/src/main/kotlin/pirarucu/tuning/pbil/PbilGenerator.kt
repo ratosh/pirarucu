@@ -1,76 +1,30 @@
 package pirarucu.tuning.pbil
 
 import java.security.SecureRandom
-import java.util.*
+import java.util.Arrays
+import java.util.BitSet
 
-class PbilGenerator(private val bitsPerValue: IntArray,
-                    private val totalBits: Int,
-                    private val allowNegatives: Boolean,
-                    private vararg val ignoreElementList: Int) {
+class PbilGenerator {
 
-    private val random: SecureRandom = SecureRandom()
+    private val random = SecureRandom()
 
-    private val probability: DoubleArray
+    private var probability = DoubleArray(0)
 
-    init {
-        Arrays.sort(ignoreElementList)
-        probability = DoubleArray(totalBits)
-        Arrays.fill(probability, 0.5)
-    }
+    var totalBits: Int
+        get() = probability.size
+        set(value) {
+            probability = DoubleArray(value)
+            Arrays.fill(probability, 0.5)
+        }
 
     fun generateGenes(): BitSet {
-        val genes = BitSet()
+        val genes = BitSet(totalBits)
         for (i in 0 until totalBits) {
             if (random.nextDouble() < probability[i]) {
                 genes.set(i)
             }
         }
         return genes
-    }
-
-    fun generateElements(genes: BitSet): IntArray {
-        val elementList = IntArray(bitsPerValue.size)
-        for (i in 0 until totalBits) {
-            val position = elementWithBit(i)
-            if (Arrays.binarySearch(ignoreElementList, position) < 0 && genes.get(i)) {
-                if (allowNegatives && isSignalBit(i)) {
-                    elementList[position] *= -1
-                } else {
-                    elementList[position] = elementList[position] or (1 shl elementBit(i))
-                }
-            }
-        }
-        return elementList
-    }
-
-    private fun elementWithBit(value: Int): Int {
-        var result = -1
-        var tmpValue = value
-        while (tmpValue >= 0) {
-            result++
-            tmpValue -= bitsPerValue[result]
-        }
-        return result
-    }
-
-    private fun elementBit(value: Int): Int {
-        var result = 0
-        var tmpValue = value
-        while (tmpValue >= bitsPerValue[result]) {
-            tmpValue -= bitsPerValue[result]
-            result++
-        }
-        return tmpValue
-    }
-
-    private fun isSignalBit(value: Int): Boolean {
-        var result = 0
-        var tmpValue = value
-        while (tmpValue >= bitsPerValue[result]) {
-            tmpValue -= bitsPerValue[result]
-            result++
-        }
-        return tmpValue == bitsPerValue[result] - 1
     }
 
     fun reportResult(bestGenes: BitSet, worstGenes: BitSet) {
@@ -87,9 +41,19 @@ class PbilGenerator(private val bitsPerValue: IntArray,
         // Mutation
         for (j in 0 until totalBits) {
             if (random.nextDouble() < MUTATION_PROBABILITY) {
-                probability[j] = probability[j] * (1.0 - MUTATION_PROBABILITY_SHIFT) + (if (random.nextBoolean()) 1.0 else 0.0) * MUTATION_PROBABILITY_SHIFT
+                probability[j] = probability[j] * (1.0 - MUTATION_PROBABILITY_SHIFT) + (if (probability[j] > 0.5) 0.0 else MUTATION_PROBABILITY_SHIFT)
             }
         }
+        println("Current probability " + Arrays.toString(probability))
+    }
+
+    fun isOptimized(): Boolean {
+        for (entry in probability) {
+            if (entry > WANTED_DIVERGENCE && entry < 1 - WANTED_DIVERGENCE) {
+                return false
+            }
+        }
+        return true
     }
 
     companion object {
@@ -98,8 +62,10 @@ class PbilGenerator(private val bitsPerValue: IntArray,
 
         private const val NEG_LEARN_RATE = 0.075
 
-        private const val MUTATION_PROBABILITY = 0.02
+        private const val MUTATION_PROBABILITY = 0.01
 
         private const val MUTATION_PROBABILITY_SHIFT = 0.05
+
+        private const val WANTED_DIVERGENCE = 0.01
     }
 }

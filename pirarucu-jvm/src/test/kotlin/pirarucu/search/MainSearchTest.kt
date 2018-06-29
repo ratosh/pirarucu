@@ -114,4 +114,13 @@ class MainSearchTest {
         // D6D5 Search
         testSearch("rn1q1rk1/p3bp2/bpp1pn1p/3p2p1/Q1PP4/2N2NP1/PP1BPPBP/R3R1K1 w - -", 10000L)
     }
+
+    @Ignore
+    @Test
+    fun testDS() {
+        // Found f3d2
+        testSearch("r2r3k/3qb1pp/5p2/2pP4/np6/2nB1NB1/2Q2PPP/R3R1K1 w - -", 10000L)
+        // Found a1e1
+        testSearch("3r1b1k/6p1/1n3p2/2n5/1p6/1Np3B1/2B2PPP/R5K1 w - -", 10000L)
+    }
 }

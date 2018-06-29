@@ -256,9 +256,8 @@ class MoveGeneratorTest {
 
     @Test
     fun testPinnedPromotion() {
-        val board = BoardFactory.getBoard("1rq2knr/ppPn1p1p/6p1/8/2Pb4/2N4P/PP2PPP1/R1B1KB1R w KQ -")
+        val board = BoardFactory.getBoard("1Qq2knr/pp1n1p1p/6p1/8/2Pb4/2N4P/PP2PPP1/R1B1KB1R b KQ -")
         val moveList = MoveList()
-        board.doMove(Move.createMove(Square.C7, Square.B8, MoveType.TYPE_PROMOTION_QUEEN))
         moveList.startPly()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
