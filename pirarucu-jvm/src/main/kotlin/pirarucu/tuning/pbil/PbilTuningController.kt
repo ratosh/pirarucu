@@ -1,6 +1,7 @@
 package pirarucu.tuning.pbil
 
 import pirarucu.util.FixedSizeMap
+import java.util.Arrays
 import java.util.BitSet
 
 class PbilTuningController {
@@ -34,7 +35,7 @@ class PbilTuningController {
         generator.totalBits = totalBits
         population = totalBits ushr 3
         tuningDataList.add(tuningData)
-        usedGenes.size = population * 20
+        usedGenes.size = population * 1000
     }
 
     protected fun reset() {
@@ -43,20 +44,20 @@ class PbilTuningController {
     }
 
     fun nextPopulation(): Boolean {
-        val genes = generator.generateGenes()
-
-        currentGenes = genes
+        currentGenes = generator.generateGenes()
         for (tuningData in tuningDataList) {
-            tuningData.generateElements(genes)
+            tuningData.generateElements(currentGenes)
         }
-        if (usedGenes.contains(genes)) {
-            reportCurrent(usedGenes.getValue(genes)!!)
+        if (usedGenes.contains(currentGenes)) {
+            reportCurrent(usedGenes.getValue(currentGenes)!!)
             return false
         }
         return true
     }
 
     fun reportCurrent(result: Double) {
+        val array = Arrays.toString(currentGenes.toLongArray())
+        println(array.toString() + " | " + result)
         if (bestInteractionResult > result) {
             bestInteractionResult = result
             bestInteractionGenes = currentGenes
@@ -100,10 +101,14 @@ class PbilTuningController {
         }
     }
 
-    fun finishInteraction() {
+    /**
+     * Finish interaction and returns optimization state
+     */
+    fun finishInteraction(): Boolean {
         printInteractionResult()
         printBestElements()
         generator.reportResult(bestInteractionGenes!!, worstInteractionGenes!!)
         reset()
+        return generator.isOptimized()
     }
 }

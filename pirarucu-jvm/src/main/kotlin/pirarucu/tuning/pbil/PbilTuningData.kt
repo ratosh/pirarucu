@@ -22,8 +22,10 @@ data class PbilTuningData(val name: String, val elementList: IntArray, val bitsP
         }
 
     init {
-        if (allowNegatives) {
-            for (index in bitsPerValue.indices) {
+        for (index in bitsPerValue.indices) {
+            if (ignoreElementList.contains(index)) {
+                bitsPerValue[index] = 0
+            } else if (allowNegatives) {
                 bitsPerValue[index]++
             }
         }
@@ -87,8 +89,7 @@ data class PbilTuningData(val name: String, val elementList: IntArray, val bitsP
         Utils.specific.arrayCopy(elementList, 0, bestElementList, 0, elementList.size)
     }
 
-
-    fun bestInteractionResult() {
+   fun bestInteractionResult() {
         Utils.specific.arrayCopy(elementList, 0, bestInteractionElementList, 0, elementList.size)
     }
 

@@ -4,6 +4,7 @@ import pirarucu.eval.EvalConstants
 import pirarucu.tuning.ErrorCalculator
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.EpdFileLoader
+import pirarucu.util.Utils
 import java.util.ArrayList
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
@@ -13,7 +14,7 @@ object PbilTuningApplication {
 
     private const val INTERACTIONS = 10000
 
-    private const val numberOfThreads = 6
+    private const val numberOfThreads = 2
     private val workers = arrayOfNulls<ErrorCalculator>(numberOfThreads)
     private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
     private val epdFileLoader = EpdFileLoader("G:/chess/epds/quiet_labeled.epd")
@@ -30,6 +31,7 @@ object PbilTuningApplication {
                 false, 0, 6))
                 */
 
+            /*
             tuningObject.registerTuningData(PbilTuningData(
                 "MATERIAL_SCORE_MG",
                 TunableConstants.MATERIAL_SCORE_MG,
@@ -41,6 +43,7 @@ object PbilTuningApplication {
                 TunableConstants.MATERIAL_SCORE_EG,
                 intArrayOf(0, 8, 10, 10, 10, 11),
                 false, intArrayOf(0)))
+                */
 
             /*
             tuningObject.registerTuningData(PbilTuningData(
@@ -70,7 +73,7 @@ object PbilTuningApplication {
                     0, 0, 0, 0
                 ),
                 true, intArrayOf(0, 1, 2, 3, 28, 29, 30, 31)))
-            */
+                */
 
             /*
             tuningObject.registerTuningData(PbilTuningData(
@@ -466,6 +469,7 @@ object PbilTuningApplication {
     private fun optimize(tuningObject: PbilTuningController) {
         var bestError = executeTest()
         println("Starting error $bestError")
+        val startTime = Utils.specific.currentTimeMillis()
         tuningObject.initialResult(bestError)
 
         for (i in 0 until INTERACTIONS) {
@@ -487,14 +491,10 @@ object PbilTuningApplication {
                     println("Skipped")
                 }
             }
-            if (!improving &&
-                tuningObject.population - skipped > 2 &&
-                skipped.toDouble() / tuningObject.population < 0.8) {
-                improving = true
-            }
             println("Skip proportion " + (skipped.toDouble() / tuningObject.population))
-            tuningObject.finishInteraction()
-            if (!improving) {
+            val timeTaken = Utils.specific.currentTimeMillis() - startTime
+            println("Current time taken $timeTaken millis")
+            if (tuningObject.finishInteraction()) {
                 println("Seems like we are not improving")
                 break
             }

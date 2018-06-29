@@ -18,7 +18,7 @@ class PbilGenerator {
         }
 
     fun generateGenes(): BitSet {
-        val genes = BitSet()
+        val genes = BitSet(totalBits)
         for (i in 0 until totalBits) {
             if (random.nextDouble() < probability[i]) {
                 genes.set(i)
@@ -41,9 +41,19 @@ class PbilGenerator {
         // Mutation
         for (j in 0 until totalBits) {
             if (random.nextDouble() < MUTATION_PROBABILITY) {
-                probability[j] = probability[j] * (1.0 - MUTATION_PROBABILITY_SHIFT) + (if (random.nextBoolean()) 1.0 else 0.0) * MUTATION_PROBABILITY_SHIFT
+                probability[j] = probability[j] * (1.0 - MUTATION_PROBABILITY_SHIFT) + (if (probability[j] > 0.5) 0.0 else MUTATION_PROBABILITY_SHIFT)
             }
         }
+        println("Current probability " + Arrays.toString(probability))
+    }
+
+    fun isOptimized(): Boolean {
+        for (entry in probability) {
+            if (entry > WANTED_DIVERGENCE && entry < 1 - WANTED_DIVERGENCE) {
+                return false
+            }
+        }
+        return true
     }
 
     companion object {
@@ -52,8 +62,10 @@ class PbilGenerator {
 
         private const val NEG_LEARN_RATE = 0.075
 
-        private const val MUTATION_PROBABILITY = 0.02
+        private const val MUTATION_PROBABILITY = 0.01
 
         private const val MUTATION_PROBABILITY_SHIFT = 0.05
+
+        private const val WANTED_DIVERGENCE = 0.01
     }
 }
