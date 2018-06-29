@@ -107,15 +107,13 @@ class MoveGeneratorPerftTest {
         assertEquals(3309887, moveInfoList[4].checks)
     }
 
-    // Not working
     @Ignore
     @Test
     fun testPosition3() {
         val moveInfoList = Array(7) { MoveInfo() }
         val board = BoardFactory.getBoard("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -")
 
-        divide(board, 2)
-        recursive(board, moveInfoList, 2)
+        recursive(board, moveInfoList, 7)
 
         assertEquals(14, moveInfoList[0].moveCount)
         assertEquals(1, moveInfoList[0].captures)
@@ -259,9 +257,7 @@ class MoveGeneratorPerftTest {
         while (moveList.hasNext()) {
             val moveInfoArray = Array(wantedDepth) { MoveInfo() }
             val move = moveList.next()
-            if (!board.isLegalMove(move)) {
-                continue
-            }
+
             board.doMove(move)
             recursive(board, moveList, moveInfoArray, 1, wantedDepth - 1)
             println("Move " + Move.toString(move))
@@ -296,10 +292,6 @@ class MoveGeneratorPerftTest {
         var totalMove = 0
         while (moveList.hasNext()) {
             val move = moveList.next()
-            if (!board.isLegalMove(move)) {
-                println("Skipping " + Move.toString(move))
-                continue
-            }
             moveInfoList[depth].moveCount++
 
             board.doMove(move)

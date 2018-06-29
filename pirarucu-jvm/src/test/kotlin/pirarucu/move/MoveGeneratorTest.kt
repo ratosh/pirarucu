@@ -17,13 +17,7 @@ class MoveGeneratorTest {
         val board = BoardFactory.getBoard("5k2/8/8/8/3P4/8/8/5K2 w - -")
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 6)
+        assertEquals(moveList.movesLeft(), 6)
     }
 
     @Test
@@ -31,13 +25,7 @@ class MoveGeneratorTest {
         val board = BoardFactory.getBoard("5k2/8/8/8/8/8/3P4/5K2 w - -")
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 7)
+        assertEquals(moveList.movesLeft(), 7)
     }
 
     @Test
@@ -45,13 +33,7 @@ class MoveGeneratorTest {
         val board = BoardFactory.getBoard("5k2/2P5/8/8/8/8/8/5K2 w - -")
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 9)
+        assertEquals(moveList.movesLeft(), 9)
     }
 
     @Test
@@ -59,13 +41,7 @@ class MoveGeneratorTest {
         val board = BoardFactory.getBoard("5k2/8/8/3p4/3P4/8/8/5K2 w - -")
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 5)
+        assertEquals(moveList.movesLeft(), 5)
     }
 
     @Test
@@ -73,13 +49,7 @@ class MoveGeneratorTest {
         val board = BoardFactory.getBoard("5k2/8/8/8/8/3p4/3P4/5K2 w - -")
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 4)
+        assertEquals(moveList.movesLeft(), 4)
     }
 
     @Test
@@ -87,13 +57,7 @@ class MoveGeneratorTest {
         val board = BoardFactory.getBoard("5k2/8/8/8/3p4/8/3P4/5K2 w - -")
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 6)
+        assertEquals(moveList.movesLeft(), 6)
     }
 
     @Test
@@ -101,13 +65,7 @@ class MoveGeneratorTest {
         val board = BoardFactory.getBoard("5k2/8/8/8/2N5/8/8/5K2 w - -")
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 13)
+        assertEquals(moveList.movesLeft(), 13)
     }
 
     @Test
@@ -115,13 +73,7 @@ class MoveGeneratorTest {
         val board = BoardFactory.getBoard("5k2/8/8/3b4/8/8/6N1/7K w - -")
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 2)
+        assertEquals(moveList.movesLeft(), 2)
     }
 
     @Test
@@ -129,13 +81,7 @@ class MoveGeneratorTest {
         val board = BoardFactory.getBoard("5k2/8/8/3B4/8/8/8/5K2 w - -")
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 18)
+        assertEquals(moveList.movesLeft(), 18)
     }
 
     @Test
@@ -144,13 +90,7 @@ class MoveGeneratorTest {
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 5)
+        assertEquals(moveList.movesLeft(), 5)
     }
 
     @Test
@@ -158,13 +98,7 @@ class MoveGeneratorTest {
         val board = BoardFactory.getBoard("5k2/8/8/3R4/8/8/8/5K2 w - -")
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 19)
+        assertEquals(moveList.movesLeft(), 19)
     }
 
     @Test
@@ -173,13 +107,7 @@ class MoveGeneratorTest {
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 9)
+        assertEquals(moveList.movesLeft(), 9)
     }
 
     @Test
@@ -187,13 +115,7 @@ class MoveGeneratorTest {
         val board = BoardFactory.getBoard("5k2/8/8/3Q4/8/8/8/5K2 w - -")
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 32)
+        assertEquals(moveList.movesLeft(), 32)
     }
 
     @Test
@@ -202,13 +124,7 @@ class MoveGeneratorTest {
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 9)
+        assertEquals(moveList.movesLeft(), 9)
     }
 
     @Test
@@ -216,13 +132,7 @@ class MoveGeneratorTest {
         val board = BoardFactory.getBoard("5k2/8/8/8/8/8/8/5K2 w - -")
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 5)
+        assertEquals(moveList.movesLeft(), 5)
     }
 
     @Test
@@ -230,13 +140,7 @@ class MoveGeneratorTest {
         val board = BoardFactory.getBoard("5k2/5r2/8/8/8/8/8/5K2 w - -")
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 4)
+        assertEquals(moveList.movesLeft(), 4)
     }
 
     @Test
@@ -244,13 +148,7 @@ class MoveGeneratorTest {
         val board = BoardFactory.getBoard("5k2/8/8/8/8/8/8/R3K3 w Q -")
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 16)
+        assertEquals(moveList.movesLeft(), 16)
     }
 
     @Test
@@ -258,13 +156,7 @@ class MoveGeneratorTest {
         val board = BoardFactory.getBoard("3r1k2/8/8/8/8/8/8/R3K3 w Q -")
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 13)
+        assertEquals(moveList.movesLeft(), 13)
     }
 
     @Test
@@ -273,13 +165,7 @@ class MoveGeneratorTest {
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 7)
+        assertEquals(moveList.movesLeft(), 7)
     }
 
     @Test
@@ -288,13 +174,7 @@ class MoveGeneratorTest {
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 7)
+        assertEquals(moveList.movesLeft(), 7)
     }
 
     @Test
@@ -303,13 +183,7 @@ class MoveGeneratorTest {
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 7)
+        assertEquals(moveList.movesLeft(), 7)
     }
 
     @Test
@@ -318,13 +192,7 @@ class MoveGeneratorTest {
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 13)
+        assertEquals(moveList.movesLeft(), 13)
     }
 
     @Test
@@ -333,13 +201,7 @@ class MoveGeneratorTest {
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 13)
+        assertEquals(moveList.movesLeft(), 13)
     }
 
     @Test
@@ -348,13 +210,7 @@ class MoveGeneratorTest {
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 14)
+        assertEquals(moveList.movesLeft(), 14)
     }
 
     @Test
@@ -363,13 +219,7 @@ class MoveGeneratorTest {
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 19)
+        assertEquals(moveList.movesLeft(), 19)
     }
 
     @Test
@@ -378,13 +228,7 @@ class MoveGeneratorTest {
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 32)
+        assertEquals(moveList.movesLeft(), 32)
     }
 
     @Test
@@ -393,13 +237,7 @@ class MoveGeneratorTest {
         val moveList = MoveList()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 2)
+        assertEquals(moveList.movesLeft(), 2)
     }
 
     @Test
@@ -423,13 +261,7 @@ class MoveGeneratorTest {
         moveList.startPly()
         MoveGenerator.legalMoves(board, attackInfo, moveList)
         MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        var legalMoves = 0
-        while (moveList.hasNext()) {
-            if (board.isLegalMove(moveList.next())) {
-                legalMoves++
-            }
-        }
-        assertEquals(legalMoves, 31)
+        println(moveList.toString())
     }
 
     @Test
