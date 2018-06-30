@@ -206,6 +206,10 @@ object MainSearch {
                 if (phase == PHASE_QUIET && currentNode.isKillerMove(move)) {
                     continue
                 }
+                if (!board.isLegalMove(move)) {
+                    continue
+                }
+
                 val moveType = Move.getMoveType(move)
                 val isPromotion = MoveType.isPromotion(moveType)
                 val toSquare = Move.getToSquare(move)
@@ -237,7 +241,6 @@ object MainSearch {
                 }
 
                 movesPerformed++
-
                 board.doMove(move)
 
                 // Reductions

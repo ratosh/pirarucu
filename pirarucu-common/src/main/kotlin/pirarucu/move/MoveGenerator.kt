@@ -110,12 +110,7 @@ object MoveGenerator {
             val rookPath = BitboardMove.BETWEEN_BITBOARD[rookFrom][rookTo]
 
             if ((kingPath or rookPath) and board.gameBitboard == Bitboard.EMPTY) {
-                val theirColor = Color.invertColor(board.colorToMove)
-
-                if (!pathUnderAttack(kingPath, ourColor, board.pieceBitboard[theirColor],
-                        board.gameBitboard)) {
-                    moveList.addMove(Move.createCastlingMove(kingSquare, kingTo))
-                }
+                moveList.addMove(Move.createCastlingMove(kingSquare, kingTo))
             }
             castlingIndexes = castlingIndexes and castlingIndexes - 1
         }
@@ -204,21 +199,13 @@ object MoveGenerator {
                 maskBitboard
             if (epPawnBitboard != Bitboard.EMPTY) {
                 val ourColor = board.colorToMove
-                val ourKingSquare = board.basicEvalInfo.kingSquare[ourColor]
-                val gameBitboard = board.gameBitboard xor epPawnBitboard
-                val theirPieceBitboard = board.pieceBitboard[theirColor]
                 var tmpPieces = board.pieceBitboard[ourColor][Piece.PAWN] and
                     BitboardMove.PAWN_ATTACKS[theirColor][epSquare]
                 while (tmpPieces != Bitboard.EMPTY) {
                     val fromSquare = Square.getSquare(tmpPieces)
-                    val fromBitboard = Bitboard.getBitboard(fromSquare)
-                    val tmpBitboard = gameBitboard xor fromBitboard xor
-                        Bitboard.getBitboard(epSquare)
 
-                    if (squareAttackedBitboard(ourKingSquare, ourColor, theirPieceBitboard, tmpBitboard) ==
-                        Bitboard.EMPTY) {
-                        moveList.addMove(Move.createPassantMove(fromSquare, epSquare))
-                    }
+                    moveList.addMove(Move.createPassantMove(fromSquare, epSquare))
+
                     tmpPieces = tmpPieces and tmpPieces - 1
                 }
             }
