@@ -66,6 +66,9 @@ object QuiescenceSearch {
 
         while (moveList.hasNext()) {
             val move = moveList.next()
+            if (!board.isLegalMove(move)) {
+                continue
+            }
             moveCount++
 
             val moveType = Move.getMoveType(move)

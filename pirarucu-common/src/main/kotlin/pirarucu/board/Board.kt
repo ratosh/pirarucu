@@ -7,6 +7,7 @@ import pirarucu.game.GameConstants
 import pirarucu.hash.Zobrist
 import pirarucu.move.BitboardMove
 import pirarucu.move.Move
+import pirarucu.move.MoveGenerator
 import pirarucu.move.MoveType
 import pirarucu.stats.Statistics
 import pirarucu.tuning.TunableConstants
@@ -262,6 +263,37 @@ class Board {
         basicEvalInfo.update(this)
     }
 
+    fun isLegalMove(move: Int): Boolean {
+        when (Move.getMoveType(move)) {
+            MoveType.TYPE_CASTLING -> {
+                // check if path is under attack
+                val toSquare = Move.getToSquare(move)
+                val toBitboard = Bitboard.getBitboard(toSquare)
+                val path = BitboardMove.BETWEEN_BITBOARD[Move.getFromSquare(move)][toSquare] or toBitboard
+                return !MoveGenerator.pathUnderAttack(path, colorToMove, pieceBitboard[nextColorToMove], gameBitboard)
+            }
+            MoveType.TYPE_PASSANT -> {
+                val fromBitboard = Bitboard.getBitboard(Move.getFromSquare(move))
+
+                val tmpBitboard = gameBitboard xor fromBitboard xor
+                    Bitboard.getBitboard(epSquare) xor BitboardMove.PAWN_MOVES[nextColorToMove][epSquare]
+                return MoveGenerator.squareAttackedBitboard(basicEvalInfo.kingSquare[colorToMove], colorToMove,
+                    pieceBitboard[nextColorToMove], tmpBitboard) == Bitboard.EMPTY
+            }
+            else -> {
+                val fromSquare = Move.getFromSquare(move)
+                if (pieceTypeBoard[fromSquare] == Piece.KING) {
+                    val fromBitboard = Bitboard.getBitboard(fromSquare)
+                    val tmpBitboard = gameBitboard xor fromBitboard
+                    val toSquare = Move.getToSquare(move)
+
+                    return MoveGenerator.squareAttackedBitboard(toSquare, colorToMove, pieceBitboard[nextColorToMove],
+                        tmpBitboard) == Bitboard.EMPTY
+                }
+                return true
+            }
+        }
+    }
 
     fun undoMove(move: Int) {
         nextColorToMove = colorToMove

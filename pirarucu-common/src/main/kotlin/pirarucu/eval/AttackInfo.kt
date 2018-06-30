@@ -6,7 +6,6 @@ import pirarucu.board.Color
 import pirarucu.board.Piece
 import pirarucu.board.Square
 import pirarucu.move.BitboardMove
-import pirarucu.move.MoveGenerator
 import pirarucu.util.Utils
 
 class AttackInfo {
@@ -145,23 +144,9 @@ class AttackInfo {
 
     private fun kingMoves(board: Board, color: Int) {
         val fromSquare = board.basicEvalInfo.kingSquare[color]
-        val fromBitboard = Bitboard.getBitboard(fromSquare)
         var moves = BitboardMove.KING_MOVES[fromSquare]
-        val ourColor = color
-        val theirColor = Color.invertColor(color)
-        val gameBitboard = board.gameBitboard xor fromBitboard
-        var bitboard = Bitboard.EMPTY
 
-        while (moves != Bitboard.EMPTY) {
-            val toSquare = Square.getSquare(moves)
-            if (MoveGenerator
-                    .squareAttackedBitboard(toSquare, ourColor, board.pieceBitboard[theirColor], gameBitboard) ==
-                Bitboard.EMPTY) {
-                bitboard = bitboard or Bitboard.getBitboard(toSquare)
-            }
-            moves = moves and moves - 1
-        }
-        pieceMovement[color][fromSquare] = bitboard
-        attacksBitboard[color][Piece.KING] = bitboard
+        pieceMovement[color][fromSquare] = moves
+        attacksBitboard[color][Piece.KING] = moves
     }
 }

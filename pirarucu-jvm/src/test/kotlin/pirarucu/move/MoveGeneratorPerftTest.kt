@@ -257,7 +257,9 @@ class MoveGeneratorPerftTest {
         while (moveList.hasNext()) {
             val moveInfoArray = Array(wantedDepth) { MoveInfo() }
             val move = moveList.next()
-
+            if (!board.isLegalMove(move)) {
+                continue
+            }
             board.doMove(move)
             recursive(board, moveList, moveInfoArray, 1, wantedDepth - 1)
             println("Move " + Move.toString(move))
@@ -292,6 +294,9 @@ class MoveGeneratorPerftTest {
         var totalMove = 0
         while (moveList.hasNext()) {
             val move = moveList.next()
+            if (!board.isLegalMove(move)) {
+                continue
+            }
             moveInfoList[depth].moveCount++
 
             board.doMove(move)
