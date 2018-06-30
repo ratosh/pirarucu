@@ -3,7 +3,6 @@ package pirarucu.move
 import pirarucu.board.Bitboard
 import pirarucu.board.Board
 import pirarucu.board.CastlingRights
-import pirarucu.board.Color
 import pirarucu.board.Piece
 import pirarucu.board.Square
 import pirarucu.eval.AttackInfo
@@ -55,13 +54,13 @@ object MoveGenerator {
                 when {
                     Bitboard.PROMOTION_BITBOARD and toBitboard != Bitboard.EMPTY -> {
                         moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
-                            MoveType.TYPE_PROMOTION_KNIGHT))
-                        moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
-                            MoveType.TYPE_PROMOTION_BISHOP))
+                            MoveType.TYPE_PROMOTION_QUEEN))
                         moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
                             MoveType.TYPE_PROMOTION_ROOK))
                         moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
-                            MoveType.TYPE_PROMOTION_QUEEN))
+                            MoveType.TYPE_PROMOTION_BISHOP))
+                        moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
+                            MoveType.TYPE_PROMOTION_KNIGHT))
                     }
                     else -> moveList.addMove(Move.createMove(fromSquare, toSquare))
                 }
@@ -172,13 +171,13 @@ object MoveGenerator {
                     when {
                         Bitboard.PROMOTION_BITBOARD and toBitboard != Bitboard.EMPTY -> {
                             moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
-                                MoveType.TYPE_PROMOTION_KNIGHT))
-                            moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
-                                MoveType.TYPE_PROMOTION_BISHOP))
+                                MoveType.TYPE_PROMOTION_QUEEN))
                             moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
                                 MoveType.TYPE_PROMOTION_ROOK))
                             moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
-                                MoveType.TYPE_PROMOTION_QUEEN))
+                                MoveType.TYPE_PROMOTION_BISHOP))
+                            moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
+                                MoveType.TYPE_PROMOTION_KNIGHT))
                         }
                         else -> moveList.addMove(Move.createMove(fromSquare, toSquare))
                     }
