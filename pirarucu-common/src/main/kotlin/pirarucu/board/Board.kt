@@ -441,7 +441,6 @@ class Board {
     }
 
     fun hasNonPawnMaterial(color: Int): Boolean {
-        return pieceCountColorType[color][Piece.PAWN] or
-            pieceCountColorType[color][Piece.KING] != pieceCountColorType[color][Piece.NONE]
+        return pieceCountColorType[color][Piece.PAWN] + 1 != pieceCountColorType[color][Piece.NONE]
     }
 }
