@@ -144,7 +144,8 @@ class AttackInfo {
 
     private fun kingMoves(board: Board, color: Int) {
         val fromSquare = board.basicEvalInfo.kingSquare[color]
-        var moves = BitboardMove.KING_MOVES[fromSquare]
+        val theirKing = board.basicEvalInfo.kingSquare[Color.invertColor(color)]
+        var moves = BitboardMove.KING_MOVES[fromSquare] and BitboardMove.KING_MOVES[theirKing].inv()
 
         pieceMovement[color][fromSquare] = moves
         attacksBitboard[color][Piece.KING] = moves

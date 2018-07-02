@@ -28,7 +28,14 @@ class EpdFileLoader(location: String) {
                 val board = BoardFactory.getBoard(epdInfo.fenPosition)
                 MoveGenerator.legalMoves(board, attackInfo, moveList)
                 MoveGenerator.legalAttacks(board, attackInfo, moveList)
-                if (moveList.hasNext()) {
+                var moves = 0
+                while (moveList.hasNext()) {
+                    if (board.isLegalMove(moveList.next())) {
+                        moves++
+                        break
+                    }
+                }
+                if (moves > 0) {
                     save(epdInfo)
                 }
             }
