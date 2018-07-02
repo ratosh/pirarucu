@@ -24,7 +24,7 @@ class FixedSizeMap<T, V>(size: Int) {
     }
 
     fun contains(item: T): Boolean {
-        return list.contains(item)
+        return map.containsKey(item)
     }
 
     fun getValue(item: T): V? {

@@ -8,7 +8,9 @@ import pirarucu.move.MoveList
 import pirarucu.move.MoveType
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 class BoardTest {
 
@@ -248,6 +250,13 @@ class BoardTest {
             board.undoMove(move)
             assertEquals(zobristKey, board.zobristKey)
         }
+    }
+
+    @Test
+    fun testHasNonPawnMaterial() {
+        val board = BoardFactory.getBoard("8/7R/1K6/8/7p/4k3/6P1/8 w - -")
+        assertFalse(board.hasNonPawnMaterial(Color.BLACK))
+        assertTrue(board.hasNonPawnMaterial(Color.WHITE))
     }
 }
 

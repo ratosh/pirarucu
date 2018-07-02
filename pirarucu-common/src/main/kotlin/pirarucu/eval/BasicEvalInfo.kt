@@ -13,17 +13,13 @@ class BasicEvalInfo {
     var checkBitboard = 0L
         private set
 
-    var pinnerBitboard = LongArray(Color.SIZE)
-        private set
+    val pinnerBitboard = LongArray(Color.SIZE)
 
-    var discoveryBitboard = LongArray(Color.SIZE)
-        private set
+    val discoveryBitboard = LongArray(Color.SIZE)
 
-    var pinnedBitboard = LongArray(Color.SIZE)
-        private set
+    val pinnedBitboard = LongArray(Color.SIZE)
 
-    var kingSquare = IntArray(Color.SIZE)
-        private set
+    val kingSquare = IntArray(Color.SIZE)
 
     fun update(board: Board) {
         for (ourColor in Color.WHITE until Color.SIZE) {
