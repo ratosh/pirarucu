@@ -260,6 +260,10 @@ object TunableConstants {
     val KING_THREAT_EG = intArrayOf(0, 0, 1, 1, 2, 11, 0)
     val KING_THREAT = IntArray(Piece.SIZE)
 
+    val SAFE_CHECK_THREAT_MG = intArrayOf(0, 0, 63, 21, 63, 52, 0)
+    val SAFE_CHECK_THREAT_EG = intArrayOf(0, 0, 18, 51, 15, 63, 0)
+    val SAFE_CHECK_THREAT = IntArray(Piece.SIZE)
+
     init {
         update()
     }
@@ -323,6 +327,10 @@ object TunableConstants {
 
         for (index in 0 until KING_THREAT.size) {
             KING_THREAT[index] = SplitValue.mergeParts(KING_THREAT_MG[index], KING_THREAT_EG[index])
+        }
+
+        for (index in 0 until SAFE_CHECK_THREAT.size) {
+            SAFE_CHECK_THREAT[index] = SplitValue.mergeParts(SAFE_CHECK_THREAT_MG[index], SAFE_CHECK_THREAT_EG[index])
         }
     }
 }

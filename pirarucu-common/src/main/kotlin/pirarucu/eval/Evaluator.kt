@@ -6,6 +6,7 @@ import pirarucu.board.Color
 import pirarucu.board.File
 import pirarucu.board.Piece
 import pirarucu.board.Square
+import pirarucu.board.factory.FenFactory
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.SplitValue
 import pirarucu.util.Utils
@@ -50,6 +51,9 @@ object Evaluator {
      */
     private fun evalKnight(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
         var tmpPieces = board.pieceBitboard[ourColor][Piece.KNIGHT]
+        if (tmpPieces == Bitboard.EMPTY) {
+            return 0
+        }
 
         // Outpost not attacked squares
         val mobilityBitboard = board.evalInfo.mobilityArea[ourColor]
@@ -57,6 +61,9 @@ object Evaluator {
         val outpostUnprotectedBitboard = board.evalInfo.unprotectedOutpost[ourColor]
 
         var result = 0
+
+        val possibleSafeCheck = board.basicEvalInfo.dangerBitboard[theirColor][Piece.KNIGHT] and
+            board.colorBitboard[ourColor].inv() and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
 
         while (tmpPieces != Bitboard.EMPTY) {
             val square = Square.getSquare(tmpPieces)
@@ -78,6 +85,12 @@ object Evaluator {
                 result += Utils.specific.bitCount(kingAreaAttacks) * TunableConstants.KING_THREAT[Piece.KNIGHT]
             }
 
+            val safeChecks = possibleSafeCheck and attackBitboard
+
+            if (safeChecks != Bitboard.EMPTY) {
+                result += TunableConstants.SAFE_CHECK_THREAT[Piece.KNIGHT]
+            }
+
             tmpPieces = tmpPieces and tmpPieces - 1
         }
         return result
@@ -88,11 +101,17 @@ object Evaluator {
      */
     private fun evalBishop(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
         var tmpPieces = board.pieceBitboard[ourColor][Piece.BISHOP]
+        if (tmpPieces == Bitboard.EMPTY) {
+            return 0
+        }
 
         // Outpost not attacked squares
         val mobilityBitboard = board.evalInfo.mobilityArea[ourColor]
         val outpostProtectedBitboard = board.evalInfo.protectedOutpost[ourColor]
         val outpostUnprotectedBitboard = board.evalInfo.unprotectedOutpost[ourColor]
+
+        val possibleSafeCheck = board.basicEvalInfo.dangerBitboard[theirColor][Piece.BISHOP] and
+            board.colorBitboard[ourColor].inv() and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
 
         var result = 0
 
@@ -116,6 +135,12 @@ object Evaluator {
                 result += Utils.specific.bitCount(kingAreaAttacks) * TunableConstants.KING_THREAT[Piece.BISHOP]
             }
 
+            val safeChecks = possibleSafeCheck and attackBitboard
+
+            if (safeChecks != Bitboard.EMPTY) {
+                result += TunableConstants.SAFE_CHECK_THREAT[Piece.BISHOP]
+            }
+
             tmpPieces = tmpPieces and tmpPieces - 1
         }
         return result
@@ -126,10 +151,16 @@ object Evaluator {
      */
     private fun evalRook(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
         var tmpPieces = board.pieceBitboard[ourColor][Piece.ROOK]
+        if (tmpPieces == Bitboard.EMPTY) {
+            return 0
+        }
 
         val mobilityBitboard = board.evalInfo.mobilityArea[ourColor]
 
         var result = 0
+
+        val possibleSafeCheck = board.basicEvalInfo.dangerBitboard[theirColor][Piece.ROOK] and
+            board.colorBitboard[ourColor].inv() and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
 
         while (tmpPieces != Bitboard.EMPTY) {
             val square = Square.getSquare(tmpPieces)
@@ -143,6 +174,12 @@ object Evaluator {
                 result += Utils.specific.bitCount(kingAreaAttacks) * TunableConstants.KING_THREAT[Piece.ROOK]
             }
 
+            val safeChecks = possibleSafeCheck and attackBitboard
+
+            if (safeChecks != Bitboard.EMPTY) {
+                result += TunableConstants.SAFE_CHECK_THREAT[Piece.ROOK]
+            }
+
             tmpPieces = tmpPieces and tmpPieces - 1
         }
         return result
@@ -153,10 +190,16 @@ object Evaluator {
      */
     private fun evalQueen(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
         var tmpPieces = board.pieceBitboard[ourColor][Piece.QUEEN]
+        if (tmpPieces == Bitboard.EMPTY) {
+            return 0
+        }
 
         val mobilityBitboard = board.evalInfo.mobilityArea[ourColor]
 
         var result = 0
+
+        val possibleSafeCheck = board.basicEvalInfo.dangerBitboard[theirColor][Piece.QUEEN] and
+            board.colorBitboard[ourColor].inv() and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
 
         while (tmpPieces != Bitboard.EMPTY) {
             val square = Square.getSquare(tmpPieces)
@@ -168,6 +211,12 @@ object Evaluator {
             val kingAreaAttacks = attackBitboard and board.evalInfo.kingArea[theirColor]
             if (kingAreaAttacks != Bitboard.EMPTY) {
                 result += Utils.specific.bitCount(kingAreaAttacks) * TunableConstants.KING_THREAT[Piece.QUEEN]
+            }
+
+            val safeChecks = possibleSafeCheck and attackBitboard
+
+            if (safeChecks != Bitboard.EMPTY) {
+                result += TunableConstants.SAFE_CHECK_THREAT[Piece.QUEEN]
             }
 
             tmpPieces = tmpPieces and tmpPieces - 1
@@ -198,6 +247,7 @@ object Evaluator {
 
             tmpPieces = tmpPieces and tmpPieces - 1
         }
+
         return result
     }
 }
