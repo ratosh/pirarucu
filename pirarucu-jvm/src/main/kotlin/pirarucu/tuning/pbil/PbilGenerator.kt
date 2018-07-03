@@ -10,11 +10,15 @@ class PbilGenerator {
 
     private var probability = DoubleArray(0)
 
+    private var mutation = MUTATION_PROBABILITY
+
     var totalBits: Int
         get() = probability.size
         set(value) {
             probability = DoubleArray(value)
             Arrays.fill(probability, 0.5)
+            mutation = 0.5 / value
+            println("mutation $mutation")
         }
 
     fun generateGenes(): BitSet {
@@ -40,11 +44,11 @@ class PbilGenerator {
 
         // Mutation
         for (j in 0 until totalBits) {
-            if (random.nextDouble() < MUTATION_PROBABILITY) {
+            if (random.nextDouble() < mutation) {
+                println("Mutating $j")
                 probability[j] = probability[j] * (1.0 - MUTATION_PROBABILITY_SHIFT) + (if (probability[j] > 0.5) 0.0 else MUTATION_PROBABILITY_SHIFT)
             }
         }
-        println("Current probability " + Arrays.toString(probability))
     }
 
     fun isOptimized(): Boolean {

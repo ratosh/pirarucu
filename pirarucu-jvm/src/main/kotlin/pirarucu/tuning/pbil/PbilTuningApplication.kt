@@ -14,7 +14,7 @@ object PbilTuningApplication {
 
     private const val INTERACTIONS = 10000
 
-    private const val numberOfThreads = 2
+    private const val numberOfThreads = 6
     private val workers = arrayOfNulls<ErrorCalculator>(numberOfThreads)
     private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
     private val epdFileLoader = EpdFileLoader("G:/chess/epds/quiet_labeled.epd")
@@ -245,9 +245,7 @@ object PbilTuningApplication {
                 TunableConstants.MOBILITY_EG[Piece.BISHOP],
                 intArrayOf(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6),
                 true, intArrayOf()))
-                */
 
-            /*
             tuningObject.registerTuningData(PbilTuningData(
                 "MOBILITY_MG[ROOK]",
                 TunableConstants.MOBILITY_MG[Piece.ROOK],
@@ -259,19 +257,17 @@ object PbilTuningApplication {
                 TunableConstants.MOBILITY_EG[Piece.ROOK],
                 intArrayOf(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6),
                 true, intArrayOf()))
-                */
 
-            /*
             tuningObject.registerTuningData(PbilTuningData(
                 "MOBILITY_MG[QUEEN]",
                 TunableConstants.MOBILITY_MG[Piece.QUEEN],
-                intArrayOf(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6),
+                intArrayOf(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6),
                 true, intArrayOf()))
 
             tuningObject.registerTuningData(PbilTuningData(
                 "MOBILITY_EG[QUEEN]",
                 TunableConstants.MOBILITY_EG[Piece.QUEEN],
-                intArrayOf(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6),
+                intArrayOf(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6),
                 true, intArrayOf()))
                 */
 
@@ -443,6 +439,18 @@ object PbilTuningApplication {
                 false, intArrayOf(0, 1, 6)))
                 */
 
+            tuningObject.registerTuningData(PbilTuningData(
+                "SAFE_CHECK_THREAT_MG",
+                TunableConstants.SAFE_CHECK_THREAT_MG,
+                intArrayOf(0, 0, 6, 6, 6, 6, 0),
+                false, intArrayOf(0, 1, 6)))
+
+            tuningObject.registerTuningData(PbilTuningData(
+                "SAFE_CHECK_THREAT_EG",
+                TunableConstants.SAFE_CHECK_THREAT_EG,
+                intArrayOf(0, 0, 6, 6, 6, 6, 0),
+                false, intArrayOf(0, 1, 6)))
+
             return tuningObject
         }
 
@@ -474,7 +482,6 @@ object PbilTuningApplication {
 
         for (i in 0 until INTERACTIONS) {
             println("Starting interaction $i")
-            var improving = false
             var skipped = 0
             for (j in 0 until tuningObject.population) {
                 println("Population $j")

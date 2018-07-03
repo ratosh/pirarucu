@@ -6,7 +6,6 @@ import pirarucu.board.Color
 import pirarucu.board.Piece
 import pirarucu.board.Square
 import pirarucu.move.BitboardMove
-import pirarucu.move.MoveGenerator
 
 class BasicEvalInfo {
 
@@ -20,6 +19,8 @@ class BasicEvalInfo {
     val pinnedBitboard = LongArray(Color.SIZE)
 
     val kingSquare = IntArray(Color.SIZE)
+
+    val dangerBitboard = Array(Color.SIZE) { LongArray(Piece.SIZE) }
 
     fun update(board: Board) {
         for (ourColor in Color.WHITE until Color.SIZE) {
@@ -35,14 +36,22 @@ class BasicEvalInfo {
                 theirColor,
                 theirPieceBitboard,
                 board.colorBitboard)
+
+            dangerBitboard[ourColor][Piece.PAWN] = BitboardMove.PAWN_ATTACKS[ourColor][kingSquarePosition]
+            dangerBitboard[ourColor][Piece.KNIGHT] = BitboardMove.KNIGHT_MOVES[kingSquarePosition]
+            dangerBitboard[ourColor][Piece.BISHOP] = BitboardMove.bishopMoves(kingSquarePosition, board.gameBitboard)
+            dangerBitboard[ourColor][Piece.ROOK] = BitboardMove.rookMoves(kingSquarePosition, board.gameBitboard)
+            dangerBitboard[ourColor][Piece.QUEEN] = dangerBitboard[ourColor][Piece.BISHOP] or
+                dangerBitboard[ourColor][Piece.ROOK]
         }
 
         val ourColor = board.colorToMove
         val theirColor = board.nextColorToMove
-        checkBitboard = MoveGenerator.squareAttackedBitboard(kingSquare[ourColor],
-            ourColor,
-            board.pieceBitboard[theirColor],
-            board.gameBitboard)
+        checkBitboard = (dangerBitboard[ourColor][Piece.PAWN] and board.pieceBitboard[theirColor][Piece.PAWN]) or
+            (dangerBitboard[ourColor][Piece.KNIGHT] and board.pieceBitboard[theirColor][Piece.KNIGHT]) or
+            (dangerBitboard[ourColor][Piece.BISHOP] and board.pieceBitboard[theirColor][Piece.BISHOP]) or
+            (dangerBitboard[ourColor][Piece.ROOK] and board.pieceBitboard[theirColor][Piece.ROOK]) or
+            (dangerBitboard[ourColor][Piece.QUEEN] and board.pieceBitboard[theirColor][Piece.QUEEN])
     }
 
     /**
