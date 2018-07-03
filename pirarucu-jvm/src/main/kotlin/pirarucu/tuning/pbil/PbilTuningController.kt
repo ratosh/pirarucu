@@ -1,7 +1,6 @@
 package pirarucu.tuning.pbil
 
 import pirarucu.util.FixedSizeMap
-import java.util.Arrays
 import java.util.BitSet
 
 class PbilTuningController {
@@ -56,8 +55,6 @@ class PbilTuningController {
     }
 
     fun reportCurrent(result: Double) {
-        val array = Arrays.toString(currentGenes.toLongArray())
-        println(array.toString() + " | " + result)
         if (bestInteractionResult > result) {
             bestInteractionResult = result
             bestInteractionGenes = currentGenes
