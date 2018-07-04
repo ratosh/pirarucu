@@ -59,6 +59,7 @@ You are welcome to contribute, please follow the [instructions](CONTRIBUTING.md)
 ### [Version 2.0.7](https://github.com/ratosh/pirarucu/releases/tag/v2.0.7)
 
 - 4th place on [Swiss Tournament. Edition VI. Group E](http://kirill-kryukov.com/chess/discussion-board/viewtopic.php?f=7&t=10054)
+- 4th place on [Doing The Elephant Stomp](http://kirill-kryukov.com/chess/discussion-board/viewtopic.php?f=7&t=10070&sid=af9ce38c95f4265395c01d2088c3bbe7)
 
 ### [Version 2.0.2](https://github.com/ratosh/pirarucu/releases/tag/v2.0.2)
 
