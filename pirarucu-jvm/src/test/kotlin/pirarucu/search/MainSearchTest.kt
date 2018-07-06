@@ -95,6 +95,12 @@ class MainSearchTest {
 
     @Ignore
     @Test
+    fun testRandomPosition8() {
+        testSearch("8/8/5Qp1/7k/2pP4/2P5/q7/1r3NK1 w - -", 15000L)
+    }
+
+    @Ignore
+    @Test
     fun testDiv8G1() {
         // Board state
         testSearch("3k2r1/1r1n1p2/1b2p3/p1ppP1p1/P4q1p/1P1P1P1P/3NQBP1/2R1RK2 b - -", 10000L)

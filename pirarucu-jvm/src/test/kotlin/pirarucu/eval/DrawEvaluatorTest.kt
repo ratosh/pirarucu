@@ -1,6 +1,8 @@
 package pirarucu.eval
 
+import pirarucu.board.Square
 import pirarucu.board.factory.BoardFactory
+import pirarucu.move.Move
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -77,5 +79,41 @@ class DrawEvaluatorTest {
     fun testKRKR() {
         var board = BoardFactory.getBoard("4k3/4r3/8/8/8/8/4R3/4K3 b - -")
         assertTrue(DrawEvaluator.hasSufficientMaterial(board))
+    }
+
+    @Test
+    fun testRule50() {
+        var board = BoardFactory.getBoard("4k3/4r3/8/8/8/8/4R3/4K3 b - - 100 10")
+        assertTrue(DrawEvaluator.isDrawByRules(board))
+    }
+
+    @Test
+    fun testRepetition() {
+        val board = BoardFactory.getBoard("4k3/8/8/8/8/8/P7/4K3 w - - 0 0")
+
+        val move0 = Move.createMove(Square.A2, Square.A3)
+        val move1 = Move.createMove(Square.E1, Square.D1)
+        val move2 = Move.createMove(Square.E8, Square.D8)
+        val move3 = Move.createMove(Square.D1, Square.E1)
+        val move4 = Move.createMove(Square.D8, Square.E8)
+
+        board.doMove(move0)
+        assertFalse(DrawEvaluator.isDrawByRules(board))
+        board.doMove(move1)
+        assertFalse(DrawEvaluator.isDrawByRules(board))
+        board.doMove(move2)
+        assertFalse(DrawEvaluator.isDrawByRules(board))
+        board.doMove(move3)
+        assertFalse(DrawEvaluator.isDrawByRules(board))
+        board.doMove(move4)
+        assertTrue(DrawEvaluator.isDrawByRules(board))
+        board.doMove(move1)
+        assertTrue(DrawEvaluator.isDrawByRules(board))
+        board.doMove(move2)
+        assertTrue(DrawEvaluator.isDrawByRules(board))
+        board.doMove(move3)
+        assertTrue(DrawEvaluator.isDrawByRules(board))
+        board.doMove(move4)
+        assertTrue(DrawEvaluator.isDrawByRules(board))
     }
 }
