@@ -8,7 +8,6 @@ import pirarucu.board.Piece
 object DrawEvaluator {
 
     private const val FIFTY_RULE = 100
-    private const val REPETITION_RULE = 2
     private const val MOVE_REPETITION = 2
     private const val MIN_MOVE_REPETITION = 4
 
@@ -43,16 +42,15 @@ object DrawEvaluator {
         if (board.rule50 >= FIFTY_RULE) {
             return true
         }
-        if (board.moveNumber > MIN_MOVE_REPETITION) {
-            var repetition = 0
-            var moveNumber = board.moveNumber - MOVE_REPETITION
-            while (moveNumber > 0) {
+        // A repetition can only happen under rule50 moves as we should not be able to repeat a
+        // position before last rule50 reset
+        if (board.rule50 >= MIN_MOVE_REPETITION) {
+            var moveNumber = board.moveNumber - MIN_MOVE_REPETITION
+            while (moveNumber >= board.moveNumber - board.rule50) {
                 val historyKey = board.historyZobristKey[moveNumber]
+                // Repetition found
                 if (historyKey == board.zobristKey) {
-                    repetition++
-                    if (repetition >= REPETITION_RULE) {
-                        return true
-                    }
+                    return true
                 }
                 moveNumber -= MOVE_REPETITION
             }
