@@ -31,11 +31,9 @@ object DrawEvaluator {
         val whiteBishopCount = board.pieceCountColorType[Color.WHITE][Piece.BISHOP]
         val blackBishopCount = board.pieceCountColorType[Color.BLACK][Piece.BISHOP]
 
-        return when {
-            whiteKnightCount + whiteBishopCount == 1 &&
-                blackKnightCount + blackBishopCount == 1 -> false
-            else -> whiteKnightCount != 2 && blackKnightCount != 2
-        }
+        return !(whiteKnightCount + whiteBishopCount == 1 &&
+            blackKnightCount + blackBishopCount == 1) &&
+            whiteKnightCount != 2 && blackKnightCount != 2
     }
 
     fun isDrawByRules(board: Board): Boolean {

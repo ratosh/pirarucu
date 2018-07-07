@@ -27,9 +27,6 @@ object QuiescenceSearch {
                ply: Int,
                alpha: Int,
                beta: Int): Int {
-        if (!DrawEvaluator.hasSufficientMaterial(board)) {
-            return EvalConstants.SCORE_DRAW
-        }
         Statistics.searchNodes++
 
         var eval = EvalConstants.SCORE_UNKNOWN
@@ -89,7 +86,11 @@ object QuiescenceSearch {
             }
 
             board.doMove(move)
-            val innerScore = -search(board, moveList, ply + 1, -beta, -bestScore)
+            val innerScore = if (!DrawEvaluator.hasSufficientMaterial(board)) {
+                EvalConstants.SCORE_DRAW
+            } else {
+                -search(board, moveList, ply + 1, -beta, -bestScore)
+            }
             board.undoMove(move)
 
             if (innerScore > bestScore) {

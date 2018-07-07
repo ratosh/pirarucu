@@ -58,11 +58,6 @@ object MainSearch {
         }
         val rootNode = ply == 0
 
-        if (!rootNode &&
-            (DrawEvaluator.isDrawByRules(board) || !DrawEvaluator.hasSufficientMaterial(board))) {
-            return EvalConstants.SCORE_DRAW
-        }
-
         Statistics.searchNodes++
         if (!rootNode &&
             Statistics.searchNodes and 0xFFFL == 0xFFFL &&
@@ -243,39 +238,43 @@ object MainSearch {
                 movesPerformed++
                 board.doMove(move)
 
-                // Reductions
-                var reduction = 1
-                if (newDepth > SearchConstants.LMR_MIN_DEPTH &&
-                    movesPerformed > SearchConstants.LMR_MIN_MOVES &&
-                    !isCapture &&
-                    !isPromotion) {
-
-                    reduction += 1 + newDepth / 6
-                    if (!pvNode) {
-                        reduction += 1
-                    }
-                }
-
-                val searchDepth = newDepth - 1
-
                 var score = EvalConstants.SCORE_MAX
 
-                // LMR Search
-                if (reduction != 1) {
-                    score = -search(board, moveList, newDepth - reduction, ply + 1, -searchAlpha - 1,
-                        -searchAlpha, false)
-                }
+                if (DrawEvaluator.isDrawByRules(board) || !DrawEvaluator.hasSufficientMaterial(board)) {
+                    score = EvalConstants.SCORE_DRAW
+                } else {
+                    // Reductions
+                    var reduction = 1
+                    if (newDepth > SearchConstants.LMR_MIN_DEPTH &&
+                        movesPerformed > SearchConstants.LMR_MIN_MOVES &&
+                        !isCapture &&
+                        !isPromotion) {
+
+                        reduction += 1 + newDepth / 6
+                        if (!pvNode) {
+                            reduction += 1
+                        }
+                    }
+
+                    val searchDepth = newDepth - 1
+
+                    // LMR Search
+                    if (reduction != 1) {
+                        score = -search(board, moveList, newDepth - reduction, ply + 1, -searchAlpha - 1,
+                            -searchAlpha, false)
+                    }
 
 
-                // PVS Search
-                if ((reduction == 1 && (!pvNode || movesPerformed != 1)) || (reduction != 1 && score > searchAlpha)) {
-                    score = -search(board, moveList, searchDepth, ply + 1, -searchAlpha - 1, -searchAlpha, false)
-                }
+                    // PVS Search
+                    if ((reduction == 1 && (!pvNode || movesPerformed != 1)) || (reduction != 1 && score > searchAlpha)) {
+                        score = -search(board, moveList, searchDepth, ply + 1, -searchAlpha - 1, -searchAlpha, false)
+                    }
 
-                // Normal search for nodes with similar score on previous search
-                // Only pvNodes or it will be equal to PVS
-                if (pvNode && score > searchAlpha) {
-                    score = -search(board, moveList, searchDepth, ply + 1, -currentBeta, -searchAlpha, false)
+                    // Normal search for nodes with similar score on previous search
+                    // Only pvNodes or it will be equal to PVS
+                    if (pvNode && score > searchAlpha) {
+                        score = -search(board, moveList, searchDepth, ply + 1, -currentBeta, -searchAlpha, false)
+                    }
                 }
 
                 board.undoMove(move)
@@ -304,11 +303,9 @@ object MainSearch {
             bestMove = Move.NONE
             bestScore = if (inCheck) {
                 // MATED
-                Statistics.mate++
                 currentAlpha
             } else {
                 // STALEMATE
-                Statistics.stalemate++
                 EvalConstants.SCORE_DRAW
             }
         }
