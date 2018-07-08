@@ -7,7 +7,7 @@ import pirarucu.eval.EvalConstants
 import pirarucu.util.Utils
 
 /**
- * 80 Bits per entry cache
+ * 96 Bits per entry cache
  */
 class PawnEvaluationCache(sizeMb: Int) {
 
@@ -16,7 +16,7 @@ class PawnEvaluationCache(sizeMb: Int) {
     private val indexShift = 64 - tableBits
 
     private val keys = LongArray(tableLimit)
-    private val values = ShortArray(tableLimit)
+    private val values = IntArray(tableLimit)
 
     fun reset() {
         Utils.specific.arrayFill(keys, 0)
@@ -26,7 +26,7 @@ class PawnEvaluationCache(sizeMb: Int) {
         val wantedKey = getKey(board)
         val index = getIndex(wantedKey)
         if (keys[index] == wantedKey) {
-            return values[index].toInt()
+            return values[index]
         }
         return EvalConstants.SCORE_UNKNOWN
     }
@@ -36,7 +36,7 @@ class PawnEvaluationCache(sizeMb: Int) {
             val key = getKey(board)
             val index = getIndex(key)
             keys[index] = key
-            values[index] = value.toShort()
+            values[index] = value
         }
     }
 
