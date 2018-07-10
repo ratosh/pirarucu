@@ -230,6 +230,17 @@ object TunableConstants {
     val PAWN_PASSED_EG = intArrayOf(0, -31, -19, 11, 47, 155, 225, 0)
     val PAWN_PASSED = IntArray(Rank.SIZE)
 
+    const val PASSED_PAWN_SAFE = 0
+    const val PASSED_PAWN_CAN_ADVANCE = 1
+    const val PASSED_PAWN_SAFE_ADVANCE = 2
+    const val PASSED_PAWN_SAFE_PATH = 3
+    const val PASSED_PAWN_DEFENDED = 4
+    const val PASSED_PAWN_DEFENDED_ADVANCE = 5
+
+    val PASSED_PAWN_BONUS_MG = intArrayOf(5, 5, 5, 5, 5, 5)
+    val PASSED_PAWN_BONUS_EG = intArrayOf(5, 5, 11, 26, 5, 17)
+    val PASSED_PAWN_BONUS = IntArray(PASSED_PAWN_BONUS_EG.size)
+
     val PAWN_SHIELD_MG = arrayOf(
         arrayOf(
             intArrayOf(0, 63, 71, 29, 22, 16, -120, 0),
@@ -331,6 +342,10 @@ object TunableConstants {
 
         for (index in 0 until SAFE_CHECK_THREAT.size) {
             SAFE_CHECK_THREAT[index] = SplitValue.mergeParts(SAFE_CHECK_THREAT_MG[index], SAFE_CHECK_THREAT_EG[index])
+        }
+
+        for (index in 0 until PASSED_PAWN_BONUS.size) {
+            PASSED_PAWN_BONUS[index] = SplitValue.mergeParts(PASSED_PAWN_BONUS_MG[index], PASSED_PAWN_BONUS_EG[index])
         }
     }
 }

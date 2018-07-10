@@ -1,8 +1,11 @@
 package pirarucu.search
 
+import pirarucu.board.Board
 import pirarucu.board.Square
 import pirarucu.board.factory.BoardFactory
+import pirarucu.board.factory.FenFactory
 import pirarucu.eval.EvalConstants
+import pirarucu.game.GameConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
 import pirarucu.stats.Statistics
@@ -13,7 +16,7 @@ import kotlin.test.assertEquals
 
 class MainSearchTest {
 
-    private fun testSearch(fen: String, searchTime: Long) {
+    fun testSearch(fen: String, searchTime: Long) {
         SearchOptions.stop = false
         TranspositionTable.reset()
         PrincipalVariation.reset()
@@ -23,6 +26,42 @@ class MainSearchTest {
         SearchOptions.minSearchTimeLimit = searchTime
         SearchOptions.maxSearchTimeLimit = searchTime * 2
         MainSearch.search(board)
+    }
+
+    private fun moveInfo(fen: String, move: String) {
+        val board = BoardFactory.getBoard(fen)
+
+        printMoveInfo(board, move)
+    }
+
+    private fun printMoveInfo(board: Board, move: String) {
+        var ply = 0
+        val pvInfo = IntArray(GameConstants.GAME_MAX_LENGTH)
+        val move = Move.getMove(board, move)
+        board.doMove(move)
+        while (true) {
+            val info = TranspositionTable.findEntry(board)
+            if (info == TranspositionTable.EMPTY_INFO) {
+                break
+            }
+
+            val score = TranspositionTable.getEval(info)
+            val fen = FenFactory.getFen(board)
+            println("Fen $fen $score")
+            val ttMove = TranspositionTable.getMove(info)
+            if (ttMove != Move.NONE) {
+                pvInfo[ply] = ttMove
+                board.doMove(ttMove)
+            } else {
+                break
+            }
+            ply++
+        }
+        while (ply > 0) {
+            ply--
+            board.undoMove(pvInfo[ply])
+        }
+        board.undoMove(move)
     }
 
     @AfterTest
@@ -97,6 +136,19 @@ class MainSearchTest {
     @Test
     fun testRandomPosition8() {
         testSearch("8/8/5Qp1/7k/2pP4/2P5/q7/1r3NK1 w - -", 15000L)
+    }
+
+    @Ignore
+    @Test
+    fun testRandomPosition9() {
+        testSearch("r4bk1/1p4pr/3p1RQp/p2P2p1/5pP1/8/PPP4P/5RK1 b - -", 60000L)
+    }
+
+    @Ignore
+    @Test
+    fun testRandomPosition10() {
+        testSearch("1kr5/p1pnq2p/1p5r/1P1B1p2/3Pp3/P3P3/2Q2P1P/2R1K1R1 w - - 5 25", 5000L)
+        moveInfo("1kr5/p1pnq2p/1p5r/1P1B1p2/3Pp3/P3P3/2Q2P1P/2R1K1R1 w - - 5 25", "c2a4")
     }
 
     @Ignore
