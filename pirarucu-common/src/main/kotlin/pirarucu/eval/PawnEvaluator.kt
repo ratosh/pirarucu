@@ -85,16 +85,20 @@ object PawnEvaluator {
         if (EvalConstants.PAWN_EVAL_CACHE) {
             val info = pawnEvalCache.findEntry(board)
             if (info != EvalConstants.SCORE_UNKNOWN) {
-                return info
+                return info +
+                    evaluatePassedPawn(board, attackInfo, Color.WHITE, Color.BLACK) -
+                    evaluatePassedPawn(board, attackInfo, Color.BLACK, Color.WHITE)
             }
         }
 
         val result = evaluatePawn(board, attackInfo, Color.WHITE, Color.BLACK) -
             evaluatePawn(board, attackInfo, Color.BLACK, Color.WHITE)
 
-        pawnEvalCache.saveEntry(board, result)
+        pawnEvalCache.saveEntry(board, result, board.evalInfo.passedPawnBitboard)
 
-        return result
+        return result +
+            evaluatePassedPawn(board, attackInfo, Color.WHITE, Color.BLACK) -
+            evaluatePassedPawn(board, attackInfo, Color.BLACK, Color.WHITE)
     }
 
     private fun evaluatePawn(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
@@ -136,10 +140,63 @@ object PawnEvaluator {
 
             if (passed) {
                 result += TunableConstants.PAWN_PASSED[relativeRank]
+                board.evalInfo.passedPawnBitboard = board.evalInfo.passedPawnBitboard or
+                    Bitboard.getBitboard(pawnSquare)
             }
 
             tmpPieces = tmpPieces and tmpPieces - 1
         }
+        return result
+    }
+
+    private fun evaluatePassedPawn(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
+        var result = 0
+
+        var tmpPieces = board.colorBitboard[ourColor] and board.evalInfo.passedPawnBitboard
+
+        while (tmpPieces != Bitboard.EMPTY) {
+            val pawnSquare = Square.getSquare(tmpPieces)
+            val bitboard = Bitboard.getBitboard(pawnSquare)
+
+            val pawnAdvance = BitboardMove.PAWN_MOVES[ourColor][pawnSquare]
+            val theirAttacks = attackInfo.attacksBitboard[theirColor][Piece.NONE]
+            val ourAttacks = attackInfo.attacksBitboard[ourColor][Piece.NONE]
+
+            val safe = bitboard and theirAttacks == Bitboard.EMPTY
+            val canAdvance = pawnAdvance and board.gameBitboard == Bitboard.EMPTY
+            val safeAdvance = pawnAdvance and theirAttacks == Bitboard.EMPTY
+            val safePath = FRONTSPAN_MASK[ourColor][pawnSquare] and theirAttacks and
+                pawnAdvance.inv() == Bitboard.EMPTY
+            val defended = bitboard and ourAttacks != Bitboard.EMPTY
+            val defendedAdvance = pawnAdvance and ourAttacks != Bitboard.EMPTY
+
+            if (safe) {
+                result += TunableConstants.PASSED_PAWN_BONUS[TunableConstants.PASSED_PAWN_SAFE]
+            }
+
+            if (canAdvance) {
+                result += TunableConstants.PASSED_PAWN_BONUS[TunableConstants.PASSED_PAWN_CAN_ADVANCE]
+            }
+
+            if (safeAdvance) {
+                result += TunableConstants.PASSED_PAWN_BONUS[TunableConstants.PASSED_PAWN_SAFE_ADVANCE]
+            }
+
+            if (safePath) {
+                result += TunableConstants.PASSED_PAWN_BONUS[TunableConstants.PASSED_PAWN_SAFE_PATH]
+            }
+
+            if (defended) {
+                result += TunableConstants.PASSED_PAWN_BONUS[TunableConstants.PASSED_PAWN_DEFENDED]
+            }
+
+            if (defendedAdvance) {
+                result += TunableConstants.PASSED_PAWN_BONUS[TunableConstants.PASSED_PAWN_DEFENDED_ADVANCE]
+            }
+
+            tmpPieces = tmpPieces and tmpPieces - 1
+        }
+
         return result
     }
 }

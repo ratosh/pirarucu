@@ -15,6 +15,7 @@ class EvalInfo {
     val protectedOutpost = LongArray(Color.SIZE)
     val unprotectedOutpost = LongArray(Color.SIZE)
 
+    var passedPawnBitboard = Bitboard.EMPTY
 
     fun update(board: Board, attackInfo: AttackInfo) {
         attackInfo.update(board, Color.WHITE)
@@ -40,6 +41,8 @@ class EvalInfo {
 
         kingArea[Color.WHITE] = EvalConstants.KING_AREA_MASK[Color.WHITE][board.basicEvalInfo.kingSquare[Color.WHITE]]
         kingArea[Color.BLACK] = EvalConstants.KING_AREA_MASK[Color.BLACK][board.basicEvalInfo.kingSquare[Color.BLACK]]
+
+        passedPawnBitboard = Bitboard.EMPTY
     }
 
 }

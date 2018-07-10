@@ -5,6 +5,7 @@ class FixedSizeMap<T, V>(size: Int) {
     private val list = mutableListOf<T>()
     private val map = mutableMapOf<T, V>()
 
+    var storedElements = 0
     var size = size
 
     fun add(element: T, value: V) {
@@ -17,6 +18,8 @@ class FixedSizeMap<T, V>(size: Int) {
             val removedElement = list.removeAt(0)
             map.remove(removedElement)
             count--
+        } else {
+            storedElements++
         }
 
         list.add(count, element)

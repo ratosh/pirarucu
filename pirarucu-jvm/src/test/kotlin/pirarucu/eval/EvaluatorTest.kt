@@ -18,6 +18,11 @@ class EvaluatorTest {
     fun tearDown() {
     }
 
+    fun evaluate(fen: String): Int {
+        val board = BoardFactory.getBoard(fen)
+        return Evaluator.evaluate(board, AttackInfo())
+    }
+
     @Test
     fun testEqualKing() {
         val board = BoardFactory.getBoard("4k3/8/8/8/8/8/8/4K3 b - -")
@@ -48,5 +53,10 @@ class EvaluatorTest {
         var eval = Evaluator.evaluate(board, attackInfo)
         println("eval $eval")
         assertTrue(eval > 0)
+    }
+
+    @Test
+    fun testEval() {
+        println(evaluate("2r5/pkpnq2p/1p5r/1P1B1p2/3Pp3/P3P3/2Q2P1P/2R1K1R1 b - -"))
     }
 }
