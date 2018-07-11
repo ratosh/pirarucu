@@ -6,7 +6,6 @@ import pirarucu.board.Color
 import pirarucu.board.File
 import pirarucu.board.Piece
 import pirarucu.board.Square
-import pirarucu.board.factory.FenFactory
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.SplitValue
 import pirarucu.util.Utils
@@ -16,9 +15,21 @@ object Evaluator {
 
     fun evaluate(board: Board, attackInfo: AttackInfo): Int {
         board.updateEval(attackInfo)
+
+        val materialScore = board.materialScore[Color.WHITE] - board.materialScore[Color.BLACK]
+        if (materialScore > 0) {
+            if (!DrawEvaluator.hasSufficientMaterial(board, Color.WHITE)) {
+                return EvalConstants.SCORE_DRAW
+            }
+        } else if (materialScore < 0) {
+            if (!DrawEvaluator.hasSufficientMaterial(board, Color.BLACK)) {
+                return EvalConstants.SCORE_DRAW
+            }
+        }
+
         var score = TunableConstants.TEMPO[board.colorToMove] +
             board.psqScore[Color.WHITE] - board.psqScore[Color.BLACK] +
-            board.materialScore[Color.WHITE] - board.materialScore[Color.BLACK]
+            materialScore
 
         score += PawnEvaluator.evaluate(board, attackInfo)
 
