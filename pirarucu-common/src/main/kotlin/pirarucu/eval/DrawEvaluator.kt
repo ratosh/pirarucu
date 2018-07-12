@@ -12,7 +12,7 @@ object DrawEvaluator {
     private const val MIN_MOVE_REPETITION = 4
 
     /**
-     * No side can force a mate.
+     * Both side can force a mate.
      */
     fun hasSufficientMaterial(board: Board): Boolean {
         return when (board.pieceCountType[Piece.NONE]) {
@@ -26,6 +26,9 @@ object DrawEvaluator {
         }
     }
 
+    /**
+     * Side has sufficient material to force a mate
+     */
     fun hasSufficientMaterial(board: Board, color: Int): Boolean {
         return (board.pieceCountColorType[color][Piece.NONE] > 2 ||
             (board.pieceCountColorType[color][Piece.NONE] == 2 &&

@@ -1,5 +1,6 @@
 package pirarucu.eval
 
+import pirarucu.board.Color
 import pirarucu.board.Square
 import pirarucu.board.factory.BoardFactory
 import pirarucu.move.Move
@@ -79,6 +80,20 @@ class DrawEvaluatorTest {
     fun testKRKR() {
         var board = BoardFactory.getBoard("4k3/4r3/8/8/8/8/4R3/4K3 b - -")
         assertTrue(DrawEvaluator.hasSufficientMaterial(board))
+    }
+
+    @Test
+    fun testKRK() {
+        var board = BoardFactory.getBoard("4k3/4r3/8/8/8/8/8/4K3 b - -")
+        assertFalse(DrawEvaluator.hasSufficientMaterial(board, Color.WHITE))
+        assertTrue(DrawEvaluator.hasSufficientMaterial(board, Color.BLACK))
+    }
+
+    @Test
+    fun testKNKP() {
+        var board = BoardFactory.getBoard("4k3/4n3/8/8/8/8/4P3/4K3 b - -")
+        assertTrue(DrawEvaluator.hasSufficientMaterial(board, Color.WHITE))
+        assertFalse(DrawEvaluator.hasSufficientMaterial(board, Color.BLACK))
     }
 
     @Test

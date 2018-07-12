@@ -6,6 +6,7 @@ import pirarucu.board.Color
 import pirarucu.board.File
 import pirarucu.board.Piece
 import pirarucu.board.Square
+import pirarucu.board.factory.FenFactory
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.SplitValue
 import pirarucu.util.Utils
@@ -17,11 +18,11 @@ object Evaluator {
         board.updateEval(attackInfo)
 
         val materialScore = board.materialScore[Color.WHITE] - board.materialScore[Color.BLACK]
-        if (materialScore > 0) {
+        if (materialScore > EvalConstants.SCORE_DRAWISH_MATERIAL) {
             if (!DrawEvaluator.hasSufficientMaterial(board, Color.WHITE)) {
                 return EvalConstants.SCORE_DRAW
             }
-        } else if (materialScore < 0) {
+        } else if (materialScore < -EvalConstants.SCORE_DRAWISH_MATERIAL) {
             if (!DrawEvaluator.hasSufficientMaterial(board, Color.BLACK)) {
                 return EvalConstants.SCORE_DRAW
             }
