@@ -16,9 +16,21 @@ object Evaluator {
 
     fun evaluate(board: Board, attackInfo: AttackInfo): Int {
         board.updateEval(attackInfo)
+
+        val materialScore = board.materialScore[Color.WHITE] - board.materialScore[Color.BLACK]
+        if (materialScore > EvalConstants.SCORE_DRAWISH_MATERIAL) {
+            if (!DrawEvaluator.hasSufficientMaterial(board, Color.WHITE)) {
+                return EvalConstants.SCORE_DRAW
+            }
+        } else if (materialScore < -EvalConstants.SCORE_DRAWISH_MATERIAL) {
+            if (!DrawEvaluator.hasSufficientMaterial(board, Color.BLACK)) {
+                return EvalConstants.SCORE_DRAW
+            }
+        }
+
         var score = TunableConstants.TEMPO[board.colorToMove] +
             board.psqScore[Color.WHITE] - board.psqScore[Color.BLACK] +
-            board.materialScore[Color.WHITE] - board.materialScore[Color.BLACK]
+            materialScore
 
         score += PawnEvaluator.evaluate(board, attackInfo)
 

@@ -52,7 +52,7 @@ class EvaluatorTest {
         var board = BoardFactory.getBoard("4k3/3pp3/8/8/8/8/4N3/4K3 b - -")
         var eval = Evaluator.evaluate(board, attackInfo)
         println("eval $eval")
-        assertTrue(eval > 0)
+        assertTrue(eval >= 0)
     }
 
     @Test

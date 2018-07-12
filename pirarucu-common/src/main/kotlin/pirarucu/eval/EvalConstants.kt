@@ -3,9 +3,11 @@ package pirarucu.eval
 import pirarucu.board.Bitboard
 import pirarucu.board.Color
 import pirarucu.board.File
+import pirarucu.board.Piece
 import pirarucu.board.Square
 import pirarucu.game.GameConstants
 import pirarucu.move.BitboardMove
+import pirarucu.tuning.TunableConstants
 
 object EvalConstants {
 
@@ -19,6 +21,8 @@ object EvalConstants {
     const val SCORE_UNKNOWN = Short.MIN_VALUE.toInt()
 
     const val SCORE_KNOW_WIN = 10000
+
+    val SCORE_DRAWISH_MATERIAL = TunableConstants.MATERIAL_SCORE[Piece.PAWN]
 
     var PAWN_EVAL_CACHE = true
 
