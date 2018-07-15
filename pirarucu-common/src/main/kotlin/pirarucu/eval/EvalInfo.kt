@@ -12,9 +12,6 @@ class EvalInfo {
     val mobilityArea = LongArray(Color.SIZE)
     val kingArea = LongArray(Color.SIZE)
 
-    val protectedOutpost = LongArray(Color.SIZE)
-    val unprotectedOutpost = LongArray(Color.SIZE)
-
     var passedPawnBitboard = Bitboard.EMPTY
 
     fun update(board: Board, attackInfo: AttackInfo) {
@@ -28,16 +25,6 @@ class EvalInfo {
             attackInfo.attacksBitboard[Color.BLACK][Piece.PAWN]).inv()
         mobilityArea[Color.BLACK] = (board.colorBitboard[Color.BLACK] or
             attackInfo.attacksBitboard[Color.WHITE][Piece.PAWN]).inv()
-
-        protectedOutpost[Color.WHITE] = Bitboard.OUTPOST[Color.WHITE] and
-            attackInfo.attacksBitboard[Color.WHITE][Piece.PAWN]
-        protectedOutpost[Color.BLACK] = Bitboard.OUTPOST[Color.BLACK] and
-            attackInfo.attacksBitboard[Color.BLACK][Piece.PAWN]
-
-        unprotectedOutpost[Color.WHITE] = Bitboard.OUTPOST[Color.WHITE] and
-            attackInfo.attacksBitboard[Color.WHITE][Piece.PAWN].inv()
-        unprotectedOutpost[Color.BLACK] = Bitboard.OUTPOST[Color.BLACK] and
-            attackInfo.attacksBitboard[Color.BLACK][Piece.PAWN].inv()
 
         kingArea[Color.WHITE] = EvalConstants.KING_AREA_MASK[Color.WHITE][board.basicEvalInfo.kingSquare[Color.WHITE]]
         kingArea[Color.BLACK] = EvalConstants.KING_AREA_MASK[Color.BLACK][board.basicEvalInfo.kingSquare[Color.BLACK]]

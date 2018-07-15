@@ -206,15 +206,13 @@ object TunableConstants {
         intArrayOf())
     val MOBILITY = Array(Piece.SIZE) { IntArray(32) }
 
-    val OUTPOST_MG = arrayOf(
-        intArrayOf(0, 0, 6, -10, 0, 0, 0),
-        intArrayOf(0, 0, 4, -16, 0, 0, 0)
-    )
-    val OUTPOST_EG = arrayOf(
-        intArrayOf(0, 0, 34, 9, 0, 0, 0),
-        intArrayOf(0, 0, 4, 3, 0, 0, 0)
-    )
-    val OUTPOST = Array(2) { IntArray(Piece.SIZE) }
+    val PAWN_SUPPORT_MG = intArrayOf(0, 0, -6, -9, 0, 0, 0)
+    val PAWN_SUPPORT_EG = intArrayOf(0, 0, 13, 12, 0, 0, 0)
+    val PAWN_SUPPORT = IntArray(Piece.SIZE)
+
+    val PAWN_THREAT_MG = intArrayOf(0, 0, 64, 64, 0, 0, 0)
+    val PAWN_THREAT_EG = intArrayOf(0, 0, 23, 64, 0, 0, 0)
+    val PAWN_THREAT = IntArray(Piece.SIZE)
 
     const val PAWN_BONUS_SUPPORTED = 0
     const val PAWN_BONUS_PHALANX = 1
@@ -313,9 +311,12 @@ object TunableConstants {
             TEMPO[index] = SplitValue.mergeParts(TEMPO_MG[index], TEMPO_EG[index])
         }
 
-        for (index in 0 until OUTPOST[0].size) {
-            OUTPOST[0][index] = SplitValue.mergeParts(OUTPOST_MG[0][index], OUTPOST_EG[0][index])
-            OUTPOST[1][index] = SplitValue.mergeParts(OUTPOST_MG[1][index], OUTPOST_EG[1][index])
+        for (piece in 0 until PAWN_THREAT.size) {
+            PAWN_THREAT[piece] = SplitValue.mergeParts(PAWN_THREAT_MG[piece], PAWN_THREAT_EG[piece])
+        }
+
+        for (piece in 0 until PAWN_SUPPORT.size) {
+            PAWN_SUPPORT[piece] = SplitValue.mergeParts(PAWN_SUPPORT_MG[piece], PAWN_SUPPORT_EG[piece])
         }
 
         for (index in 0 until PAWN_BONUS.size) {

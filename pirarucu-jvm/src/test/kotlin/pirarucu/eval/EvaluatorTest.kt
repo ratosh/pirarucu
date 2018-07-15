@@ -57,6 +57,6 @@ class EvaluatorTest {
 
     @Test
     fun testEval() {
-        println(evaluate("2r5/pkpnq2p/1p5r/1P1B1p2/3Pp3/P3P3/2Q2P1P/2R1K1R1 b - -"))
+        println(evaluate("6r1/8/8/1p1p3R/p1nB1r2/P1Pkp3/1PR4K/8 w - -"))
     }
 }
