@@ -73,6 +73,8 @@ class TexelTuningController {
         if (bestElementResult > result) {
             bestElementResult = result
             setBestResult()
+            println("Improvement found -> $bestInteractionResult | " +
+                tuningDataList[currentTuningObject].getElementString())
         }
         geneCache.add(currentGenes, result)
     }
@@ -92,14 +94,14 @@ class TexelTuningController {
     fun printBestElements() {
         println("Best result $bestElementResult")
         for (entry in tuningDataList) {
-            entry.printBestElement()
+            println(entry.getBestElement())
         }
     }
 
     private fun printInteractionResult() {
         println("Interaction result $bestInteractionResult")
         for (entry in tuningDataList) {
-            entry.printBestInteractionElement()
+            println(entry.getBestInteractionElement())
         }
     }
 

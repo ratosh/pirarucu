@@ -6,7 +6,6 @@ import pirarucu.board.Color
 import pirarucu.board.File
 import pirarucu.board.Piece
 import pirarucu.board.Square
-import pirarucu.board.factory.FenFactory
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.SplitValue
 import pirarucu.util.Utils
@@ -67,10 +66,9 @@ object Evaluator {
             return 0
         }
 
-        // Outpost not attacked squares
         val mobilityBitboard = board.evalInfo.mobilityArea[ourColor]
-        val outpostProtectedBitboard = board.evalInfo.protectedOutpost[ourColor]
-        val outpostUnprotectedBitboard = board.evalInfo.unprotectedOutpost[ourColor]
+        val pawnSupportBitboard = attackInfo.attacksBitboard[ourColor][Piece.PAWN]
+        val pawnThreatBitboard = attackInfo.attacksBitboard[theirColor][Piece.PAWN]
 
         var result = 0
 
@@ -82,12 +80,13 @@ object Evaluator {
             val bitboard = Bitboard.getBitboard(square)
 
             val attackBitboard = attackInfo.pieceMovement[ourColor][square]
-            // A knight is in an outpost square
-            if (bitboard and outpostProtectedBitboard != Bitboard.EMPTY) {
-                result += TunableConstants.OUTPOST[0][Piece.KNIGHT]
+            // Is supported by a pawn
+            if (bitboard and pawnSupportBitboard != Bitboard.EMPTY) {
+                result += TunableConstants.PAWN_SUPPORT[Piece.KNIGHT]
             }
-            if (bitboard and outpostUnprotectedBitboard != Bitboard.EMPTY) {
-                result += TunableConstants.OUTPOST[1][Piece.KNIGHT]
+            // Is attacked by a pawn
+            if (bitboard and pawnThreatBitboard != Bitboard.EMPTY) {
+                result -= TunableConstants.PAWN_THREAT[Piece.KNIGHT]
             }
             val pieceMobilityBitboard = attackBitboard and mobilityBitboard
             result += TunableConstants.MOBILITY[Piece.KNIGHT][Utils.specific.bitCount(pieceMobilityBitboard)]
@@ -117,10 +116,9 @@ object Evaluator {
             return 0
         }
 
-        // Outpost not attacked squares
         val mobilityBitboard = board.evalInfo.mobilityArea[ourColor]
-        val outpostProtectedBitboard = board.evalInfo.protectedOutpost[ourColor]
-        val outpostUnprotectedBitboard = board.evalInfo.unprotectedOutpost[ourColor]
+        val pawnSupportBitboard = attackInfo.attacksBitboard[ourColor][Piece.PAWN]
+        val pawnThreatBitboard = attackInfo.attacksBitboard[theirColor][Piece.PAWN]
 
         val possibleSafeCheck = board.basicEvalInfo.dangerBitboard[theirColor][Piece.BISHOP] and
             board.colorBitboard[ourColor].inv() and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
@@ -132,12 +130,13 @@ object Evaluator {
             val bitboard = Bitboard.getBitboard(square)
 
             val attackBitboard = attackInfo.pieceMovement[ourColor][square]
-            // A bishop is in an outpost square
-            if (bitboard and outpostProtectedBitboard != Bitboard.EMPTY) {
-                result += TunableConstants.OUTPOST[0][Piece.BISHOP]
+            // Is supported by a pawn
+            if (bitboard and pawnSupportBitboard != Bitboard.EMPTY) {
+                result += TunableConstants.PAWN_SUPPORT[Piece.BISHOP]
             }
-            if (bitboard and outpostUnprotectedBitboard != Bitboard.EMPTY) {
-                result += TunableConstants.OUTPOST[1][Piece.BISHOP]
+            // Is attacked by a pawn
+            if (bitboard and pawnThreatBitboard != Bitboard.EMPTY) {
+                result -= TunableConstants.PAWN_THREAT[Piece.BISHOP]
             }
             val pieceMobilityBitboard = attackBitboard and mobilityBitboard
             result += TunableConstants.MOBILITY[Piece.BISHOP][Utils.specific.bitCount(pieceMobilityBitboard)]

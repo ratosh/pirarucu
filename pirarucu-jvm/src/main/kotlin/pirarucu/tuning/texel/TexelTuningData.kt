@@ -116,16 +116,16 @@ data class TexelTuningData(val name: String, val elementList: IntArray, val bits
         Utils.specific.arrayCopy(elementList, 0, bestInteractionElementList, 0, elementList.size)
     }
 
-    fun printBestInteractionElement() {
-        println("$name " + Arrays.toString(bestInteractionElementList))
+    fun getBestInteractionElement(): String {
+        return "$name " + Arrays.toString(bestInteractionElementList)
     }
 
-    fun printElement() {
-        println("$name " + Arrays.toString(elementList))
+    fun getElementString(): String {
+        return "$name " + Arrays.toString(elementList)
     }
 
-    fun printBestElement() {
-        println("$name " + Arrays.toString(bestElementList))
+    fun getBestElement(): String {
+        return "$name " + Arrays.toString(bestElementList)
     }
 
     fun next() {
@@ -140,7 +140,7 @@ data class TexelTuningData(val name: String, val elementList: IntArray, val bits
 
     fun hasNext(): Boolean {
         while (currentIndex < elementList.size &&
-            (Arrays.binarySearch(ignoreElementList, currentIncrement) >= 0 ||
+            (Arrays.binarySearch(ignoreElementList, currentIndex) >= 0 ||
                 !insideBounds(currentIndex, currentIncrement))) {
             currentIndex++
         }

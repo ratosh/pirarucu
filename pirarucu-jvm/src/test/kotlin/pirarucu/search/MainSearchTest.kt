@@ -37,8 +37,8 @@ class MainSearchTest {
     private fun printMoveInfo(board: Board, move: String) {
         var ply = 0
         val pvInfo = IntArray(GameConstants.GAME_MAX_LENGTH)
-        val move = Move.getMove(board, move)
-        board.doMove(move)
+        val infoMove = Move.getMove(board, move)
+        board.doMove(infoMove)
         while (true) {
             val info = TranspositionTable.findEntry(board)
             if (info == TranspositionTable.EMPTY_INFO) {
@@ -61,7 +61,7 @@ class MainSearchTest {
             ply--
             board.undoMove(pvInfo[ply])
         }
-        board.undoMove(move)
+        board.undoMove(infoMove)
     }
 
     @AfterTest

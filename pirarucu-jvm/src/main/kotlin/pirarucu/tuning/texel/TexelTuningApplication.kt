@@ -1,6 +1,5 @@
 package pirarucu.tuning.texel
 
-import pirarucu.board.Piece
 import pirarucu.eval.EvalConstants
 import pirarucu.tuning.ErrorCalculator
 import pirarucu.tuning.TunableConstants
@@ -15,7 +14,7 @@ object TexelTuningApplication {
 
     private const val INTERACTIONS = 10000
 
-    private const val numberOfThreads = 1
+    private const val numberOfThreads = 6
     private val workers = arrayOfNulls<ErrorCalculator>(numberOfThreads)
     private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
     private val epdFileLoader = EpdFileLoader("G:/chess/epds/quiet_labeled.epd")
@@ -37,14 +36,14 @@ object TexelTuningApplication {
                 "MATERIAL_SCORE_MG",
                 TunableConstants.MATERIAL_SCORE_MG,
                 intArrayOf(0, 8, 10, 10, 10, 11),
-                false, intArrayOf(0), 5))
+                false, intArrayOf(0), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "MATERIAL_SCORE_EG",
                 TunableConstants.MATERIAL_SCORE_EG,
                 intArrayOf(0, 8, 10, 10, 10, 11),
-                false, intArrayOf(0), 5))
-            */
+                false, intArrayOf(0), 1))
+                */
 
             /*
             tuningObject.registerTuningData(TexelTuningData(
@@ -270,31 +269,31 @@ object TexelTuningApplication {
                 true, intArrayOf(), 5))
             */
 
+            tuningObject.registerTuningData(TexelTuningData(
+                "PAWN_SUPPORT_MG",
+                TunableConstants.PAWN_SUPPORT_MG,
+                intArrayOf(0, 0, 6, 6, 0, 0, 0),
+                true, intArrayOf(0, 1, 4, 5, 6), 1))
+
+            tuningObject.registerTuningData(TexelTuningData(
+                "PAWN_SUPPORT_EG",
+                TunableConstants.PAWN_SUPPORT_EG,
+                intArrayOf(0, 0, 6, 6, 0, 0, 0),
+                true, intArrayOf(0, 1, 4, 5, 6), 1))
+
+            tuningObject.registerTuningData(TexelTuningData(
+                "PAWN_THREAT_MG",
+                TunableConstants.PAWN_THREAT_MG,
+                intArrayOf(0, 0, 6, 6, 0, 0, 0),
+                true, intArrayOf(0, 1, 4, 5, 6), 1))
+
+            tuningObject.registerTuningData(TexelTuningData(
+                "PAWN_THREAT_EG",
+                TunableConstants.PAWN_THREAT_EG,
+                intArrayOf(0, 0, 6, 6, 0, 0, 0),
+                true, intArrayOf(0, 1, 4, 5, 6), 1))
+
             /*
-            tuningObject.registerTuningData(TexelTuningData(
-                "OUTPOST_MG[0]",
-                TunableConstants.OUTPOST_MG[0],
-                intArrayOf(0, 0, 6, 6, 0, 0, 0),
-                true, intArrayOf(0, 1, 4, 5, 6), 1))
-
-            tuningObject.registerTuningData(TexelTuningData(
-                "OUTPOST_MG[1]",
-                TunableConstants.OUTPOST_MG[1],
-                intArrayOf(0, 0, 6, 6, 0, 0, 0),
-                true, intArrayOf(0, 1, 4, 5, 6), 1))
-
-            tuningObject.registerTuningData(TexelTuningData(
-                "OUTPOST_EG[0]",
-                TunableConstants.OUTPOST_EG[0],
-                intArrayOf(0, 0, 6, 6, 0, 0, 0),
-                true, intArrayOf(0, 1, 4, 5, 6), 1))
-
-            tuningObject.registerTuningData(TexelTuningData(
-                "OUTPOST_EG[1]",
-                TunableConstants.OUTPOST_EG[1],
-                intArrayOf(0, 0, 6, 6, 0, 0, 0),
-                true, intArrayOf(0, 1, 4, 5, 6), 1))
-
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_BONUS_MG",
                 TunableConstants.PAWN_BONUS_MG,
@@ -320,6 +319,7 @@ object TexelTuningApplication {
                 true, intArrayOf(0, 7), 1))
                 */
 
+            /*
             tuningObject.registerTuningData(TexelTuningData(
                 "PASSED_PAWN_BONUS_MG",
                 TunableConstants.PASSED_PAWN_BONUS_MG,
@@ -331,6 +331,7 @@ object TexelTuningApplication {
                 TunableConstants.PASSED_PAWN_BONUS_EG,
                 intArrayOf(6, 6, 6, 6, 6, 6),
                 false, intArrayOf(), 1))
+                */
 
             /*
             tuningObject.registerTuningData(TexelTuningData(
