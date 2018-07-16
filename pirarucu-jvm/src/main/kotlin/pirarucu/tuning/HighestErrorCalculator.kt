@@ -4,13 +4,14 @@ import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory
 import pirarucu.eval.AttackInfo
 import pirarucu.eval.Evaluator
+import pirarucu.util.EpdInfo
 import java.util.concurrent.Callable
 
 class HighestErrorCalculator(size: Int) : Callable<Double> {
     private var constantCalculated: Boolean = false
     private var constant: Double = 0.toDouble()
 
-    private val fens = HashMap<String, Double>()
+    private val epdInfoList = mutableListOf<EpdInfo>()
     private var board: Board = Board()
 
     private val attackInfo = AttackInfo()
@@ -18,8 +19,8 @@ class HighestErrorCalculator(size: Int) : Callable<Double> {
     private val largestError = DoubleArray(size)
     private val largestErrorFen = Array(size, { "" })
 
-    fun addFenWithScore(fen: String, score: Double) {
-        fens[fen] = score
+    fun addEpdInfo(epdInfo: EpdInfo) {
+        epdInfoList.add(epdInfo)
     }
 
     override fun call(): Double? {
@@ -33,10 +34,10 @@ class HighestErrorCalculator(size: Int) : Callable<Double> {
     private fun calculateError(currentConstant: Double): Double {
         var highestError = 0.0
         var error = 0.0
-        for ((key, value) in fens) {
-            BoardFactory.setBoard(key, board)
+        for (entry in epdInfoList) {
+            BoardFactory.setBoard(entry.fenPosition, board)
             try {
-                val entryError = Math.pow(value - calculateSigmoid(Evaluator.evaluate(board, attackInfo),
+                val entryError = Math.pow(entry.result - calculateSigmoid(Evaluator.evaluate(board, attackInfo),
                     currentConstant), 2.0)
 
                 if (error < entryError) {
@@ -56,7 +57,7 @@ class HighestErrorCalculator(size: Int) : Callable<Double> {
                 }
                 if (replaceIndex >= 0) {
                     largestError[replaceIndex] = entryError
-                    largestErrorFen[replaceIndex] = key
+                    largestErrorFen[replaceIndex] = entry.fenPosition
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()

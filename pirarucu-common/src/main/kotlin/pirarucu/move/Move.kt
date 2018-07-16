@@ -2,8 +2,11 @@ package pirarucu.move
 
 import pirarucu.board.Bitboard
 import pirarucu.board.Board
+import pirarucu.board.CastlingRights
 import pirarucu.board.Color
+import pirarucu.board.File
 import pirarucu.board.Piece
+import pirarucu.board.Rank
 import pirarucu.board.Square
 
 
@@ -105,5 +108,60 @@ object Move {
             }
         }
         return Move.createMove(fromSquare, toSquare, moveType)
+    }
+
+    fun areMovesCompatibles(board: Board, ourMove: Int, algebraicMove: String): Boolean {
+        // Remove unwanted characters
+        var move = algebraicMove.replace("+", "").replace("x", "")
+            .replace("-", "").replace("=", "")
+            .replace("#", "").replace("?", "")
+            .replace("!", "").replace(" ", "")
+            .replace("0", "o").replace("O", "o")
+
+        // Fixing castle string
+        if (move == "oo") {
+            val castlingIndex = CastlingRights.getCastlingRightIndex(board.colorToMove, CastlingRights.KING_SIDE)
+            move = Square.toString(board.basicEvalInfo.kingSquare[board.colorToMove]) +
+                Square.toString(CastlingRights.KING_FINAL_SQUARE[castlingIndex])
+        } else if (move == "ooo") {
+            val castlingIndex = CastlingRights.getCastlingRightIndex(board.colorToMove, CastlingRights.QUEEN_SIDE)
+            move = Square.toString(board.basicEvalInfo.kingSquare[board.colorToMove]) +
+                Square.toString(CastlingRights.KING_FINAL_SQUARE[castlingIndex])
+        } else {
+            when (move.length) {
+                2 -> {
+                    move = Square.toString(Move.getFromSquare(ourMove)) + move
+                }
+                3 -> {
+                    val piece = Piece.getPiece(move[0])
+                    if (board.pieceTypeBoard[Move.getFromSquare(ourMove)] != piece) {
+                        return false
+                    }
+                    move = Square.toString(Move.getFromSquare(ourMove)) + move.substring(1, move.length)
+                }
+                4 -> {
+                    val piece = Piece.getPiece(move[0])
+                    if (board.pieceTypeBoard[Move.getFromSquare(ourMove)] != piece) {
+                        return false
+                    }
+                    val file = File.getFile(move[1])
+                    if (file != File.INVALID) {
+                        if (File.getFile(Move.getFromSquare(ourMove)) != file) {
+                            return false
+                        }
+                    } else {
+                        val rank = Rank.getRank(move[1])
+                        if (rank != Rank.INVALID && Rank.getRank(Move.getFromSquare(ourMove)) != rank) {
+                            return false
+                        }
+                    }
+                    move = Square.toString(Move.getFromSquare(ourMove)) + move.substring(2, move.length)
+                }
+                5 -> {
+                    move = move.substring(1, move.length)
+                }
+            }
+        }
+        return Move.getMove(board, move) == ourMove
     }
 }

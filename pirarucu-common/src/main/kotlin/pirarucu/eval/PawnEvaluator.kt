@@ -139,7 +139,7 @@ object PawnEvaluator {
             }
 
             if (passed) {
-                result += TunableConstants.PAWN_PASSED[relativeRank]
+                result += TunableConstants.PASSED_PAWN[relativeRank]
                 board.evalInfo.passedPawnBitboard = board.evalInfo.passedPawnBitboard or
                     Bitboard.getBitboard(pawnSquare)
             }

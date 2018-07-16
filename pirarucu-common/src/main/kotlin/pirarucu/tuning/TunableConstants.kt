@@ -1,9 +1,11 @@
 package pirarucu.tuning
 
+import pirarucu.board.Color
 import pirarucu.board.File
 import pirarucu.board.Piece
 import pirarucu.board.Rank
 import pirarucu.board.Square
+import pirarucu.game.GameConstants
 import pirarucu.util.SplitValue
 import kotlin.math.min
 
@@ -12,9 +14,8 @@ object TunableConstants {
     val FUTILITY_CHILD_MARGIN = intArrayOf(0, 120, 180, 250, 330, 420, 520)
     val FUTILITY_PARENT_MARGIN = intArrayOf(0, 100, 200, 310, 430, 550, 660)
 
-    val TEMPO_MG = intArrayOf(10, -10)
-    val TEMPO_EG = intArrayOf(2, -2)
-    val TEMPO = IntArray(TEMPO_MG.size)
+    val TEMPO_TUNING = intArrayOf(18, 8)
+    val TEMPO = IntArray(Color.SIZE)
 
     val PHASE_PIECE_VALUE = intArrayOf(0, 1, 9, 10, 20, 40, 0)
 
@@ -24,8 +25,8 @@ object TunableConstants {
         PHASE_PIECE_VALUE[Piece.ROOK] * 4 +
         PHASE_PIECE_VALUE[Piece.QUEEN] * 2
 
-    val MATERIAL_SCORE_MG = intArrayOf(0, 144, 608, 642, 799, 1765)
-    val MATERIAL_SCORE_EG = intArrayOf(0, 174, 384, 421, 766, 1366)
+    val MATERIAL_SCORE_MG = intArrayOf(0, 104, 508, 557, 719, 1510)
+    val MATERIAL_SCORE_EG = intArrayOf(0, 114, 334, 361, 646, 1126)
     val MATERIAL_SCORE = IntArray(Piece.SIZE)
 
     val QS_FUTILITY_VALUE = intArrayOf(0,
@@ -224,9 +225,9 @@ object TunableConstants {
     val PAWN_BONUS_EG = intArrayOf(5, -2, 0, -41, -7)
     val PAWN_BONUS = IntArray(PAWN_BONUS_EG.size)
 
-    val PAWN_PASSED_MG = intArrayOf(0, 11, -1, -4, 19, 32, 64, 0)
-    val PAWN_PASSED_EG = intArrayOf(0, -31, -19, 11, 47, 155, 225, 0)
-    val PAWN_PASSED = IntArray(Rank.SIZE)
+    val PASSED_PAWN_MG = intArrayOf(0, 11, -1, -4, 19, 32, 64, 0)
+    val PASSED_PAWN_EG = intArrayOf(0, -31, -19, 11, 47, 155, 225, 0)
+    val PASSED_PAWN = IntArray(Rank.SIZE)
 
     const val PASSED_PAWN_SAFE = 0
     const val PASSED_PAWN_CAN_ADVANCE = 1
@@ -308,23 +309,23 @@ object TunableConstants {
         }
 
         for (index in 0 until TEMPO.size) {
-            TEMPO[index] = SplitValue.mergeParts(TEMPO_MG[index], TEMPO_EG[index])
-        }
-
-        for (piece in 0 until PAWN_THREAT.size) {
-            PAWN_THREAT[piece] = SplitValue.mergeParts(PAWN_THREAT_MG[piece], PAWN_THREAT_EG[piece])
+            TEMPO[index] = SplitValue.mergeParts(TEMPO_TUNING[0], TEMPO_TUNING[1]) * GameConstants.COLOR_FACTOR[index]
         }
 
         for (piece in 0 until PAWN_SUPPORT.size) {
             PAWN_SUPPORT[piece] = SplitValue.mergeParts(PAWN_SUPPORT_MG[piece], PAWN_SUPPORT_EG[piece])
         }
 
+        for (piece in 0 until PAWN_THREAT.size) {
+            PAWN_THREAT[piece] = SplitValue.mergeParts(PAWN_THREAT_MG[piece], PAWN_THREAT_EG[piece])
+        }
+
         for (index in 0 until PAWN_BONUS.size) {
             PAWN_BONUS[index] = SplitValue.mergeParts(PAWN_BONUS_MG[index], PAWN_BONUS_EG[index])
         }
 
-        for (index in 0 until PAWN_PASSED.size) {
-            PAWN_PASSED[index] = SplitValue.mergeParts(PAWN_PASSED_MG[index], PAWN_PASSED_EG[index])
+        for (index in 0 until PASSED_PAWN.size) {
+            PASSED_PAWN[index] = SplitValue.mergeParts(PASSED_PAWN_MG[index], PASSED_PAWN_EG[index])
         }
 
         for (index in 0 until PAWN_SHIELD.size) {

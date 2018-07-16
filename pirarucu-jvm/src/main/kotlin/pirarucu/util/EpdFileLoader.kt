@@ -6,12 +6,11 @@ import pirarucu.move.MoveGenerator
 import pirarucu.move.MoveList
 import pirarucu.util.factory.EpdInfoFactory
 import java.io.File
-import java.util.HashMap
 import java.util.Scanner
 
 class EpdFileLoader(location: String) {
 
-    private val epdInfoList = HashMap<String, EpdInfo>()
+    private val epdInfoList = mutableListOf<EpdInfo>()
 
     init {
         try {
@@ -36,7 +35,7 @@ class EpdFileLoader(location: String) {
                     }
                 }
                 if (moves > 0) {
-                    save(epdInfo)
+                    epdInfoList.add(epdInfo)
                 }
             }
             println(String.format("Found %d good positions in %d possibilities.", epdInfoList.size,
@@ -46,15 +45,7 @@ class EpdFileLoader(location: String) {
         }
     }
 
-    private fun save(epdInfo: EpdInfo) {
-        if (epdInfoList.containsKey(epdInfo.fenPosition)) {
-            epdInfoList[epdInfo.fenPosition]!!.merge(epdInfo)
-        } else {
-            epdInfoList[epdInfo.fenPosition] = epdInfo
-        }
-    }
-
     fun getEpdInfoList(): Collection<EpdInfo> {
-        return epdInfoList.values
+        return epdInfoList
     }
 }

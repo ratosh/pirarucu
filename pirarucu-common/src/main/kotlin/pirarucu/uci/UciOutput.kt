@@ -8,8 +8,12 @@ import pirarucu.stats.Statistics
 
 object UciOutput {
 
+    var silent = false
+
     fun println(line: String) {
-        kotlin.io.println(line)
+        if (!silent) {
+            kotlin.io.println(line)
+        }
     }
 
     fun info(line: String) {

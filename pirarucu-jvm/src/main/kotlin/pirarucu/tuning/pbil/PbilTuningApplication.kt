@@ -313,14 +313,14 @@ object PbilTuningApplication {
 
             /*
             tuningObject.registerTuningData(PbilTuningData(
-                "PAWN_PASSED_MG",
-                TunableConstants.PAWN_PASSED_MG,
+                "PASSED_PAWN_MG",
+                TunableConstants.PASSED_PAWN_MG,
                 intArrayOf(0, 6, 6, 6, 6, 6, 6, 0),
                 true, intArrayOf(0, 7)))
 
             tuningObject.registerTuningData(PbilTuningData(
-                "PAWN_PASSED_EG",
-                TunableConstants.PAWN_PASSED_EG,
+                "PASSED_PAWN_EG",
+                TunableConstants.PASSED_PAWN_EG,
                 intArrayOf(0, 6, 6, 6, 6, 6, 6, 0),
                 true, intArrayOf(0, 7)))
 
@@ -466,7 +466,7 @@ object PbilTuningApplication {
         var workerIndex = 0
         val iterator = epdFileLoader.getEpdInfoList()
         for (epdInfo in iterator) {
-            workers[workerIndex]!!.addFenWithScore(epdInfo.fenPosition, epdInfo.averageResult)
+            workers[workerIndex]!!.addEpdInfo(epdInfo)
             workerIndex = if (workerIndex == numberOfThreads - 1) 0 else workerIndex + 1
         }
         optimize(tuningObjects)

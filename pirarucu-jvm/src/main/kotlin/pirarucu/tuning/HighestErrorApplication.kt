@@ -23,7 +23,7 @@ object HighestErrorApplication {
         var workerIndex = 0
         val iterator = epdFileLoader.getEpdInfoList()
         for (epdInfo in iterator) {
-            workers[workerIndex]!!.addFenWithScore(epdInfo.fenPosition, epdInfo.averageResult)
+            workers[workerIndex]!!.addEpdInfo(epdInfo)
             workerIndex = if (workerIndex == numberOfThreads - 1) 0 else workerIndex + 1
         }
         executeTest()

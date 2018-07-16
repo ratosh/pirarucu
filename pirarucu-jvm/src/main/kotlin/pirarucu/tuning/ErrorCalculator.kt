@@ -4,21 +4,21 @@ import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory
 import pirarucu.eval.AttackInfo
 import pirarucu.eval.Evaluator
+import pirarucu.util.EpdInfo
 import java.util.concurrent.Callable
 
 class ErrorCalculator : Callable<Double> {
     private var constantCalculated: Boolean = false
     private var constant: Double = ORIGINAL_CONSTANT
 
-    private val fens = HashMap<String, Double>()
+    private val epdInfoList = mutableListOf<EpdInfo>()
     private var board: Board = Board()
 
     private val attackInfo = AttackInfo()
 
-    fun addFenWithScore(fen: String, score: Double) {
-        fens[fen] = score
+    fun addEpdInfo(epdInfo: EpdInfo) {
+        epdInfoList.add(epdInfo)
     }
-
     override fun call(): Double? {
         if (!constantCalculated) {
             //constant = calculateConstant()
@@ -63,10 +63,10 @@ class ErrorCalculator : Callable<Double> {
 
     private fun calculateError(currentConstant: Double): Double {
         var error = 0.0
-        for ((key, value) in fens) {
-            BoardFactory.setBoard(key, board)
+        for (entry in epdInfoList) {
+            BoardFactory.setBoard(entry.fenPosition, board)
             try {
-                val entryError = Math.pow(value - calculateSigmoid(Evaluator.evaluate(board, attackInfo),
+                val entryError = Math.pow(entry.result - calculateSigmoid(Evaluator.evaluate(board, attackInfo),
                     currentConstant), 2.0)
                 error += entryError
             } catch (ex: Exception) {
@@ -74,13 +74,13 @@ class ErrorCalculator : Callable<Double> {
             }
         }
 
-        return error / fens.size
+        return error / epdInfoList.size
     }
 
     companion object {
 
         const val MINIMUM_ERROR = 0.00000000001
-        const val ORIGINAL_CONSTANT = 1.0
+        const val ORIGINAL_CONSTANT = 1.5
         private const val INITIAL_VARIATION = 1.0
 
         fun calculateSigmoid(score: Int, constant: Double): Double {
