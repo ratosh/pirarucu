@@ -22,16 +22,13 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-object MainSearch {
+class MainSearch {
 
     private var maxSearchTimeLimit = 0L
 
-    private const val PHASE_END = 0
-    private const val PHASE_QUIET = 1
-    private const val PHASE_KILLER_2 = 2
-    private const val PHASE_KILLER_1 = 3
-    private const val PHASE_ATTACK = 4
-    private const val PHASE_TT = 5
+    private var searchOptions = SearchOptions()
+    private var searchInfo = SearchInfo()
+    private var quiescenceSearch = QuiescenceSearch()
 
     private fun search(board: Board,
                        moveList: MoveList,
@@ -40,7 +37,7 @@ object MainSearch {
                        alpha: Int,
                        beta: Int,
                        skipNullMove: Boolean = false): Int {
-        if (SearchOptions.stop) {
+        if (searchOptions.stop) {
             return 0
         }
         val inCheck = board.basicEvalInfo.checkBitboard != Bitboard.EMPTY
@@ -54,7 +51,7 @@ object MainSearch {
         val newDepth = depth + extension
 
         if (newDepth <= 0) {
-            return QuiescenceSearch.search(board, moveList, ply, alpha, beta)
+            return quiescenceSearch.search(board, moveList, ply, alpha, beta)
         }
         val rootNode = ply == 0
 
@@ -62,7 +59,7 @@ object MainSearch {
         if (!rootNode &&
             Statistics.searchNodes and 0xFFFL == 0xFFFL &&
             maxSearchTimeLimit < Utils.specific.currentTimeMillis()) {
-            SearchOptions.stop = true
+            searchOptions.stop = true
             return 0
         }
 
@@ -101,7 +98,7 @@ object MainSearch {
             }
         }
 
-        val currentNode = SearchInfo.plyInfoList[ply]
+        val currentNode = searchInfo.plyInfoList[ply]
 
         // Prunes
         if (prunable) {
@@ -316,14 +313,21 @@ object MainSearch {
             else -> HashConstants.SCORE_TYPE_EXACT_SCORE
         }
 
-        TranspositionTable.save(board, eval, bestScore, scoreType, newDepth, ply, bestMove)
+        if (!searchOptions.stop) {
+            TranspositionTable.save(board, eval, bestScore, scoreType, newDepth, ply, bestMove)
+        }
 
         return bestScore
     }
 
     // Interactive deepening with aspiration window
-    fun search(board: Board) {
-        PrincipalVariation.reset()
+    fun search(board: Board, searchInfo: SearchInfo, searchOptions: SearchOptions) {
+        this.searchInfo = searchInfo
+        this.searchOptions = searchOptions
+        quiescenceSearch.searchInfo = searchInfo
+        quiescenceSearch.searchOptions = searchOptions
+
+        searchInfo.reset()
         Statistics.reset()
 
         val moveList = MoveList()
@@ -335,14 +339,14 @@ object MainSearch {
         var beta = EvalConstants.SCORE_MAX
         var score = EvalConstants.SCORE_MIN
         val startTime: Long = Utils.specific.currentTimeMillis()
-        var searchTimeLimit: Long = startTime + SearchOptions.minSearchTimeLimit
-        val minSearchTimeLimit = startTime + SearchOptions.minSearchTimeLimit
-        maxSearchTimeLimit = startTime + SearchOptions.maxSearchTimeLimit
+        var searchTimeLimit: Long = startTime + searchOptions.minSearchTimeLimit
+        val minSearchTimeLimit = startTime + searchOptions.minSearchTimeLimit
+        maxSearchTimeLimit = startTime + searchOptions.maxSearchTimeLimit
 
-        val searchTimeIncrement = SearchOptions.searchTimeIncrement
+        val searchTimeIncrement = searchOptions.searchTimeIncrement
 
-        while (depth <= SearchOptions.depth) {
-            if (SearchOptions.stop && PrincipalVariation.bestMove != Move.NONE) {
+        while (depth <= searchOptions.depth) {
+            if (searchOptions.stop && searchInfo.bestMove != Move.NONE) {
                 break
             }
             var aspirationWindow = SearchConstants.ASPIRATION_WINDOW_SIZE
@@ -352,10 +356,10 @@ object MainSearch {
 
                 score = search(board, moveList, depth, 0, alpha, beta, true)
 
-                PrincipalVariation.save(board)
+                searchInfo.save(board)
 
                 val currentTime = Utils.specific.currentTimeMillis()
-                UciOutput.searchInfo(depth, currentTime - startTime)
+                UciOutput.searchInfo(depth, currentTime - startTime, searchInfo)
 
                 if (score < previousScore &&
                     searchTimeLimit < maxSearchTimeLimit &&
@@ -369,7 +373,7 @@ object MainSearch {
                 }
 
                 if (searchTimeLimit < currentTime) {
-                    SearchOptions.stop = true
+                    searchOptions.stop = true
                     break
                 }
 
@@ -395,8 +399,17 @@ object MainSearch {
             }
             depth++
         }
-        SearchOptions.stop = true
+        searchOptions.stop = true
 
-        UciOutput.bestMove(PrincipalVariation.bestMove)
+        UciOutput.bestMove(searchInfo.bestMove)
+    }
+
+    companion object {
+        private const val PHASE_END = 0
+        private const val PHASE_QUIET = 1
+        private const val PHASE_KILLER_2 = 2
+        private const val PHASE_KILLER_1 = 3
+        private const val PHASE_ATTACK = 4
+        private const val PHASE_TT = 5
     }
 }

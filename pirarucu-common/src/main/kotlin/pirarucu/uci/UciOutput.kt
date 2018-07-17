@@ -4,6 +4,7 @@ package pirarucu.uci
 import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
 import pirarucu.search.PrincipalVariation
+import pirarucu.search.SearchInfo
 import pirarucu.stats.Statistics
 
 object UciOutput {
@@ -24,7 +25,7 @@ object UciOutput {
         println("bestmove " + Move.toString(move))
     }
 
-    fun searchInfo(depth: Int, time: Long) {
+    fun searchInfo(depth: Int, time: Long, searchInfo: SearchInfo) {
         val nps = if (Statistics.searchNodes > 0 && time > 0) {
             " nps " + Statistics.searchNodes * 1000 / time
         } else {
@@ -32,7 +33,7 @@ object UciOutput {
         }
         println("info depth " + depth +
             " time " + time +
-            " score cp " + PrincipalVariation.bestScore +
+            " score cp " + searchInfo.bestScore +
             nps +
             " nodes " + Statistics.searchNodes +
             " hashfull " + TranspositionTable.ttUsage * 1000 / TranspositionTable.tableLimit +

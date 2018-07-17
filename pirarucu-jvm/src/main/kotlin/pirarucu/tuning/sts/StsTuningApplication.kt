@@ -33,7 +33,6 @@ object StsTuningApplication {
                 false, intArrayOf(0), 10))
                 */
 
-            /*
             tuningObject.registerTuningData(StsTuningData(
                 "TEMPO_TUNING",
                 TunableConstants.TEMPO_TUNING,
@@ -51,7 +50,6 @@ object StsTuningApplication {
                 TunableConstants.MATERIAL_SCORE_EG,
                 intArrayOf(0, 8, 10, 10, 10, 11),
                 false, intArrayOf(0), 5))
-                */
 
             /*
             tuningObject.registerTuningData(StsTuningData(
@@ -239,7 +237,6 @@ object StsTuningApplication {
                 intArrayOf(6, 6, 6, 6, 6, 6, 6, 6, 6),
                 true, intArrayOf(), 5))
 
-            /*
             tuningObject.registerTuningData(StsTuningData(
                 "MOBILITY_MG[BISHOP]",
                 TunableConstants.MOBILITY_MG[Piece.BISHOP],
@@ -275,7 +272,6 @@ object StsTuningApplication {
                 TunableConstants.MOBILITY_EG[Piece.QUEEN],
                 intArrayOf(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6),
                 true, intArrayOf(), 5))
-            */
 
             /*
             tuningObject.registerTuningData(StsTuningData(
