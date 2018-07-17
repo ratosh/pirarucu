@@ -14,7 +14,7 @@ object TunableConstants {
     val FUTILITY_CHILD_MARGIN = intArrayOf(0, 120, 180, 250, 330, 420, 520)
     val FUTILITY_PARENT_MARGIN = intArrayOf(0, 100, 200, 310, 430, 550, 660)
 
-    val TEMPO_TUNING = intArrayOf(18, 8)
+    val TEMPO_TUNING = intArrayOf(23, 13)
     val TEMPO = IntArray(Color.SIZE)
 
     val PHASE_PIECE_VALUE = intArrayOf(0, 1, 9, 10, 20, 40, 0)
@@ -25,8 +25,8 @@ object TunableConstants {
         PHASE_PIECE_VALUE[Piece.ROOK] * 4 +
         PHASE_PIECE_VALUE[Piece.QUEEN] * 2
 
-    val MATERIAL_SCORE_MG = intArrayOf(0, 104, 508, 557, 719, 1510)
-    val MATERIAL_SCORE_EG = intArrayOf(0, 114, 334, 361, 646, 1126)
+    val MATERIAL_SCORE_MG = intArrayOf(0, 144, 603, 647, 809, 1775)
+    val MATERIAL_SCORE_EG = intArrayOf(0, 174, 389, 416, 771, 1366)
     val MATERIAL_SCORE = IntArray(Piece.SIZE)
 
     val QS_FUTILITY_VALUE = intArrayOf(0,

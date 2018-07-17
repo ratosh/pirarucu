@@ -6,6 +6,7 @@ import pirarucu.hash.TranspositionTable
 import pirarucu.search.MainSearch
 import pirarucu.search.SearchOptions
 import pirarucu.stats.Statistics
+import pirarucu.uci.UciOutput
 import pirarucu.util.EpdFileLoader
 import pirarucu.util.Utils
 import java.util.concurrent.ExecutionException
@@ -22,6 +23,7 @@ object BenchmarkApplication {
 
     fun runBenchmark() {
         EvalConstants.PAWN_EVAL_CACHE = false
+        UciOutput.silent = true
 
         val iterator = epdFileLoader.getEpdInfoList()
         var nodeCount = 0L
