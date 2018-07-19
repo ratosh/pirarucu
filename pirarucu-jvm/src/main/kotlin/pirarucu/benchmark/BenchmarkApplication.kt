@@ -36,8 +36,9 @@ object BenchmarkApplication {
         searchOptions.searchTimeIncrement = 1000L
         val searchInfo = SearchInfo()
         var timeTaken = 0L
+        val board = BoardFactory.getBoard()
         for (epdInfo in iterator) {
-            val board = BoardFactory.getBoard(epdInfo.fenPosition)
+            BoardFactory.setBoard(epdInfo.fenPosition, board)
             TranspositionTable.reset()
             searchOptions.stop = false
             println(epdInfo.fenPosition)

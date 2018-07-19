@@ -34,9 +34,11 @@ class QuiescenceSearch {
 
         var eval = EvalConstants.SCORE_UNKNOWN
 
-        val foundInfo = TranspositionTable.findEntry(board)
-        if (foundInfo != TranspositionTable.EMPTY_INFO) {
-            eval = TranspositionTable.getEval(foundInfo)
+        if (SearchConstants.USE_TT) {
+            val foundInfo = TranspositionTable.findEntry(board)
+            if (foundInfo != TranspositionTable.EMPTY_INFO) {
+                eval = TranspositionTable.getEval(foundInfo)
+            }
         }
 
         val currentNode = searchInfo.plyInfoList[ply]
@@ -100,7 +102,7 @@ class QuiescenceSearch {
                 bestScore = innerScore
             }
             if (innerScore >= beta) {
-                if (!searchOptions.stop) {
+                if (SearchConstants.USE_TT && !searchOptions.stop) {
                     TranspositionTable.save(board, eval, bestScore, HashConstants.SCORE_TYPE_BOUND_LOWER, 0, ply, move)
                 }
                 break

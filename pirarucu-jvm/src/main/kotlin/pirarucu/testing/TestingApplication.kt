@@ -4,7 +4,6 @@ import pirarucu.board.factory.BoardFactory
 import pirarucu.eval.EvalConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.search.MainSearch
-import pirarucu.search.PrincipalVariation
 import pirarucu.search.SearchInfo
 import pirarucu.search.SearchOptions
 import pirarucu.uci.UciOutput
@@ -19,7 +18,7 @@ object TestingApplication {
     fun main(args: Array<String>) {
         val startTime = Utils.specific.currentTimeMillis()
         val fileLoader = EpdFileLoader("G:/chess/epds/STS/STS.epd")
-        val testScore = test(fileLoader, 3)
+        val testScore = test(fileLoader, 8)
         val timeTaken = Utils.specific.currentTimeMillis() - startTime
         println("Time taken (ms) $timeTaken")
         println("Test score $testScore.")
@@ -32,13 +31,14 @@ object TestingApplication {
         var testScore = 0
         val mainSearch = MainSearch()
         val searchOptions = SearchOptions()
-        searchOptions.depth = 13
+        searchOptions.depth = depth
         searchOptions.minSearchTimeLimit = 60000L
         searchOptions.maxSearchTimeLimit = 60000L
         searchOptions.searchTimeIncrement = 1000L
         val searchInfo = SearchInfo()
+        val board = BoardFactory.getBoard()
         for (epdInfo in testFile.getEpdInfoList()) {
-            val board = BoardFactory.getBoard(epdInfo.fenPosition)
+            BoardFactory.setBoard(epdInfo.fenPosition, board)
             TranspositionTable.reset()
             searchOptions.stop = false
 

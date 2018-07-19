@@ -74,24 +74,27 @@ class MainSearch {
 
         var eval = EvalConstants.SCORE_UNKNOWN
 
-        var foundInfo = TranspositionTable.findEntry(board)
-        if (foundInfo != TranspositionTable.EMPTY_INFO) {
-            eval = TranspositionTable.getEval(foundInfo)
-            if (!pvNode && TranspositionTable.getDepth(foundInfo) >= newDepth) {
-                val ttScore = TranspositionTable.getScore(foundInfo, ply)
-                val ttScoreType = TranspositionTable.getScoreType(foundInfo)
-                when (ttScoreType) {
-                    HashConstants.SCORE_TYPE_EXACT_SCORE -> {
-                        return ttScore
-                    }
-                    HashConstants.SCORE_TYPE_BOUND_LOWER -> {
-                        if (ttScore >= currentBeta) {
+        var foundInfo = TranspositionTable.EMPTY_INFO
+        if (SearchConstants.USE_TT) {
+            foundInfo = TranspositionTable.findEntry(board)
+            if (foundInfo != TranspositionTable.EMPTY_INFO) {
+                eval = TranspositionTable.getEval(foundInfo)
+                if (!pvNode && TranspositionTable.getDepth(foundInfo) >= newDepth) {
+                    val ttScore = TranspositionTable.getScore(foundInfo, ply)
+                    val ttScoreType = TranspositionTable.getScoreType(foundInfo)
+                    when (ttScoreType) {
+                        HashConstants.SCORE_TYPE_EXACT_SCORE -> {
                             return ttScore
                         }
-                    }
-                    HashConstants.SCORE_TYPE_BOUND_UPPER -> {
-                        if (ttScore <= currentAlpha) {
-                            return ttScore
+                        HashConstants.SCORE_TYPE_BOUND_LOWER -> {
+                            if (ttScore >= currentBeta) {
+                                return ttScore
+                            }
+                        }
+                        HashConstants.SCORE_TYPE_BOUND_UPPER -> {
+                            if (ttScore <= currentAlpha) {
+                                return ttScore
+                            }
                         }
                     }
                 }
@@ -153,7 +156,10 @@ class MainSearch {
         while (phase > PHASE_END) {
             when (phase) {
                 PHASE_TT -> {
-                    if (pvNode && foundInfo == TranspositionTable.EMPTY_INFO && newDepth > SearchConstants.IID_DEPTH) {
+                    if (SearchConstants.USE_TT &&
+                        pvNode &&
+                        foundInfo == TranspositionTable.EMPTY_INFO &&
+                        newDepth > SearchConstants.IID_DEPTH) {
                         search(board, moveList, newDepth - SearchConstants.IID_DEPTH, ply, currentAlpha,
                             currentBeta, false)
                         foundInfo = TranspositionTable.findEntry(board)

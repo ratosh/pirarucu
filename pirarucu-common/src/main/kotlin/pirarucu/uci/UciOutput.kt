@@ -3,7 +3,6 @@ package pirarucu.uci
 
 import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
-import pirarucu.search.PrincipalVariation
 import pirarucu.search.SearchInfo
 import pirarucu.stats.Statistics
 
@@ -37,6 +36,6 @@ object UciOutput {
             nps +
             " nodes " + Statistics.searchNodes +
             " hashfull " + TranspositionTable.ttUsage * 1000 / TranspositionTable.tableLimit +
-            " pv " + PrincipalVariation.toString())
+            " pv " + searchInfo.toString())
     }
 }

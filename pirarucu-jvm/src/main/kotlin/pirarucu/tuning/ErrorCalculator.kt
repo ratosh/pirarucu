@@ -80,7 +80,7 @@ class ErrorCalculator : Callable<Double> {
     companion object {
 
         const val MINIMUM_ERROR = 0.00000000001
-        const val ORIGINAL_CONSTANT = 1.5
+        const val ORIGINAL_CONSTANT = 1.4
         private const val INITIAL_VARIATION = 1.0
 
         fun calculateSigmoid(score: Int, constant: Double): Double {
