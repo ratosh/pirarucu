@@ -20,7 +20,10 @@ import kotlin.math.max
 /**
  * https://chessprogramming.wikispaces.com/Quiescence+Search
  */
-object QuiescenceSearch {
+class QuiescenceSearch {
+
+    var searchOptions = SearchOptions()
+    var searchInfo = SearchInfo()
 
     fun search(board: Board,
                moveList: MoveList,
@@ -31,12 +34,14 @@ object QuiescenceSearch {
 
         var eval = EvalConstants.SCORE_UNKNOWN
 
-        val foundInfo = TranspositionTable.findEntry(board)
-        if (foundInfo != TranspositionTable.EMPTY_INFO) {
-            eval = TranspositionTable.getEval(foundInfo)
+        if (SearchConstants.USE_TT) {
+            val foundInfo = TranspositionTable.findEntry(board)
+            if (foundInfo != TranspositionTable.EMPTY_INFO) {
+                eval = TranspositionTable.getEval(foundInfo)
+            }
         }
 
-        val currentNode = SearchInfo.plyInfoList[ply]
+        val currentNode = searchInfo.plyInfoList[ply]
 
         if (eval == EvalConstants.SCORE_UNKNOWN) {
             eval = GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board, currentNode.attackInfo)
@@ -97,7 +102,9 @@ object QuiescenceSearch {
                 bestScore = innerScore
             }
             if (innerScore >= beta) {
-                TranspositionTable.save(board, eval, bestScore, HashConstants.SCORE_TYPE_BOUND_LOWER, 0, ply, move)
+                if (SearchConstants.USE_TT && !searchOptions.stop) {
+                    TranspositionTable.save(board, eval, bestScore, HashConstants.SCORE_TYPE_BOUND_LOWER, 0, ply, move)
+                }
                 break
             }
         }

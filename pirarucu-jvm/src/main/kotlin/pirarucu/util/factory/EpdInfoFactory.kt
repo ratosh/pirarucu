@@ -14,15 +14,9 @@ object EpdInfoFactory {
         var fenPosition: String
         var bestMoveList: Set<String>?
         var avoidMoveList: Set<String>?
+        var moveScoreList: Map<String, Int>?
         var result = 0.toDouble()
         var comment = ""
-
-        val commentIndex = tempLine.indexOf(";")
-        if (commentIndex >= 0) {
-
-            comment = tempLine.substring(commentIndex + 1, tempLine.length)
-            tempLine = tempLine.substring(0, commentIndex)
-        }
 
         val c9Index = tempLine.indexOf("c9")
 
@@ -46,11 +40,35 @@ object EpdInfoFactory {
         } else {
             result = 0.5
         }
+        val c0Index = tempLine.indexOf("c0")
+        if (c0Index >= 0) {
+            var c0String = tempLine.substring(c0Index + 3, tempLine.length).replace("\"", "").replace(" ", "")
+            val c0End = c0String.indexOf(";")
+            c0String = c0String.substring(0, c0End)
+            tempLine = tempLine.substring(0, c0Index)
+
+            val moveList = c0String.split(",")
+            moveScoreList = mutableMapOf()
+            for (entry in moveList) {
+                val split = entry.split("=")
+                moveScoreList[split[0]] = Integer.parseInt(split[1])
+            }
+
+        } else {
+            moveScoreList = null
+        }
+
+        val commentIndex = tempLine.indexOf(";")
+        if (commentIndex >= 0) {
+
+            comment = tempLine.substring(commentIndex + 1, tempLine.length)
+            tempLine = tempLine.substring(0, commentIndex)
+        }
 
         val bmIndex = tempLine.indexOf(" bm ")
 
         if (bmIndex >= 0) {
-            val bmString = tempLine.substring(bmIndex + 3, tempLine.length)
+            val bmString = tempLine.substring(bmIndex + 4, tempLine.length)
             tempLine = tempLine.substring(0, bmIndex)
 
             bestMoveList = HashSet<String>(Arrays.asList(*bmString.split(" ".toRegex())
@@ -62,7 +80,7 @@ object EpdInfoFactory {
         val amIndex = tempLine.indexOf("am ")
 
         if (amIndex >= 0) {
-            val amString = tempLine.substring(amIndex + 3, tempLine.length)
+            val amString = tempLine.substring(amIndex + 4, tempLine.length)
             tempLine = tempLine.substring(0, amIndex)
 
             avoidMoveList = HashSet<String>(Arrays.asList(*amString.split(" ".toRegex())
@@ -76,6 +94,6 @@ object EpdInfoFactory {
             fenPosition = ""
         }
 
-        return EpdInfo(fenPosition, bestMoveList, avoidMoveList, result, comment)
+        return EpdInfo(fenPosition, bestMoveList, avoidMoveList, moveScoreList, result, comment)
     }
 }

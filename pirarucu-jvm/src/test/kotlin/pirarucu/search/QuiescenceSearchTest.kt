@@ -13,10 +13,17 @@ import kotlin.test.assertTrue
 
 class QuiescenceSearchTest {
 
+    private var quiescenceSearch = QuiescenceSearch()
+    private var searchInfo = SearchInfo()
+
+    init {
+        quiescenceSearch.searchInfo = searchInfo
+    }
+
     private fun testSearch(fen: String, minDiff: Int, maxDiff: Int) {
         val board = BoardFactory.getBoard(fen)
         val evalValue = Evaluator.evaluate(board, AttackInfo()) * GameConstants.COLOR_FACTOR[board.colorToMove]
-        val searchValue = QuiescenceSearch.search(board,
+        val searchValue = quiescenceSearch.search(board,
             MoveList(),
             0,
             EvalConstants.SCORE_MIN,
@@ -32,12 +39,12 @@ class QuiescenceSearchTest {
     @BeforeTest
     fun setup() {
         TranspositionTable.reset()
-        PrincipalVariation.reset()
+        searchInfo.reset()
     }
 
     @Test
     fun testCapture() {
-        testSearch("1k6/8/8/4p3/8/8/8/2K1R3 w - -", 100, 250)
+        testSearch("1k6/8/8/4p3/8/8/8/2K1R3 w - -", 80, 250)
     }
 
     @Test

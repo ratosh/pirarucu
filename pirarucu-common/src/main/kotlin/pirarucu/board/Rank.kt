@@ -4,6 +4,8 @@ object Rank {
     private const val RANK_1_TOKEN = '1'
     const val RANK_SHIFT = 3
 
+    const val INVALID = -1
+
     const val RANK_1 = 0
     const val RANK_2 = 1
     const val RANK_3 = 2

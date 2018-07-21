@@ -4,11 +4,7 @@ import pirarucu.board.Color
 import pirarucu.game.GameConstants
 import kotlin.math.max
 
-object SearchOptions {
-    private const val MAX_TIME_RATIO = 2.5
-    private const val GAME_MOVES = 40L
-
-    private const val INCREMENT_RATIO = 20
+class SearchOptions {
 
     var minSearchTimeLimit = 0L
     var maxSearchTimeLimit = 0L
@@ -43,5 +39,12 @@ object SearchOptions {
         }
 
         searchTimeIncrement = max(1, (maxSearchTimeLimit - minSearchTimeLimit) / INCREMENT_RATIO)
+    }
+
+    companion object {
+        private const val MAX_TIME_RATIO = 2.5
+        private const val GAME_MOVES = 40L
+
+        private const val INCREMENT_RATIO = 20
     }
 }

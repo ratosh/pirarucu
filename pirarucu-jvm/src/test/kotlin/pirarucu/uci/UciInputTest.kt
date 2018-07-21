@@ -1,7 +1,6 @@
 package pirarucu.uci
 
 import pirarucu.hash.TranspositionTable
-import pirarucu.search.PrincipalVariation
 import pirarucu.search.SearchOptions
 import pirarucu.stats.Statistics
 import pirarucu.tuning.TunableConstants
@@ -13,20 +12,21 @@ import kotlin.test.assertEquals
 
 class UciInputTest {
 
-    private val uciInput = UciInput(InputHandler())
+    private val inputHandler = InputHandler()
+    private val uciInput = UciInput(inputHandler)
 
+    private var searchOptions = SearchOptions()
     private var search = false
 
     @BeforeTest
     fun setup() {
         TranspositionTable.reset()
-        PrincipalVariation.reset()
         Statistics.reset()
     }
 
     @AfterTest
     fun tearDown() {
-        while (search && !SearchOptions.stop) {
+        while (search && !InputHandler.searchOptions.stop) {
             Thread.yield()
         }
         if (search) {

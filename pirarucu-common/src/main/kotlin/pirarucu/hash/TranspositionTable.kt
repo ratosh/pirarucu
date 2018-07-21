@@ -81,9 +81,6 @@ object TranspositionTable {
     }
 
     fun save(board: Board, eval: Int, score: Int, scoreType: Int, depth: Int, ply: Int, bestMove: Int) {
-        if (SearchOptions.stop) {
-            return
-        }
         val startIndex = getIndex(board)
         val maxIndex = getMaxIndex(startIndex)
         var index = startIndex

@@ -4,10 +4,10 @@ import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory
 import pirarucu.move.Move
 import pirarucu.search.MainSearch
+import pirarucu.search.SearchInfo
 import pirarucu.search.SearchOptions
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.Utils
-import kotlin.jvm.Volatile
 
 class InputHandler : IInputHandler {
 
@@ -15,15 +15,15 @@ class InputHandler : IInputHandler {
         var index = 1
         while (index < tokens.size) {
             when (tokens[index]) {
-                "wtime" -> SearchOptions.whiteTime = tokens[index + 1].toLong()
-                "btime" -> SearchOptions.blackTime = tokens[index + 1].toLong()
-                "winc" -> SearchOptions.whiteIncrement = tokens[index + 1].toLong()
-                "binc" -> SearchOptions.blackIncrement = tokens[index + 1].toLong()
-                "movestogo" -> SearchOptions.movesToGo = tokens[index + 1].toLong()
+                "wtime" -> searchOptions.whiteTime = tokens[index + 1].toLong()
+                "btime" -> searchOptions.blackTime = tokens[index + 1].toLong()
+                "winc" -> searchOptions.whiteIncrement = tokens[index + 1].toLong()
+                "binc" -> searchOptions.blackIncrement = tokens[index + 1].toLong()
+                "movestogo" -> searchOptions.movesToGo = tokens[index + 1].toLong()
             }
             index += 2
         }
-        SearchOptions.setTime(board.colorToMove)
+        searchOptions.setTime(board.colorToMove)
         synchronized(lock) {
             running = true
             lock.notifyAll()
@@ -31,7 +31,7 @@ class InputHandler : IInputHandler {
     }
 
     override fun stop() {
-        SearchOptions.stop = true
+        searchOptions.stop = true
         while (running) {
             Thread.sleep(10)
         }
@@ -77,6 +77,7 @@ class InputHandler : IInputHandler {
 
     class SearchThread : Runnable {
 
+
         override fun run() {
             while (true) {
                 synchronized(lock) {
@@ -84,9 +85,9 @@ class InputHandler : IInputHandler {
                         lock.wait()
                     }
                 }
-                SearchOptions.stop = false
+                searchOptions.stop = false
                 running = false
-                MainSearch.search(board)
+                mainSearch.search(board, searchInfo, searchOptions)
             }
         }
     }
@@ -94,6 +95,10 @@ class InputHandler : IInputHandler {
     companion object {
 
         private val lock = java.lang.Object()
+
+        val mainSearch = MainSearch()
+        val searchInfo = SearchInfo()
+        val searchOptions = SearchOptions()
 
         @Volatile
         private var running = false

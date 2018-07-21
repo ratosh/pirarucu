@@ -16,16 +16,20 @@ import kotlin.test.assertEquals
 
 class MainSearchTest {
 
+    private var searchInfo = SearchInfo()
+    private var searchOptions = SearchOptions()
+    private var mainSearch = MainSearch()
+
     fun testSearch(fen: String, searchTime: Long) {
-        SearchOptions.stop = false
+        searchOptions.stop = false
         TranspositionTable.reset()
-        PrincipalVariation.reset()
+        searchInfo.reset()
         Statistics.reset()
         val board = BoardFactory.getBoard(fen)
         BoardFactory.setBoard(fen, board)
-        SearchOptions.minSearchTimeLimit = searchTime
-        SearchOptions.maxSearchTimeLimit = searchTime * 2
-        MainSearch.search(board)
+        searchOptions.minSearchTimeLimit = searchTime
+        searchOptions.maxSearchTimeLimit = searchTime * 2
+        mainSearch.search(board, searchInfo, searchOptions)
     }
 
     private fun moveInfo(fen: String, move: String) {
@@ -72,28 +76,28 @@ class MainSearchTest {
     @Test
     fun testDraw() {
         testSearch("8/3k4/3P4/7p/7K/8/8/8 w - -", 1000L)
-        println(PrincipalVariation.toString())
-        assertEquals(EvalConstants.SCORE_DRAW, PrincipalVariation.bestScore)
+        println(searchInfo.toString())
+        assertEquals(EvalConstants.SCORE_DRAW, searchInfo.bestScore)
     }
 
     @Test
     fun testShallowMate1() {
         testSearch("7K/8/3P4/3r4/8/2k3r1/7p/8 b - -", 1000L)
-        println(PrincipalVariation.toString())
-        assertEquals(EvalConstants.SCORE_MAX - 1, PrincipalVariation.bestScore)
+        println(searchInfo.toString())
+        assertEquals(EvalConstants.SCORE_MAX - 1, searchInfo.bestScore)
     }
 
     @Test
     fun testShallowMate2() {
         testSearch("7K/8/3P4/3r4/8/2k3r1/7p/8 w - -", 1000L)
-        println(PrincipalVariation.toString())
-        assertEquals(EvalConstants.SCORE_MIN + 2, PrincipalVariation.bestScore)
+        println(searchInfo.toString())
+        assertEquals(EvalConstants.SCORE_MIN + 2, searchInfo.bestScore)
     }
 
     @Test
     fun testFine70() {
         testSearch("8/k7/3p4/p2P1p2/P2P1P2/8/8/K7 w - -", 10000L)
-        assertEquals(Move.createMove(Square.A1, Square.B1), PrincipalVariation.bestMove)
+        assertEquals(Move.createMove(Square.A1, Square.B1), searchInfo.bestMove)
     }
 
     @Ignore

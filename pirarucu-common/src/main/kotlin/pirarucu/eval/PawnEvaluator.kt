@@ -108,7 +108,6 @@ object PawnEvaluator {
         var result = 0
         while (tmpPieces != Bitboard.EMPTY) {
             val pawnSquare = Square.getSquare(tmpPieces)
-            val relativeRank = Rank.getRelativeRank(ourColor, Rank.getRank(pawnSquare))
 
             val passed = PASSED_MASK[ourColor][pawnSquare] and theirPawns == Bitboard.EMPTY
 
@@ -139,7 +138,8 @@ object PawnEvaluator {
             }
 
             if (passed) {
-                result += TunableConstants.PAWN_PASSED[relativeRank]
+                val relativeRank = Rank.getRelativeRank(ourColor, Rank.getRank(pawnSquare))
+                result += TunableConstants.PASSED_PAWN[relativeRank]
                 board.evalInfo.passedPawnBitboard = board.evalInfo.passedPawnBitboard or
                     Bitboard.getBitboard(pawnSquare)
             }
