@@ -1,6 +1,5 @@
 package pirarucu.tuning.sts
 
-import pirarucu.board.Piece
 import pirarucu.eval.EvalConstants
 import pirarucu.search.SearchConstants
 import pirarucu.tuning.TunableConstants
@@ -38,7 +37,6 @@ object StsTuningApplication {
                 TunableConstants.TEMPO_TUNING,
                 intArrayOf(6, 6),
                 false, intArrayOf(), 5))
-                */
 
             tuningObject.registerTuningData(StsTuningData(
                 "MATERIAL_SCORE_MG",
@@ -79,7 +77,6 @@ object StsTuningApplication {
                     0, 0, 0, 0
                 ),
                 true, intArrayOf(0, 1, 2, 3, 28, 29, 30, 31), 5))
-
             tuningObject.registerTuningData(StsTuningData(
                 "PSQT_MG[KNIGHT]",
                 TunableConstants.PSQT_MG[Piece.KNIGHT],
@@ -219,7 +216,9 @@ object StsTuningApplication {
                     8, 8, 8, 8
                 ),
                 true, intArrayOf(), 5))
+                */
 
+            /*
             tuningObject.registerTuningData(StsTuningData(
                 "MOBILITY_MG[KNIGHT]",
                 TunableConstants.MOBILITY_MG[Piece.KNIGHT],
@@ -267,7 +266,9 @@ object StsTuningApplication {
                 TunableConstants.MOBILITY_EG[Piece.QUEEN],
                 intArrayOf(7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7),
                 true, intArrayOf(), 5))
+            */
 
+            /*
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SUPPORT_MG",
                 TunableConstants.PAWN_SUPPORT_MG,
@@ -327,7 +328,9 @@ object StsTuningApplication {
                 TunableConstants.PASSED_PAWN_BONUS_EG,
                 intArrayOf(8, 8, 8, 8, 8, 8),
                 false, intArrayOf(), 5))
+                */
 
+            /*
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SHIELD_MG[0][0]",
                 TunableConstants.PAWN_SHIELD_MG[0][0],
@@ -423,7 +426,9 @@ object StsTuningApplication {
                 TunableConstants.PAWN_SHIELD_EG[1][3],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
                 true, intArrayOf(7), 5))
+                */
 
+            /*
             tuningObject.registerTuningData(StsTuningData(
                 "KING_THREAT_MG",
                 TunableConstants.KING_THREAT_MG,
@@ -447,6 +452,7 @@ object StsTuningApplication {
                 TunableConstants.SAFE_CHECK_THREAT_EG,
                 intArrayOf(0, 0, 7, 7, 7, 7, 0),
                 false, intArrayOf(0, 1, 6), 5))
+                */
 
             return tuningObject
         }
@@ -510,8 +516,9 @@ object StsTuningApplication {
 
     @Throws(ExecutionException::class, InterruptedException::class)
     private fun executeTest(): Double {
-        val searchDepth = intArrayOf(3, 4, 5, 6, 7)
+        val searchDepth = intArrayOf(9)
         var score = 0
+        val startTime = System.currentTimeMillis()
         for (depth in searchDepth) {
             var depthScore = 0
             val list = ArrayList<Future<Int>>()
@@ -526,6 +533,8 @@ object StsTuningApplication {
             }
             score += depthScore * depth
         }
+        val timeTaken = System.currentTimeMillis() - startTime
+        println("$timeTaken (ms) | $score points")
         return (15000.0 - score / searchDepth.sum()) / 15000.0
     }
 }

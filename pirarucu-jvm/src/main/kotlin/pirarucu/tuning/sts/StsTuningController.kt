@@ -61,7 +61,6 @@ class StsTuningController {
 
     fun next(): Boolean {
         tuningDataList[currentTuningObject].next()
-        println(tuningDataList[currentTuningObject].getElementString())
         currentGenes = BitSet()
         for (entry in tuningDataList) {
             currentGenes = entry.updateGenes(currentGenes)
@@ -77,6 +76,10 @@ class StsTuningController {
         if (bestInteractionResult > result) {
             bestInteractionResult = result
             setBestInteractionResult()
+        }
+        if (bestElementResult == result) {
+            println("Equal value -> $bestInteractionResult | " +
+                tuningDataList[currentTuningObject].getElementString())
         }
         if (bestElementResult > result) {
             bestElementResult = result
