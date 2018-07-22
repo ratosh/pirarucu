@@ -1,5 +1,6 @@
 package pirarucu.tuning.sts
 
+import pirarucu.board.Piece
 import pirarucu.eval.EvalConstants
 import pirarucu.search.SearchConstants
 import pirarucu.tuning.TunableConstants
@@ -12,7 +13,7 @@ import java.util.concurrent.Future
 
 object StsTuningApplication {
 
-    private const val INTERACTIONS = 5
+    private const val INTERACTIONS = 10000
     private val fileLoader = EpdFileLoader("G:/chess/epds/STS/STS.epd")
 
     private const val numberOfThreads = 6
@@ -36,19 +37,20 @@ object StsTuningApplication {
                 "TEMPO_TUNING",
                 TunableConstants.TEMPO_TUNING,
                 intArrayOf(6, 6),
-                false, intArrayOf(), 5))
+                false, intArrayOf(), 64))
+                */
 
             tuningObject.registerTuningData(StsTuningData(
                 "MATERIAL_SCORE_MG",
                 TunableConstants.MATERIAL_SCORE_MG,
                 intArrayOf(0, 8, 10, 10, 10, 11),
-                false, intArrayOf(0), 5))
+                false, intArrayOf(0), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "MATERIAL_SCORE_EG",
                 TunableConstants.MATERIAL_SCORE_EG,
                 intArrayOf(0, 8, 10, 10, 10, 11),
-                false, intArrayOf(0), 5))
+                false, intArrayOf(0), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PSQT_MG[PAWN]",
@@ -62,7 +64,7 @@ object StsTuningApplication {
                     8, 8, 8, 8,
                     0, 0, 0, 0
                 ),
-                true, intArrayOf(0, 1, 2, 3, 28, 29, 30, 31), 5))
+                true, intArrayOf(0, 1, 2, 3, 28, 29, 30, 31), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PSQT_EG[PAWN]",
@@ -76,7 +78,7 @@ object StsTuningApplication {
                     8, 8, 8, 8,
                     0, 0, 0, 0
                 ),
-                true, intArrayOf(0, 1, 2, 3, 28, 29, 30, 31), 5))
+                true, intArrayOf(0, 1, 2, 3, 28, 29, 30, 31), 64))
             tuningObject.registerTuningData(StsTuningData(
                 "PSQT_MG[KNIGHT]",
                 TunableConstants.PSQT_MG[Piece.KNIGHT],
@@ -89,7 +91,7 @@ object StsTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PSQT_EG[KNIGHT]",
@@ -103,7 +105,7 @@ object StsTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PSQT_MG[BISHOP]",
@@ -117,7 +119,7 @@ object StsTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PSQT_EG[BISHOP]",
@@ -131,7 +133,7 @@ object StsTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PSQT_MG[ROOK]",
@@ -145,7 +147,7 @@ object StsTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PSQT_EG[ROOK]",
@@ -159,7 +161,7 @@ object StsTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PSQT_MG[QUEEN]",
@@ -173,7 +175,7 @@ object StsTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PSQT_EG[QUEEN]",
@@ -187,7 +189,7 @@ object StsTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PSQT_MG[KING]",
@@ -201,7 +203,7 @@ object StsTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PSQT_EG[KING]",
@@ -215,244 +217,235 @@ object StsTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
-                */
+                true, intArrayOf(), 64))
 
-            /*
             tuningObject.registerTuningData(StsTuningData(
                 "MOBILITY_MG[KNIGHT]",
                 TunableConstants.MOBILITY_MG[Piece.KNIGHT],
                 intArrayOf(7, 7, 7, 7, 7, 7, 7, 7, 7),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "MOBILITY_EG[KNIGHT]",
                 TunableConstants.MOBILITY_EG[Piece.KNIGHT],
                 intArrayOf(7, 7, 7, 7, 7, 7, 7, 7, 7),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "MOBILITY_MG[BISHOP]",
                 TunableConstants.MOBILITY_MG[Piece.BISHOP],
                 intArrayOf(7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "MOBILITY_EG[BISHOP]",
                 TunableConstants.MOBILITY_EG[Piece.BISHOP],
                 intArrayOf(7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "MOBILITY_MG[ROOK]",
                 TunableConstants.MOBILITY_MG[Piece.ROOK],
                 intArrayOf(7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "MOBILITY_EG[ROOK]",
                 TunableConstants.MOBILITY_EG[Piece.ROOK],
                 intArrayOf(7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "MOBILITY_MG[QUEEN]",
                 TunableConstants.MOBILITY_MG[Piece.QUEEN],
                 intArrayOf(7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "MOBILITY_EG[QUEEN]",
                 TunableConstants.MOBILITY_EG[Piece.QUEEN],
                 intArrayOf(7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7),
-                true, intArrayOf(), 5))
-            */
+                true, intArrayOf(), 64))
 
-            /*
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SUPPORT_MG",
                 TunableConstants.PAWN_SUPPORT_MG,
                 intArrayOf(0, 0, 8, 8, 0, 0, 0),
-                true, intArrayOf(0, 1, 4, 5, 6), 5))
+                true, intArrayOf(0, 1, 4, 5, 6), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SUPPORT_EG",
                 TunableConstants.PAWN_SUPPORT_EG,
                 intArrayOf(0, 0, 8, 8, 0, 0, 0),
-                true, intArrayOf(0, 1, 4, 5, 6), 5))
+                true, intArrayOf(0, 1, 4, 5, 6), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_THREAT_MG",
                 TunableConstants.PAWN_THREAT_MG,
                 intArrayOf(0, 0, 8, 8, 0, 0, 0),
-                true, intArrayOf(0, 1, 4, 5, 6), 5))
+                true, intArrayOf(0, 1, 4, 5, 6), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_THREAT_EG",
                 TunableConstants.PAWN_THREAT_EG,
                 intArrayOf(0, 0, 8, 8, 0, 0, 0),
-                true, intArrayOf(0, 1, 4, 5, 6), 5))
+                true, intArrayOf(0, 1, 4, 5, 6), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_BONUS_MG",
                 TunableConstants.PAWN_BONUS_MG,
                 intArrayOf(6, 6, 6, 6, 6),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_BONUS_EG",
                 TunableConstants.PAWN_BONUS_EG,
                 intArrayOf(6, 6, 6, 6, 6),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PASSED_PAWN_MG",
                 TunableConstants.PASSED_PAWN_MG,
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PASSED_PAWN_EG",
                 TunableConstants.PASSED_PAWN_EG,
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PASSED_PAWN_BONUS_MG",
                 TunableConstants.PASSED_PAWN_BONUS_MG,
                 intArrayOf(8, 8, 8, 8, 8, 8),
-                false, intArrayOf(), 5))
+                false, intArrayOf(), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PASSED_PAWN_BONUS_EG",
                 TunableConstants.PASSED_PAWN_BONUS_EG,
                 intArrayOf(8, 8, 8, 8, 8, 8),
-                false, intArrayOf(), 5))
-                */
+                false, intArrayOf(), 64))
 
-            /*
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SHIELD_MG[0][0]",
                 TunableConstants.PAWN_SHIELD_MG[0][0],
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SHIELD_MG[0][1]",
                 TunableConstants.PAWN_SHIELD_MG[0][1],
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SHIELD_MG[0][2]",
                 TunableConstants.PAWN_SHIELD_MG[0][2],
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SHIELD_MG[0][3]",
                 TunableConstants.PAWN_SHIELD_MG[0][3],
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SHIELD_MG[1][0]",
                 TunableConstants.PAWN_SHIELD_MG[1][0],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(7), 5))
+                true, intArrayOf(7), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SHIELD_MG[1][1]",
                 TunableConstants.PAWN_SHIELD_MG[1][1],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(7), 5))
+                true, intArrayOf(7), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SHIELD_MG[1][2]",
                 TunableConstants.PAWN_SHIELD_MG[1][2],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(7), 5))
+                true, intArrayOf(7), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SHIELD_MG[1][3]",
                 TunableConstants.PAWN_SHIELD_MG[1][3],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(7), 5))
+                true, intArrayOf(7), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SHIELD_EG[0][0]",
                 TunableConstants.PAWN_SHIELD_EG[0][0],
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SHIELD_EG[0][1]",
                 TunableConstants.PAWN_SHIELD_EG[0][1],
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SHIELD_EG[0][2]",
                 TunableConstants.PAWN_SHIELD_EG[0][2],
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SHIELD_EG[0][3]",
                 TunableConstants.PAWN_SHIELD_EG[0][3],
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SHIELD_EG[1][0]",
                 TunableConstants.PAWN_SHIELD_EG[1][0],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(7), 5))
+                true, intArrayOf(7), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SHIELD_EG[1][1]",
                 TunableConstants.PAWN_SHIELD_EG[1][1],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(7), 5))
+                true, intArrayOf(7), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SHIELD_EG[1][2]",
                 TunableConstants.PAWN_SHIELD_EG[1][2],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(7), 5))
+                true, intArrayOf(7), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "PAWN_SHIELD_EG[1][3]",
                 TunableConstants.PAWN_SHIELD_EG[1][3],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(7), 5))
-                */
+                true, intArrayOf(7), 64))
 
-            /*
             tuningObject.registerTuningData(StsTuningData(
                 "KING_THREAT_MG",
                 TunableConstants.KING_THREAT_MG,
                 intArrayOf(0, 0, 7, 7, 7, 7, 0),
-                false, intArrayOf(0, 1, 6), 5))
+                false, intArrayOf(0, 1, 6), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "KING_THREAT_EG",
                 TunableConstants.KING_THREAT_EG,
                 intArrayOf(0, 0, 7, 7, 7, 7, 0),
-                false, intArrayOf(0, 1, 6), 5))
+                false, intArrayOf(0, 1, 6), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "SAFE_CHECK_THREAT_MG",
                 TunableConstants.SAFE_CHECK_THREAT_MG,
                 intArrayOf(0, 0, 7, 7, 7, 7, 0),
-                false, intArrayOf(0, 1, 6), 5))
+                false, intArrayOf(0, 1, 6), 64))
 
             tuningObject.registerTuningData(StsTuningData(
                 "SAFE_CHECK_THREAT_EG",
                 TunableConstants.SAFE_CHECK_THREAT_EG,
                 intArrayOf(0, 0, 7, 7, 7, 7, 0),
-                false, intArrayOf(0, 1, 6), 5))
-                */
+                false, intArrayOf(0, 1, 6), 64))
 
             return tuningObject
         }
@@ -516,7 +509,7 @@ object StsTuningApplication {
 
     @Throws(ExecutionException::class, InterruptedException::class)
     private fun executeTest(): Double {
-        val searchDepth = intArrayOf(9)
+        val searchDepth = intArrayOf(6)
         var score = 0
         val startTime = System.currentTimeMillis()
         for (depth in searchDepth) {
@@ -533,8 +526,9 @@ object StsTuningApplication {
             }
             score += depthScore * depth
         }
+        score /= searchDepth.sum()
         val timeTaken = System.currentTimeMillis() - startTime
         println("$timeTaken (ms) | $score points")
-        return (15000.0 - score / searchDepth.sum()) / 15000.0
+        return (15000.0 - score) / 15000.0
     }
 }

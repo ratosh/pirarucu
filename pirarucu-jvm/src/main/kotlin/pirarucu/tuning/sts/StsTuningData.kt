@@ -133,7 +133,11 @@ data class StsTuningData(val name: String, val elementList: IntArray, val bitsPe
             elementList[index] = bestElementList[index]
         }
         if (insideBounds(currentIndex, currentIncrement)) {
-            elementList[currentIndex] = elementList[currentIndex] + currentIncrement
+            elementList[currentIndex] = if (elementList[currentIndex] > 0) {
+                elementList[currentIndex] - currentIncrement
+            } else {
+                elementList[currentIndex] + currentIncrement
+            }
         }
         currentIndex += 1
     }
@@ -145,9 +149,9 @@ data class StsTuningData(val name: String, val elementList: IntArray, val bitsPe
             currentIndex++
         }
         if (currentIndex >= elementList.size) {
-            if (currentIncrement > 0) {
+            if (currentIncrement > 4) {
                 currentIndex = 0
-                currentIncrement = -currentIncrement
+                currentIncrement /= 2
                 return hasNext()
             } else {
                 currentIndex = 0
@@ -159,7 +163,16 @@ data class StsTuningData(val name: String, val elementList: IntArray, val bitsPe
     }
 
     private fun insideBounds(index: Int, increment: Int): Boolean {
-        val nextEntry = elementList[index] + increment
+        if (elementList[index] == 0 ||
+            (elementList[index] > 0 && elementList[index] <= increment) ||
+            (elementList[index] < 0 && elementList[index] >= -increment)) {
+            return false
+        }
+        val nextEntry = if (elementList[index] > 0) {
+            elementList[index] - increment
+        } else {
+            elementList[index] + increment
+        }
         return nextEntry <= upperBounds[index] && nextEntry >= lowerBounds[index]
     }
 }
