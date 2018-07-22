@@ -1,11 +1,14 @@
 package pirarucu.tuning.pbil
 
 import java.util.BitSet
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class PbilGeneratorTest {
 
+    // This test have a small chance of failing
+    @Ignore
     @Test
     fun testGenerateGenes() {
         val totalBits = 100
