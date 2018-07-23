@@ -14,15 +14,17 @@ import java.util.concurrent.ExecutionException
 
 object BenchmarkApplication {
 
-    private val epdFileLoader = EpdFileLoader("G:/chess/epds/benchmark.epd")
+    private val epdFileLoader = EpdFileLoader(BenchmarkApplication::class.java.getResource("/benchmark.epd").file)
+    const val DEFAULT_BENCHMARK_DEPTH = 13
 
     @Throws(ExecutionException::class, InterruptedException::class)
     @JvmStatic
     fun main(args: Array<String>) {
-        runBenchmark()
+        runBenchmark(DEFAULT_BENCHMARK_DEPTH)
     }
 
-    fun runBenchmark() {
+    fun runBenchmark(depth: Int) {
+        println("Running benchmark depth $depth")
         EvalConstants.PAWN_EVAL_CACHE = false
         UciOutput.silent = true
 
@@ -30,28 +32,26 @@ object BenchmarkApplication {
         var nodeCount = 0L
         val mainSearch = MainSearch()
         val searchOptions = SearchOptions()
-        searchOptions.depth = 13
+        searchOptions.depth = depth
         searchOptions.minSearchTimeLimit = 60000L
         searchOptions.maxSearchTimeLimit = 60000L
         searchOptions.searchTimeIncrement = 1000L
         val searchInfo = SearchInfo()
-        var timeTaken = 0L
         val board = BoardFactory.getBoard()
+        val startTime = Utils.specific.currentTimeMillis()
         for (epdInfo in iterator) {
             BoardFactory.setBoard(epdInfo.fenPosition, board)
             TranspositionTable.reset()
             searchOptions.stop = false
-            println(epdInfo.fenPosition)
 
-            val startTime = Utils.specific.currentTimeMillis()
             mainSearch.search(board, searchInfo, searchOptions)
-            timeTaken += Utils.specific.currentTimeMillis() - startTime
             nodeCount += Statistics.searchNodes
-            println(Statistics.toString())
         }
+        val timeTaken = Utils.specific.currentTimeMillis() - startTime
 
-        println("Time taken (ms) $timeTaken")
-        println("Nodes $nodeCount")
-        println("NPS " + (nodeCount * 1000 / timeTaken))
+        println("-")
+        println("Time  : ${timeTaken}ms")
+        println("Nodes : $nodeCount")
+        println("NPS   : " + (nodeCount / (timeTaken / 1000)))
     }
 }
