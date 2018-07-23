@@ -34,12 +34,12 @@ object TranspositionTable {
 
     var ttUsage = 0L
 
-    private val tableBits = Square.getSquare(HashConstants.TRANSPOSITION_TABLE_SIZE) + 16
-    val tableLimit = Bitboard.getBitboard(tableBits).toInt()
-    private val indexShift = 64 - tableBits
+    private var tableBits = Square.getSquare(HashConstants.TRANSPOSITION_TABLE_SIZE) + 16
+    var tableLimit = Bitboard.getBitboard(tableBits).toInt()
+    private var indexShift = Square.SIZE - tableBits
 
-    private val keys = LongArray(tableLimit)
-    private val infos = LongArray(tableLimit)
+    private var keys = LongArray(tableLimit)
+    private var infos = LongArray(tableLimit)
 
     private const val MOVE_SHIFT = 0
     private const val EVAL_SHIFT = 16
@@ -52,6 +52,18 @@ object TranspositionTable {
     private const val SCORE_MASK = 0xFFFFL
     private const val DEPTH_MASK = 0x3FFL
     private const val SCORE_TYPE_MASK = 0x3L
+
+    fun resize(sizeMb: Int) {
+        tableBits = Square.getSquare(sizeMb) + 16
+        tableLimit = Bitboard.getBitboard(tableBits).toInt()
+        indexShift = Square.SIZE - tableBits
+
+        keys = LongArray(tableLimit)
+        infos = LongArray(tableLimit)
+
+        ttUsage = 0
+        baseDepth = 0
+    }
 
     fun reset() {
         ttUsage = 0

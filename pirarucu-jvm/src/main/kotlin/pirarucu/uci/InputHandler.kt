@@ -1,7 +1,7 @@
 package pirarucu.uci
 
-import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory
+import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
 import pirarucu.search.MainSearch
 import pirarucu.search.SearchInfo
@@ -38,9 +38,19 @@ class InputHandler : IInputHandler {
     }
 
     override fun setOption(option: String, value: String) {
-        Utils.specific.applyConfig(option, value.toInt())
+        when (option.toLowerCase()) {
+            "hash" -> {
+                TranspositionTable.resize(Integer.parseInt(value))
+            }
+            "threads" -> {
+                UciOutput.println("Only one thread supported")
+            }
+            else -> {
+                Utils.specific.applyConfig(option, value.toInt())
 
-        TunableConstants.update()
+                TunableConstants.update()
+            }
+        }
     }
 
     override fun position(tokens: Array<String>) {
@@ -103,7 +113,7 @@ class InputHandler : IInputHandler {
         @Volatile
         private var running = false
 
-        private val board = Board()
+        private val board = BoardFactory.getBoard()
 
         private val searchThread = Thread(SearchThread())
 
