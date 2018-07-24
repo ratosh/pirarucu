@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException
 
 object BenchmarkApplication {
 
-    private val epdFileLoader = EpdFileLoader(BenchmarkApplication::class.java.getResource("/benchmark.epd").file)
+    private val epdFileLoader = EpdFileLoader(BenchmarkApplication::class.java.getResourceAsStream("/benchmark.epd"))
     const val DEFAULT_BENCHMARK_DEPTH = 13
 
     @Throws(ExecutionException::class, InterruptedException::class)
