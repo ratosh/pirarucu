@@ -6,15 +6,17 @@ import pirarucu.move.MoveGenerator
 import pirarucu.move.MoveList
 import pirarucu.util.factory.EpdInfoFactory
 import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
 import java.util.Scanner
 
-class EpdFileLoader(location: String) {
+class EpdFileLoader(inputStream: InputStream) {
 
     private val epdInfoList = mutableListOf<EpdInfo>()
 
     init {
         try {
-            val scanner = Scanner(File(location))
+            val scanner = Scanner(inputStream)
 
             var lines = 0
             while (scanner.hasNextLine()) {
@@ -44,6 +46,8 @@ class EpdFileLoader(location: String) {
             ex.printStackTrace()
         }
     }
+
+    constructor(file: String) : this(FileInputStream(File(file)))
 
     fun getEpdInfoList(): Collection<EpdInfo> {
         return epdInfoList
