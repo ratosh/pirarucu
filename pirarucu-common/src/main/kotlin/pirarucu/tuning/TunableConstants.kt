@@ -194,6 +194,10 @@ object TunableConstants {
     val OTHER_BONUS_EG = intArrayOf(59)
     val OTHER_BONUS = IntArray(OTHER_BONUS_EG.size)
 
+    val KNIGHT_THREAT_MG = intArrayOf(0, 1, 1, 1, 1, 1, 0)
+    val KNIGHT_THREAT_EG = intArrayOf(0, 1, 1, 1, 1, 1, 0)
+    val KNIGHT_THREAT = IntArray(Piece.SIZE)
+
     init {
         update()
     }
@@ -272,6 +276,10 @@ object TunableConstants {
 
         for (index in 0 until OTHER_BONUS.size) {
             OTHER_BONUS[index] = SplitValue.mergeParts(OTHER_BONUS_MG[index], OTHER_BONUS_EG[index])
+        }
+
+        for (piece in 0 until KNIGHT_THREAT.size) {
+            KNIGHT_THREAT[piece] = SplitValue.mergeParts(KNIGHT_THREAT_MG[piece], KNIGHT_THREAT_EG[piece])
         }
     }
 }
