@@ -65,13 +65,8 @@ jar {
     }
 }
 
-startScripts {
-    doLast {
-        unixScript.text = unixScript.text
-                .replace(project.name.toUpperCase() + "_OPTS", 'PIRARUCU_OPTS')
-        windowsScript.text = windowsScript.text
-                .replace(project.name.toUpperCase() + "_OPTS", 'PIRARUCU_OPTS')
-    }
+startShadowScripts {
+    optsEnvironmentVar = 'PIRARUCU'
 }
 
 shadowJar {
