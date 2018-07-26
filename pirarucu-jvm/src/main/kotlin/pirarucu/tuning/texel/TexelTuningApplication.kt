@@ -452,6 +452,18 @@ object TexelTuningApplication {
                 intArrayOf(8),
                 false, intArrayOf(), 5))
 
+            tuningObject.registerTuningData(TexelTuningData(
+                "KNIGHT_THREAT_MG",
+                TunableConstants.KNIGHT_THREAT_MG,
+                intArrayOf(0, 8, 0, 8, 8, 8, 0),
+                false, intArrayOf(0, 2, 6), 5))
+
+            tuningObject.registerTuningData(TexelTuningData(
+                "KNIGHT_THREAT_EG",
+                TunableConstants.KNIGHT_THREAT_EG,
+                intArrayOf(0, 8, 0, 8, 8, 8, 0),
+                false, intArrayOf(0, 2, 6), 5))
+
             return tuningObject
         }
 

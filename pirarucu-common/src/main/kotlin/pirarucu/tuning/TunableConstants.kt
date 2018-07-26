@@ -194,8 +194,8 @@ object TunableConstants {
     val OTHER_BONUS_EG = intArrayOf(59)
     val OTHER_BONUS = IntArray(OTHER_BONUS_EG.size)
 
-    val KNIGHT_THREAT_MG = intArrayOf(0, 1, 1, 1, 1, 1, 0)
-    val KNIGHT_THREAT_EG = intArrayOf(0, 1, 1, 1, 1, 1, 0)
+    val KNIGHT_THREAT_MG = intArrayOf(0, 6, 0, 31, 56, 31, 0)
+    val KNIGHT_THREAT_EG = intArrayOf(0, 6, 0, 21, 1, 1, 0)
     val KNIGHT_THREAT = IntArray(Piece.SIZE)
 
     init {
