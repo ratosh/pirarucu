@@ -10,6 +10,7 @@ data class TexelTuningData(val name: String, val elementList: IntArray, val bits
     private var upperBounds = IntArray(elementList.size)
     private var lowerBounds = IntArray(elementList.size)
 
+    private var originalElementList = IntArray(elementList.size)
     private var bestElementList = IntArray(elementList.size)
     private var bestInteractionElementList = IntArray(elementList.size)
 
@@ -27,6 +28,10 @@ data class TexelTuningData(val name: String, val elementList: IntArray, val bits
             geneStartIndex = value
         }
 
+    fun foundImprovement(): Boolean {
+        return !(originalElementList contentEquals bestElementList)
+    }
+
     init {
         for (index in bitsPerValue.indices) {
             if (ignoreElementList.contains(index)) {
@@ -43,6 +48,7 @@ data class TexelTuningData(val name: String, val elementList: IntArray, val bits
         }
         totalBits = bitsPerValue.sum()
         geneIndex = 0
+        Utils.specific.arrayCopy(elementList, 0, originalElementList, 0, elementList.size)
         bestResult()
     }
 

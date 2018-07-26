@@ -94,7 +94,9 @@ class TexelTuningController {
     fun printBestElements() {
         println("Best result $bestElementResult")
         for (entry in tuningDataList) {
-            println(entry.getBestElement())
+            if (entry.foundImprovement()) {
+                println(entry.getBestElement())
+            }
         }
     }
 
