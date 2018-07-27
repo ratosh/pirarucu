@@ -20,10 +20,15 @@ object BenchmarkApplication {
     @Throws(ExecutionException::class, InterruptedException::class)
     @JvmStatic
     fun main(args: Array<String>) {
-        runBenchmark(DEFAULT_BENCHMARK_DEPTH)
+        var timeTaken = 0L
+        for (index in 0 until 5) {
+            timeTaken += runBenchmark(DEFAULT_BENCHMARK_DEPTH)
+        }
+        println("Total time taken $timeTaken")
+
     }
 
-    fun runBenchmark(depth: Int) {
+    fun runBenchmark(depth: Int): Long {
         println("Running benchmark depth $depth")
         EvalConstants.PAWN_EVAL_CACHE = false
         UciOutput.silent = true
@@ -53,5 +58,6 @@ object BenchmarkApplication {
         println("Time  : ${timeTaken}ms")
         println("Nodes : $nodeCount")
         println("NPS   : " + (nodeCount / (timeTaken / 1000)))
+        return timeTaken
     }
 }
