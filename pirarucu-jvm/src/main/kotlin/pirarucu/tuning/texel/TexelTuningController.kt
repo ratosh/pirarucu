@@ -98,9 +98,6 @@ class TexelTuningController {
 
     private fun printInteractionResult() {
         println("Interaction result $bestInteractionResult")
-        for (entry in tuningDataList) {
-            println(entry.getBestInteractionElement())
-        }
     }
 
     /**
