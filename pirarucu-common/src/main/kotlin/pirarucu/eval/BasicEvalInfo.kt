@@ -12,8 +12,6 @@ class BasicEvalInfo {
     var checkBitboard = 0L
         private set
 
-    val pinnerBitboard = LongArray(Color.SIZE)
-
     val discoveryBitboard = LongArray(Color.SIZE)
 
     val pinnedBitboard = LongArray(Color.SIZE)
@@ -55,7 +53,7 @@ class BasicEvalInfo {
     }
 
     /**
-     * Updates pinnedBitboard, pinnerBitboard and discoveryBitboard
+     * Updates pinnedBitboard and discoveryBitboard
      */
     private fun setPinnedDiscovery(kingSquare: Int,
                                    ourColor: Int,
@@ -63,7 +61,6 @@ class BasicEvalInfo {
                                    theirPieceBitboard: LongArray,
                                    colorBitboard: LongArray) {
         var pinned = 0L
-        var pinner = 0L
         var discovery = 0L
 
         val ourColorBitboard = colorBitboard[ourColor]
@@ -79,8 +76,6 @@ class BasicEvalInfo {
             val square = Square.getSquare(piece)
             val betweenPiece = BitboardMove.BETWEEN_BITBOARD[kingSquare][square] and gameBitboard
             if (betweenPiece != 0L && Bitboard.oneElement(betweenPiece)) {
-                val bitboard = Bitboard.getBitboard(square)
-                pinner = pinner or bitboard
                 discovery = discovery or (betweenPiece and theirColorBitboard)
                 pinned = pinned or (betweenPiece and ourColorBitboard)
             }
@@ -88,7 +83,6 @@ class BasicEvalInfo {
             piece = piece and piece - 1
         }
         pinnedBitboard[ourColor] = pinned
-        pinnerBitboard[theirColor] = pinner
         discoveryBitboard[theirColor] = discovery
     }
 }
