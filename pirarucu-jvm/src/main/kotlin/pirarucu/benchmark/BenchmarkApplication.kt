@@ -20,12 +20,13 @@ object BenchmarkApplication {
     @Throws(ExecutionException::class, InterruptedException::class)
     @JvmStatic
     fun main(args: Array<String>) {
-        var timeTaken = 0L
-        for (index in 0 until 5) {
-            timeTaken += runBenchmark(DEFAULT_BENCHMARK_DEPTH)
+        var speed = LongArray(5)
+        for (tries in 0 until speed.size) {
+            speed[tries] = runBenchmark(DEFAULT_BENCHMARK_DEPTH)
         }
-        println("Total time taken $timeTaken")
-
+        println("Time taken " + speed.sum())
+        println("Max " +  speed.max()!!)
+        println("Min " +  speed.min()!!)
     }
 
     fun runBenchmark(depth: Int): Long {
