@@ -188,6 +188,12 @@ object TunableConstants {
     val SAFE_CHECK_THREAT_EG = intArrayOf(0, 0, 3, 36, 5, 88, 0)
     val SAFE_CHECK_THREAT = IntArray(Piece.SIZE)
 
+    val OTHER_BONUS_BISHOP_PAIR = 0
+
+    val OTHER_BONUS_MG = intArrayOf(4)
+    val OTHER_BONUS_EG = intArrayOf(39)
+    val OTHER_BONUS = IntArray(OTHER_BONUS_EG.size)
+
     init {
         update()
     }
@@ -262,6 +268,10 @@ object TunableConstants {
 
         for (index in 0 until PASSED_PAWN_BONUS.size) {
             PASSED_PAWN_BONUS[index] = SplitValue.mergeParts(PASSED_PAWN_BONUS_MG[index], PASSED_PAWN_BONUS_EG[index])
+        }
+
+        for (index in 0 until OTHER_BONUS.size) {
+            OTHER_BONUS[index] = SplitValue.mergeParts(OTHER_BONUS_MG[index], OTHER_BONUS_EG[index])
         }
     }
 }

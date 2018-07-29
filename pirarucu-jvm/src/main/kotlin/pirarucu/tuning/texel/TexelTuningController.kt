@@ -80,15 +80,11 @@ class TexelTuningController {
     }
 
     private fun setBestResult() {
-        for (entry in tuningDataList) {
-            entry.bestResult()
-        }
+        tuningDataList[currentTuningObject].bestResult()
     }
 
     private fun setBestInteractionResult() {
-        for (entry in tuningDataList) {
-            entry.bestInteractionResult()
-        }
+        tuningDataList[currentTuningObject].bestInteractionResult()
     }
 
     fun printBestElements() {

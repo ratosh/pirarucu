@@ -15,7 +15,7 @@ object TexelTuningApplication {
 
     private const val INTERACTIONS = 10000
 
-    private const val numberOfThreads = 6
+    private const val numberOfThreads = 2
     private val workers = arrayOfNulls<ErrorCalculator>(numberOfThreads)
     private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
     private val epdFileLoader = EpdFileLoader("G:/chess/epds/quiet_labeled.epd")
@@ -439,6 +439,18 @@ object TexelTuningApplication {
                 TunableConstants.SAFE_CHECK_THREAT_EG,
                 intArrayOf(0, 0, 8, 8, 8, 8, 0),
                 false, intArrayOf(0, 1, 6), 5))
+
+            tuningObject.registerTuningData(TexelTuningData(
+                "OTHER_BONUS_MG",
+                TunableConstants.OTHER_BONUS_MG,
+                intArrayOf(8),
+                false, intArrayOf(), 5))
+
+            tuningObject.registerTuningData(TexelTuningData(
+                "OTHER_BONUS_EG",
+                TunableConstants.OTHER_BONUS_EG,
+                intArrayOf(8),
+                false, intArrayOf(), 5))
 
             return tuningObject
         }
