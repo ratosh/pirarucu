@@ -125,6 +125,10 @@ object Evaluator {
 
         var result = 0
 
+        if (board.pieceCountColorType[ourColor][Piece.BISHOP] > 1) {
+            result += TunableConstants.OTHER_BONUS[TunableConstants.OTHER_BONUS_BISHOP_PAIR]
+        }
+
         while (tmpPieces != Bitboard.EMPTY) {
             val square = Square.getSquare(tmpPieces)
             val bitboard = Bitboard.getBitboard(square)
