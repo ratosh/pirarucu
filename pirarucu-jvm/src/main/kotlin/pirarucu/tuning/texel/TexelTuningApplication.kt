@@ -495,7 +495,6 @@ object TexelTuningApplication {
 
         for (i in 0 until INTERACTIONS) {
             println("Starting interaction $i")
-            var skipped = 0
             while (tuningController.hasNext()) {
                 if (tuningController.next()) {
                     TunableConstants.update()
@@ -504,9 +503,6 @@ object TexelTuningApplication {
                     if (error < bestError) {
                         bestError = error
                     }
-                } else {
-                    skipped++
-                    println("Skipped")
                 }
             }
             val timeTaken = Utils.specific.currentTimeMillis() - startTime
