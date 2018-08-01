@@ -55,6 +55,13 @@ class SplitValueTest {
     }
 
     @Test
+    fun mutiplyNegative() {
+        val value = -5 * SplitValue.mergeParts(3, 7)
+        assertEquals(-15, SplitValue.getFirstPart(value))
+        assertEquals(-35, SplitValue.getSecondPart(value))
+    }
+
+    @Test
     fun firstPartZero() {
         val value = SplitValue.mergeParts(0, -5)
         assertEquals(0, SplitValue.getFirstPart(value))
