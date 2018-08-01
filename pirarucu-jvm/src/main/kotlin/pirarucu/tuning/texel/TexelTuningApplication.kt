@@ -452,6 +452,18 @@ object TexelTuningApplication {
                 intArrayOf(8),
                 false, intArrayOf(), 5))
 
+            tuningObject.registerTuningData(TexelTuningData(
+                "THREATEN_BY_KNIGHT_MG",
+                TunableConstants.THREATEN_BY_KNIGHT_MG,
+                intArrayOf(0, 8, 0, 8, 8, 8, 0),
+                false, intArrayOf(0, 2, 6), 5))
+
+            tuningObject.registerTuningData(TexelTuningData(
+                "THREATEN_BY_KNIGHT_EG",
+                TunableConstants.THREATEN_BY_KNIGHT_EG,
+                intArrayOf(0, 8, 0, 8, 8, 8, 0),
+                false, intArrayOf(0, 2, 6), 5))
+
             return tuningObject
         }
 
@@ -483,7 +495,6 @@ object TexelTuningApplication {
 
         for (i in 0 until INTERACTIONS) {
             println("Starting interaction $i")
-            var skipped = 0
             while (tuningController.hasNext()) {
                 if (tuningController.next()) {
                     TunableConstants.update()
@@ -492,9 +503,6 @@ object TexelTuningApplication {
                     if (error < bestError) {
                         bestError = error
                     }
-                } else {
-                    skipped++
-                    println("Skipped")
                 }
             }
             val timeTaken = Utils.specific.currentTimeMillis() - startTime
