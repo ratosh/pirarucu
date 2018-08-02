@@ -15,7 +15,7 @@ object TexelTuningApplication {
 
     private const val INTERACTIONS = 10000
 
-    private const val numberOfThreads = 6
+    private const val numberOfThreads = 2
     private val workers = arrayOfNulls<ErrorCalculator>(numberOfThreads)
     private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
     private val epdFileLoader = EpdFileLoader("G:/chess/epds/quiet_labeled.epd")
@@ -440,6 +440,30 @@ object TexelTuningApplication {
                 intArrayOf(0, 0, 8, 8, 8, 8, 0),
                 false, intArrayOf(0, 1, 6), 5))
 
+            tuningObject.registerTuningData(TexelTuningData(
+                "OTHER_BONUS_MG",
+                TunableConstants.OTHER_BONUS_MG,
+                intArrayOf(8),
+                false, intArrayOf(), 5))
+
+            tuningObject.registerTuningData(TexelTuningData(
+                "OTHER_BONUS_EG",
+                TunableConstants.OTHER_BONUS_EG,
+                intArrayOf(8),
+                false, intArrayOf(), 5))
+
+            tuningObject.registerTuningData(TexelTuningData(
+                "THREATEN_BY_KNIGHT_MG",
+                TunableConstants.THREATEN_BY_KNIGHT_MG,
+                intArrayOf(0, 8, 0, 8, 8, 8, 0),
+                false, intArrayOf(0, 2, 6), 5))
+
+            tuningObject.registerTuningData(TexelTuningData(
+                "THREATEN_BY_KNIGHT_EG",
+                TunableConstants.THREATEN_BY_KNIGHT_EG,
+                intArrayOf(0, 8, 0, 8, 8, 8, 0),
+                false, intArrayOf(0, 2, 6), 5))
+
             return tuningObject
         }
 
@@ -471,7 +495,6 @@ object TexelTuningApplication {
 
         for (i in 0 until INTERACTIONS) {
             println("Starting interaction $i")
-            var skipped = 0
             while (tuningController.hasNext()) {
                 if (tuningController.next()) {
                     TunableConstants.update()
@@ -480,9 +503,6 @@ object TexelTuningApplication {
                     if (error < bestError) {
                         bestError = error
                     }
-                } else {
-                    skipped++
-                    println("Skipped")
                 }
             }
             val timeTaken = Utils.specific.currentTimeMillis() - startTime

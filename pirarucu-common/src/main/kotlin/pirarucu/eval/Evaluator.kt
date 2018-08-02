@@ -88,6 +88,28 @@ object Evaluator {
             if (bitboard and pawnThreatBitboard != Bitboard.EMPTY) {
                 result -= TunableConstants.PAWN_THREAT[Piece.KNIGHT]
             }
+
+            // Attacking undefended pawns
+            if (attackBitboard and board.pieceBitboard[theirColor][Piece.PAWN] and
+                attackInfo.attacksBitboard[theirColor][Piece.NONE].inv() != Bitboard.EMPTY) {
+                result += TunableConstants.THREATEN_BY_KNIGHT[Piece.PAWN]
+            }
+
+            // Attacking bishops
+            if (attackBitboard and board.pieceBitboard[theirColor][Piece.BISHOP] != Bitboard.EMPTY) {
+                result += TunableConstants.THREATEN_BY_KNIGHT[Piece.BISHOP]
+            }
+
+            // Attacking rook
+            if (attackBitboard and board.pieceBitboard[theirColor][Piece.ROOK] != Bitboard.EMPTY) {
+                result += TunableConstants.THREATEN_BY_KNIGHT[Piece.ROOK]
+            }
+
+            // Attacking queen
+            if (attackBitboard and board.pieceBitboard[theirColor][Piece.QUEEN] != Bitboard.EMPTY) {
+                result += TunableConstants.THREATEN_BY_KNIGHT[Piece.QUEEN]
+            }
+
             val pieceMobilityBitboard = attackBitboard and mobilityBitboard
             result += TunableConstants.MOBILITY[Piece.KNIGHT][Utils.specific.bitCount(pieceMobilityBitboard)]
 
@@ -101,6 +123,7 @@ object Evaluator {
             if (safeChecks != Bitboard.EMPTY) {
                 result += TunableConstants.SAFE_CHECK_THREAT[Piece.KNIGHT]
             }
+
 
             tmpPieces = tmpPieces and tmpPieces - 1
         }
@@ -124,6 +147,10 @@ object Evaluator {
             board.colorBitboard[ourColor].inv() and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
 
         var result = 0
+
+        if (board.pieceCountColorType[ourColor][Piece.BISHOP] > 1) {
+            result += TunableConstants.OTHER_BONUS[TunableConstants.OTHER_BONUS_BISHOP_PAIR]
+        }
 
         while (tmpPieces != Bitboard.EMPTY) {
             val square = Square.getSquare(tmpPieces)
