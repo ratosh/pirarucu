@@ -97,11 +97,11 @@ object TranspositionTable {
         val maxIndex = getMaxIndex(startIndex)
         var index = startIndex
 
-        var usedIndex = startIndex
+        var usedIndex = -1
 
         val wantedKey = board.zobristKey
 
-        var replacedDepth = depth
+        var replacedDepth = Int.MAX_VALUE
 
         while (index < maxIndex) {
             // Unpopulated entry
@@ -110,8 +110,7 @@ object TranspositionTable {
                 usedIndex = index
                 break
             }
-            val info = infos[index]
-            val savedDepth = getDepth(info)
+            val savedDepth = getDepth(infos[index])
 
             // Update entry
             if (keys[index] == wantedKey) {
