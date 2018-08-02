@@ -7,8 +7,6 @@ import pirarucu.eval.EvalConstants
 import pirarucu.eval.Evaluator
 import pirarucu.eval.StaticExchangeEvaluator
 import pirarucu.game.GameConstants
-import pirarucu.hash.HashConstants
-import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
 import pirarucu.move.MoveGenerator
 import pirarucu.move.MoveList
@@ -32,20 +30,8 @@ class QuiescenceSearch {
                beta: Int): Int {
         Statistics.searchNodes++
 
-        var eval = EvalConstants.SCORE_UNKNOWN
-
-        if (SearchConstants.USE_TT) {
-            val foundInfo = TranspositionTable.findEntry(board)
-            if (foundInfo != TranspositionTable.EMPTY_INFO) {
-                eval = TranspositionTable.getEval(foundInfo)
-            }
-        }
-
         val currentNode = searchInfo.plyInfoList[ply]
-
-        if (eval == EvalConstants.SCORE_UNKNOWN) {
-            eval = GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board, currentNode.attackInfo)
-        }
+        val eval = GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board, currentNode.attackInfo)
 
         if (eval >= beta) {
             return eval
@@ -102,9 +88,6 @@ class QuiescenceSearch {
                 bestScore = innerScore
             }
             if (innerScore >= beta) {
-                if (SearchConstants.USE_TT && !searchOptions.stop) {
-                    TranspositionTable.save(board, eval, bestScore, HashConstants.SCORE_TYPE_BOUND_LOWER, 0, ply, move)
-                }
                 break
             }
         }
