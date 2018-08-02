@@ -165,6 +165,28 @@ object Evaluator {
             if (bitboard and pawnThreatBitboard != Bitboard.EMPTY) {
                 result -= TunableConstants.PAWN_THREAT[Piece.BISHOP]
             }
+            // Attacking undefended pawns
+            if (attackBitboard and board.pieceBitboard[theirColor][Piece.PAWN] and
+                attackInfo.attacksBitboard[theirColor][Piece.NONE].inv() != Bitboard.EMPTY) {
+                result += TunableConstants.THREATEN_BY_BISHOP[Piece.PAWN]
+            }
+
+            // Attacking knights
+            if (attackBitboard and board.pieceBitboard[theirColor][Piece.KNIGHT] != Bitboard.EMPTY) {
+                result += TunableConstants.THREATEN_BY_BISHOP[Piece.KNIGHT]
+            }
+
+            // Attacking rook
+            if (attackBitboard and board.pieceBitboard[theirColor][Piece.ROOK] != Bitboard.EMPTY) {
+                result += TunableConstants.THREATEN_BY_BISHOP[Piece.ROOK]
+            }
+
+            // Protected bishop attacking queen
+            if (attackBitboard and board.pieceBitboard[theirColor][Piece.QUEEN] != Bitboard.EMPTY &&
+                bitboard and attackInfo.attacksBitboard[ourColor][Piece.NONE] != Bitboard.EMPTY) {
+                result += TunableConstants.THREATEN_BY_BISHOP[Piece.QUEEN]
+            }
+
             val pieceMobilityBitboard = attackBitboard and mobilityBitboard
             result += TunableConstants.MOBILITY[Piece.BISHOP][Utils.specific.bitCount(pieceMobilityBitboard)]
 

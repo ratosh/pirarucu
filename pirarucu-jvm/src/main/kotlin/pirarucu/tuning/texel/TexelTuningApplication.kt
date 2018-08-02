@@ -464,6 +464,18 @@ object TexelTuningApplication {
                 intArrayOf(0, 8, 0, 8, 8, 8, 0),
                 false, intArrayOf(0, 2, 6), 5))
 
+            tuningObject.registerTuningData(TexelTuningData(
+                "THREATEN_BY_BISHOP_MG",
+                TunableConstants.THREATEN_BY_BISHOP_MG,
+                intArrayOf(0, 8, 8, 0, 8, 8, 0),
+                false, intArrayOf(0, 3, 6), 5))
+
+            tuningObject.registerTuningData(TexelTuningData(
+                "THREATEN_BY_BISHOP_EG",
+                TunableConstants.THREATEN_BY_BISHOP_EG,
+                intArrayOf(0, 8, 8, 0, 8, 8, 0),
+                false, intArrayOf(0, 3, 6), 5))
+
             return tuningObject
         }
 
