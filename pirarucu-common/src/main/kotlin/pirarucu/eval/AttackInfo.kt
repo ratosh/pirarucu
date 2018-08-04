@@ -35,7 +35,7 @@ class AttackInfo {
             }
             Bitboard.oneElement(checkBitboard) -> {
                 val square = Square.getSquare(checkBitboard)
-                val kingSquare = board.basicEvalInfo.kingSquare[color]
+                val kingSquare = board.kingSquare[color]
                 BitboardMove.BETWEEN_BITBOARD[kingSquare][square] or checkBitboard
             }
             else -> {
@@ -61,28 +61,25 @@ class AttackInfo {
     }
 
     private fun pawnAttacks(board: Board, color: Int, mask: Long) {
-        val kingSquare = board.basicEvalInfo.kingSquare[color]
-        var tmpPieces = board.pieceBitboard[color][Piece.PAWN]
+        val unpinnedPawns = board.pieceBitboard[color][Piece.PAWN] and board.basicEvalInfo.pinnedBitboard.inv()
+        attacksBitboard[color][Piece.PAWN] = BitboardMove.pawnAttacks(color, unpinnedPawns) and mask
+
+        var tmpPieces = board.pieceBitboard[color][Piece.PAWN] and board.basicEvalInfo.pinnedBitboard
+        val kingSquare = board.kingSquare[color]
         while (tmpPieces != Bitboard.EMPTY) {
             val fromSquare = Square.getSquare(tmpPieces)
-            val fromBitboard = Bitboard.getBitboard(fromSquare)
+            val bitboard = BitboardMove.PAWN_ATTACKS[color][fromSquare] and mask and
+                BitboardMove.PINNED_MOVE_MASK[kingSquare][fromSquare]
 
-            var bitboard = BitboardMove.PAWN_ATTACKS[color][fromSquare] and mask
-            if (fromBitboard and board.basicEvalInfo.pinnedBitboard[color] != Bitboard.EMPTY) {
-                bitboard = bitboard and BitboardMove.PINNED_MOVE_MASK[kingSquare][fromSquare]
-            }
-
-            pieceMovement[color][fromSquare] = bitboard
             attacksBitboard[color][Piece.PAWN] = attacksBitboard[color][Piece.PAWN] or
                 bitboard
-
             tmpPieces = tmpPieces and tmpPieces - 1
         }
     }
 
     private fun knightMoves(board: Board, color: Int, mask: Long) {
         var tmpPieces = board.pieceBitboard[color][Piece.KNIGHT] and
-            board.basicEvalInfo.pinnedBitboard[color].inv()
+            board.basicEvalInfo.pinnedBitboard.inv()
         while (tmpPieces != Bitboard.EMPTY) {
             val fromSquare = Square.getSquare(tmpPieces)
             val bitboard = BitboardMove.KNIGHT_MOVES[fromSquare] and mask
@@ -96,7 +93,7 @@ class AttackInfo {
     }
 
     private fun bishopMoves(board: Board, color: Int, mask: Long) {
-        val kingSquare = board.basicEvalInfo.kingSquare[color]
+        val kingSquare = board.kingSquare[color]
         val pieces = board.pieceBitboard[color][Piece.BISHOP] or
             board.pieceBitboard[color][Piece.QUEEN]
         var tmpPieces = pieces
@@ -105,7 +102,7 @@ class AttackInfo {
             val fromBitboard = Bitboard.getBitboard(fromSquare)
             var bitboard = BitboardMove.bishopMoves(fromSquare, board.gameBitboard) and
                 mask
-            if (fromBitboard and board.basicEvalInfo.pinnedBitboard[color] != Bitboard.EMPTY) {
+            if (fromBitboard and board.basicEvalInfo.pinnedBitboard != Bitboard.EMPTY) {
                 bitboard = bitboard and BitboardMove.PINNED_MOVE_MASK[kingSquare][fromSquare]
             }
             val pieceType = board.pieceTypeBoard[fromSquare]
@@ -119,7 +116,7 @@ class AttackInfo {
     }
 
     private fun rookMoves(board: Board, color: Int, mask: Long) {
-        val kingSquare = board.basicEvalInfo.kingSquare[color]
+        val kingSquare = board.kingSquare[color]
         val pieces = board.pieceBitboard[color][Piece.ROOK] or
             board.pieceBitboard[color][Piece.QUEEN]
         var tmpPieces = pieces
@@ -128,7 +125,7 @@ class AttackInfo {
             val fromBitboard = Bitboard.getBitboard(fromSquare)
             var bitboard = BitboardMove.rookMoves(fromSquare, board.gameBitboard) and
                 mask
-            if (fromBitboard and board.basicEvalInfo.pinnedBitboard[color] != Bitboard.EMPTY) {
+            if (fromBitboard and board.basicEvalInfo.pinnedBitboard != Bitboard.EMPTY) {
                 bitboard = bitboard and BitboardMove.PINNED_MOVE_MASK[kingSquare][fromSquare]
             }
             val pieceType = board.pieceTypeBoard[fromSquare]
@@ -142,8 +139,8 @@ class AttackInfo {
     }
 
     private fun kingMoves(board: Board, color: Int) {
-        val fromSquare = board.basicEvalInfo.kingSquare[color]
-        val theirKing = board.basicEvalInfo.kingSquare[Color.invertColor(color)]
+        val fromSquare = board.kingSquare[color]
+        val theirKing = board.kingSquare[Color.invertColor(color)]
         var moves = BitboardMove.KING_MOVES[fromSquare] and BitboardMove.KING_MOVES[theirKing].inv()
 
         pieceMovement[color][fromSquare] = moves

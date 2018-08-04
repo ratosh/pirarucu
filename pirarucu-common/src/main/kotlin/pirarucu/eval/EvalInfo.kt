@@ -26,8 +26,8 @@ class EvalInfo {
         mobilityArea[Color.BLACK] = (board.colorBitboard[Color.BLACK] or
             attackInfo.attacksBitboard[Color.WHITE][Piece.PAWN]).inv()
 
-        kingArea[Color.WHITE] = EvalConstants.KING_AREA_MASK[Color.WHITE][board.basicEvalInfo.kingSquare[Color.WHITE]]
-        kingArea[Color.BLACK] = EvalConstants.KING_AREA_MASK[Color.BLACK][board.basicEvalInfo.kingSquare[Color.BLACK]]
+        kingArea[Color.WHITE] = EvalConstants.KING_AREA_MASK[Color.WHITE][board.kingSquare[Color.WHITE]]
+        kingArea[Color.BLACK] = EvalConstants.KING_AREA_MASK[Color.BLACK][board.kingSquare[Color.BLACK]]
 
         passedPawnBitboard = Bitboard.EMPTY
     }

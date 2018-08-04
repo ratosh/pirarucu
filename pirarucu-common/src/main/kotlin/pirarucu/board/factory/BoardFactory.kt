@@ -79,7 +79,10 @@ object BoardFactory {
         board.rule50 = rule50
         board.moveNumber = moveNumber
 
+        board.setInitialKingSquare()
         board.updateBasicInfo()
+        board.basicEvalInfo.update(board)
+        board.basicEvalInfo.updatePinned(board)
         BoardUtil.updateZobristKeys(board)
     }
 }

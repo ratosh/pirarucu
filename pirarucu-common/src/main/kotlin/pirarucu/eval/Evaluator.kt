@@ -288,7 +288,7 @@ object Evaluator {
      * Evaluate king
      */
     private fun evalKing(board: Board, attackInfo: AttackInfo, ourColor: Int): Int {
-        val kingSquare = board.basicEvalInfo.kingSquare[ourColor]
+        val kingSquare = board.kingSquare[ourColor]
 
         var result = 0
 

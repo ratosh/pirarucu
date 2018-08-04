@@ -21,16 +21,16 @@ class Board {
 
     private var castlingRightsSquare = IntArray(Square.SIZE)
 
-    var gameBitboard: Long = 0L
-    var emptyBitboard: Long = 0L
+    var gameBitboard = 0L
+    var emptyBitboard = 0L
 
     var moveNumber: Int = 0
 
     var colorToMove = Color.WHITE
     var nextColorToMove = Color.BLACK
 
-    var basicEvalInfo = BasicEvalInfo()
-    var evalInfo = EvalInfo()
+    val basicEvalInfo = BasicEvalInfo()
+    val evalInfo = EvalInfo()
 
     val pieceTypeBoard = IntArray(Square.SIZE)
     val pieceBitboard = Array(Color.SIZE) { LongArray(Piece.SIZE) }
@@ -45,8 +45,9 @@ class Board {
     var zobristKey = 0L
     var pawnZobristKey = 0L
 
-    var psqScore = IntArray(Color.SIZE)
-    var materialScore = IntArray(Color.SIZE)
+    val kingSquare = IntArray(Color.SIZE)
+    val psqScore = IntArray(Color.SIZE)
+    val materialScore = IntArray(Color.SIZE)
     var phase = 0
 
     var capturedPiece = Piece.NONE
@@ -122,6 +123,7 @@ class Board {
         historyZobristKey[moveNumber] = zobristKey
         historyPawnZobristKey[moveNumber] = pawnZobristKey
         historyCapturedPiece[moveNumber] = capturedPiece
+        basicEvalInfo.pushToHistory(moveNumber)
         moveNumber++
     }
 
@@ -133,6 +135,7 @@ class Board {
         zobristKey = historyZobristKey[moveNumber]
         pawnZobristKey = historyPawnZobristKey[moveNumber]
         capturedPiece = historyCapturedPiece[moveNumber]
+        basicEvalInfo.popFromHistory(moveNumber)
     }
 
     fun doNullMove() {
@@ -226,6 +229,9 @@ class Board {
                 }
                 rule50 = 0
             }
+            Piece.KING -> {
+                kingSquare[ourColor] = toSquare
+            }
         }
 
         updateCastlingRights(fromSquare, toSquare)
@@ -234,6 +240,8 @@ class Board {
         colorToMove = Color.invertColor(colorToMove)
 
         updateBasicInfo()
+        basicEvalInfo.updatePinned(this)
+        basicEvalInfo.update(this)
     }
 
     fun debugString(): String {
@@ -257,10 +265,14 @@ class Board {
         evalInfo.update(this, attackInfo)
     }
 
+    fun setInitialKingSquare() {
+        kingSquare[Color.WHITE] = Square.getSquare(pieceBitboard[Color.WHITE][Piece.KING])
+        kingSquare[Color.BLACK] = Square.getSquare(pieceBitboard[Color.BLACK][Piece.KING])
+    }
+
     fun updateBasicInfo() {
         gameBitboard = colorBitboard[Color.WHITE] or colorBitboard[Color.BLACK]
         emptyBitboard = gameBitboard.inv()
-        basicEvalInfo.update(this)
     }
 
     fun isLegalMove(move: Int): Boolean {
@@ -277,7 +289,7 @@ class Board {
 
                 val tmpBitboard = gameBitboard xor fromBitboard xor
                     Bitboard.getBitboard(epSquare) xor BitboardMove.PAWN_MOVES[nextColorToMove][epSquare]
-                return MoveGenerator.squareAttackedBitboard(basicEvalInfo.kingSquare[colorToMove], colorToMove,
+                return MoveGenerator.squareAttackedBitboard(kingSquare[colorToMove], colorToMove,
                     pieceBitboard[nextColorToMove], tmpBitboard) == Bitboard.EMPTY
             }
             else -> {
@@ -329,9 +341,13 @@ class Board {
                 putPiece(theirColor, capturedPiece, capturedSquare)
             }
         }
+        if (movedPieceType == Piece.KING) {
+            kingSquare[ourColor] = fromSquare
+        }
 
-        popFromHistory()
         updateBasicInfo()
+        popFromHistory()
+        basicEvalInfo.update(this)
     }
 
     private fun updateCastlingRights(fromSquare: Int, toSquare: Int) {
