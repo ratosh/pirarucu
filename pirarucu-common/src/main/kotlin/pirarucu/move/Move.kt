@@ -121,11 +121,11 @@ object Move {
         // Fixing castle string
         if (move == "oo") {
             val castlingIndex = CastlingRights.getCastlingRightIndex(board.colorToMove, CastlingRights.KING_SIDE)
-            move = Square.toString(board.basicEvalInfo.kingSquare[board.colorToMove]) +
+            move = Square.toString(board.kingSquare[board.colorToMove]) +
                 Square.toString(CastlingRights.KING_FINAL_SQUARE[castlingIndex])
         } else if (move == "ooo") {
             val castlingIndex = CastlingRights.getCastlingRightIndex(board.colorToMove, CastlingRights.QUEEN_SIDE)
-            move = Square.toString(board.basicEvalInfo.kingSquare[board.colorToMove]) +
+            move = Square.toString(board.kingSquare[board.colorToMove]) +
                 Square.toString(CastlingRights.KING_FINAL_SQUARE[castlingIndex])
         } else {
             when (move.length) {

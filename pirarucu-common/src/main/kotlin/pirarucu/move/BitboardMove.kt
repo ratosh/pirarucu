@@ -329,4 +329,12 @@ object BitboardMove {
     fun queenMoves(square: Int, occupied: Long): Long {
         return bishopMoves(square, occupied) xor rookMoves(square, occupied)
     }
+
+    fun pawnAttacks(color: Int, bitboard: Long): Long {
+        return if (color == Color.WHITE) {
+            (bitboard shl 7 and Bitboard.NOT_FILE_H) or (bitboard shl 9 and Bitboard.NOT_FILE_A)
+        } else {
+            (bitboard ushr 7 and Bitboard.NOT_FILE_A) or (bitboard ushr 9 and Bitboard.NOT_FILE_H)
+        }
+    }
 }
