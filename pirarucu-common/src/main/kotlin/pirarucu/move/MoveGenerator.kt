@@ -75,14 +75,15 @@ object MoveGenerator {
                               moveList: MoveList,
                               movedPiece: Int,
                               maskBitboard: Long) {
-        if (maskBitboard == Bitboard.EMPTY) {
+        val ourColor = board.colorToMove
+        val maskedMove = maskBitboard and attackInfo.attacksBitboard[ourColor][movedPiece]
+        if (maskedMove == Bitboard.EMPTY) {
             return
         }
-        val ourColor = board.colorToMove
         var tmpPieces = board.pieceBitboard[ourColor][movedPiece]
         while (tmpPieces != Bitboard.EMPTY) {
             val fromSquare = Square.getSquare(tmpPieces)
-            var bitboard = attackInfo.pieceMovement[ourColor][fromSquare] and maskBitboard
+            var bitboard = attackInfo.pieceMovement[ourColor][fromSquare] and maskedMove
 
             while (bitboard != Bitboard.EMPTY) {
                 val toSquare = Square.getSquare(bitboard)
@@ -143,40 +144,39 @@ object MoveGenerator {
                                     maskBitboard: Long) {
         val theirColor = board.nextColorToMove
         val theirPieceBitboard = board.pieceBitboard[theirColor]
-        val pieceMask = maskBitboard and theirPieceBitboard[capturedPiece]
-        if (pieceMask == Bitboard.EMPTY) {
+        val ourColor = board.colorToMove
+        val targetMask = maskBitboard and theirPieceBitboard[capturedPiece] and
+            attackInfo.attacksBitboard[ourColor][Piece.PAWN]
+        if (targetMask == Bitboard.EMPTY) {
             return
         }
-        val ourColor = board.colorToMove
-        val pawnBitboard = board.pieceBitboard[ourColor][Piece.PAWN]
         val kingSquare = board.kingSquare[ourColor]
         // Pieces attacked by side to move pawns
-        var tmpPieces = pieceMask and attackInfo.attacksBitboard[ourColor][Piece.PAWN]
+        var tmpPieces = board.pieceBitboard[ourColor][Piece.PAWN]
         while (tmpPieces != Bitboard.EMPTY) {
-            val toSquare = Square.getSquare(tmpPieces)
-            val toBitboard = Bitboard.getBitboard(toSquare)
-            // Pawn bitboard that can attack that piece
-            var bitboard = BitboardMove.PAWN_ATTACKS[theirColor][toSquare] and pawnBitboard
+            val fromSquare = Square.getSquare(tmpPieces)
+            var bitboard = BitboardMove.PAWN_ATTACKS[ourColor][fromSquare] and targetMask
+            val fromBitboard = Bitboard.getBitboard(fromSquare)
+
+            if (fromBitboard and board.basicEvalInfo.pinnedBitboard != Bitboard.EMPTY) {
+                bitboard = bitboard and BitboardMove.PINNED_MOVE_MASK[kingSquare][fromSquare]
+            }
 
             while (bitboard != Bitboard.EMPTY) {
-                val fromSquare = Square.getSquare(bitboard)
-                val fromBitboard = Bitboard.getBitboard(fromSquare)
-                // Skip pinned pieces not attacking the pinner
-                if (fromBitboard and board.basicEvalInfo.pinnedBitboard == Bitboard.EMPTY ||
-                    BitboardMove.PINNED_MOVE_MASK[kingSquare][fromSquare] and toBitboard != Bitboard.EMPTY) {
-                    when {
-                        Bitboard.PROMOTION_BITBOARD and toBitboard != Bitboard.EMPTY -> {
-                            moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
-                                MoveType.TYPE_PROMOTION_QUEEN))
-                            moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
-                                MoveType.TYPE_PROMOTION_ROOK))
-                            moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
-                                MoveType.TYPE_PROMOTION_BISHOP))
-                            moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
-                                MoveType.TYPE_PROMOTION_KNIGHT))
-                        }
-                        else -> moveList.addMove(Move.createMove(fromSquare, toSquare))
+                val toSquare = Square.getSquare(bitboard)
+                val toBitboard = Bitboard.getBitboard(toSquare)
+                when {
+                    Bitboard.PROMOTION_BITBOARD and toBitboard != Bitboard.EMPTY -> {
+                        moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
+                            MoveType.TYPE_PROMOTION_QUEEN))
+                        moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
+                            MoveType.TYPE_PROMOTION_ROOK))
+                        moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
+                            MoveType.TYPE_PROMOTION_BISHOP))
+                        moveList.addMove(Move.createPromotionMove(fromSquare, toSquare,
+                            MoveType.TYPE_PROMOTION_KNIGHT))
                     }
+                    else -> moveList.addMove(Move.createMove(fromSquare, toSquare))
                 }
                 bitboard = bitboard and bitboard - 1
             }
@@ -191,15 +191,16 @@ object MoveGenerator {
                                 capturedPiece: Int,
                                 theirPieceBitboard: LongArray,
                                 maskBitboard: Long) {
-        val pieceMask = maskBitboard and theirPieceBitboard[capturedPiece]
-        if (pieceMask == Bitboard.EMPTY) {
+        val ourColor = board.colorToMove
+        val targetMask = maskBitboard and theirPieceBitboard[capturedPiece] and
+            attackInfo.attacksBitboard[ourColor][movedPiece]
+        if (targetMask == Bitboard.EMPTY) {
             return
         }
-        val ourColor = board.colorToMove
         var tmpPieces = board.pieceBitboard[ourColor][movedPiece]
         while (tmpPieces != Bitboard.EMPTY) {
             val fromSquare = Square.getSquare(tmpPieces)
-            var bitboard = attackInfo.pieceMovement[ourColor][fromSquare] and pieceMask
+            var bitboard = attackInfo.pieceMovement[ourColor][fromSquare] and targetMask
 
             while (bitboard != Bitboard.EMPTY) {
                 val toSquare = Square.getSquare(bitboard)
