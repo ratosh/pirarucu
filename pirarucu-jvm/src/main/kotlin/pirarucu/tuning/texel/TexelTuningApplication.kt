@@ -1,6 +1,5 @@
 package pirarucu.tuning.texel
 
-import pirarucu.board.Piece
 import pirarucu.eval.EvalConstants
 import pirarucu.tuning.ErrorCalculator
 import pirarucu.tuning.TunableConstants
@@ -15,7 +14,7 @@ object TexelTuningApplication {
 
     private const val INTERACTIONS = 10000
 
-    private const val numberOfThreads = 2
+    private const val numberOfThreads = 6
     private val workers = arrayOfNulls<ErrorCalculator>(numberOfThreads)
     private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
     private val epdFileLoader = EpdFileLoader("G:/chess/epds/quiet_labeled.epd")
@@ -32,6 +31,7 @@ object TexelTuningApplication {
                 false, 0, 6))
                 */
 
+            /*
             tuningObject.registerTuningData(TexelTuningData(
                 "MATERIAL_SCORE_MG",
                 TunableConstants.MATERIAL_SCORE_MG,
@@ -475,6 +475,19 @@ object TexelTuningApplication {
                 TunableConstants.THREATEN_BY_BISHOP_EG,
                 intArrayOf(0, 8, 8, 0, 8, 8, 0),
                 false, intArrayOf(0, 3, 6), 5))
+            */
+
+            tuningObject.registerTuningData(TexelTuningData(
+                "THREATEN_BY_ROOK_MG",
+                TunableConstants.THREATEN_BY_ROOK_MG,
+                intArrayOf(0, 8, 8, 8, 0, 8, 0),
+                false, intArrayOf(0, 4, 6), 5))
+
+            tuningObject.registerTuningData(TexelTuningData(
+                "THREATEN_BY_ROOK_EG",
+                TunableConstants.THREATEN_BY_ROOK_EG,
+                intArrayOf(0, 8, 8, 8, 0, 8, 0),
+                false, intArrayOf(0, 4, 6), 5))
 
             return tuningObject
         }
