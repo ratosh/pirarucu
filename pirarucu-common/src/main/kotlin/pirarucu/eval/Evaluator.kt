@@ -266,7 +266,7 @@ object Evaluator {
                 result += TunableConstants.SAFE_CHECK_THREAT[Piece.ROOK]
             }
             if (Rank.getRelativeRank(ourColor, Rank.getRank(square)) == Rank.RANK_7 &&
-                Rank.getRelativeRank(ourColor, Rank.getRank(board.basicEvalInfo.kingSquare[theirColor])) >=
+                Rank.getRelativeRank(ourColor, Rank.getRank(board.kingSquare[theirColor])) >=
                 Rank.RANK_7) {
                 result += TunableConstants.OTHER_BONUS[TunableConstants.OTHER_BONUS_ROOK_ON_SEVENTH]
             }

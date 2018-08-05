@@ -191,8 +191,8 @@ object TunableConstants {
     val OTHER_BONUS_BISHOP_PAIR = 0
     val OTHER_BONUS_ROOK_ON_SEVENTH = 1
 
-    val OTHER_BONUS_MG = intArrayOf(24, 19)
-    val OTHER_BONUS_EG = intArrayOf(54, 14)
+    val OTHER_BONUS_MG = intArrayOf(24, 4)
+    val OTHER_BONUS_EG = intArrayOf(54, 9)
     val OTHER_BONUS = IntArray(OTHER_BONUS_EG.size)
 
     val THREATEN_BY_KNIGHT_MG = intArrayOf(0, 6, 0, 36, 61, 31, 0)
