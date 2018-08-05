@@ -202,6 +202,10 @@ object TunableConstants {
     val THREATEN_BY_BISHOP_EG = intArrayOf(0, 16, 31, 0, 11, 26, 0)
     val THREATEN_BY_BISHOP = IntArray(Piece.SIZE)
 
+    val THREATEN_BY_ROOK_MG = intArrayOf(0, 4, 19, 4, 0, 89, 0)
+    val THREATEN_BY_ROOK_EG = intArrayOf(0, 19, 19, 29, 0, 4, 0)
+    val THREATEN_BY_ROOK = IntArray(Piece.SIZE)
+
     init {
         update()
     }
@@ -290,6 +294,11 @@ object TunableConstants {
         for (piece in 0 until THREATEN_BY_BISHOP.size) {
             THREATEN_BY_BISHOP[piece] = SplitValue.mergeParts(THREATEN_BY_BISHOP_MG[piece],
                 THREATEN_BY_BISHOP_EG[piece])
+        }
+
+        for (piece in 0 until THREATEN_BY_ROOK.size) {
+            THREATEN_BY_ROOK[piece] = SplitValue.mergeParts(THREATEN_BY_ROOK_MG[piece],
+                THREATEN_BY_ROOK_EG[piece])
         }
     }
 }

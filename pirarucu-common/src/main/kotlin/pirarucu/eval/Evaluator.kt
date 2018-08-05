@@ -224,8 +224,33 @@ object Evaluator {
 
         while (tmpPieces != Bitboard.EMPTY) {
             val square = Square.getSquare(tmpPieces)
+            val bitboard = Bitboard.getBitboard(square)
 
             val attackBitboard = attackInfo.pieceMovement[ourColor][square]
+            // Attacking undefended pawns
+            if (attackBitboard and board.pieceBitboard[theirColor][Piece.PAWN] and
+                attackInfo.attacksBitboard[theirColor][Piece.NONE].inv() != Bitboard.EMPTY) {
+                result += TunableConstants.THREATEN_BY_ROOK[Piece.PAWN]
+            }
+
+            // Attacking undefended knights
+            if (attackBitboard and board.pieceBitboard[theirColor][Piece.KNIGHT] and
+                attackInfo.attacksBitboard[theirColor][Piece.NONE].inv() != Bitboard.EMPTY) {
+                result += TunableConstants.THREATEN_BY_ROOK[Piece.KNIGHT]
+            }
+
+            // Attacking undefended bishops
+            if (attackBitboard and board.pieceBitboard[theirColor][Piece.BISHOP] and
+                attackInfo.attacksBitboard[theirColor][Piece.NONE].inv() != Bitboard.EMPTY) {
+                result += TunableConstants.THREATEN_BY_ROOK[Piece.BISHOP]
+            }
+
+            // Protected rook attacking queen
+            if (attackBitboard and board.pieceBitboard[theirColor][Piece.QUEEN] != Bitboard.EMPTY &&
+                bitboard and attackInfo.attacksBitboard[ourColor][Piece.NONE] != Bitboard.EMPTY) {
+                result += TunableConstants.THREATEN_BY_ROOK[Piece.QUEEN]
+            }
+
             val pieceMobilityBitboard = attackBitboard and mobilityBitboard
             result += TunableConstants.MOBILITY[Piece.ROOK][Utils.specific.bitCount(pieceMobilityBitboard)]
 
