@@ -52,6 +52,7 @@ object BenchmarkApplication {
 
             mainSearch.search(board, searchInfo, searchOptions)
             nodeCount += Statistics.searchNodes
+            println("Board (" + epdInfo.fenPosition + ") | Nodes: " + Statistics.searchNodes)
         }
         val timeTaken = Utils.specific.currentTimeMillis() - startTime
 

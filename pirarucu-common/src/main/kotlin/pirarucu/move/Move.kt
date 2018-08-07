@@ -24,6 +24,8 @@ object Move {
     private const val TO_SHIFT = 6
     private const val MOVE_TYPE_SHIFT = 12
 
+    private const val FROM_TO_MASK = 0xFFF
+
     const val SIZE = 16
 
     fun createPromotionMove(fromSquare: Int,
@@ -164,4 +166,9 @@ object Move {
         }
         return Move.getMove(board, move) == ourMove
     }
+
+    fun getFromTo(move: Int): Int {
+        return move and FROM_TO_MASK
+    }
+
 }

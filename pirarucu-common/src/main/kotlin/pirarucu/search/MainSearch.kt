@@ -167,7 +167,7 @@ class MainSearch {
                     if (foundInfo != TranspositionTable.EMPTY_INFO) {
                         val ttMove = TranspositionTable.getMove(foundInfo)
                         if (ttMove != Move.NONE) {
-                            moveList.addMove(ttMove)
+                            moveList.addMove(ttMove, 0)
                         }
                         currentNode.setTTMove(ttMove)
                     }
@@ -181,7 +181,7 @@ class MainSearch {
                     if (killerMove != Move.NONE &&
                         !currentNode.isTTMove(killerMove) &&
                         MoveGenerator.isLegalQuietMove(board, currentNode.attackInfo, killerMove)) {
-                        moveList.addMove(killerMove)
+                        moveList.addMove(killerMove, 0)
                     }
                 }
                 PHASE_KILLER_2 -> {
@@ -189,7 +189,7 @@ class MainSearch {
                     if (killerMove != Move.NONE &&
                         !currentNode.isTTMove(killerMove) &&
                         MoveGenerator.isLegalQuietMove(board, currentNode.attackInfo, killerMove)) {
-                        moveList.addMove(killerMove)
+                        moveList.addMove(killerMove, 0)
                     }
                 }
                 PHASE_QUIET -> {
@@ -214,6 +214,7 @@ class MainSearch {
                 val capturedPiece = board.pieceTypeBoard[toSquare]
 
                 val isCapture = capturedPiece != Piece.NONE
+                val isQuiet = !isCapture && moveType == MoveType.TYPE_NORMAL
 
                 if (prunable &&
                     !isPromotion &&
@@ -290,12 +291,15 @@ class MainSearch {
                 }
 
                 if (searchAlpha >= currentBeta) {
-                    val isNormal = Move.getMoveType(bestMove) == MoveType.TYPE_NORMAL
-                    if (!isCapture && isNormal) {
-                        currentNode.addKillerMove(bestMove)
+                    if (isQuiet) {
+                        currentNode.addKillerMove(move)
+                        History.addHistory(board.colorToMove, move, depth * depth)
                     }
                     phase = PHASE_END
                     break
+                }
+                if (isQuiet) {
+                    History.addHistory(board.colorToMove, move, -depth * depth)
                 }
             }
             phase--
