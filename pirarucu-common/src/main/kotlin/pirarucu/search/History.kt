@@ -3,6 +3,7 @@ package pirarucu.search
 import pirarucu.board.Color
 import pirarucu.board.Square
 import pirarucu.move.Move
+import pirarucu.util.Utils
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -25,5 +26,10 @@ object History {
         var entry = history[colour][fromTo]
         entry += 32 * delta - entry * abs(delta) / 512
         history[colour][fromTo] = entry
+    }
+
+    fun reset() {
+        Utils.specific.arrayFill(history[0], 0)
+        Utils.specific.arrayFill(history[1], 0)
     }
 }

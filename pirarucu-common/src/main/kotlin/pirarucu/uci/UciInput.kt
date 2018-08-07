@@ -1,6 +1,7 @@
 package pirarucu.uci
 
 import pirarucu.hash.TranspositionTable
+import pirarucu.search.History
 import pirarucu.util.Utils
 
 class UciInput(private val inputHandler: IInputHandler) {
@@ -19,6 +20,7 @@ class UciInput(private val inputHandler: IInputHandler) {
             }
             "ucinewgame" -> {
                 TranspositionTable.reset()
+                History.reset()
             }
             "position" -> inputHandler.position(tokens)
             "setoption" -> inputHandler.setOption(tokens[2], tokens[4])
