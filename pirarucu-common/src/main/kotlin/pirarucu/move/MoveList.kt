@@ -1,7 +1,6 @@
 package pirarucu.move
 
 import pirarucu.game.GameConstants
-import pirarucu.stats.Statistics
 import pirarucu.util.Utils
 
 /**
@@ -10,6 +9,7 @@ import pirarucu.util.Utils
 class MoveList {
 
     private val moves = IntArray(GameConstants.MAX_MOVES)
+    private val scores = IntArray(GameConstants.MAX_MOVES)
     private val nextToMove = IntArray(GameConstants.MAX_PLIES)
     private val nextToGenerate = IntArray(GameConstants.MAX_PLIES)
 
@@ -31,14 +31,31 @@ class MoveList {
     }
 
     operator fun next(): Int {
-        return moves[nextToMove[currentPly]++]
+        var bestScore = INVALID_SCORE
+        var bestIndex = -1
+        val next = nextToMove[currentPly]
+        for (i in next until nextToGenerate[currentPly]) {
+            val score = scores[i]
+            if (score > bestScore) {
+                bestScore = score
+                bestIndex = i
+            }
+        }
+        val move = moves[bestIndex]
+        if (bestIndex != next) {
+            moves[bestIndex] = moves[next]
+            scores[bestIndex] = scores[next]
+        }
+        nextToMove[currentPly]++
+        return move
     }
 
     operator fun hasNext(): Boolean {
         return nextToGenerate[currentPly] != nextToMove[currentPly]
     }
 
-    fun addMove(move: Int) {
+    fun addMove(move: Int, score: Int) {
+        scores[nextToGenerate[currentPly]] = score
         moves[nextToGenerate[currentPly]++] = move
     }
 
@@ -78,5 +95,9 @@ class MoveList {
             buffer.append(' ')
         }
         return buffer.toString()
+    }
+
+    companion object {
+        const val INVALID_SCORE = Int.MIN_VALUE
     }
 }

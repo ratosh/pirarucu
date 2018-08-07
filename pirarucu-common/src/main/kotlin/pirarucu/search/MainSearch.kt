@@ -167,7 +167,7 @@ class MainSearch {
                     if (foundInfo != TranspositionTable.EMPTY_INFO) {
                         val ttMove = TranspositionTable.getMove(foundInfo)
                         if (ttMove != Move.NONE) {
-                            moveList.addMove(ttMove)
+                            moveList.addMove(ttMove, 0)
                         }
                         currentNode.setTTMove(ttMove)
                     }
@@ -181,7 +181,7 @@ class MainSearch {
                     if (killerMove != Move.NONE &&
                         !currentNode.isTTMove(killerMove) &&
                         MoveGenerator.isLegalQuietMove(board, currentNode.attackInfo, killerMove)) {
-                        moveList.addMove(killerMove)
+                        moveList.addMove(killerMove, 0)
                     }
                 }
                 PHASE_KILLER_2 -> {
@@ -189,7 +189,7 @@ class MainSearch {
                     if (killerMove != Move.NONE &&
                         !currentNode.isTTMove(killerMove) &&
                         MoveGenerator.isLegalQuietMove(board, currentNode.attackInfo, killerMove)) {
-                        moveList.addMove(killerMove)
+                        moveList.addMove(killerMove, 0)
                     }
                 }
                 PHASE_QUIET -> {

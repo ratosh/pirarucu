@@ -337,4 +337,12 @@ object BitboardMove {
             (bitboard ushr 7 and Bitboard.NOT_FILE_A) or (bitboard ushr 9 and Bitboard.NOT_FILE_H)
         }
     }
+
+    fun pawnForward(color: Int, bitboard: Long): Long {
+        return if (color == Color.WHITE) {
+            (bitboard shl 8)
+        } else {
+            (bitboard ushr 8)
+        }
+    }
 }

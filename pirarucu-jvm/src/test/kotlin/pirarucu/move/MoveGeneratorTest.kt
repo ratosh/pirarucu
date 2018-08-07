@@ -44,14 +44,14 @@ class MoveGeneratorTest {
     fun testPromotion() {
         val board = BoardFactory.getBoard("5k2/2P5/8/8/8/8/8/5K2 w - -")
         val moveList = MoveList()
-        MoveGenerator.legalMoves(board, attackInfo, moveList)
+        MoveGenerator.legalAttacks(board, attackInfo, moveList)
         var legalMoves = 0
         while (moveList.hasNext()) {
             if (board.isLegalMove(moveList.next())) {
                 legalMoves++
             }
         }
-        assertEquals(legalMoves, 9)
+        assertEquals(legalMoves, 4)
     }
 
     @Test
