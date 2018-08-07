@@ -35,12 +35,12 @@ object MoveGenerator {
         val theirColor = board.nextColorToMove
         var quietPieces = Bitboard.FROM_PROMOTION_BITBOARD[ourColor].inv() and
             board.pieceBitboard[ourColor][Piece.PAWN] and
-            BitboardMove.pawnForward(theirColor, mask)
+            BitboardMove.pawnForward(theirColor, board.emptyBitboard)
         val kingSquare = board.kingSquare[ourColor]
         val emptyBitboardMask = board.emptyBitboard
         while (quietPieces != Bitboard.EMPTY) {
             val fromSquare = Square.getSquare(quietPieces)
-            var bitboard = BitboardMove.PAWN_MOVES[ourColor][fromSquare] and emptyBitboardMask or
+            var bitboard = (BitboardMove.PAWN_MOVES[ourColor][fromSquare] and emptyBitboardMask) or
                 (BitboardMove.DOUBLE_PAWN_MOVES[ourColor][fromSquare] and emptyBitboardMask)
 
             val fromBitboard = Bitboard.getBitboard(fromSquare)
@@ -48,7 +48,7 @@ object MoveGenerator {
             if (fromBitboard and board.basicEvalInfo.pinnedBitboard != Bitboard.EMPTY) {
                 bitboard = bitboard and BitboardMove.PINNED_MOVE_MASK[kingSquare][fromSquare]
             }
-            bitboard = bitboard and attackInfo.movementMask[ourColor]
+            bitboard = bitboard and mask
 
             generateQuietMoves(moveList, ourColor, fromSquare, bitboard)
 
