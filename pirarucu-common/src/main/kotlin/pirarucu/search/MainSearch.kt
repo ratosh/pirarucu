@@ -214,6 +214,7 @@ class MainSearch {
                 val capturedPiece = board.pieceTypeBoard[toSquare]
 
                 val isCapture = capturedPiece != Piece.NONE
+                val isQuiet = !isCapture && moveType == MoveType.TYPE_NORMAL
 
                 if (prunable &&
                     !isPromotion &&
@@ -290,12 +291,15 @@ class MainSearch {
                 }
 
                 if (searchAlpha >= currentBeta) {
-                    val isNormal = Move.getMoveType(bestMove) == MoveType.TYPE_NORMAL
-                    if (!isCapture && isNormal) {
-                        currentNode.addKillerMove(bestMove)
+                    if (isQuiet) {
+                        currentNode.addKillerMove(move)
+                        History.addHistory(board.colorToMove, move, depth * depth)
                     }
                     phase = PHASE_END
                     break
+                }
+                if (isQuiet) {
+                    History.addHistory(board.colorToMove, move, -depth * depth)
                 }
             }
             phase--
