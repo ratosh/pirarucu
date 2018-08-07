@@ -379,7 +379,7 @@ object MoveGenerator {
     private fun createPromotions(board: Board, moveList: MoveList, fromSquare: Int, toSquare: Int) {
         registerExchangeMove(moveList, true,
             Move.createPromotionMove(fromSquare, toSquare, MoveType.TYPE_PROMOTION_QUEEN),
-            getMVVLVAScore(Piece.PAWN, board.pieceTypeBoard[toSquare]) + Piece.QUEEN)
+            getMVVLVAScore(Piece.PAWN, board.pieceTypeBoard[toSquare]) + TunableConstants.SEE_VALUE[Piece.QUEEN])
 
         registerExchangeMove(moveList, false,
             Move.createPromotionMove(fromSquare, toSquare, MoveType.TYPE_PROMOTION_ROOK),
