@@ -5,6 +5,7 @@ import pirarucu.board.Board
 import pirarucu.board.Color
 import pirarucu.board.File
 import pirarucu.board.Piece
+import pirarucu.board.Rank
 import pirarucu.board.Square
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.SplitValue
@@ -263,6 +264,11 @@ object Evaluator {
 
             if (safeChecks != Bitboard.EMPTY) {
                 result += TunableConstants.SAFE_CHECK_THREAT[Piece.ROOK]
+            }
+            if (Rank.getRelativeRank(ourColor, Rank.getRank(square)) == Rank.RANK_7 &&
+                Rank.getRelativeRank(ourColor, Rank.getRank(board.kingSquare[theirColor])) >=
+                Rank.RANK_7) {
+                result += TunableConstants.OTHER_BONUS[TunableConstants.OTHER_BONUS_ROOK_ON_SEVENTH]
             }
 
             tmpPieces = tmpPieces and tmpPieces - 1

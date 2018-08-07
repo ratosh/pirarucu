@@ -439,19 +439,21 @@ object TexelTuningApplication {
                 TunableConstants.SAFE_CHECK_THREAT_EG,
                 intArrayOf(0, 0, 8, 8, 8, 8, 0),
                 false, intArrayOf(0, 1, 6), 5))
+                */
 
             tuningObject.registerTuningData(TexelTuningData(
                 "OTHER_BONUS_MG",
                 TunableConstants.OTHER_BONUS_MG,
-                intArrayOf(8),
+                intArrayOf(8, 8),
                 false, intArrayOf(), 5))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "OTHER_BONUS_EG",
                 TunableConstants.OTHER_BONUS_EG,
-                intArrayOf(8),
+                intArrayOf(8, 8),
                 false, intArrayOf(), 5))
 
+            /*
             tuningObject.registerTuningData(TexelTuningData(
                 "THREATEN_BY_KNIGHT_MG",
                 TunableConstants.THREATEN_BY_KNIGHT_MG,
@@ -475,7 +477,6 @@ object TexelTuningApplication {
                 TunableConstants.THREATEN_BY_BISHOP_EG,
                 intArrayOf(0, 8, 8, 0, 8, 8, 0),
                 false, intArrayOf(0, 3, 6), 5))
-            */
 
             tuningObject.registerTuningData(TexelTuningData(
                 "THREATEN_BY_ROOK_MG",
@@ -488,6 +489,7 @@ object TexelTuningApplication {
                 TunableConstants.THREATEN_BY_ROOK_EG,
                 intArrayOf(0, 8, 8, 8, 0, 8, 0),
                 false, intArrayOf(0, 4, 6), 5))
+                */
 
             return tuningObject
         }
