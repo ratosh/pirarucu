@@ -11,4 +11,8 @@ object SearchConstants {
     const val LMR_MIN_MOVES = 1
 
     const val IID_DEPTH = 10
+
+    const val LMP_DEPTH = 6
+    const val LMP_MULTIPLIER = 3
+    const val LMP_MIN_MOVES = 3
 }

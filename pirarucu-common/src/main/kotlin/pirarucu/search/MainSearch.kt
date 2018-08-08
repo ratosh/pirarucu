@@ -220,6 +220,16 @@ class MainSearch {
                     !isPromotion &&
                     movesPerformed > 0) {
 
+                    if (newDepth < SearchConstants.LMP_DEPTH) {
+                        if (movesPerformed > depth * SearchConstants.LMP_MULTIPLIER + SearchConstants.LMP_MIN_MOVES) {
+                            if (phase == PHASE_QUIET) {
+                                break
+                            } else {
+                                continue
+                            }
+                        }
+                    }
+
                     if (!isCapture &&
                         newDepth < TunableConstants.FUTILITY_PARENT_MARGIN.size) {
                         val futilityValue = eval + TunableConstants.FUTILITY_PARENT_MARGIN[newDepth]
