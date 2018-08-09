@@ -264,7 +264,7 @@ class MainSearch {
                         !isCapture &&
                         !isPromotion) {
 
-                        reduction += 1 + newDepth / 6
+                        reduction += 1 + newDepth / 6 + movesPerformed / 10
                         if (!pvNode) {
                             reduction += 1
                         }
