@@ -7,7 +7,9 @@ import pirarucu.board.Rank
 import pirarucu.board.Square
 import pirarucu.game.GameConstants
 import pirarucu.util.SplitValue
+import kotlin.math.ln
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 object TunableConstants {
     val RAZOR_MARGIN = intArrayOf(0, 400)
@@ -16,6 +18,8 @@ object TunableConstants {
 
     val TEMPO_TUNING = intArrayOf(23, 13)
     val TEMPO = IntArray(Color.SIZE)
+
+    val LMR_TABLE = Array(64) { IntArray(64) }
 
     val PHASE_PIECE_VALUE = intArrayOf(0, 0, 9, 10, 20, 40, 0)
 
@@ -208,6 +212,14 @@ object TunableConstants {
     val THREATEN_BY_ROOK = IntArray(Piece.SIZE)
 
     init {
+        // Ethereal LMR formula with depth and number of performed moves
+        for (depth in 1 until LMR_TABLE.size) {
+            for (moveNumber in 1 until LMR_TABLE[depth].size) {
+                LMR_TABLE[depth][moveNumber] =
+                    (0.75 + ln(depth.toDouble()) * ln(moveNumber.toDouble()) / 2.25).roundToInt()
+            }
+        }
+
         update()
     }
 

@@ -264,10 +264,11 @@ class MainSearch {
                         !isCapture &&
                         !isPromotion) {
 
-                        reduction += 1 + newDepth / 6 + movesPerformed / 10
+                        reduction = TunableConstants.LMR_TABLE[min(newDepth, 63)][min(movesPerformed, 63)]
                         if (!pvNode) {
                             reduction += 1
                         }
+                        reduction = min(newDepth - 1, max(reduction, 1))
                     }
 
                     val searchDepth = newDepth - 1
@@ -277,7 +278,6 @@ class MainSearch {
                         score = -search(board, moveList, newDepth - reduction, ply + 1, -searchAlpha - 1,
                             -searchAlpha, false)
                     }
-
 
                     // PVS Search
                     if ((reduction == 1 && (!pvNode || movesPerformed != 1)) || (reduction != 1 && score > searchAlpha)) {
