@@ -215,13 +215,10 @@ object TunableConstants {
     init {
         // Ethereal LMR formula with depth and number of performed moves
         for (depth in 1 until LMR_TABLE.size) {
-            val buffer = StringBuilder()
             for (moveNumber in 1 until LMR_TABLE[depth].size) {
                 LMR_TABLE[depth][moveNumber] =
                     (1 + ln(depth.toDouble()) * ln(moveNumber.toDouble() * 1.2) / 2.1).roundToInt()
-                buffer.append(" " + LMR_TABLE[depth][moveNumber])
             }
-            println(buffer.toString())
         }
 
         update()
