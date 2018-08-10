@@ -10,7 +10,6 @@ import pirarucu.util.SplitValue
 import kotlin.math.ln
 import kotlin.math.min
 import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
 object TunableConstants {
     val RAZOR_MARGIN = intArrayOf(0, 400)
@@ -217,7 +216,7 @@ object TunableConstants {
         for (depth in 1 until LMR_TABLE.size) {
             for (moveNumber in 1 until LMR_TABLE[depth].size) {
                 LMR_TABLE[depth][moveNumber] =
-                    (1 + ln(depth.toDouble()) * ln(moveNumber.toDouble() * 1.2) / 2.1).roundToInt()
+                    (0.5 + ln(depth.toDouble()) * ln(moveNumber.toDouble() * 1.2) / 2.5).roundToInt()
             }
         }
 
