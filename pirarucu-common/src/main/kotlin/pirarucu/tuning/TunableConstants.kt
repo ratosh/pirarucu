@@ -10,6 +10,7 @@ import pirarucu.util.SplitValue
 import kotlin.math.ln
 import kotlin.math.min
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 object TunableConstants {
     val RAZOR_MARGIN = intArrayOf(0, 400)
@@ -214,10 +215,13 @@ object TunableConstants {
     init {
         // Ethereal LMR formula with depth and number of performed moves
         for (depth in 1 until LMR_TABLE.size) {
+            val buffer = StringBuilder()
             for (moveNumber in 1 until LMR_TABLE[depth].size) {
                 LMR_TABLE[depth][moveNumber] =
-                    (0.75 + ln(depth.toDouble()) * ln(moveNumber.toDouble()) / 2.25).roundToInt()
+                    (1 + ln(depth.toDouble()) * ln(moveNumber.toDouble() * 1.2) / 2.1).roundToInt()
+                buffer.append(" " + LMR_TABLE[depth][moveNumber])
             }
+            println(buffer.toString())
         }
 
         update()
