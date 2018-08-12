@@ -17,7 +17,7 @@ class HighestErrorCalculator(size: Int) : Callable<Double> {
     private val attackInfo = AttackInfo()
 
     private val largestError = DoubleArray(size)
-    private val largestErrorFen = Array(size, { "" })
+    private val largestErrorFen = Array(size) { "" }
 
     fun addEpdInfo(epdInfo: EpdInfo) {
         epdInfoList.add(epdInfo)

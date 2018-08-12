@@ -46,8 +46,8 @@ object Evaluator {
         score += evalQueen(board, attackInfo, Color.WHITE, Color.BLACK) -
             evalQueen(board, attackInfo, Color.BLACK, Color.WHITE)
 
-        score += evalKing(board, attackInfo, Color.WHITE) -
-            evalKing(board, attackInfo, Color.BLACK)
+        score += evalKing(board, attackInfo, Color.WHITE, Color.BLACK) -
+            evalKing(board, attackInfo, Color.BLACK, Color.WHITE)
 
         val mgScore = SplitValue.getFirstPart(score)
         val egScore = SplitValue.getSecondPart(score)
@@ -318,7 +318,7 @@ object Evaluator {
     /**
      * Evaluate king
      */
-    private fun evalKing(board: Board, attackInfo: AttackInfo, ourColor: Int): Int {
+    private fun evalKing(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
         val kingSquare = board.kingSquare[ourColor]
 
         var result = 0
@@ -336,8 +336,13 @@ object Evaluator {
 
             result += TunableConstants.PAWN_SHIELD[fileDistance][fileBorderDistance][rankDistance]
 
+
             tmpPieces = tmpPieces and tmpPieces - 1
         }
+        val attackBitboard = attackInfo.pieceMovement[ourColor][kingSquare]
+
+        val pieceMobilityBitboard = attackBitboard and attackInfo.attacksBitboard[theirColor][Piece.NONE]
+        result += TunableConstants.MOBILITY[Piece.KING][Utils.specific.bitCount(pieceMobilityBitboard)]
 
         return result
     }
