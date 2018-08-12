@@ -341,8 +341,8 @@ object Evaluator {
         }
         val attackBitboard = attackInfo.pieceMovement[ourColor][kingSquare]
 
-        val pieceMobilityBitboard = attackBitboard and attackInfo.attacksBitboard[theirColor][Piece.NONE]
-        result += TunableConstants.MOBILITY[Piece.KING][Utils.specific.bitCount(pieceMobilityBitboard)]
+        val kingMobility = attackBitboard and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
+        result += TunableConstants.MOBILITY[Piece.KING][Utils.specific.bitCount(kingMobility)]
 
         return result
     }
