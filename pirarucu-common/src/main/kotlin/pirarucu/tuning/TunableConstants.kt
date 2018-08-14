@@ -113,7 +113,7 @@ object TunableConstants {
         intArrayOf(-32, -18, -5, 4, 7, 13, 17, 18, 19, 23, 41, 59, -22, 69),
         intArrayOf(-72, -57, -49, -41, -39, -27, -20, -8, 3, 15, 24, 35, 42, 40, 50),
         intArrayOf(13, -4, 3, 0, 10, 12, 9, 10, 9, 10, 13, 13, 12, 22, 23, 21, 16, 42, 30, 61, 56, 100, 57, 141, 75, 233, 49, 219),
-        intArrayOf())
+        intArrayOf(-90, -78, -23, 2, 13, 3, 17, 8, 19))
 
     val MOBILITY_EG = arrayOf(
         intArrayOf(),
@@ -122,7 +122,7 @@ object TunableConstants {
         intArrayOf(-33, -38, -17, -7, 4, 8, 12, 16, 18, 17, 8, 11, 41, 11),
         intArrayOf(-20, -25, 9, 14, 21, 24, 35, 31, 31, 29, 30, 33, 34, 39, 34),
         intArrayOf(-6, -82, -43, -41, -54, -60, -26, -15, -7, 9, 18, 26, 33, 27, 28, 39, 49, 22, 41, 27, 32, 13, 22, 0, 6, -69, 42, -68),
-        intArrayOf())
+        intArrayOf(-10, 33, 20, 16, 14, 4, 1, 4, -20))
     val MOBILITY = Array(Piece.SIZE) { IntArray(32) }
 
     val PAWN_SUPPORT_MG = intArrayOf(0, 0, 4, 1, 0, 0, 0)

@@ -11,14 +11,14 @@ object HighestErrorApplication {
     private const val numberOfThreads = 1
     private val workers = arrayOfNulls<HighestErrorCalculator>(numberOfThreads)
     private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
-    private val epdFileLoader = EpdFileLoader("d:\\chess\\epds\\quiet_labeled_v7c.epd")
+    private val epdFileLoader = EpdFileLoader("g:\\chess\\epds\\quiet_labeled.epd")
 
     @Throws(ExecutionException::class, InterruptedException::class)
     @JvmStatic
     fun main(args: Array<String>) {
         // setup
         for (i in workers.indices) {
-            workers[i] = HighestErrorCalculator(20)
+            workers[i] = HighestErrorCalculator(100)
         }
         var workerIndex = 0
         val iterator = epdFileLoader.getEpdInfoList()
