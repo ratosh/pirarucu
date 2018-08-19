@@ -153,9 +153,10 @@ object TunableConstants {
     const val PASSED_PAWN_SAFE_PATH = 3
     const val PASSED_PAWN_DEFENDED = 4
     const val PASSED_PAWN_DEFENDED_ADVANCE = 5
+    const val PASSED_PAWN_KING_DISTANCE = 6
 
-    val PASSED_PAWN_BONUS_MG = intArrayOf(0, 30, 0, 0, 25, 0)
-    val PASSED_PAWN_BONUS_EG = intArrayOf(10, 10, 21, 21, 0, 17)
+    val PASSED_PAWN_BONUS_MG = intArrayOf(0, 29, 1, 0, 22, 0, 0)
+    val PASSED_PAWN_BONUS_EG = intArrayOf(4, 14, 20, 22, 0, 11, 7)
     val PASSED_PAWN_BONUS = IntArray(PASSED_PAWN_BONUS_EG.size)
 
     val PAWN_SHIELD_MG = arrayOf(

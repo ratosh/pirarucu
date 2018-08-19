@@ -194,6 +194,11 @@ object PawnEvaluator {
                 result += TunableConstants.PASSED_PAWN_BONUS[TunableConstants.PASSED_PAWN_DEFENDED_ADVANCE]
             }
 
+            result += TunableConstants.PASSED_PAWN_BONUS[TunableConstants.PASSED_PAWN_KING_DISTANCE] *
+                (Square.SQUARE_DISTANCE[pawnSquare][board.kingSquare[theirColor]] -
+                    Square.SQUARE_DISTANCE[pawnSquare][board.kingSquare[ourColor]])
+
+
             tmpPieces = tmpPieces and tmpPieces - 1
         }
 
