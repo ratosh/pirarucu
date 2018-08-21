@@ -42,6 +42,7 @@ object BenchmarkApplication {
         searchOptions.minSearchTimeLimit = 60000L
         searchOptions.maxSearchTimeLimit = 60000L
         searchOptions.searchTimeIncrement = 1000L
+        TranspositionTable.resize(16)
         val searchInfo = SearchInfo()
         val board = BoardFactory.getBoard()
         val startTime = Utils.specific.currentTimeMillis()

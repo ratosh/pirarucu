@@ -1,6 +1,5 @@
 package pirarucu.tuning.texel
 
-import pirarucu.board.Piece
 import pirarucu.eval.EvalConstants
 import pirarucu.tuning.ErrorCalculator
 import pirarucu.tuning.TunableConstants
@@ -260,7 +259,6 @@ object TexelTuningApplication {
                 TunableConstants.MOBILITY_EG[Piece.QUEEN],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8),
                 true, intArrayOf(), 5))
-                */
 
             tuningObject.registerTuningData(TexelTuningData(
                 "MOBILITY_MG[KING]",
@@ -274,7 +272,6 @@ object TexelTuningApplication {
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 8, 8),
                 true, intArrayOf(), 1))
 
-            /*
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SUPPORT_MG",
                 TunableConstants.PAWN_SUPPORT_MG,
@@ -322,19 +319,21 @@ object TexelTuningApplication {
                 TunableConstants.PASSED_PAWN_EG,
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
                 true, intArrayOf(0, 7), 5))
+                */
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PASSED_PAWN_BONUS_MG",
                 TunableConstants.PASSED_PAWN_BONUS_MG,
-                intArrayOf(8, 8, 8, 8, 8, 8),
-                false, intArrayOf(), 5))
+                intArrayOf(8, 8, 8, 8, 8, 8, 8),
+                false, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PASSED_PAWN_BONUS_EG",
                 TunableConstants.PASSED_PAWN_BONUS_EG,
-                intArrayOf(8, 8, 8, 8, 8, 8),
-                false, intArrayOf(), 5))
+                intArrayOf(8, 8, 8, 8, 8, 8, 8),
+                false, intArrayOf(), 1))
 
+            /*
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_MG[0][0]",
                 TunableConstants.PAWN_SHIELD_MG[0][0],
