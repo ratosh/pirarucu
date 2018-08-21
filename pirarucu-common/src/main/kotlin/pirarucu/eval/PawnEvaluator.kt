@@ -198,7 +198,6 @@ object PawnEvaluator {
                 (Square.SQUARE_DISTANCE[pawnSquare][board.kingSquare[theirColor]] -
                     Square.SQUARE_DISTANCE[pawnSquare][board.kingSquare[ourColor]])
 
-
             tmpPieces = tmpPieces and tmpPieces - 1
         }
 
