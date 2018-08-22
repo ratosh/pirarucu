@@ -36,13 +36,13 @@ object TexelTuningApplication {
                 "MATERIAL_SCORE_MG",
                 TunableConstants.MATERIAL_SCORE_MG,
                 intArrayOf(0, 8, 10, 10, 10, 11),
-                false, intArrayOf(0), 5))
+                false, intArrayOf(0), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "MATERIAL_SCORE_EG",
                 TunableConstants.MATERIAL_SCORE_EG,
                 intArrayOf(0, 8, 10, 10, 10, 11),
-                false, intArrayOf(0), 5))
+                false, intArrayOf(0), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PSQT_MG[PAWN]",
@@ -56,7 +56,7 @@ object TexelTuningApplication {
                     8, 8, 8, 8,
                     0, 0, 0, 0
                 ),
-                true, intArrayOf(0, 1, 2, 3, 28, 29, 30, 31), 5))
+                true, intArrayOf(0, 1, 2, 3, 28, 29, 30, 31), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PSQT_EG[PAWN]",
@@ -70,7 +70,7 @@ object TexelTuningApplication {
                     8, 8, 8, 8,
                     0, 0, 0, 0
                 ),
-                true, intArrayOf(0, 1, 2, 3, 28, 29, 30, 31), 5))
+                true, intArrayOf(0, 1, 2, 3, 28, 29, 30, 31), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PSQT_MG[KNIGHT]",
@@ -84,7 +84,7 @@ object TexelTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PSQT_EG[KNIGHT]",
@@ -98,7 +98,7 @@ object TexelTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PSQT_MG[BISHOP]",
@@ -112,7 +112,7 @@ object TexelTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PSQT_EG[BISHOP]",
@@ -126,7 +126,7 @@ object TexelTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PSQT_MG[ROOK]",
@@ -140,7 +140,7 @@ object TexelTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PSQT_EG[ROOK]",
@@ -154,7 +154,7 @@ object TexelTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PSQT_MG[QUEEN]",
@@ -168,7 +168,7 @@ object TexelTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PSQT_EG[QUEEN]",
@@ -182,7 +182,7 @@ object TexelTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PSQT_MG[KING]",
@@ -196,7 +196,7 @@ object TexelTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PSQT_EG[KING]",
@@ -210,55 +210,55 @@ object TexelTuningApplication {
                     8, 8, 8, 8,
                     8, 8, 8, 8
                 ),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "MOBILITY_MG[KNIGHT]",
                 TunableConstants.MOBILITY_MG[Piece.KNIGHT],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 8, 8),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "MOBILITY_EG[KNIGHT]",
                 TunableConstants.MOBILITY_EG[Piece.KNIGHT],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 8, 8),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "MOBILITY_MG[BISHOP]",
                 TunableConstants.MOBILITY_MG[Piece.BISHOP],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "MOBILITY_EG[BISHOP]",
                 TunableConstants.MOBILITY_EG[Piece.BISHOP],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "MOBILITY_MG[ROOK]",
                 TunableConstants.MOBILITY_MG[Piece.ROOK],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "MOBILITY_EG[ROOK]",
                 TunableConstants.MOBILITY_EG[Piece.ROOK],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "MOBILITY_MG[QUEEN]",
                 TunableConstants.MOBILITY_MG[Piece.QUEEN],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "MOBILITY_EG[QUEEN]",
                 TunableConstants.MOBILITY_EG[Piece.QUEEN],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "MOBILITY_MG[KING]",
@@ -276,50 +276,49 @@ object TexelTuningApplication {
                 "PAWN_SUPPORT_MG",
                 TunableConstants.PAWN_SUPPORT_MG,
                 intArrayOf(0, 0, 8, 8, 0, 0, 0),
-                true, intArrayOf(0, 1, 4, 5, 6), 5))
+                true, intArrayOf(0, 1, 4, 5, 6), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SUPPORT_EG",
                 TunableConstants.PAWN_SUPPORT_EG,
                 intArrayOf(0, 0, 8, 8, 0, 0, 0),
-                true, intArrayOf(0, 1, 4, 5, 6), 5))
+                true, intArrayOf(0, 1, 4, 5, 6), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_THREAT_MG",
                 TunableConstants.PAWN_THREAT_MG,
                 intArrayOf(0, 0, 8, 8, 0, 0, 0),
-                true, intArrayOf(0, 1, 4, 5, 6), 5))
+                true, intArrayOf(0, 1, 4, 5, 6), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_THREAT_EG",
                 TunableConstants.PAWN_THREAT_EG,
                 intArrayOf(0, 0, 8, 8, 0, 0, 0),
-                true, intArrayOf(0, 1, 4, 5, 6), 5))
+                true, intArrayOf(0, 1, 4, 5, 6), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_BONUS_MG",
                 TunableConstants.PAWN_BONUS_MG,
                 intArrayOf(8, 8, 8, 8, 8),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_BONUS_EG",
                 TunableConstants.PAWN_BONUS_EG,
                 intArrayOf(8, 8, 8, 8, 8),
-                true, intArrayOf(), 5))
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PASSED_PAWN_MG",
                 TunableConstants.PASSED_PAWN_MG,
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PASSED_PAWN_EG",
                 TunableConstants.PASSED_PAWN_EG,
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
-                */
+                true, intArrayOf(0, 7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PASSED_PAWN_BONUS_MG",
@@ -333,174 +332,175 @@ object TexelTuningApplication {
                 intArrayOf(8, 8, 8, 8, 8, 8, 8),
                 false, intArrayOf(), 1))
 
-            /*
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_MG[0][0]",
                 TunableConstants.PAWN_SHIELD_MG[0][0],
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_MG[0][1]",
                 TunableConstants.PAWN_SHIELD_MG[0][1],
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_MG[0][2]",
                 TunableConstants.PAWN_SHIELD_MG[0][2],
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_MG[0][3]",
                 TunableConstants.PAWN_SHIELD_MG[0][3],
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_MG[1][0]",
                 TunableConstants.PAWN_SHIELD_MG[1][0],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(7), 5))
+                true, intArrayOf(7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_MG[1][1]",
                 TunableConstants.PAWN_SHIELD_MG[1][1],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(7), 5))
+                true, intArrayOf(7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_MG[1][2]",
                 TunableConstants.PAWN_SHIELD_MG[1][2],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(7), 5))
+                true, intArrayOf(7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_MG[1][3]",
                 TunableConstants.PAWN_SHIELD_MG[1][3],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(7), 5))
+                true, intArrayOf(7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_EG[0][0]",
                 TunableConstants.PAWN_SHIELD_EG[0][0],
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_EG[0][1]",
                 TunableConstants.PAWN_SHIELD_EG[0][1],
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_EG[0][2]",
                 TunableConstants.PAWN_SHIELD_EG[0][2],
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_EG[0][3]",
                 TunableConstants.PAWN_SHIELD_EG[0][3],
                 intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(0, 7), 5))
+                true, intArrayOf(0, 7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_EG[1][0]",
                 TunableConstants.PAWN_SHIELD_EG[1][0],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(7), 5))
+                true, intArrayOf(7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_EG[1][1]",
                 TunableConstants.PAWN_SHIELD_EG[1][1],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(7), 5))
+                true, intArrayOf(7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_EG[1][2]",
                 TunableConstants.PAWN_SHIELD_EG[1][2],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(7), 5))
+                true, intArrayOf(7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_EG[1][3]",
                 TunableConstants.PAWN_SHIELD_EG[1][3],
                 intArrayOf(8, 8, 8, 8, 8, 8, 8, 0),
-                true, intArrayOf(7), 5))
+                true, intArrayOf(7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "KING_THREAT_MG",
                 TunableConstants.KING_THREAT_MG,
                 intArrayOf(0, 0, 8, 8, 8, 8, 0),
-                false, intArrayOf(0, 1, 6), 5))
+                false, intArrayOf(0, 1, 6), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "KING_THREAT_EG",
                 TunableConstants.KING_THREAT_EG,
                 intArrayOf(0, 0, 8, 8, 8, 8, 0),
-                false, intArrayOf(0, 1, 6), 5))
+                false, intArrayOf(0, 1, 6), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "SAFE_CHECK_THREAT_MG",
                 TunableConstants.SAFE_CHECK_THREAT_MG,
                 intArrayOf(0, 0, 8, 8, 8, 8, 0),
-                false, intArrayOf(0, 1, 6), 5))
+                false, intArrayOf(0, 1, 6), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "SAFE_CHECK_THREAT_EG",
                 TunableConstants.SAFE_CHECK_THREAT_EG,
                 intArrayOf(0, 0, 8, 8, 8, 8, 0),
-                false, intArrayOf(0, 1, 6), 5))
+                false, intArrayOf(0, 1, 6), 1))
+                */
 
             tuningObject.registerTuningData(TexelTuningData(
                 "OTHER_BONUS_MG",
                 TunableConstants.OTHER_BONUS_MG,
-                intArrayOf(8, 8),
-                false, intArrayOf(), 5))
+                intArrayOf(8, 8, 8, 8),
+                false, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "OTHER_BONUS_EG",
                 TunableConstants.OTHER_BONUS_EG,
-                intArrayOf(8, 8),
-                false, intArrayOf(), 5))
+                intArrayOf(8, 8, 8, 8),
+                false, intArrayOf(), 1))
 
+            /*
             tuningObject.registerTuningData(TexelTuningData(
                 "THREATEN_BY_KNIGHT_MG",
                 TunableConstants.THREATEN_BY_KNIGHT_MG,
                 intArrayOf(0, 8, 0, 8, 8, 8, 0),
-                false, intArrayOf(0, 2, 6), 5))
+                false, intArrayOf(0, 2, 6), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "THREATEN_BY_KNIGHT_EG",
                 TunableConstants.THREATEN_BY_KNIGHT_EG,
                 intArrayOf(0, 8, 0, 8, 8, 8, 0),
-                false, intArrayOf(0, 2, 6), 5))
+                false, intArrayOf(0, 2, 6), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "THREATEN_BY_BISHOP_MG",
                 TunableConstants.THREATEN_BY_BISHOP_MG,
                 intArrayOf(0, 8, 8, 0, 8, 8, 0),
-                false, intArrayOf(0, 3, 6), 5))
+                false, intArrayOf(0, 3, 6), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "THREATEN_BY_BISHOP_EG",
                 TunableConstants.THREATEN_BY_BISHOP_EG,
                 intArrayOf(0, 8, 8, 0, 8, 8, 0),
-                false, intArrayOf(0, 3, 6), 5))
+                false, intArrayOf(0, 3, 6), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "THREATEN_BY_ROOK_MG",
                 TunableConstants.THREATEN_BY_ROOK_MG,
                 intArrayOf(0, 8, 8, 8, 0, 8, 0),
-                false, intArrayOf(0, 4, 6), 5))
+                false, intArrayOf(0, 4, 6), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "THREATEN_BY_ROOK_EG",
                 TunableConstants.THREATEN_BY_ROOK_EG,
                 intArrayOf(0, 8, 8, 8, 0, 8, 0),
-                false, intArrayOf(0, 4, 6), 5))
+                false, intArrayOf(0, 4, 6), 1))
                 */
 
             return tuningObject
