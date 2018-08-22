@@ -271,6 +271,14 @@ object Evaluator {
                 result += TunableConstants.OTHER_BONUS[TunableConstants.OTHER_BONUS_ROOK_ON_SEVENTH]
             }
 
+            val fileBitboard = Bitboard.FILES[File.getFile(square)]
+            if (fileBitboard and board.pieceBitboard[ourColor][Piece.PAWN] == Bitboard.EMPTY) {
+                result += if (fileBitboard and board.pieceBitboard[theirColor][Piece.PAWN] == Bitboard.EMPTY) {
+                    TunableConstants.OTHER_BONUS[TunableConstants.OTHER_BONUS_ROOK_OPEN_FILE]
+                } else {
+                    TunableConstants.OTHER_BONUS[TunableConstants.OTHER_BONUS_ROOK_HALF_OPEN_FILE]
+                }
+            }
             tmpPieces = tmpPieces and tmpPieces - 1
         }
         return result
