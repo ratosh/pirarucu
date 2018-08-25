@@ -243,7 +243,7 @@ class MainSearch {
                     }
 
                     if (newDepth < SearchConstants.NEGATIVE_SEE_DEPTH) {
-                        if (StaticExchangeEvaluator.getSeeCaptureScore(board, move) < 0) {
+                        if (!StaticExchangeEvaluator.seeInThreshold(board, move, 0)) {
                             continue
                         }
                     }

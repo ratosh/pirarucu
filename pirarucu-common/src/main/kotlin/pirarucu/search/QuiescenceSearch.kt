@@ -72,7 +72,7 @@ class QuiescenceSearch {
                 continue
             }
 
-            if (StaticExchangeEvaluator.getSeeCaptureScore(board, move) <= 0) {
+            if (!StaticExchangeEvaluator.seeInThreshold(board, move, 1)) {
                 continue
             }
 
