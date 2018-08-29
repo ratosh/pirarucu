@@ -10,16 +10,22 @@ import pirarucu.board.Rank
 import pirarucu.board.Square
 import kotlin.math.max
 
-
+/**
+ * Fen string factory.
+ */
 object FenFactory {
 
     private const val EMPTY_SPACE = ' '
     private const val RANK_SEPARATOR = '/'
 
+    /**
+     * Get the board string representation in Forsyth–Edwards Notation
+     */
     fun getFen(board: Board): String {
-
         val stringBuilder = StringBuilder()
         var emptyCount = 0
+
+        // Board piece representation
         for (rank in Rank.RANK_8 downTo Rank.RANK_1) {
             for (file in File.FILE_A until File.SIZE) {
                 val square = Square.getSquare(file, rank)
@@ -49,8 +55,8 @@ object FenFactory {
             }
         }
 
+        // Extra information
         val castlingRights = CastlingRights.toString(board.castlingRights)
-
         stringBuilder.append(EMPTY_SPACE)
             .append(Color.toString(board.colorToMove))
             .append(EMPTY_SPACE)

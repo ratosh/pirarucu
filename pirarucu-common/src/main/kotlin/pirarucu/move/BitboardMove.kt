@@ -299,18 +299,26 @@ object BitboardMove {
     private fun populateNeighbours() {
         for (square in Square.A1 until Square.SIZE) {
             val file = File.getFile(square)
-            var possibleBitboard = Bitboard.ALL
+            var boundBitboard = Bitboard.ALL
 
             when (file) {
                 File.FILE_H -> {
-                    possibleBitboard = possibleBitboard and Bitboard.NOT_FILE_A
+                    boundBitboard = boundBitboard and Bitboard.NOT_FILE_A
                 }
                 File.FILE_A -> {
-                    possibleBitboard = possibleBitboard and Bitboard.NOT_FILE_H
+                    boundBitboard = boundBitboard and Bitboard.NOT_FILE_H
                 }
             }
-            NEIGHBOURS[square] = (Bitboard.getBitboard(square + WEST) or
-                Bitboard.getBitboard(square + EAST)) and possibleBitboard
+            var possibleNeighbours = Bitboard.EMPTY
+            val westSquare = square + WEST
+            if (Square.isValid(westSquare)) {
+                possibleNeighbours = Bitboard.getBitboard(westSquare)
+            }
+            val eastSquare = square + EAST
+            if (Square.isValid(eastSquare)) {
+                possibleNeighbours = possibleNeighbours or Bitboard.getBitboard(eastSquare)
+            }
+            NEIGHBOURS[square] = boundBitboard and possibleNeighbours
         }
     }
 

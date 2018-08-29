@@ -1,7 +1,5 @@
 package pirarucu.board
 
-import pirarucu.util.Utils
-
 /**
  * Bitboard class.
  */
@@ -136,20 +134,16 @@ object Bitboard {
 
     val OUTPOST = longArrayOf(RANK_4 or RANK_5 or RANK_6, RANK_3 or RANK_4 or RANK_5)
 
-    fun mirrorVertical(bitboard: Long): Long {
-        return Utils.specific.reverseBytes(bitboard)
-    }
-
-    fun getNeighbours(bitboard: Long): Long {
-        return (bitboard shl 1 and Bitboard.NOT_FILE_A) or (bitboard ushr 1 and Bitboard.NOT_FILE_H)
-    }
-
+    /**
+     * Get bitboard info from a square.
+     */
     fun getBitboard(square: Int): Long {
-        return if (square >= Square.NONE || square < 0) {
-            Bitboard.EMPTY
-        } else 1L shl square
+        return 1L shl square
     }
 
+    /**
+     * Get bitboard info from a square list.
+     */
     fun getBitboard(vararg squareList: Int): Long {
         var result = Bitboard.EMPTY
         for (square in squareList) {
@@ -158,10 +152,16 @@ object Bitboard {
         return result
     }
 
+    /**
+     * Check if the bitboard only contains one element.
+     */
     fun oneElement(bitboard: Long): Boolean {
         return bitboard and (bitboard - 1) == Bitboard.EMPTY
     }
 
+    /**
+     * Get a string representation of a bitboard.
+     */
     fun toString(bitboard: Long): String {
         val buffer = StringBuilder()
         buffer.append("  abcdefgh\n")
