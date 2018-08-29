@@ -236,8 +236,8 @@ class Board {
 
         updateCastlingRights(fromSquare, toSquare)
 
-        nextColorToMove = colorToMove
-        colorToMove = Color.invertColor(colorToMove)
+        nextColorToMove = ourColor
+        colorToMove = theirColor
 
         updateBasicInfo()
         basicEvalInfo.updatePinned(this)

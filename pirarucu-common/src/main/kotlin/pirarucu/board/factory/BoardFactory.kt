@@ -10,6 +10,9 @@ import pirarucu.board.Square
 import pirarucu.move.BitboardMove
 import kotlin.math.max
 
+/**
+ * Board factory.
+ */
 object BoardFactory {
     const val STARTER_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
     private const val SPLITTER = '/'
@@ -21,16 +24,25 @@ object BoardFactory {
     private const val RULE_50_POSITION = 4
     private const val MOVE_NUMBER_POSITION = 5
 
+    /**
+     * Get a board with starter position.
+     */
     fun getBoard(): Board {
         return getBoard(STARTER_FEN)
     }
 
+    /**
+     * Get a board with a specific position.
+     */
     fun getBoard(fen: String): Board {
         val result = Board()
         setBoard(fen, result)
         return result
     }
 
+    /**
+     * Change the board to a specific position.
+     */
     fun setBoard(fen: String, board: Board) {
         board.reset()
         var square = Square.A8
