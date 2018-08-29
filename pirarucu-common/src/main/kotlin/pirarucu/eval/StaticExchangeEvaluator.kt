@@ -7,7 +7,6 @@ import pirarucu.board.Piece
 import pirarucu.board.Square
 import pirarucu.move.BitboardMove
 import pirarucu.move.Move
-import pirarucu.stats.Statistics
 import pirarucu.tuning.TunableConstants
 import kotlin.math.max
 

@@ -66,8 +66,7 @@ class QuiescenceSearch {
             }
 
             // Qsearch Futility
-            val capturedPiece = board.pieceTypeBoard[Move.getToSquare(move)]
-            val futilityValue = eval + TunableConstants.QS_FUTILITY_VALUE[capturedPiece]
+            val futilityValue = eval + getMoveValue(board, Move.getToSquare(move), moveType)
             if (futilityValue <= bestScore) {
                 continue
             }
@@ -95,4 +94,21 @@ class QuiescenceSearch {
         moveList.endPly()
         return bestScore
     }
+
+    private fun getMoveValue(board: Board, toSquare: Int, moveType: Int): Int {
+        return when {
+            moveType == MoveType.TYPE_PASSANT -> {
+                TunableConstants.QS_FUTILITY_VALUE[Piece.PAWN]
+            }
+            MoveType.isPromotion(moveType) -> {
+                TunableConstants.QS_FUTILITY_VALUE[board.pieceTypeBoard[toSquare]] -
+                    TunableConstants.QS_FUTILITY_VALUE[Piece.PAWN] +
+                    TunableConstants.QS_FUTILITY_VALUE[MoveType.getPromotedPiece(moveType)]
+            }
+            else -> {
+                TunableConstants.QS_FUTILITY_VALUE[board.pieceTypeBoard[toSquare]]
+            }
+        }
+    }
+
 }
