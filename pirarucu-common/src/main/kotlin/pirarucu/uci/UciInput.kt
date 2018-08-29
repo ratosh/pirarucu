@@ -31,6 +31,9 @@ class UciInput(private val inputHandler: IInputHandler) {
             "stop" -> {
                 inputHandler.stop()
             }
+            "perft" -> {
+                inputHandler.perft(tokens)
+            }
             else -> UciOutput.println("Unknown command: " + tokens[0])
         }
     }

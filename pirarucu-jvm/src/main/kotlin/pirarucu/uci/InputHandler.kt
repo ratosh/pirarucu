@@ -7,6 +7,7 @@ import pirarucu.search.MainSearch
 import pirarucu.search.SearchInfo
 import pirarucu.search.SearchOptions
 import pirarucu.tuning.TunableConstants
+import pirarucu.util.Perft
 import pirarucu.util.Utils
 
 class InputHandler : IInputHandler {
@@ -83,6 +84,14 @@ class InputHandler : IInputHandler {
 
     override fun isReady() {
         UciOutput.println("readyok")
+    }
+
+    override fun perft(tokens: Array<String>) {
+        val startTime = Utils.specific.currentTimeMillis()
+        val perftResult = Perft.perft(board, tokens[1].toInt())
+        val totalTime = Utils.specific.currentTimeMillis() - startTime
+        val nps = perftResult * 1000 / totalTime
+        UciOutput.println("$perftResult nodes in ${totalTime}ms ($nps nps)")
     }
 
     class SearchThread : Runnable {

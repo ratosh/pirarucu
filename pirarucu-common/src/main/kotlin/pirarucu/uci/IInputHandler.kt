@@ -11,4 +11,6 @@ interface IInputHandler {
     fun stop()
 
     fun isReady()
+
+    fun perft(tokens: Array<String>)
 }

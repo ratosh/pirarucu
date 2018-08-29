@@ -20,7 +20,7 @@ object BenchmarkApplication {
     @Throws(ExecutionException::class, InterruptedException::class)
     @JvmStatic
     fun main(args: Array<String>) {
-        var speed = LongArray(5)
+        var speed = LongArray(1)
         for (tries in 0 until speed.size) {
             speed[tries] = runBenchmark(DEFAULT_BENCHMARK_DEPTH)
         }
