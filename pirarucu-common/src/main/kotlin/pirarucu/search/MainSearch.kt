@@ -147,7 +147,11 @@ class MainSearch {
         var bestScore = EvalConstants.SCORE_MIN
 
         if (!moveList.startPly()) {
-            return eval
+            return if (eval == EvalConstants.SCORE_UNKNOWN) {
+                GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board, currentNode.attackInfo)
+            } else {
+                eval
+            }
         }
 
         var movesPerformed = 0
