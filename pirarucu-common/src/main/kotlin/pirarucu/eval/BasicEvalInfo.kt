@@ -5,7 +5,6 @@ import pirarucu.board.Board
 import pirarucu.board.Color
 import pirarucu.board.Piece
 import pirarucu.board.Square
-import pirarucu.board.factory.FenFactory
 import pirarucu.move.BitboardMove
 
 class BasicEvalInfo {
@@ -19,9 +18,8 @@ class BasicEvalInfo {
     val dangerBitboard = Array(Color.SIZE) { LongArray(Piece.SIZE) }
 
     fun update(board: Board) {
-        for (ourColor in Color.WHITE until Color.SIZE) {
-            updateDangerBitboard(board, ourColor)
-        }
+        updateDangerBitboard(board, Color.WHITE)
+        updateDangerBitboard(board, Color.BLACK)
 
         pinnedBitboard = 0L
         for (ourColor in Color.WHITE until Color.SIZE) {
