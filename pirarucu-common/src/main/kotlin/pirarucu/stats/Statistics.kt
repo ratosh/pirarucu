@@ -33,7 +33,7 @@ object Statistics {
             TranspositionTable.tableLimit.toLong()) + "\n")
 
         buffer.append("--- Moves\n")
-        buffer.append("Moves: " + buildPercentage(moves, gMoves) + "\n")
+        buffer.append("Moves: $moves\n")
 
         return buffer.toString()
     }

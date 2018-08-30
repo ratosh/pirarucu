@@ -8,28 +8,12 @@ import kotlin.test.assertTrue
 class BitboardTest {
 
     @Test
-    fun testMirrorVertical() {
+    fun testGetBitboard() {
         for (square in Square.A1 until Square.SIZE) {
-            assertEquals(Bitboard.mirrorVertical(Bitboard.getBitboard(square)),
-                Bitboard.getBitboard(Square.invertSquare(square)))
-        }
-    }
-
-    @Test
-    fun testNeighbours() {
-        for (square in Square.A1 until Square.SIZE) {
-            val file = File.getFile(square)
             val bitboard = Bitboard.getBitboard(square)
-            val neighbours = Bitboard.getNeighbours(bitboard)
-            if (file > File.FILE_A) {
-                val leftNeighbour = bitboard ushr 1
-                assertEquals(neighbours and leftNeighbour, leftNeighbour)
-            }
-            if (file < File.FILE_H) {
-                val rightNeighbour = bitboard shl 1
-                assertEquals(neighbours and rightNeighbour, rightNeighbour)
-            }
+            assertEquals(bitboard, 1L shl square)
         }
+        println(1L shl 63)
     }
 
     @Test
