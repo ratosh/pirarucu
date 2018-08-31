@@ -10,7 +10,7 @@ internal class Magic(
 
     companion object {
         const val SIZE = 88772
-        var ROOK = arrayOf(
+        val ROOK = arrayOf(
             Magic(0x000101010101017eL, 0x00280077ffebfffeL, 26304),
             Magic(0x000202020202027cL, 0x2004010201097fffL, 35520),
             Magic(0x000404040404047aL, 0x0010020010053fffL, 38592),
@@ -76,7 +76,7 @@ internal class Magic(
             Magic(0x3e40404040404000L, 0x0003ffffbf7dfeecL, 66501),
             Magic(0x7e80808080808000L, 0x0001ffff9dffa333L, 14826))
 
-        var BISHOP = arrayOf(
+        val BISHOP = arrayOf(
             Magic(0x0040201008040200L, 0x007fbfbfbfbfbfffL, 5378),
             Magic(0x0000402010080400L, 0x0000a060401007fcL, 4093),
             Magic(0x0000004020100a00L, 0x0001004008020000L, 4314),
