@@ -57,7 +57,7 @@ class Board {
     private val historyEpSquare = IntArray(GameConstants.GAME_MAX_LENGTH)
     private val historyPawnZobristKey = LongArray(GameConstants.GAME_MAX_LENGTH)
     private val historyCapturedPiece = IntArray(GameConstants.GAME_MAX_LENGTH)
-    private val historyBasicEvalInfo = Array(GameConstants.GAME_MAX_LENGTH + 1) { BasicEvalInfo() }
+    private val historyBasicEvalInfo = Array(GameConstants.GAME_MAX_LENGTH) { BasicEvalInfo() }
 
     var basicEvalInfo = historyBasicEvalInfo[0]
     val evalInfo = EvalInfo()
