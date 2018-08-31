@@ -5,7 +5,6 @@ import pirarucu.board.Board
 import pirarucu.board.Color
 import pirarucu.board.Piece
 import pirarucu.board.Square
-import pirarucu.game.GameConstants
 import pirarucu.move.BitboardMove
 
 class BasicEvalInfo {
@@ -18,11 +17,20 @@ class BasicEvalInfo {
 
     val dangerBitboard = Array(Color.SIZE) { LongArray(Piece.SIZE) }
 
-    private val pinnedHistory = LongArray(GameConstants.GAME_MAX_LENGTH)
-
     fun update(board: Board) {
+        updateDangerBitboard(board, Color.WHITE)
+        updateDangerBitboard(board, Color.BLACK)
+
+        pinnedBitboard = 0L
         for (ourColor in Color.WHITE until Color.SIZE) {
-            updateDangerBitboard(board, ourColor)
+            val theirColor = Color.invertColor(ourColor)
+            val theirPieceBitboard = board.pieceBitboard[theirColor]
+            val kingSquarePosition = board.kingSquare[ourColor]
+            setPinned(kingSquarePosition,
+                ourColor,
+                theirColor,
+                theirPieceBitboard,
+                board.colorBitboard)
         }
 
         val ourColor = board.colorToMove
@@ -49,20 +57,6 @@ class BasicEvalInfo {
             dangerBitboard[ourColor][Piece.KNIGHT] or
             dangerBitboard[ourColor][Piece.BISHOP] or
             dangerBitboard[ourColor][Piece.ROOK]
-    }
-
-    fun updatePinned(board: Board) {
-        pinnedBitboard = 0L
-        for (ourColor in Color.WHITE until Color.SIZE) {
-            val theirColor = Color.invertColor(ourColor)
-            val theirPieceBitboard = board.pieceBitboard[theirColor]
-            val kingSquarePosition = board.kingSquare[ourColor]
-            setPinned(kingSquarePosition,
-                ourColor,
-                theirColor,
-                theirPieceBitboard,
-                board.colorBitboard)
-        }
     }
 
     /**
@@ -100,13 +94,5 @@ class BasicEvalInfo {
             }
             pinnedBitboard = pinnedBitboard or pinned
         }
-    }
-
-    fun pushToHistory(moveNumber: Int) {
-        pinnedHistory[moveNumber] = pinnedBitboard
-    }
-
-    fun popFromHistory(moveNumber: Int) {
-        pinnedBitboard = pinnedHistory[moveNumber]
     }
 }

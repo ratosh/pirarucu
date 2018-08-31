@@ -25,12 +25,10 @@ class Board {
     var emptyBitboard = 0L
 
     var moveNumber: Int = 0
+    var basicInfoIndex: Int = 0
 
     var colorToMove = Color.WHITE
     var nextColorToMove = Color.BLACK
-
-    val basicEvalInfo = BasicEvalInfo()
-    val evalInfo = EvalInfo()
 
     val pieceTypeBoard = IntArray(Square.SIZE)
     val pieceBitboard = Array(Color.SIZE) { LongArray(Piece.SIZE) }
@@ -53,12 +51,16 @@ class Board {
     var capturedPiece = Piece.NONE
 
     // History
-    val historyRule50 = IntArray(GameConstants.GAME_MAX_LENGTH)
-    val historyCastlingRights = IntArray(GameConstants.GAME_MAX_LENGTH)
-    val historyEpSquare = IntArray(GameConstants.GAME_MAX_LENGTH)
     val historyZobristKey = LongArray(GameConstants.GAME_MAX_LENGTH)
-    val historyPawnZobristKey = LongArray(GameConstants.GAME_MAX_LENGTH)
-    val historyCapturedPiece = IntArray(GameConstants.GAME_MAX_LENGTH)
+    private val historyRule50 = IntArray(GameConstants.GAME_MAX_LENGTH)
+    private val historyCastlingRights = IntArray(GameConstants.GAME_MAX_LENGTH)
+    private val historyEpSquare = IntArray(GameConstants.GAME_MAX_LENGTH)
+    private val historyPawnZobristKey = LongArray(GameConstants.GAME_MAX_LENGTH)
+    private val historyCapturedPiece = IntArray(GameConstants.GAME_MAX_LENGTH)
+    private val historyBasicEvalInfo = Array(GameConstants.GAME_MAX_LENGTH) { BasicEvalInfo() }
+
+    var basicEvalInfo = historyBasicEvalInfo[0]
+    val evalInfo = EvalInfo()
 
     fun colorAt(square: Int): Int {
         val bitboard = Bitboard.getBitboard(square)
@@ -123,7 +125,6 @@ class Board {
         historyZobristKey[moveNumber] = zobristKey
         historyPawnZobristKey[moveNumber] = pawnZobristKey
         historyCapturedPiece[moveNumber] = capturedPiece
-        basicEvalInfo.pushToHistory(moveNumber)
         moveNumber++
     }
 
@@ -135,7 +136,6 @@ class Board {
         zobristKey = historyZobristKey[moveNumber]
         pawnZobristKey = historyPawnZobristKey[moveNumber]
         capturedPiece = historyCapturedPiece[moveNumber]
-        basicEvalInfo.popFromHistory(moveNumber)
     }
 
     fun doNullMove() {
@@ -239,8 +239,8 @@ class Board {
         nextColorToMove = ourColor
         colorToMove = theirColor
 
-        updateBasicInfo()
-        basicEvalInfo.updatePinned(this)
+        updateBitboardInfo()
+        basicEvalInfo = nextBasicEvalInfo()
         basicEvalInfo.update(this)
     }
 
@@ -265,12 +265,12 @@ class Board {
         evalInfo.update(this, attackInfo)
     }
 
-    fun setInitialKingSquare() {
+    private fun setInitialKingSquare() {
         kingSquare[Color.WHITE] = Square.getSquare(pieceBitboard[Color.WHITE][Piece.KING])
         kingSquare[Color.BLACK] = Square.getSquare(pieceBitboard[Color.BLACK][Piece.KING])
     }
 
-    fun updateBasicInfo() {
+    fun updateBitboardInfo() {
         gameBitboard = colorBitboard[Color.WHITE] or colorBitboard[Color.BLACK]
         emptyBitboard = gameBitboard.inv()
     }
@@ -345,9 +345,9 @@ class Board {
             kingSquare[ourColor] = fromSquare
         }
 
-        updateBasicInfo()
+        updateBitboardInfo()
         popFromHistory()
-        basicEvalInfo.update(this)
+        basicEvalInfo = previousBasicEvalInfo()
     }
 
     private fun updateCastlingRights(fromSquare: Int, toSquare: Int) {
@@ -458,5 +458,23 @@ class Board {
 
     fun hasNonPawnMaterial(color: Int): Boolean {
         return pieceCountColorType[color][Piece.PAWN] + 1 != pieceCountColorType[color][Piece.NONE]
+    }
+
+    private fun nextBasicEvalInfo(): BasicEvalInfo {
+        basicInfoIndex++
+        return historyBasicEvalInfo[basicInfoIndex]
+    }
+
+    private fun previousBasicEvalInfo(): BasicEvalInfo {
+        basicInfoIndex--
+        return historyBasicEvalInfo[basicInfoIndex]
+    }
+
+    fun setInitialStuff() {
+        updateBitboardInfo()
+        setInitialKingSquare()
+        basicInfoIndex = 0
+        basicEvalInfo = historyBasicEvalInfo[basicInfoIndex]
+        basicEvalInfo.update(this)
     }
 }
