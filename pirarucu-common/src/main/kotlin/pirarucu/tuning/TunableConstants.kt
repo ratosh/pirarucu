@@ -40,7 +40,7 @@ object TunableConstants {
         min(MATERIAL_SCORE_MG[4], MATERIAL_SCORE_EG[4]),
         min(MATERIAL_SCORE_MG[5], MATERIAL_SCORE_EG[5]))
 
-    val SEE_VALUE = intArrayOf(0, 100, 325, 330, 550, 900, 10000)
+    val SEE_VALUE = intArrayOf(0, 100, 325, 330, 550, 900, 0)
 
     val PSQT_MG = arrayOf(
         intArrayOf(
