@@ -18,7 +18,6 @@ import pirarucu.stats.Statistics
 import pirarucu.tuning.TunableConstants
 import pirarucu.uci.UciOutput
 import pirarucu.util.Utils
-import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -385,15 +384,27 @@ class MainSearch {
                 val currentTime = Utils.specific.currentTimeMillis()
                 UciOutput.searchInfo(depth, currentTime - startTime, searchInfo)
 
-                if (score < previousScore &&
-                    searchTimeLimit < maxSearchTimeLimit &&
-                    abs(score) < EvalConstants.SCORE_MATE) {
-                    searchTimeLimit += searchTimeIncrement
-                }
-                if (score > previousScore &&
-                    searchTimeLimit > minSearchTimeLimit &&
-                    abs(score) < EvalConstants.SCORE_MATE) {
-                    searchTimeLimit -= searchTimeIncrement
+                if (depth > 4) {
+                    if (score < previousScore &&
+                        searchTimeLimit < maxSearchTimeLimit) {
+                        searchTimeLimit += searchTimeIncrement
+                    }
+                    if (score + 10 < previousScore &&
+                        searchTimeLimit < maxSearchTimeLimit) {
+                        searchTimeLimit += searchTimeIncrement
+                    }
+                    if (score + 50 < previousScore &&
+                        searchTimeLimit < maxSearchTimeLimit) {
+                        searchTimeLimit += searchTimeIncrement
+                    }
+                    if (score + 100 < previousScore &&
+                        searchTimeLimit < maxSearchTimeLimit) {
+                        searchTimeLimit += searchTimeIncrement
+                    }
+                    if (score > previousScore &&
+                        searchTimeLimit > minSearchTimeLimit) {
+                        searchTimeLimit -= searchTimeIncrement
+                    }
                 }
 
                 if (searchTimeLimit < currentTime) {

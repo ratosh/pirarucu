@@ -42,9 +42,9 @@ class SearchOptions {
     }
 
     companion object {
-        private const val MAX_TIME_RATIO = 2.5
+        private const val MAX_TIME_RATIO = 5.0
         private const val GAME_MOVES = 40L
 
-        private const val INCREMENT_RATIO = 20
+        private const val INCREMENT_RATIO = 30
     }
 }
