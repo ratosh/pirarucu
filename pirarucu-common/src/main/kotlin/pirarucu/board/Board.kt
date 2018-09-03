@@ -24,8 +24,8 @@ class Board {
     var gameBitboard = 0L
     var emptyBitboard = 0L
 
-    var moveNumber: Int = 0
-    var basicInfoIndex: Int = 0
+    var moveNumber = 0
+    private var basicInfoIndex = 0
 
     var colorToMove = Color.WHITE
     var nextColorToMove = Color.BLACK
@@ -59,7 +59,7 @@ class Board {
     private val historyCapturedPiece = IntArray(GameConstants.GAME_MAX_LENGTH)
     private val historyBasicEvalInfo = Array(GameConstants.GAME_MAX_LENGTH) { BasicEvalInfo() }
 
-    var basicEvalInfo = historyBasicEvalInfo[0]
+    var basicEvalInfo = historyBasicEvalInfo[basicInfoIndex]
     val evalInfo = EvalInfo()
 
     fun colorAt(square: Int): Int {
@@ -270,7 +270,7 @@ class Board {
         kingSquare[Color.BLACK] = Square.getSquare(pieceBitboard[Color.BLACK][Piece.KING])
     }
 
-    fun updateBitboardInfo() {
+    private fun updateBitboardInfo() {
         gameBitboard = colorBitboard[Color.WHITE] or colorBitboard[Color.BLACK]
         emptyBitboard = gameBitboard.inv()
     }
@@ -476,5 +476,50 @@ class Board {
         basicInfoIndex = 0
         basicEvalInfo = historyBasicEvalInfo[basicInfoIndex]
         basicEvalInfo.update(this)
+    }
+
+    fun copy(board: Board) {
+        gameBitboard = board.gameBitboard
+        emptyBitboard = board.emptyBitboard
+
+        moveNumber = board.moveNumber
+        basicInfoIndex = board.basicInfoIndex
+
+        colorToMove = board.colorToMove
+        nextColorToMove = board.nextColorToMove
+
+        Utils.specific.arrayCopy(board.pieceTypeBoard, 0, pieceTypeBoard, 0, pieceTypeBoard.size)
+        Utils.specific.arrayCopy(board.pieceBitboard, pieceBitboard)
+        Utils.specific.arrayCopy(board.colorBitboard, 0, colorBitboard, 0, colorBitboard.size)
+
+        Utils.specific.arrayCopy(board.pieceCountType, 0, pieceCountType, 0, pieceCountType.size)
+        Utils.specific.arrayCopy(board.pieceCountColorType, pieceCountColorType)
+
+        rule50 = board.rule50
+        castlingRights = board.castlingRights
+        epSquare = board.epSquare
+        zobristKey = board.zobristKey
+        pawnZobristKey = board.pawnZobristKey
+
+        Utils.specific.arrayCopy(board.kingSquare, 0, kingSquare, 0, kingSquare.size)
+        Utils.specific.arrayCopy(board.psqScore, 0, psqScore, 0, psqScore.size)
+        Utils.specific.arrayCopy(board.materialScore, 0, materialScore, 0, materialScore.size)
+
+        phase = board.phase
+
+        capturedPiece = board.capturedPiece
+
+        // History
+        Utils.specific.arrayCopy(board.historyZobristKey, 0, historyZobristKey, 0, historyZobristKey.size)
+        Utils.specific.arrayCopy(board.historyRule50, 0, historyRule50, 0, historyZobristKey.size)
+        Utils.specific.arrayCopy(board.historyCastlingRights, 0, historyCastlingRights, 0, historyZobristKey.size)
+        Utils.specific.arrayCopy(board.historyEpSquare, 0, historyEpSquare, 0, historyZobristKey.size)
+        Utils.specific.arrayCopy(board.historyPawnZobristKey, 0, historyPawnZobristKey, 0, historyZobristKey.size)
+        Utils.specific.arrayCopy(board.historyCapturedPiece, 0, historyCapturedPiece, 0, historyZobristKey.size)
+        for (index in historyBasicEvalInfo.indices) {
+            historyBasicEvalInfo[index].copy(board.historyBasicEvalInfo[index])
+        }
+
+        basicEvalInfo = historyBasicEvalInfo[basicInfoIndex]
     }
 }

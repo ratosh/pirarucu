@@ -6,6 +6,7 @@ import pirarucu.board.Color
 import pirarucu.board.Piece
 import pirarucu.board.Square
 import pirarucu.move.BitboardMove
+import pirarucu.util.Utils
 
 class BasicEvalInfo {
 
@@ -94,5 +95,11 @@ class BasicEvalInfo {
             }
             pinnedBitboard = pinnedBitboard or pinned
         }
+    }
+
+    fun copy(basicEvalInfo: BasicEvalInfo) {
+        checkBitboard = basicEvalInfo.checkBitboard
+        pinnedBitboard = basicEvalInfo.pinnedBitboard
+        Utils.specific.arrayCopy(basicEvalInfo.dangerBitboard, dangerBitboard)
     }
 }

@@ -4,7 +4,6 @@ import pirarucu.board.Bitboard
 import pirarucu.board.Board
 import pirarucu.board.Square
 import pirarucu.eval.EvalConstants
-import pirarucu.search.SearchOptions
 import pirarucu.util.Utils
 import kotlin.math.min
 
