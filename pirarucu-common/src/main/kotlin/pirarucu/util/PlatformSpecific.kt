@@ -24,7 +24,11 @@ expect class PlatformSpecific() {
 
     fun arrayCopy(src: IntArray, srcPos: Int, dest: IntArray, destPos: Int, length: Int)
 
+    fun arrayCopy(src: Array<IntArray>, dest: Array<IntArray>)
+
     fun arrayCopy(src: LongArray, srcPos: Int, dest: LongArray, destPos: Int, length: Int)
+
+    fun arrayCopy(src: Array<LongArray>, dest: Array<LongArray>)
 
     fun formatString(source: String, vararg args: Any): String
 
@@ -33,6 +37,6 @@ expect class PlatformSpecific() {
     fun exit(code: Int)
 
     fun gc()
-    
+
     fun getVersion(): String
 }
