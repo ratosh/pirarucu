@@ -3,7 +3,7 @@ package pirarucu.util
 import pirarucu.eval.EvalConstants
 import pirarucu.tuning.TunableConstants
 import java.security.SecureRandom
-import java.util.*
+import java.util.Arrays
 
 actual class PlatformSpecific actual constructor() {
 
@@ -53,8 +53,20 @@ actual class PlatformSpecific actual constructor() {
         System.arraycopy(src, srcPos, dest, destPos, length)
     }
 
+    actual fun arrayCopy(src: Array<IntArray>, dest: Array<IntArray>) {
+        for (index in src.indices) {
+            arrayCopy(src[index], 0, dest[index], 0, src[index].size)
+        }
+    }
+
     actual fun arrayCopy(src: LongArray, srcPos: Int, dest: LongArray, destPos: Int, length: Int) {
         System.arraycopy(src, srcPos, dest, destPos, length)
+    }
+
+    actual fun arrayCopy(src: Array<LongArray>, dest: Array<LongArray>) {
+        for (index in src.indices) {
+            arrayCopy(src[index], 0, dest[index], 0, src[index].size)
+        }
     }
 
     actual fun formatString(source: String, vararg args: Any): String {
