@@ -9,7 +9,6 @@ import pirarucu.move.BitboardMove
 import pirarucu.move.Move
 import pirarucu.move.MoveGenerator
 import pirarucu.move.MoveType
-import pirarucu.stats.Statistics
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.Utils
 
@@ -161,7 +160,6 @@ class Board {
 
     fun doMove(move: Int) {
         pushToHistory()
-        Statistics.moves++
         rule50++
 
         val fromSquare = Move.getFromSquare(move)

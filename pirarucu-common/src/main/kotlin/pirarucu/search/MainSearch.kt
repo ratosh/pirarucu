@@ -14,7 +14,6 @@ import pirarucu.move.Move
 import pirarucu.move.MoveGenerator
 import pirarucu.move.MoveList
 import pirarucu.move.MoveType
-import pirarucu.stats.Statistics
 import pirarucu.tuning.TunableConstants
 import pirarucu.uci.UciOutput
 import pirarucu.util.Utils
@@ -54,9 +53,9 @@ class MainSearch {
         }
         val rootNode = ply == 0
 
-        Statistics.searchNodes++
+        searchInfo.searchNodes++
         if (!rootNode &&
-            Statistics.searchNodes and 0xFFFL == 0xFFFL &&
+            searchInfo.searchNodes and 0xFFFL == 0xFFFL &&
             maxSearchTimeLimit < Utils.specific.currentTimeMillis()) {
             searchOptions.stop = true
             return 0
@@ -351,7 +350,6 @@ class MainSearch {
         quiescenceSearch.searchOptions = searchOptions
 
         searchInfo.reset()
-        Statistics.reset()
 
         val moveList = MoveList()
 
