@@ -4,7 +4,6 @@ import pirarucu.board.factory.BoardFactory
 import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
 import pirarucu.search.MainSearch
-import pirarucu.search.SearchInfo
 import pirarucu.search.SearchOptions
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.Perft
@@ -106,7 +105,7 @@ class InputHandler : IInputHandler {
                 }
                 searchOptions.stop = false
                 running = false
-                mainSearch.search(board, searchInfo, searchOptions)
+                mainSearch.search(board)
             }
         }
     }
@@ -115,9 +114,8 @@ class InputHandler : IInputHandler {
 
         private val lock = java.lang.Object()
 
-        val mainSearch = MainSearch()
-        val searchInfo = SearchInfo()
         val searchOptions = SearchOptions()
+        val mainSearch = MainSearch(searchOptions)
 
         @Volatile
         private var running = false

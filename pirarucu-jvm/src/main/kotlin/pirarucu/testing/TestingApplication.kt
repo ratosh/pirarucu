@@ -4,7 +4,6 @@ import pirarucu.board.factory.BoardFactory
 import pirarucu.eval.EvalConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.search.MainSearch
-import pirarucu.search.SearchInfo
 import pirarucu.search.SearchOptions
 import pirarucu.uci.UciOutput
 import pirarucu.util.EpdFileLoader
@@ -29,22 +28,21 @@ object TestingApplication {
         UciOutput.silent = true
 
         var testScore = 0
-        val mainSearch = MainSearch()
         val searchOptions = SearchOptions()
+        val mainSearch = MainSearch(searchOptions)
         searchOptions.depth = depth
         searchOptions.minSearchTimeLimit = 60000L
         searchOptions.maxSearchTimeLimit = 60000L
         searchOptions.searchTimeIncrement = 1000L
-        val searchInfo = SearchInfo()
         val board = BoardFactory.getBoard()
         for (epdInfo in testFile.getEpdInfoList()) {
             BoardFactory.setBoard(epdInfo.fenPosition, board)
             TranspositionTable.reset()
             searchOptions.stop = false
 
-            mainSearch.search(board, searchInfo, searchOptions)
+            mainSearch.search(board)
 
-            val score = epdInfo.getMoveScore(board, searchInfo.bestMove)
+            val score = epdInfo.getMoveScore(board, mainSearch.searchInfo.bestMove)
 
             testScore += score
         }

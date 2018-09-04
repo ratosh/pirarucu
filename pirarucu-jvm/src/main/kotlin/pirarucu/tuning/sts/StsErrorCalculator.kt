@@ -14,11 +14,8 @@ class StsErrorCalculator : Callable<Int> {
     private val epdInfoList = mutableListOf<EpdInfo>()
     private var board: Board = Board()
 
-    private val attackInfo = AttackInfo()
-
     private var searchOptions = SearchOptions()
-    private var searchInfo = SearchInfo()
-    private var mainSearch = MainSearch()
+    private var mainSearch = MainSearch(searchOptions)
 
     fun addEpdInfo(epdInfo: EpdInfo) {
         epdInfoList.add(epdInfo)
@@ -47,9 +44,9 @@ class StsErrorCalculator : Callable<Int> {
             BoardFactory.setBoard(entry.fenPosition, board)
             searchOptions.stop = false
 
-            mainSearch.search(board, searchInfo, searchOptions)
+            mainSearch.search(board)
 
-            score += entry.getMoveScore(board, searchInfo.bestMove)
+            score += entry.getMoveScore(board, mainSearch.searchInfo.bestMove)
         }
         return score
     }

@@ -4,7 +4,6 @@ import pirarucu.board.factory.BoardFactory
 import pirarucu.eval.EvalConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.search.MainSearch
-import pirarucu.search.SearchInfo
 import pirarucu.search.SearchOptions
 import pirarucu.uci.UciOutput
 import pirarucu.util.EpdFileLoader
@@ -24,8 +23,8 @@ object BenchmarkApplication {
             speed[tries] = runBenchmark(DEFAULT_BENCHMARK_DEPTH)
         }
         println("Time taken " + speed.sum())
-        println("Max " +  speed.max()!!)
-        println("Min " +  speed.min()!!)
+        println("Max " + speed.max()!!)
+        println("Min " + speed.min()!!)
     }
 
     fun runBenchmark(depth: Int): Long {
@@ -35,14 +34,13 @@ object BenchmarkApplication {
 
         val iterator = epdFileLoader.getEpdInfoList()
         var nodeCount = 0L
-        val mainSearch = MainSearch()
         val searchOptions = SearchOptions()
+        val mainSearch = MainSearch(searchOptions)
         searchOptions.depth = depth
         searchOptions.minSearchTimeLimit = 60000L
         searchOptions.maxSearchTimeLimit = 60000L
         searchOptions.searchTimeIncrement = 1000L
         TranspositionTable.resize(16)
-        val searchInfo = SearchInfo()
         val board = BoardFactory.getBoard()
         val startTime = Utils.specific.currentTimeMillis()
         for (epdInfo in iterator) {
@@ -50,9 +48,9 @@ object BenchmarkApplication {
             TranspositionTable.reset()
             searchOptions.stop = false
 
-            mainSearch.search(board, searchInfo, searchOptions)
-            nodeCount += searchInfo.searchNodes
-            println("Board (" + epdInfo.fenPosition + ") | Nodes: " + searchInfo.searchNodes)
+            mainSearch.search(board)
+            nodeCount += mainSearch.searchInfo.searchNodes
+            println("Board (" + epdInfo.fenPosition + ") | Nodes: " + mainSearch.searchInfo.searchNodes)
         }
         val timeTaken = Utils.specific.currentTimeMillis() - startTime
 
