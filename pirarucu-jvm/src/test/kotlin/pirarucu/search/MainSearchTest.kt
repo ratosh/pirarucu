@@ -8,8 +8,6 @@ import pirarucu.eval.EvalConstants
 import pirarucu.game.GameConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
-import pirarucu.stats.Statistics
-import kotlin.test.AfterTest
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -24,7 +22,6 @@ class MainSearchTest {
         searchOptions.stop = false
         TranspositionTable.reset()
         searchInfo.reset()
-        Statistics.reset()
         val board = BoardFactory.getBoard(fen)
         BoardFactory.setBoard(fen, board)
         searchOptions.minSearchTimeLimit = searchTime
@@ -66,11 +63,6 @@ class MainSearchTest {
             board.undoMove(pvInfo[ply])
         }
         board.undoMove(infoMove)
-    }
-
-    @AfterTest
-    fun tearDown() {
-        println(Statistics.toString())
     }
 
     @Test

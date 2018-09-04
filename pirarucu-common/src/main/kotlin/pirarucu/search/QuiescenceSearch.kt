@@ -11,7 +11,6 @@ import pirarucu.move.Move
 import pirarucu.move.MoveGenerator
 import pirarucu.move.MoveList
 import pirarucu.move.MoveType
-import pirarucu.stats.Statistics
 import pirarucu.tuning.TunableConstants
 import kotlin.math.max
 
@@ -28,7 +27,7 @@ class QuiescenceSearch {
                ply: Int,
                alpha: Int,
                beta: Int): Int {
-        Statistics.searchNodes++
+        searchInfo.searchNodes++
 
         val currentNode = searchInfo.plyInfoList[ply]
         val eval = GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board, currentNode.attackInfo)

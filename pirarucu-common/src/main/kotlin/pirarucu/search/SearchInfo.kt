@@ -8,9 +8,11 @@ import pirarucu.util.Utils
 
 class SearchInfo {
 
+    var searchNodes = 0L
     val plyInfoList = Array(GameConstants.MAX_PLIES + 4) { SearchPlyInfo(it) }
 
     fun reset() {
+        searchNodes = 0
         for (info in plyInfoList) {
             info.clear()
         }

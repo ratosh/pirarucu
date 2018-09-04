@@ -1,10 +1,7 @@
 package pirarucu.uci
 
 import pirarucu.hash.TranspositionTable
-import pirarucu.search.SearchOptions
-import pirarucu.stats.Statistics
 import pirarucu.tuning.TunableConstants
-import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -15,23 +12,9 @@ class UciInputTest {
     private val inputHandler = InputHandler()
     private val uciInput = UciInput(inputHandler)
 
-    private var searchOptions = SearchOptions()
-    private var search = false
-
     @BeforeTest
     fun setup() {
         TranspositionTable.reset()
-        Statistics.reset()
-    }
-
-    @AfterTest
-    fun tearDown() {
-        while (search && !InputHandler.searchOptions.stop) {
-            Thread.yield()
-        }
-        if (search) {
-            println(Statistics.toString())
-        }
     }
 
     @Test
@@ -55,7 +38,6 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame() {
-        search = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
@@ -66,7 +48,6 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame2() {
-        search = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
@@ -77,7 +58,6 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame3() {
-        search = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
@@ -88,7 +68,6 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame4() {
-        search = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
@@ -99,7 +78,6 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame5() {
-        search = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
@@ -110,7 +88,6 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame6() {
-        search = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
@@ -121,7 +98,6 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame7() {
-        search = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
@@ -132,7 +108,6 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame8() {
-        search = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")

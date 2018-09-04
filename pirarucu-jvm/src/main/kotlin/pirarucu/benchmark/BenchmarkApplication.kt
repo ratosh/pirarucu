@@ -6,7 +6,6 @@ import pirarucu.hash.TranspositionTable
 import pirarucu.search.MainSearch
 import pirarucu.search.SearchInfo
 import pirarucu.search.SearchOptions
-import pirarucu.stats.Statistics
 import pirarucu.uci.UciOutput
 import pirarucu.util.EpdFileLoader
 import pirarucu.util.Utils
@@ -52,8 +51,8 @@ object BenchmarkApplication {
             searchOptions.stop = false
 
             mainSearch.search(board, searchInfo, searchOptions)
-            nodeCount += Statistics.searchNodes
-            println("Board (" + epdInfo.fenPosition + ") | Nodes: " + Statistics.searchNodes)
+            nodeCount += searchInfo.searchNodes
+            println("Board (" + epdInfo.fenPosition + ") | Nodes: " + searchInfo.searchNodes)
         }
         val timeTaken = Utils.specific.currentTimeMillis() - startTime
 
