@@ -13,12 +13,8 @@ import kotlin.test.assertTrue
 
 class QuiescenceSearchTest {
 
-    private var quiescenceSearch = QuiescenceSearch()
     private var searchInfo = SearchInfo()
-
-    init {
-        quiescenceSearch.searchInfo = searchInfo
-    }
+    private var quiescenceSearch = QuiescenceSearch(searchInfo)
 
     private fun testSearch(fen: String, minDiff: Int, maxDiff: Int) {
         val board = BoardFactory.getBoard(fen)

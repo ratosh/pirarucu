@@ -17,10 +17,7 @@ import kotlin.math.max
 /**
  * https://chessprogramming.wikispaces.com/Quiescence+Search
  */
-class QuiescenceSearch {
-
-    var searchOptions = SearchOptions()
-    var searchInfo = SearchInfo()
+class QuiescenceSearch(private val searchInfo: SearchInfo) {
 
     fun search(board: Board,
                moveList: MoveList,

@@ -20,13 +20,13 @@ import pirarucu.util.Utils
 import kotlin.math.max
 import kotlin.math.min
 
-class MainSearch {
+class MainSearch(private val searchOptions: SearchOptions) {
+
+    val searchInfo = SearchInfo()
 
     private var maxSearchTimeLimit = 0L
 
-    private var searchOptions = SearchOptions()
-    private var searchInfo = SearchInfo()
-    private var quiescenceSearch = QuiescenceSearch()
+    private val quiescenceSearch = QuiescenceSearch(searchInfo)
 
     private fun search(board: Board,
                        moveList: MoveList,
@@ -343,12 +343,7 @@ class MainSearch {
     }
 
     // Interactive deepening with aspiration window
-    fun search(board: Board, searchInfo: SearchInfo, searchOptions: SearchOptions) {
-        this.searchInfo = searchInfo
-        this.searchOptions = searchOptions
-        quiescenceSearch.searchInfo = searchInfo
-        quiescenceSearch.searchOptions = searchOptions
-
+    fun search(board: Board) {
         searchInfo.reset()
 
         val moveList = MoveList()
