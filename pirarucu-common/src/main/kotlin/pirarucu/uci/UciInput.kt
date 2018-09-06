@@ -19,8 +19,7 @@ class UciInput(private val inputHandler: IInputHandler) {
                 inputHandler.isReady()
             }
             "ucinewgame" -> {
-                TranspositionTable.reset()
-                History.reset()
+                inputHandler.newGame()
             }
             "position" -> inputHandler.position(tokens)
             "setoption" -> inputHandler.setOption(tokens[2], tokens[4])

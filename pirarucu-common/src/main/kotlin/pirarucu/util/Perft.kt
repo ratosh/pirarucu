@@ -4,11 +4,13 @@ import pirarucu.board.Board
 import pirarucu.eval.AttackInfo
 import pirarucu.move.MoveGenerator
 import pirarucu.move.MoveList
+import pirarucu.search.History
 
 object Perft {
 
     private val attackInfo = AttackInfo()
     private val moveList = MoveList()
+    private val moveGenerator = MoveGenerator(History())
 
     fun perft(board: Board, depth: Int): Long {
         var nodes: Long = 0
@@ -18,9 +20,9 @@ object Perft {
         }
 
         moveList.startPly()
-        MoveGenerator.legalMoves(board, attackInfo, moveList)
-        MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        
+        moveGenerator.legalMoves(board, attackInfo, moveList)
+        moveGenerator.legalAttacks(board, attackInfo, moveList)
+
         while (moveList.hasNext()) {
             val move = moveList.next()
             if (board.isLegalMove(move)) {

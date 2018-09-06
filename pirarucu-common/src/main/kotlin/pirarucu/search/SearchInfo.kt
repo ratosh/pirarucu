@@ -4,11 +4,14 @@ import pirarucu.board.Board
 import pirarucu.game.GameConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
+import pirarucu.move.MoveGenerator
 import pirarucu.util.Utils
 
 class SearchInfo {
 
     var searchNodes = 0L
+    val history = History()
+    val moveGenerator = MoveGenerator(history)
     val plyInfoList = Array(GameConstants.MAX_PLIES + 4) { SearchPlyInfo(it) }
 
     fun reset() {

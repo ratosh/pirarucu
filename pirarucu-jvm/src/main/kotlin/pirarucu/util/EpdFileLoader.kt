@@ -4,6 +4,7 @@ import pirarucu.board.factory.BoardFactory
 import pirarucu.eval.AttackInfo
 import pirarucu.move.MoveGenerator
 import pirarucu.move.MoveList
+import pirarucu.search.History
 import pirarucu.util.factory.EpdInfoFactory
 import java.io.File
 import java.io.FileInputStream
@@ -13,6 +14,7 @@ import java.util.Scanner
 class EpdFileLoader(inputStream: InputStream) {
 
     private val epdInfoList = mutableListOf<EpdInfo>()
+    private val moveGenerator = MoveGenerator(History())
 
     init {
         try {
@@ -27,8 +29,8 @@ class EpdFileLoader(inputStream: InputStream) {
                 val attackInfo = AttackInfo()
 
                 val board = BoardFactory.getBoard(epdInfo.fenPosition)
-                MoveGenerator.legalMoves(board, attackInfo, moveList)
-                MoveGenerator.legalAttacks(board, attackInfo, moveList)
+                moveGenerator.legalMoves(board, attackInfo, moveList)
+                moveGenerator.legalAttacks(board, attackInfo, moveList)
                 var moves = 0
                 while (moveList.hasNext()) {
                     if (board.isLegalMove(moveList.next())) {

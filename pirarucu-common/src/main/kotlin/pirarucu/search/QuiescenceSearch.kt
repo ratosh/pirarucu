@@ -44,7 +44,7 @@ class QuiescenceSearch(private val searchInfo: SearchInfo) {
         if (!moveList.startPly()) {
             return bestScore
         }
-        MoveGenerator.legalAttacks(board, currentNode.attackInfo, moveList)
+        searchInfo.moveGenerator.legalAttacks(board, currentNode.attackInfo, moveList)
 
         var moveCount = 0
 

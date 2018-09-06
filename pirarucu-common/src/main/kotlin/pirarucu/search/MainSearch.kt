@@ -176,7 +176,7 @@ class MainSearch(private val searchOptions: SearchOptions) {
 
                 }
                 PHASE_ATTACK -> {
-                    MoveGenerator.legalAttacks(board, currentNode.attackInfo, moveList)
+                    searchInfo.moveGenerator.legalAttacks(board, currentNode.attackInfo, moveList)
                 }
                 PHASE_KILLER_1 -> {
                     val killerMove = currentNode.killerMove1
@@ -195,7 +195,7 @@ class MainSearch(private val searchOptions: SearchOptions) {
                     }
                 }
                 PHASE_QUIET -> {
-                    MoveGenerator.legalMoves(board, currentNode.attackInfo, moveList)
+                    searchInfo.moveGenerator.legalMoves(board, currentNode.attackInfo, moveList)
                 }
             }
             while (moveList.hasNext()) {
@@ -305,13 +305,13 @@ class MainSearch(private val searchOptions: SearchOptions) {
                 if (searchAlpha >= currentBeta) {
                     if (isQuiet) {
                         currentNode.addKillerMove(move)
-                        History.addHistory(board.colorToMove, move, depth * depth)
+                        searchInfo.history.addHistory(board.colorToMove, move, depth * depth)
                     }
                     phase = PHASE_END
                     break
                 }
                 if (isQuiet) {
-                    History.addHistory(board.colorToMove, move, -depth * depth)
+                    searchInfo.history.addHistory(board.colorToMove, move, -depth * depth)
                 }
             }
             phase--
