@@ -5,12 +5,14 @@ import pirarucu.board.Board
 import pirarucu.board.Piece
 import pirarucu.board.factory.BoardFactory
 import pirarucu.eval.AttackInfo
+import pirarucu.search.History
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class MoveGeneratorPerftTest {
     private val attackInfo = AttackInfo()
+    private val moveGenerator = MoveGenerator(History())
 
     @Ignore
     @Test
@@ -252,8 +254,8 @@ class MoveGeneratorPerftTest {
                wantedDepth: Int) {
         val moveList = MoveList()
         moveList.startPly()
-        MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        MoveGenerator.legalMoves(board, attackInfo, moveList)
+        moveGenerator.legalAttacks(board, attackInfo, moveList)
+        moveGenerator.legalMoves(board, attackInfo, moveList)
         while (moveList.hasNext()) {
             val moveInfoArray = Array(wantedDepth) { MoveInfo() }
             val move = moveList.next()
@@ -288,8 +290,8 @@ class MoveGeneratorPerftTest {
         }
 
         moveList.startPly()
-        MoveGenerator.legalAttacks(board, attackInfo, moveList)
-        MoveGenerator.legalMoves(board, attackInfo, moveList)
+        moveGenerator.legalAttacks(board, attackInfo, moveList)
+        moveGenerator.legalMoves(board, attackInfo, moveList)
 
         var totalMove = 0
         while (moveList.hasNext()) {

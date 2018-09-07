@@ -92,6 +92,12 @@ class MainSearchTest {
 
     @Ignore
     @Test
+    fun testStartPosition() {
+        testSearch(BoardFactory.STARTER_FEN, 10000L)
+    }
+
+    @Ignore
+    @Test
     fun testRandomPosition() {
         testSearch("r3kb1r/ppqn1pp1/4pn1p/8/3N3P/6N1/PPPBQPP1/R3R1K1 b kq -", 1000L)
     }

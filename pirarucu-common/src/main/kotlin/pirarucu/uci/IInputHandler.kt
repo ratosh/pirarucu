@@ -2,6 +2,10 @@ package pirarucu.uci
 
 interface IInputHandler {
 
+    fun isReady()
+
+    fun newGame()
+
     fun setOption(option: String, value: String)
 
     fun position(tokens: Array<String>)
@@ -9,8 +13,6 @@ interface IInputHandler {
     fun search(tokens: Array<String>)
 
     fun stop()
-
-    fun isReady()
 
     fun perft(tokens: Array<String>)
 }

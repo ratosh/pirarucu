@@ -10,6 +10,14 @@ import pirarucu.util.Perft
 import pirarucu.util.Utils
 
 class InputHandler : IInputHandler {
+    override fun newGame() {
+        TranspositionTable.reset()
+        mainSearch.searchInfo.history.reset()
+    }
+
+    override fun isReady() {
+        UciOutput.println("readyok")
+    }
 
     override fun search(tokens: Array<String>) {
         var index = 1
@@ -79,10 +87,6 @@ class InputHandler : IInputHandler {
                 }
             }
         }
-    }
-
-    override fun isReady() {
-        UciOutput.println("readyok")
     }
 
     override fun perft(tokens: Array<String>) {
