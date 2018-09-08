@@ -18,7 +18,6 @@ class MainSearchTest {
     private val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener())
 
     fun testSearch(fen: String, searchTime: Long) {
-        searchOptions.stop = false
         TranspositionTable.reset()
         val board = BoardFactory.getBoard(fen)
         BoardFactory.setBoard(fen, board)

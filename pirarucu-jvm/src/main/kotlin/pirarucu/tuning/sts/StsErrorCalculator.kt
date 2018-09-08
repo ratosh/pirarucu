@@ -38,10 +38,9 @@ class StsErrorCalculator : Callable<Int> {
 
     private fun calculateError(): Int {
         var score = 0
-        searchOptions.stop = false
         for (entry in epdInfoList) {
             BoardFactory.setBoard(entry.fenPosition, board)
-            searchOptions.stop = false
+            searchOptions.startControl()
 
             mainSearch.search(board)
 

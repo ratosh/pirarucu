@@ -39,7 +39,7 @@ object TestingApplication {
         for (epdInfo in testFile.getEpdInfoList()) {
             BoardFactory.setBoard(epdInfo.fenPosition, board)
             TranspositionTable.reset()
-            searchOptions.stop = false
+            searchOptions.startControl()
 
             mainSearch.search(board)
 

@@ -63,8 +63,6 @@ object MultiThreadedSearch {
     // Start search
     fun search() {
         searchOptions.setTime(mainBoard().colorToMove)
-        searchOptions.stop = false
-        searchOptions.setTime(mainBoard().colorToMove)
         searchOptions.startControl()
 
         synchronized(startLock) {

@@ -47,7 +47,7 @@ object BenchmarkApplication {
         for (epdInfo in iterator) {
             BoardFactory.setBoard(epdInfo.fenPosition, board)
             TranspositionTable.reset()
-            searchOptions.stop = false
+            searchOptions.startControl()
 
             mainSearch.search(board)
             nodeCount += mainSearch.searchInfo.searchNodes
