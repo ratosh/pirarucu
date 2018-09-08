@@ -15,16 +15,13 @@ import pirarucu.move.MoveGenerator
 import pirarucu.move.MoveList
 import pirarucu.move.MoveType
 import pirarucu.tuning.TunableConstants
-import pirarucu.uci.UciOutput
 import pirarucu.util.Utils
 import kotlin.math.max
 import kotlin.math.min
 
-class MainSearch(private val searchOptions: SearchOptions) {
+class MainSearch(private val searchOptions: SearchOptions, private val searchInfoListener: SearchInfoListener) {
 
     val searchInfo = SearchInfo()
-
-    private var maxSearchTimeLimit = 0L
 
     private val quiescenceSearch = QuiescenceSearch(searchInfo)
 
@@ -56,7 +53,7 @@ class MainSearch(private val searchOptions: SearchOptions) {
         searchInfo.searchNodes++
         if (!rootNode &&
             searchInfo.searchNodes and 0xFFFL == 0xFFFL &&
-            maxSearchTimeLimit < Utils.specific.currentTimeMillis()) {
+            searchOptions.maxSearchTimeLimit < Utils.specific.currentTimeMillis()) {
             searchOptions.stop = true
             return 0
         }
@@ -354,10 +351,7 @@ class MainSearch(private val searchOptions: SearchOptions) {
         var alpha = EvalConstants.SCORE_MIN
         var beta = EvalConstants.SCORE_MAX
         var score = EvalConstants.SCORE_MIN
-        val startTime: Long = Utils.specific.currentTimeMillis()
-        var searchTimeLimit: Long = startTime + searchOptions.minSearchTimeLimit
-        val minSearchTimeLimit = startTime + searchOptions.minSearchTimeLimit
-        maxSearchTimeLimit = startTime + searchOptions.maxSearchTimeLimit
+        var wantedSearchTime = searchOptions.minSearchTimeLimit
 
         val searchTimeIncrement = searchOptions.searchTimeIncrement
 
@@ -375,32 +369,32 @@ class MainSearch(private val searchOptions: SearchOptions) {
                 searchInfo.save(board)
 
                 val currentTime = Utils.specific.currentTimeMillis()
-                UciOutput.searchInfo(depth, currentTime - startTime, searchInfo)
+                searchInfoListener.searchInfo(depth, currentTime - searchOptions.startTime, searchInfo)
 
                 if (depth > 4) {
                     if (score < previousScore &&
-                        searchTimeLimit < maxSearchTimeLimit) {
-                        searchTimeLimit += searchTimeIncrement
+                        wantedSearchTime < searchOptions.maxSearchTimeLimit) {
+                        wantedSearchTime += searchTimeIncrement
                     }
                     if (score + 10 < previousScore &&
-                        searchTimeLimit < maxSearchTimeLimit) {
-                        searchTimeLimit += searchTimeIncrement
+                        wantedSearchTime < searchOptions.maxSearchTimeLimit) {
+                        wantedSearchTime += searchTimeIncrement
                     }
                     if (score + 50 < previousScore &&
-                        searchTimeLimit < maxSearchTimeLimit) {
-                        searchTimeLimit += searchTimeIncrement
+                        wantedSearchTime < searchOptions.maxSearchTimeLimit) {
+                        wantedSearchTime += searchTimeIncrement
                     }
                     if (score + 100 < previousScore &&
-                        searchTimeLimit < maxSearchTimeLimit) {
-                        searchTimeLimit += searchTimeIncrement
+                        wantedSearchTime < searchOptions.maxSearchTimeLimit) {
+                        wantedSearchTime += searchTimeIncrement
                     }
                     if (score > previousScore &&
-                        searchTimeLimit > minSearchTimeLimit) {
-                        searchTimeLimit -= searchTimeIncrement
+                        wantedSearchTime > searchOptions.minSearchTimeLimit) {
+                        wantedSearchTime -= searchTimeIncrement
                     }
                 }
 
-                if (searchTimeLimit < currentTime) {
+                if (wantedSearchTime < currentTime) {
                     searchOptions.stop = true
                     break
                 }
@@ -429,7 +423,47 @@ class MainSearch(private val searchOptions: SearchOptions) {
         }
         searchOptions.stop = true
 
-        UciOutput.bestMove(searchInfo.bestMove)
+        searchInfoListener.bestMove(searchInfo.bestMove)
+    }
+
+    // Used by helper threads
+    fun searchStep(board: Board, moveList: MoveList, previousScore: Int, depth: Int): Int {
+        if (previousScore == EvalConstants.SCORE_UNKNOWN) {
+            val score = search(board, moveList, depth, 0, EvalConstants.SCORE_MIN, EvalConstants.SCORE_MAX)
+            searchInfo.save(board)
+            return score
+        }
+
+        var aspirationWindow = SearchConstants.ASPIRATION_WINDOW_SIZE
+        var alpha = max(previousScore - aspirationWindow, EvalConstants.SCORE_MIN)
+        var beta = min(previousScore + aspirationWindow, EvalConstants.SCORE_MAX)
+
+        while (true) {
+            val score = search(board, moveList, depth, 0, alpha, beta)
+
+            when {
+                score <= alpha -> {
+                    alpha = if (score < -EvalConstants.SCORE_MATE) {
+                        EvalConstants.SCORE_MIN
+                    } else {
+                        max(score - aspirationWindow, EvalConstants.SCORE_MIN)
+                    }
+                }
+                score >= beta -> {
+                    beta = if (score > EvalConstants.SCORE_MATE) {
+                        EvalConstants.SCORE_MAX
+                    } else {
+                        min(score + aspirationWindow, EvalConstants.SCORE_MAX)
+                    }
+                }
+                else -> {
+                    searchInfo.save(board)
+                    return score
+                }
+            }
+
+            aspirationWindow += aspirationWindow / 4
+        }
     }
 
     companion object {

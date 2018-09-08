@@ -79,12 +79,14 @@ object TranspositionTable {
         val wantedKey = board.zobristKey
         while (index < maxIndex) {
             // Unpopulated entry
+            val info = infos[index]
             val key = keys[index]
-            if (key == 0L) {
+            val savedKey = key xor info
+            if (key == 0L && savedKey == 0L) {
                 break
             }
-            if (wantedKey == key) {
-                return infos[index]
+            if (wantedKey == savedKey) {
+                return info
             }
             index++
         }
@@ -103,16 +105,19 @@ object TranspositionTable {
         var replacedDepth = Int.MAX_VALUE
 
         while (index < maxIndex) {
+            val info = infos[index]
+            val key = keys[index]
+            val savedKey = key xor info
             // Unpopulated entry
-            if (keys[index] == 0L) {
+            if (key == 0L && savedKey == 0L) {
                 ttUsage++
                 usedIndex = index
                 break
             }
-            val savedDepth = getDepth(infos[index])
+            val savedDepth = getDepth(info)
 
             // Update entry
-            if (keys[index] == wantedKey) {
+            if (savedKey == wantedKey) {
                 usedIndex = index
                 if (savedDepth > depth && scoreType != HashConstants.SCORE_TYPE_EXACT_SCORE) {
                     return
@@ -134,8 +139,9 @@ object TranspositionTable {
             else -> score
         }
 
-        keys[usedIndex] = wantedKey
-        infos[usedIndex] = buildInfo(bestMove, eval, realScore, depth + baseDepth, scoreType)
+        val info = buildInfo(bestMove, eval, realScore, depth + baseDepth, scoreType)
+        infos[usedIndex] = info
+        keys[usedIndex] = wantedKey xor info
     }
 
     private fun getIndex(board: Board): Int {

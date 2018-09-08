@@ -15,15 +15,16 @@ import kotlin.test.assertEquals
 class MainSearchTest {
 
     private var searchOptions = SearchOptions()
-    private var mainSearch = MainSearch(searchOptions)
+    private val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener())
 
     fun testSearch(fen: String, searchTime: Long) {
         searchOptions.stop = false
         TranspositionTable.reset()
         val board = BoardFactory.getBoard(fen)
         BoardFactory.setBoard(fen, board)
-        searchOptions.minSearchTimeLimit = searchTime
-        searchOptions.maxSearchTimeLimit = searchTime * 2
+        searchOptions.minSearchTime = searchTime
+        searchOptions.maxSearchTime = searchTime * 2
+        searchOptions.startControl()
         mainSearch.search(board)
     }
 

@@ -2,28 +2,27 @@ package pirarucu.tuning.sts
 
 import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory
-import pirarucu.eval.AttackInfo
 import pirarucu.search.MainSearch
-import pirarucu.search.SearchInfo
 import pirarucu.search.SearchOptions
+import pirarucu.search.SimpleSearchInfoListener
 import pirarucu.util.EpdInfo
 import java.util.concurrent.Callable
 
 class StsErrorCalculator : Callable<Int> {
 
     private val epdInfoList = mutableListOf<EpdInfo>()
-    private var board: Board = Board()
+    private val board: Board = Board()
 
-    private var searchOptions = SearchOptions()
-    private var mainSearch = MainSearch(searchOptions)
+    private val searchOptions = SearchOptions()
+    private val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener())
 
     fun addEpdInfo(epdInfo: EpdInfo) {
         epdInfoList.add(epdInfo)
     }
 
     init {
-        searchOptions.minSearchTimeLimit = 60000L
-        searchOptions.maxSearchTimeLimit = 60000L
+        searchOptions.minSearchTime = 60000L
+        searchOptions.maxSearchTime = 60000L
         searchOptions.searchTimeIncrement = 1000L
     }
 
