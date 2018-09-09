@@ -1,7 +1,9 @@
 package pirarucu.uci
 
 import pirarucu.hash.TranspositionTable
+import pirarucu.search.MultiThreadedSearch
 import pirarucu.tuning.TunableConstants
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -9,35 +11,46 @@ import kotlin.test.assertEquals
 
 class UciInputTest {
 
-    private val inputHandler = InputHandler()
-    private val uciInput = UciInput(inputHandler)
+    private val uciInput = UciInput(InputHandler())
+
+    private var searching = false
 
     @BeforeTest
     fun setup() {
         TranspositionTable.reset()
+        searching = false
+    }
+
+    @AfterTest
+    fun tearDown() {
+        while (searching && !MultiThreadedSearch.searchOptions.stop) {
+            Thread.yield()
+        }
     }
 
     @Test
     fun testOption1() {
-        uciInput.process("uci")
-        uciInput.process("ucinewgame")
-        uciInput.process("isready")
         uciInput.process("setoption name PHASE_PIECE_VALUE-1 value 100")
         assertEquals(TunableConstants.PHASE_PIECE_VALUE[1], 100)
     }
 
     @Test
     fun testOption2() {
-        uciInput.process("uci")
-        uciInput.process("ucinewgame")
-        uciInput.process("isready")
         uciInput.process("setoption name PSQT_MG-1-0 value 100")
         assertEquals(TunableConstants.PSQT_MG[1][0], 100)
+    }
+
+    @Test
+    fun testHash() {
+        val size = 2
+        uciInput.process("setoption name Hash value $size")
+        assertEquals(size, TranspositionTable.tableLimit / 64 / 1000)
     }
 
     @Ignore
     @Test
     fun testGame() {
+        searching = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
@@ -48,6 +61,7 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame2() {
+        searching = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
@@ -58,6 +72,7 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame3() {
+        searching = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
@@ -68,6 +83,7 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame4() {
+        searching = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
@@ -78,6 +94,7 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame5() {
+        searching = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
@@ -88,6 +105,7 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame6() {
+        searching = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")
@@ -98,8 +116,13 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame7() {
+        searching = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
+        uciInput.process("isready")
+        uciInput.process("setoption name Threads value 4")
+        uciInput.process("position startpos moves e2e4 e7e6 d2d4 d7d5 b1c3 f8b4 e4e5 c7c5 d1g4 g8e7 g1f3 b8c6 f1b5 c5d4 f3d4 e8g8 d4c6 b4c3 b2c3 b7c6 b5d3 d8c7 g4h5 e7g6 f2f4 c6c5 e1g1 c5c4 d3g6 c7b6 g1h1 h7g6 h5d1 b6a5 f1f3 c8b7 d1e1 a5a4")
+        uciInput.process("go wtime 853844 btime 1026222 movestogo 5")
         uciInput.process("isready")
         uciInput.process("position startpos moves e2e4 e7e6 d2d4 d7d5 b1c3 f8b4 e4e5 c7c5 d1g4 g8e7 g1f3 b8c6 f1b5 c5d4 f3d4 e8g8 d4c6 b4c3 b2c3 b7c6 b5d3 d8c7 g4h5 e7g6 f2f4 c6c5 e1g1 c5c4 d3g6 c7b6 g1h1 h7g6 h5d1 b6a5 f1f3 c8b7 d1e1 a5a4")
         uciInput.process("go wtime 853844 btime 1026222 movestogo 5")
@@ -108,6 +131,7 @@ class UciInputTest {
     @Ignore
     @Test
     fun testGame8() {
+        searching = true
         uciInput.process("uci")
         uciInput.process("ucinewgame")
         uciInput.process("isready")

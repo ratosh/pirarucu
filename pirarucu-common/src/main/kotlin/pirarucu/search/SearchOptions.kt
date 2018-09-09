@@ -2,17 +2,22 @@ package pirarucu.search
 
 import pirarucu.board.Color
 import pirarucu.game.GameConstants
+import pirarucu.util.Utils
 import kotlin.math.max
 
 class SearchOptions {
 
-    var minSearchTimeLimit = 0L
+    // Search control
+    var stop = false
+    var startTime = 0L
     var maxSearchTimeLimit = 0L
+    var minSearchTimeLimit = 0L
+
+    var minSearchTime = 0L
+    var maxSearchTime = 0L
     var searchTimeIncrement = 0L
 
     var depth = GameConstants.MAX_PLIES - 1
-
-    var stop = false
 
     var movesToGo = 0L
 
@@ -32,13 +37,20 @@ class SearchOptions {
             else -> GAME_MOVES
         }
 
-        minSearchTimeLimit = totalTime / moves
-        maxSearchTimeLimit = when (movesToGo) {
+        minSearchTime = totalTime / moves
+        maxSearchTime = when (movesToGo) {
             1L -> (totalTime - 1000)
-            else -> (minSearchTimeLimit * MAX_TIME_RATIO).toLong()
+            else -> (minSearchTime * MAX_TIME_RATIO).toLong()
         }
 
-        searchTimeIncrement = max(1, (maxSearchTimeLimit - minSearchTimeLimit) / INCREMENT_RATIO)
+        searchTimeIncrement = max(1, (maxSearchTime - minSearchTime) / INCREMENT_RATIO)
+    }
+
+    fun startControl() {
+        stop = false
+        startTime = Utils.specific.currentTimeMillis()
+        maxSearchTimeLimit = startTime + maxSearchTime
+        minSearchTimeLimit = startTime + minSearchTime
     }
 
     companion object {
