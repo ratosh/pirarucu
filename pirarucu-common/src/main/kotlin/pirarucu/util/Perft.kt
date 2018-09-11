@@ -3,13 +3,12 @@ package pirarucu.util
 import pirarucu.board.Board
 import pirarucu.eval.AttackInfo
 import pirarucu.move.MoveGenerator
-import pirarucu.move.MoveList
+import pirarucu.move.OrderedMoveList
 import pirarucu.search.History
 
 object Perft {
 
     private val attackInfo = AttackInfo()
-    private val moveList = MoveList()
     private val moveGenerator = MoveGenerator(History())
 
     fun perft(board: Board, depth: Int): Long {
@@ -19,12 +18,12 @@ object Perft {
             return 1L
         }
 
-        moveList.startPly()
-        moveGenerator.legalMoves(board, attackInfo, moveList)
-        moveGenerator.legalAttacks(board, attackInfo, moveList)
+        val orderedMoveList = OrderedMoveList()
+        moveGenerator.legalMoves(board, attackInfo, orderedMoveList)
+        moveGenerator.legalAttacks(board, attackInfo, orderedMoveList)
 
-        while (moveList.hasNext()) {
-            val move = moveList.next()
+        while (orderedMoveList.hasNext()) {
+            val move = orderedMoveList.next()
             if (board.isLegalMove(move)) {
                 board.doMove(move)
                 nodes += perft(board, depth - 1)
@@ -32,7 +31,6 @@ object Perft {
             }
         }
 
-        moveList.endPly()
         return nodes
     }
 }

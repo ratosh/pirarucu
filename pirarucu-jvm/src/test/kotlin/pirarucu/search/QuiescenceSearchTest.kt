@@ -20,7 +20,6 @@ class QuiescenceSearchTest {
         val board = BoardFactory.getBoard(fen)
         val evalValue = Evaluator.evaluate(board, AttackInfo()) * GameConstants.COLOR_FACTOR[board.colorToMove]
         val searchValue = quiescenceSearch.search(board,
-            MoveList(),
             0,
             EvalConstants.SCORE_MIN,
             EvalConstants.SCORE_MAX)

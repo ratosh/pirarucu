@@ -11,7 +11,7 @@ import pirarucu.tuning.TunableConstants
 
 class MoveGenerator(private val history: History) {
 
-    fun legalMoves(board: Board, attackInfo: AttackInfo, moveList: MoveList) {
+    fun legalMoves(board: Board, attackInfo: AttackInfo, moveList: OrderedMoveList) {
         attackInfo.update(board, board.colorToMove)
         val ourColor = board.colorToMove
         val checkBitboard = board.basicEvalInfo.checkBitboard
@@ -30,7 +30,10 @@ class MoveGenerator(private val history: History) {
         generateQuietMoves(board, attackInfo, moveList, Piece.KING, board.emptyBitboard)
     }
 
-    private fun generateQuietPawnMoves(board: Board, attackInfo: AttackInfo, moveList: MoveList, mask: Long) {
+    private fun generateQuietPawnMoves(board: Board,
+                                       attackInfo: AttackInfo,
+                                       moveList: OrderedMoveList,
+                                       mask: Long) {
         val ourColor = board.colorToMove
         val theirColor = board.nextColorToMove
         var quietPieces = Bitboard.FROM_PROMOTION_BITBOARD[ourColor].inv() and
@@ -58,7 +61,7 @@ class MoveGenerator(private val history: History) {
 
     private fun generateQuietMoves(board: Board,
                                    attackInfo: AttackInfo,
-                                   moveList: MoveList,
+                                   moveList: OrderedMoveList,
                                    movedPiece: Int,
                                    maskBitboard: Long) {
         val ourColor = board.colorToMove
@@ -77,7 +80,7 @@ class MoveGenerator(private val history: History) {
         }
     }
 
-    private fun castlingMoves(board: Board, moveList: MoveList) {
+    private fun castlingMoves(board: Board, moveList: OrderedMoveList) {
         val ourColor = board.colorToMove
         var castlingIndexes = CastlingRights.filterCastlingRight(ourColor,
             board.castlingRights)
@@ -101,7 +104,9 @@ class MoveGenerator(private val history: History) {
         }
     }
 
-    fun legalAttacks(board: Board, attackInfo: AttackInfo, moveList: MoveList) {
+    fun legalAttacks(board: Board,
+                     attackInfo: AttackInfo,
+                     moveList: OrderedMoveList) {
         val theirColor = board.nextColorToMove
         val theirBitboard = board.colorBitboard[theirColor]
         val ourColor = board.colorToMove
@@ -122,14 +127,20 @@ class MoveGenerator(private val history: History) {
         legalKingCaptures(board, attackInfo, moveList, theirBitboard)
     }
 
-    private fun legalKingCaptures(board: Board, attackInfo: AttackInfo, moveList: MoveList, mask: Long) {
+    private fun legalKingCaptures(board: Board,
+                                  attackInfo: AttackInfo,
+                                  moveList: OrderedMoveList,
+                                  mask: Long) {
         val ourColor = board.colorToMove
         val fromSquare = board.kingSquare[ourColor]
         val bitboard = attackInfo.pieceMovement[ourColor][fromSquare] and mask
         generateCaptures(board, moveList, fromSquare, bitboard)
     }
 
-    private fun generateCapturePromotions(board: Board, attackInfo: AttackInfo, moveList: MoveList, mask: Long) {
+    private fun generateCapturePromotions(board: Board,
+                                          attackInfo: AttackInfo,
+                                          moveList: OrderedMoveList,
+                                          mask: Long) {
         val ourColor = board.colorToMove
         val theirColor = board.nextColorToMove
         var promotionAttacks = attackInfo.attacksBitboard[ourColor][Piece.PAWN] and
@@ -157,7 +168,9 @@ class MoveGenerator(private val history: History) {
         }
     }
 
-    private fun generateNoCapturePromotions(board: Board, attackInfo: AttackInfo, moveList: MoveList) {
+    private fun generateNoCapturePromotions(board: Board,
+                                            attackInfo: AttackInfo,
+                                            moveList: OrderedMoveList) {
         val ourColor = board.colorToMove
         val theirColor = board.nextColorToMove
         val pawnBitboard = board.pieceBitboard[ourColor][Piece.PAWN]
@@ -188,7 +201,7 @@ class MoveGenerator(private val history: History) {
 
     private fun generateNoPromotionPawnCaptures(board: Board,
                                                 attackInfo: AttackInfo,
-                                                moveList: MoveList,
+                                                moveList: OrderedMoveList,
                                                 mask: Long) {
         val ourColor = board.colorToMove
         val theirColor = board.nextColorToMove
@@ -221,7 +234,7 @@ class MoveGenerator(private val history: History) {
 
     private fun generateAttacks(board: Board,
                                 attackInfo: AttackInfo,
-                                moveList: MoveList,
+                                moveList: OrderedMoveList,
                                 movedPiece: Int,
                                 maskBitboard: Long) {
         val ourColor = board.colorToMove
@@ -240,7 +253,7 @@ class MoveGenerator(private val history: History) {
     }
 
     private fun generateCaptures(board: Board,
-                                 moveList: MoveList,
+                                 moveList: OrderedMoveList,
                                  fromSquare: Int,
                                  targetBitboard: Long) {
         var tmpTargetBitboard = targetBitboard
@@ -252,7 +265,9 @@ class MoveGenerator(private val history: History) {
         }
     }
 
-    private fun legalPawnEPCapture(board: Board, moveList: MoveList, maskBitboard: Long) {
+    private fun legalPawnEPCapture(board: Board,
+                                   moveList: OrderedMoveList,
+                                   maskBitboard: Long) {
         val epSquare = board.epSquare
         if (epSquare != Square.NONE) {
             val theirColor = board.nextColorToMove
@@ -274,7 +289,10 @@ class MoveGenerator(private val history: History) {
         }
     }
 
-    private fun generateQuietMoves(moveList: MoveList, color: Int, fromSquare: Int, toBitboard: Long) {
+    private fun generateQuietMoves(moveList: OrderedMoveList,
+                                   color: Int,
+                                   fromSquare: Int,
+                                   toBitboard: Long) {
         var tmpToBitboard = toBitboard
         while (tmpToBitboard != Bitboard.EMPTY) {
             val toSquare = Square.getSquare(tmpToBitboard)
@@ -285,7 +303,10 @@ class MoveGenerator(private val history: History) {
         }
     }
 
-    private fun createPromotions(board: Board, moveList: MoveList, fromSquare: Int, toSquare: Int) {
+    private fun createPromotions(board: Board,
+                                 moveList: OrderedMoveList,
+                                 fromSquare: Int,
+                                 toSquare: Int) {
         registerExchangeMove(moveList, true,
             Move.createPromotionMove(fromSquare, toSquare, MoveType.TYPE_PROMOTION_QUEEN),
             getMVVLVAScore(Piece.PAWN, board.pieceTypeBoard[toSquare]) + TunableConstants.SEE_VALUE[Piece.QUEEN])
@@ -303,7 +324,10 @@ class MoveGenerator(private val history: History) {
             getMVVLVAScore(Piece.PAWN, board.pieceTypeBoard[toSquare]) + Piece.KNIGHT)
     }
 
-    private fun registerExchangeMove(moveList: MoveList, goodExchange: Boolean, move: Int, score: Int) {
+    private fun registerExchangeMove(moveList: OrderedMoveList,
+                                     goodExchange: Boolean,
+                                     move: Int,
+                                     score: Int) {
         if (goodExchange) {
             moveList.addMove(move, score)
         } else {

@@ -252,8 +252,7 @@ class MoveGeneratorPerftTest {
 
     fun divide(board: Board,
                wantedDepth: Int) {
-        val moveList = MoveList()
-        moveList.startPly()
+        val moveList = OrderedMoveList()
         moveGenerator.legalAttacks(board, attackInfo, moveList)
         moveGenerator.legalMoves(board, attackInfo, moveList)
         while (moveList.hasNext()) {
@@ -263,24 +262,22 @@ class MoveGeneratorPerftTest {
                 continue
             }
             board.doMove(move)
-            recursive(board, moveList, moveInfoArray, 1, wantedDepth - 1)
+            recursive(board, moveInfoArray, 1, wantedDepth - 1)
             println("Move " + Move.toString(move))
             if (wantedDepth > 1) {
                 println(getString(moveInfoArray))
             }
             board.undoMove(move)
         }
-        moveList.endPly()
     }
 
     private fun recursive(board: Board,
                           moveInfo: Array<MoveInfo>,
                           wantedDepth: Int): Int {
-        return recursive(board, MoveList(), moveInfo, 0, wantedDepth - 1)
+        return recursive(board, moveInfo, 0, wantedDepth - 1)
     }
 
     private fun recursive(board: Board,
-                          moveList: MoveList,
                           moveInfoList: Array<MoveInfo>,
                           depth: Int,
                           wantedDepth: Int): Int {
@@ -289,7 +286,7 @@ class MoveGeneratorPerftTest {
             return 1
         }
 
-        moveList.startPly()
+        val moveList = OrderedMoveList()
         moveGenerator.legalAttacks(board, attackInfo, moveList)
         moveGenerator.legalMoves(board, attackInfo, moveList)
 
@@ -321,7 +318,7 @@ class MoveGeneratorPerftTest {
             }
 
             val moveCount = if (depth < wantedDepth) {
-                recursive(board, moveList, moveInfoList, depth + 1, wantedDepth)
+                recursive(board, moveInfoList, depth + 1, wantedDepth)
             } else {
                 1
             }
@@ -330,7 +327,6 @@ class MoveGeneratorPerftTest {
             board.undoMove(move)
         }
 
-        moveList.endPly()
         return totalMove
     }
 

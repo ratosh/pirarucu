@@ -11,8 +11,6 @@ import pirarucu.game.GameConstants
 import pirarucu.hash.HashConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
-import pirarucu.move.MoveGenerator
-import pirarucu.move.MoveList
 import pirarucu.move.MoveType
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.Utils
@@ -26,7 +24,6 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
     private val quiescenceSearch = QuiescenceSearch(searchInfo)
 
     private fun search(board: Board,
-                       moveList: MoveList,
                        depth: Int,
                        ply: Int,
                        alpha: Int,
@@ -46,7 +43,7 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
         val newDepth = depth + extension
 
         if (newDepth <= 0) {
-            return quiescenceSearch.search(board, moveList, ply, alpha, beta)
+            return quiescenceSearch.search(board, ply, alpha, beta)
         }
         val rootNode = ply == 0
 
@@ -98,6 +95,14 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
 
         val currentNode = searchInfo.plyInfoList[ply]
 
+        if (ply >= GameConstants.MAX_PLIES) {
+            return if (eval == EvalConstants.SCORE_UNKNOWN) {
+                GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board, currentNode.attackInfo)
+            } else {
+                eval
+            }
+        }
+
         // Prunes
         if (prunable) {
             if (eval == EvalConstants.SCORE_UNKNOWN) {
@@ -116,7 +121,7 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
             if (newDepth < TunableConstants.RAZOR_MARGIN.size) {
                 val razorAlpha = currentAlpha - TunableConstants.RAZOR_MARGIN[newDepth]
                 if (eval < razorAlpha) {
-                    val razorSearchValue = search(board, moveList, 0, ply, razorAlpha, razorAlpha + 1, false)
+                    val razorSearchValue = search(board, 0, ply, razorAlpha, razorAlpha + 1, false)
                     if (razorSearchValue <= razorAlpha) {
                         return razorSearchValue
                     }
@@ -129,7 +134,7 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
                 board.hasNonPawnMaterial(board.colorToMove)) {
                 board.doNullMove()
                 val reduction = 3 + newDepth / 3
-                val score = -search(board, moveList, newDepth - reduction, ply + 1, -currentBeta, -currentBeta + 1,
+                val score = -search(board, newDepth - reduction, ply + 1, -currentBeta, -currentBeta + 1,
                     true)
                 board.undoNullMove()
                 if (score >= currentBeta) {
@@ -141,179 +146,135 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
         var bestMove = Move.NONE
         var bestScore = EvalConstants.SCORE_MIN
 
-        if (!moveList.startPly()) {
-            return if (eval == EvalConstants.SCORE_UNKNOWN) {
-                GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board, currentNode.attackInfo)
-            } else {
-                eval
-            }
+        // IID
+        if (SearchConstants.USE_TT &&
+            pvNode &&
+            foundInfo == TranspositionTable.EMPTY_INFO &&
+            newDepth > SearchConstants.IID_DEPTH) {
+            search(board, newDepth - SearchConstants.IID_DEPTH, ply, currentAlpha,
+                currentBeta, false)
+            foundInfo = TranspositionTable.findEntry(board)
+        }
+
+        var ttMove = Move.NONE
+        if (foundInfo != TranspositionTable.EMPTY_INFO) {
+            ttMove = TranspositionTable.getMove(foundInfo)
+            currentNode.setTTMove(ttMove)
+        }
+
+        val movePicker = searchInfo.plyInfoList[ply].setupMovePicker(board, ttMove)
+
+        val futilityValue = if (newDepth < TunableConstants.FUTILITY_PARENT_MARGIN.size) {
+            eval + TunableConstants.FUTILITY_PARENT_MARGIN[newDepth]
+        } else {
+            0
         }
 
         var movesPerformed = 0
         var searchAlpha = currentAlpha
-        var phase = PHASE_TT
-        while (phase > PHASE_END) {
-            when (phase) {
-                PHASE_TT -> {
-                    if (SearchConstants.USE_TT &&
-                        pvNode &&
-                        foundInfo == TranspositionTable.EMPTY_INFO &&
-                        newDepth > SearchConstants.IID_DEPTH) {
-                        search(board, moveList, newDepth - SearchConstants.IID_DEPTH, ply, currentAlpha,
-                            currentBeta, false)
-                        foundInfo = TranspositionTable.findEntry(board)
-                    }
-                    if (foundInfo != TranspositionTable.EMPTY_INFO) {
-                        val ttMove = TranspositionTable.getMove(foundInfo)
-                        if (ttMove != Move.NONE) {
-                            moveList.addMove(ttMove, 0)
-                        }
-                        currentNode.setTTMove(ttMove)
-                    }
+        var skipQuiets = false
+        while (true) {
+            val move = movePicker.next(skipQuiets)
+            if (move == Move.NONE) {
+                break
+            }
+            if (!board.isLegalMove(move)) {
+                continue
+            }
 
-                }
-                PHASE_ATTACK -> {
-                    searchInfo.moveGenerator.legalAttacks(board, currentNode.attackInfo, moveList)
-                }
-                PHASE_KILLER_1 -> {
-                    val killerMove = currentNode.killerMove1
-                    if (killerMove != Move.NONE &&
-                        !currentNode.isTTMove(killerMove) &&
-                        MoveGenerator.isLegalQuietMove(board, currentNode.attackInfo, killerMove)) {
-                        moveList.addMove(killerMove, 0)
+            val moveType = Move.getMoveType(move)
+            val isPromotion = MoveType.isPromotion(moveType)
+            val toSquare = Move.getToSquare(move)
+            val capturedPiece = board.pieceTypeBoard[toSquare]
+
+            val isCapture = capturedPiece != Piece.NONE
+            val isQuiet = !isCapture && moveType == MoveType.TYPE_NORMAL
+
+            if (prunable &&
+                !isPromotion &&
+                movesPerformed > 0) {
+
+                if (newDepth < SearchConstants.LMP_DEPTH) {
+                    if (movesPerformed > depth * SearchConstants.LMP_MULTIPLIER + SearchConstants.LMP_MIN_MOVES) {
+                        skipQuiets = true
                     }
                 }
-                PHASE_KILLER_2 -> {
-                    val killerMove = currentNode.killerMove2
-                    if (killerMove != Move.NONE &&
-                        !currentNode.isTTMove(killerMove) &&
-                        MoveGenerator.isLegalQuietMove(board, currentNode.attackInfo, killerMove)) {
-                        moveList.addMove(killerMove, 0)
-                    }
+
+                if (!isCapture &&
+                    newDepth < TunableConstants.FUTILITY_PARENT_MARGIN.size &&
+                    futilityValue <= searchAlpha) {
+                    skipQuiets = true
                 }
-                PHASE_QUIET -> {
-                    searchInfo.moveGenerator.legalMoves(board, currentNode.attackInfo, moveList)
+
+                if (newDepth < SearchConstants.NEGATIVE_SEE_DEPTH) {
+                    if (!StaticExchangeEvaluator.seeInThreshold(board, move, 0)) {
+                        continue
+                    }
                 }
             }
-            while (moveList.hasNext()) {
-                val move = moveList.next()
-                if (foundInfo != TranspositionTable.EMPTY_INFO && phase != PHASE_TT && currentNode.isTTMove(move)) {
-                    continue
-                }
-                if (phase == PHASE_QUIET && currentNode.isKillerMove(move)) {
-                    continue
-                }
-                if (!board.isLegalMove(move)) {
-                    continue
-                }
 
-                val moveType = Move.getMoveType(move)
-                val isPromotion = MoveType.isPromotion(moveType)
-                val toSquare = Move.getToSquare(move)
-                val capturedPiece = board.pieceTypeBoard[toSquare]
+            movesPerformed++
+            board.doMove(move)
 
-                val isCapture = capturedPiece != Piece.NONE
-                val isQuiet = !isCapture && moveType == MoveType.TYPE_NORMAL
+            var score = EvalConstants.SCORE_MAX
 
-                if (prunable &&
-                    !isPromotion &&
-                    movesPerformed > 0) {
+            if (DrawEvaluator.isDrawByRules(board) || !DrawEvaluator.hasSufficientMaterial(board)) {
+                score = EvalConstants.SCORE_DRAW
+            } else {
+                // Reductions
+                var reduction = 1
+                if (newDepth > SearchConstants.LMR_MIN_DEPTH &&
+                    movesPerformed > SearchConstants.LMR_MIN_MOVES &&
+                    !isCapture &&
+                    !isPromotion) {
 
-                    if (newDepth < SearchConstants.LMP_DEPTH) {
-                        if (movesPerformed > depth * SearchConstants.LMP_MULTIPLIER + SearchConstants.LMP_MIN_MOVES) {
-                            if (phase == PHASE_QUIET) {
-                                break
-                            } else {
-                                continue
-                            }
-                        }
+                    reduction = TunableConstants.LMR_TABLE[min(newDepth, 63)][min(movesPerformed, 63)]
+                    if (!pvNode) {
+                        reduction += 1
                     }
-
-                    if (!isCapture &&
-                        newDepth < TunableConstants.FUTILITY_PARENT_MARGIN.size) {
-                        val futilityValue = eval + TunableConstants.FUTILITY_PARENT_MARGIN[newDepth]
-                        if (futilityValue <= searchAlpha) {
-                            if (futilityValue > bestScore) {
-                                bestScore = futilityValue
-                                bestMove = move
-                            }
-                            continue
-                        }
-                    }
-
-                    if (newDepth < SearchConstants.NEGATIVE_SEE_DEPTH) {
-                        if (!StaticExchangeEvaluator.seeInThreshold(board, move, 0)) {
-                            continue
-                        }
-                    }
+                    reduction = min(newDepth - 1, max(reduction, 1))
                 }
 
-                movesPerformed++
-                board.doMove(move)
+                val searchDepth = newDepth - 1
 
-                var score = EvalConstants.SCORE_MAX
-
-                if (DrawEvaluator.isDrawByRules(board) || !DrawEvaluator.hasSufficientMaterial(board)) {
-                    score = EvalConstants.SCORE_DRAW
-                } else {
-                    // Reductions
-                    var reduction = 1
-                    if (newDepth > SearchConstants.LMR_MIN_DEPTH &&
-                        movesPerformed > SearchConstants.LMR_MIN_MOVES &&
-                        !isCapture &&
-                        !isPromotion) {
-
-                        reduction = TunableConstants.LMR_TABLE[min(newDepth, 63)][min(movesPerformed, 63)]
-                        if (!pvNode) {
-                            reduction += 1
-                        }
-                        reduction = min(newDepth - 1, max(reduction, 1))
-                    }
-
-                    val searchDepth = newDepth - 1
-
-                    // LMR Search
-                    if (reduction != 1) {
-                        score = -search(board, moveList, newDepth - reduction, ply + 1, -searchAlpha - 1,
-                            -searchAlpha, false)
-                    }
-
-                    // PVS Search
-                    if ((reduction == 1 && (!pvNode || movesPerformed != 1)) || (reduction != 1 && score > searchAlpha)) {
-                        score = -search(board, moveList, searchDepth, ply + 1, -searchAlpha - 1, -searchAlpha, false)
-                    }
-
-                    // Normal search for nodes with similar score on previous search
-                    // Only pvNodes or it will be equal to PVS
-                    if (pvNode && score > searchAlpha) {
-                        score = -search(board, moveList, searchDepth, ply + 1, -currentBeta, -searchAlpha, false)
-                    }
+                // LMR Search
+                if (reduction != 1) {
+                    score = -search(board, newDepth - reduction, ply + 1, -searchAlpha - 1,
+                        -searchAlpha, false)
                 }
 
-                board.undoMove(move)
-
-                searchAlpha = max(searchAlpha, score)
-
-                if (score > bestScore) {
-                    bestScore = score
-                    bestMove = move
+                // PVS Search
+                if ((reduction == 1 && (!pvNode || movesPerformed != 1)) || (reduction != 1 && score > searchAlpha)) {
+                    score = -search(board, searchDepth, ply + 1, -searchAlpha - 1, -searchAlpha, false)
                 }
 
-                if (searchAlpha >= currentBeta) {
-                    if (isQuiet) {
-                        currentNode.addKillerMove(move)
-                        searchInfo.history.addHistory(board.colorToMove, move, depth * depth)
-                    }
-                    phase = PHASE_END
-                    break
+                // Normal search for nodes with similar score on previous search
+                // Only pvNodes or it will be equal to PVS
+                if (pvNode && score > searchAlpha) {
+                    score = -search(board, searchDepth, ply + 1, -currentBeta, -searchAlpha, false)
                 }
+            }
+
+            board.undoMove(move)
+
+            searchAlpha = max(searchAlpha, score)
+
+            if (score > bestScore) {
+                bestScore = score
+                bestMove = move
+            }
+
+            if (searchAlpha >= currentBeta) {
                 if (isQuiet) {
-                    searchInfo.history.addHistory(board.colorToMove, move, -depth * depth)
+                    currentNode.addKillerMove(move)
+                    searchInfo.history.addHistory(board.colorToMove, move, depth * depth)
                 }
+                break
             }
-            phase--
+            if (isQuiet) {
+                searchInfo.history.addHistory(board.colorToMove, move, -depth * depth)
+            }
         }
-        moveList.endPly()
 
         if (movesPerformed == 0) {
             bestMove = Move.NONE
@@ -343,8 +304,6 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
     fun search(board: Board) {
         searchInfo.reset()
 
-        val moveList = MoveList()
-
         TranspositionTable.baseDepth = board.moveNumber
 
         var depth = 1
@@ -364,7 +323,7 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
             while (true) {
                 val previousScore = score
 
-                score = search(board, moveList, depth, 0, alpha, beta, true)
+                score = search(board, depth, 0, alpha, beta, true)
 
                 searchInfo.save(board)
 
@@ -427,9 +386,9 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
     }
 
     // Used by helper threads
-    fun searchStep(board: Board, moveList: MoveList, previousScore: Int, depth: Int): Int {
+    fun searchStep(board: Board, previousScore: Int, depth: Int): Int {
         if (previousScore == EvalConstants.SCORE_UNKNOWN) {
-            val score = search(board, moveList, depth, 0, EvalConstants.SCORE_MIN, EvalConstants.SCORE_MAX)
+            val score = search(board, depth, 0, EvalConstants.SCORE_MIN, EvalConstants.SCORE_MAX)
             searchInfo.save(board)
             return score
         }
@@ -439,7 +398,7 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
         var beta = min(previousScore + aspirationWindow, EvalConstants.SCORE_MAX)
 
         while (true) {
-            val score = search(board, moveList, depth, 0, alpha, beta)
+            val score = search(board, depth, 0, alpha, beta)
 
             when {
                 score <= alpha -> {

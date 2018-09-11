@@ -6,6 +6,7 @@ import pirarucu.move.Move
 import pirarucu.move.MoveGenerator
 import pirarucu.move.MoveList
 import pirarucu.move.MoveType
+import pirarucu.move.OrderedMoveList
 import pirarucu.search.History
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -243,7 +244,7 @@ class BoardTest {
         var zobristKey = board.zobristKey
         board.doMove(Move.createMove(Square.A2, Square.A4))
         assertNotEquals(zobristKey, board.zobristKey)
-        val moveList = MoveList()
+        val moveList = OrderedMoveList()
         moveGenerator.legalAttacks(board, AttackInfo(), moveList)
         while (moveList.hasNext()) {
             val move = moveList.next()
