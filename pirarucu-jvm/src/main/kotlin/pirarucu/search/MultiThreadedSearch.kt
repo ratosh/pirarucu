@@ -142,7 +142,6 @@ object MultiThreadedSearch {
     class HelperThread(val innerId: Int) : Thread() {
         private val board = BoardFactory.getBoard()
         private val search = MainSearch(searchOptions, searchInfoListener)
-        private val moveList = MoveList()
 
         var searchDepth = 4
             private set
@@ -168,7 +167,7 @@ object MultiThreadedSearch {
                 if (searchDepth >= GameConstants.MAX_PLIES) {
                     break
                 }
-                score = search.searchStep(board, moveList, score, searchDepth)
+                score = search.searchStep(board, score, searchDepth)
             }
         }
 

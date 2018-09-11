@@ -5,11 +5,8 @@ import pirarucu.board.Piece
 import pirarucu.eval.DrawEvaluator
 import pirarucu.eval.EvalConstants
 import pirarucu.eval.Evaluator
-import pirarucu.eval.StaticExchangeEvaluator
 import pirarucu.game.GameConstants
 import pirarucu.move.Move
-import pirarucu.move.MoveGenerator
-import pirarucu.move.MoveList
 import pirarucu.move.MoveType
 import pirarucu.tuning.TunableConstants
 import kotlin.math.max
@@ -20,7 +17,6 @@ import kotlin.math.max
 class QuiescenceSearch(private val searchInfo: SearchInfo) {
 
     fun search(board: Board,
-               moveList: MoveList,
                ply: Int,
                alpha: Int,
                beta: Int): Int {
@@ -41,15 +37,18 @@ class QuiescenceSearch(private val searchInfo: SearchInfo) {
             return futilityQueenValue
         }
 
-        if (!moveList.startPly()) {
+        if (ply >= GameConstants.MAX_PLIES) {
             return bestScore
         }
-        searchInfo.moveGenerator.legalAttacks(board, currentNode.attackInfo, moveList)
+        val movePicker = searchInfo.plyInfoList[ply].setupMovePicker(board)
 
         var moveCount = 0
 
-        while (moveList.hasNext()) {
-            val move = moveList.next()
+        while (true) {
+            val move = movePicker.next(true)
+            if (move == Move.NONE) {
+                break
+            }
             if (!board.isLegalMove(move)) {
                 continue
             }
@@ -67,15 +66,11 @@ class QuiescenceSearch(private val searchInfo: SearchInfo) {
                 continue
             }
 
-            if (!StaticExchangeEvaluator.seeInThreshold(board, move, 1)) {
-                continue
-            }
-
             board.doMove(move)
             val innerScore = if (!DrawEvaluator.hasSufficientMaterial(board)) {
                 EvalConstants.SCORE_DRAW
             } else {
-                -search(board, moveList, ply + 1, -beta, -bestScore)
+                -search(board, ply + 1, -beta, -bestScore)
             }
             board.undoMove(move)
 
@@ -86,8 +81,6 @@ class QuiescenceSearch(private val searchInfo: SearchInfo) {
                 break
             }
         }
-
-        moveList.endPly()
         return bestScore
     }
 

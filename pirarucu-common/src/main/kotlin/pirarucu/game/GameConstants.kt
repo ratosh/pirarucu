@@ -8,4 +8,5 @@ object GameConstants {
 
     const val MAX_MOVES = 4096
     const val MAX_PLIES = 128
+    const val MAX_PLY_MOVES = 256
 }
