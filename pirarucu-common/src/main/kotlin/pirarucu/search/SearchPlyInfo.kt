@@ -6,7 +6,7 @@ import pirarucu.move.Move
 import pirarucu.move.MoveGenerator
 import pirarucu.move.MovePicker
 
-class SearchPlyInfo(val ply: Int, val moveGenerator: MoveGenerator) {
+class SearchPlyInfo(val ply: Int, private val moveGenerator: MoveGenerator) {
 
     val attackInfo = AttackInfo()
 
