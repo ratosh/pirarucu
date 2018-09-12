@@ -77,6 +77,13 @@ You are welcome to contribute, please follow the [instructions](CONTRIBUTING.md)
 - 12th place on [Swiss Tournament Edition VI. Group F](http://kirill-kryukov.com/chess/discussion-board/viewtopic.php?f=7&t=10037)
 
 
+## Appreciation
+
+- To all who share ideas and/or code, without this huge resource I would not be able to make such strong engine.
+- To all who tested Pirarucu, especially to all CCRL team who are constantly testing several engines (including several versions of Pirarucu).
+- To Andrew Grant for developing [OpenBench](https://github.com/AndyGrant/OpenBench), a great open source tool to test and track progress of chess engines. I started using it just after v2.2.2 release and recommend it for every author.
+- To all who shared their computer power with the Pirarucu OpenBench instance.
+
 ## Author
 
 - Raoni Campos
