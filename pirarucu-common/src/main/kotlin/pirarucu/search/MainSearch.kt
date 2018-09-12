@@ -159,10 +159,10 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
             // Limit the number of moves
             var probMoves = 0
 
-            while (true) {
+            while (probMoves < SearchConstants.PROB_CUT_MOVES) {
                 val move = movePicker.next(true)
                 // Move picker finish
-                if (move == Move.NONE || probMoves >= SearchConstants.PROB_CUT_MOVES) {
+                if (move == Move.NONE) {
                     break
                 }
 

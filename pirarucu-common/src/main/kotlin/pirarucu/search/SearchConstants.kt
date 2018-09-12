@@ -18,5 +18,5 @@ object SearchConstants {
 
     const val PROB_CUT_DEPTH = 4
     const val PROB_CUT_MARGIN = 100
-    const val PROB_CUT_MOVES = 5
+    const val PROB_CUT_MOVES = 3
 }
