@@ -175,10 +175,11 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
                 board.doMove(move)
 
                 // Verify the move using a low depth search
-                var value = -search(board, 0, ply + 1, -probBeta, -probBeta + 1)
+                var value = -search(board, SearchConstants.PROB_CUT_LOW_DEPTH, ply + 1, -probBeta, -probBeta + 1)
 
                 // Verify the move using a deeper search
-                if (value >= probBeta) {
+                if (value >= probBeta &&
+                    newDepth > SearchConstants.PROB_CUT_DEPTH + SearchConstants.PROB_CUT_LOW_DEPTH) {
                     value = -search(board, newDepth - SearchConstants.PROB_CUT_DEPTH, ply + 1, -probBeta, -probBeta + 1)
                 }
                 board.undoMove(move)
