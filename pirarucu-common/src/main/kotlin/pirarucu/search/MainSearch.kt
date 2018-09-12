@@ -162,7 +162,7 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
             while (true) {
                 val move = movePicker.next(true)
                 // Move picker finish
-                if (move == Move.NONE || probMoves > SearchConstants.PROB_CUT_MOVES) {
+                if (move == Move.NONE || probMoves >= SearchConstants.PROB_CUT_MOVES) {
                     break
                 }
 
@@ -170,6 +170,7 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
                 if (!board.isLegalMove(move)) {
                     continue
                 }
+                probMoves++
 
                 board.doMove(move)
 
