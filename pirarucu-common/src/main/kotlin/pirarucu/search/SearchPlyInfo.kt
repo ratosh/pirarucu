@@ -28,13 +28,13 @@ class SearchPlyInfo(val ply: Int, private val moveGenerator: MoveGenerator) {
         killerMove2 = Move.NONE
     }
 
-    fun setupMovePicker(board: Board): MovePicker {
-        movePicker.setup(board, attackInfo, moveGenerator)
+    fun setupMovePicker(board: Board, threshold: Int): MovePicker {
+        movePicker.setup(board, attackInfo, moveGenerator, threshold)
         return movePicker
     }
 
-    fun setupMovePicker(board: Board, ttMove: Int): MovePicker {
-        movePicker.setup(board, attackInfo, moveGenerator, ttMove, killerMove1, killerMove2)
+    fun setupMovePicker(board: Board, threshold: Int, ttMove: Int): MovePicker {
+        movePicker.setup(board, attackInfo, moveGenerator, threshold, ttMove, killerMove1, killerMove2)
         return movePicker
     }
 
