@@ -30,6 +30,7 @@ class MovePicker {
     fun setup(board: Board,
               attackInfo: AttackInfo,
               moveGenerator: MoveGenerator,
+              threshold: Int,
               ttMove: Int,
               killerMove1: Int,
               killerMove2: Int) {
@@ -46,7 +47,7 @@ class MovePicker {
         this.killerMove1 = killerMove1
         this.killerMove2 = killerMove2
 
-        threshold = 0
+        this.threshold = threshold
 
         exchangeMoveList.reset()
         quietMoveList.reset()
@@ -55,7 +56,8 @@ class MovePicker {
 
     fun setup(board: Board,
               attackInfo: AttackInfo,
-              moveGenerator: MoveGenerator) {
+              moveGenerator: MoveGenerator,
+              threshold: Int) {
         this.board = board
         this.attackInfo = attackInfo
         this.moveGenerator = moveGenerator
@@ -69,7 +71,7 @@ class MovePicker {
         this.killerMove1 = Move.NONE
         this.killerMove2 = Move.NONE
 
-        threshold = 1
+        this.threshold = threshold
 
         exchangeMoveList.reset()
         quietMoveList.reset()

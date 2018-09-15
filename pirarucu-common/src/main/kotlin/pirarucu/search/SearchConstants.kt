@@ -15,4 +15,9 @@ object SearchConstants {
     const val LMP_DEPTH = 6
     const val LMP_MULTIPLIER = 3
     const val LMP_MIN_MOVES = 3
+
+    const val PROB_CUT_LOW_DEPTH = 1
+    const val PROB_CUT_DEPTH = 4
+    const val PROB_CUT_MARGIN = 100
+    const val PROB_CUT_MOVES = 3
 }

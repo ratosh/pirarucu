@@ -14,6 +14,7 @@ import pirarucu.move.Move
 import pirarucu.move.MoveType
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.Utils
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -141,10 +142,55 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
                     return score
                 }
             }
+
+            // ProbCut
+            // Prune the previous move if we find a capture above prob cut in a lower search.
+            if (newDepth > SearchConstants.PROB_CUT_DEPTH &&
+                abs(beta) < EvalConstants.SCORE_MATE) {
+
+                // Cut beta bound
+                val probBeta = min(beta + SearchConstants.PROB_CUT_MARGIN, EvalConstants.SCORE_MATE - 1)
+
+                // Use good capture move picker
+                val movePicker = searchInfo.plyInfoList[ply].setupMovePicker(board, probBeta - eval)
+
+                // Limit the number of moves
+                var probMoves = 0
+
+                while (probMoves < SearchConstants.PROB_CUT_MOVES) {
+                    val move = movePicker.next(true)
+                    // Move picker finish
+                    if (move == Move.NONE) {
+                        break
+                    }
+
+                    // Move is not legal
+                    if (!board.isLegalMove(move)) {
+                        continue
+                    }
+                    probMoves++
+
+                    board.doMove(move)
+
+                    // Verify the move using a low depth search
+                    var value = -search(board, SearchConstants.PROB_CUT_LOW_DEPTH, ply + 1, -probBeta, -probBeta + 1)
+
+                    // Verify the move using a deeper search
+                    if (value >= probBeta &&
+                        newDepth > SearchConstants.PROB_CUT_DEPTH + SearchConstants.PROB_CUT_LOW_DEPTH) {
+                        value = -search(board, newDepth - SearchConstants.PROB_CUT_DEPTH, ply + 1, -probBeta, -probBeta + 1)
+                    }
+                    board.undoMove(move)
+
+                    // Value is above beta cut
+                    if (value >= probBeta) {
+                        return value
+                    }
+                }
+            }
         }
 
-        var bestMove = Move.NONE
-        var bestScore = EvalConstants.SCORE_MIN
+
 
         // IID
         if (SearchConstants.USE_TT &&
@@ -162,13 +208,16 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
             currentNode.setTTMove(ttMove)
         }
 
-        val movePicker = searchInfo.plyInfoList[ply].setupMovePicker(board, ttMove)
+        val movePicker = searchInfo.plyInfoList[ply].setupMovePicker(board, 0, ttMove)
 
         val futilityValue = if (newDepth < TunableConstants.FUTILITY_PARENT_MARGIN.size) {
             eval + TunableConstants.FUTILITY_PARENT_MARGIN[newDepth]
         } else {
             0
         }
+
+        var bestMove = Move.NONE
+        var bestScore = EvalConstants.SCORE_MIN
 
         var movesPerformed = 0
         var searchAlpha = currentAlpha
