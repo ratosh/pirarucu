@@ -278,6 +278,10 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
                     !isPromotion) {
 
                     reduction = TunableConstants.LMR_TABLE[min(newDepth, 63)][min(movesPerformed, 63)]
+
+                    if (currentNode.isKillerMove(move)) {
+                        reduction -= 1
+                    }
                     if (!pvNode) {
                         reduction += 1
                     }
