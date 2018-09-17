@@ -191,7 +191,6 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
         }
 
 
-
         // IID
         if (SearchConstants.USE_TT &&
             pvNode &&
@@ -287,13 +286,13 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
                 val searchDepth = newDepth - 1
 
                 // LMR Search
-                if (reduction != 1) {
+                if (reduction != 1 || !pvNode || movesPerformed != 1) {
                     score = -search(board, newDepth - reduction, ply + 1, -searchAlpha - 1,
                         -searchAlpha, false)
                 }
 
                 // PVS Search
-                if ((reduction == 1 && (!pvNode || movesPerformed != 1)) || (reduction != 1 && score > searchAlpha)) {
+                if (reduction != 1 && score > searchAlpha) {
                     score = -search(board, searchDepth, ply + 1, -searchAlpha - 1, -searchAlpha, false)
                 }
 
