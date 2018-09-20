@@ -44,7 +44,7 @@ class MainSearchTest {
                 break
             }
 
-            val score = TranspositionTable.getEval(info)
+            val score = TranspositionTable.getScore(info, ply)
             val fen = FenFactory.getFen(board)
             println("Fen $fen $score")
             val ttMove = TranspositionTable.getMove(info)
