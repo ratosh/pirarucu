@@ -214,7 +214,6 @@ object MultiThreadedSearch {
                     }
                 }
 
-                searchOptions.setTime(board.colorToMove)
                 search.search(board)
                 synchronized(startLock) {
                     running = false
