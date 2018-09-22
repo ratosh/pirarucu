@@ -5,7 +5,8 @@ object SearchConstants {
 
     const val ASPIRATION_WINDOW_SIZE = 20
 
-    const val NEGATIVE_SEE_DEPTH = 6
+    const val NEGATIVE_SEE_DEPTH = 7
+    const val NEGATIVE_SEE_MARGIN = -20
 
     const val LMR_MIN_DEPTH = 2
     const val LMR_MIN_MOVES = 1

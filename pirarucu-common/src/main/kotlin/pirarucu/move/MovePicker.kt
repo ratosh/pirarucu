@@ -7,7 +7,8 @@ import pirarucu.eval.StaticExchangeEvaluator
 class MovePicker {
 
     private var searchType = MAIN_SEARCH
-    private var phase = PHASE_END
+    var phase = PHASE_END
+        private set
 
     private var ttMove = Move.NONE
 
@@ -92,7 +93,7 @@ class MovePicker {
                     generateExchangeMoves(board!!, attackInfo!!)
                     phase--
                 }
-                PHASE_MATERIAL_EXCHANGE -> {
+                PHASE_GOOD_MATERIAL_EXCHANGE -> {
                     while (exchangeMoveList.hasNext()) {
                         currentMove = exchangeMoveList.next()
                         if (currentMove == ttMove) {
@@ -190,7 +191,7 @@ class MovePicker {
 
         const val PHASE_TT = 8
         const val PHASE_GEN_MATERIAL_EXCHANGE_MOVES = 7
-        const val PHASE_MATERIAL_EXCHANGE = 6
+        const val PHASE_GOOD_MATERIAL_EXCHANGE = 6
         const val PHASE_KILLER1 = 5
         const val PHASE_KILLER2 = 4
         const val PHASE_GEN_QUIET = 3
