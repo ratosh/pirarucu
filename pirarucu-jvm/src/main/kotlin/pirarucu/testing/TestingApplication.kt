@@ -1,4 +1,4 @@
-package pirarucu.benchmark
+package pirarucu.testing
 
 import pirarucu.board.factory.BoardFactory
 import pirarucu.eval.EvalConstants
@@ -34,18 +34,36 @@ object TestingApplication {
         searchOptions.depth = depth
         searchOptions.minSearchTime = 60000L
         searchOptions.maxSearchTime = 60000L
-        searchOptions.searchTimeIncrement = 1000L
+        searchOptions.searchTimeIncrement = 60000L
         val board = BoardFactory.getBoard()
-        for (epdInfo in testFile.getEpdInfoList()) {
+        var partialScore = 0
+        TranspositionTable.resize(4)
+        for ((index, epdInfo) in testFile.getEpdInfoList().withIndex()) {
             BoardFactory.setBoard(epdInfo.fenPosition, board)
             TranspositionTable.reset()
             searchOptions.startControl()
+            mainSearch.searchInfo.history.reset()
 
             mainSearch.search(board)
 
             val score = epdInfo.getMoveScore(board, mainSearch.searchInfo.bestMove)
 
-            testScore += score
+            /*
+            if (score == 0) {
+                println("Improvement needed " + epdInfo.comment)
+                println("Fen " + epdInfo.fenPosition)
+                println("Wanted moves " + epdInfo.moveScoreList?.keys?.joinToString(" "))
+                println("Found move " + Move.toString(mainSearch.searchInfo.bestMove))
+            }
+            */
+
+            partialScore += score
+
+            if (index % 100 == 99) {
+                println((index / 100).toString() + " score $partialScore")
+                partialScore = 0
+                testScore += partialScore
+            }
         }
 
         return testScore

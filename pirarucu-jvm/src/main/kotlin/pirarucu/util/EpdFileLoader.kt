@@ -1,5 +1,6 @@
 package pirarucu.util
 
+import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory
 import pirarucu.eval.AttackInfo
 import pirarucu.move.MoveGenerator
@@ -21,6 +22,7 @@ class EpdFileLoader(inputStream: InputStream) {
             val scanner = Scanner(inputStream)
 
             var lines = 0
+            val board = Board()
             while (scanner.hasNextLine()) {
                 lines++
                 val line = scanner.nextLine()
@@ -28,7 +30,7 @@ class EpdFileLoader(inputStream: InputStream) {
                 val moveList = OrderedMoveList()
                 val attackInfo = AttackInfo()
 
-                val board = BoardFactory.getBoard(epdInfo.fenPosition)
+                BoardFactory.setBoard(epdInfo.fenPosition, board)
                 moveGenerator.legalMoves(board, attackInfo, moveList)
                 moveGenerator.legalAttacks(board, attackInfo, moveList)
                 var moves = 0
