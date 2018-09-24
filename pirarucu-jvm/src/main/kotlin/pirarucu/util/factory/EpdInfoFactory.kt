@@ -44,8 +44,11 @@ object EpdInfoFactory {
         if (c0Index >= 0) {
             var c0String = tempLine.substring(c0Index + 3, tempLine.length).replace("\"", "").replace(" ", "")
             val c0End = c0String.indexOf(";")
+            val p1 = tempLine.substring(0, c0Index)
+            val p2 = c0String.substring(c0End, c0String.length)
+
             c0String = c0String.substring(0, c0End)
-            tempLine = tempLine.substring(0, c0Index)
+            tempLine = p1 + p2
 
             val moveList = c0String.split(",")
             moveScoreList = mutableMapOf()
@@ -53,15 +56,13 @@ object EpdInfoFactory {
                 val split = entry.split("=")
                 moveScoreList[split[0]] = Integer.parseInt(split[1])
             }
-
         } else {
             moveScoreList = null
         }
 
         val commentIndex = tempLine.indexOf(";")
         if (commentIndex >= 0) {
-
-            comment = tempLine.substring(commentIndex + 1, tempLine.length)
+            comment = tempLine.substring(commentIndex + 1, tempLine.length).replace(";", "")
             tempLine = tempLine.substring(0, commentIndex)
         }
 
@@ -72,7 +73,7 @@ object EpdInfoFactory {
             tempLine = tempLine.substring(0, bmIndex)
 
             bestMoveList = HashSet<String>(Arrays.asList(*bmString.split(" ".toRegex())
-                .dropLastWhile({ it.isEmpty() }).toTypedArray()))
+                .dropLastWhile { it.isEmpty() }.toTypedArray()))
         } else {
             bestMoveList = null
         }
@@ -84,14 +85,14 @@ object EpdInfoFactory {
             tempLine = tempLine.substring(0, amIndex)
 
             avoidMoveList = HashSet<String>(Arrays.asList(*amString.split(" ".toRegex())
-                .dropLastWhile({ it.isEmpty() }).toTypedArray()))
+                .dropLastWhile { it.isEmpty() }.toTypedArray()))
         } else {
             avoidMoveList = null
         }
-        if (!tempLine.isEmpty()) {
-            fenPosition = tempLine.trim({ it <= ' ' })
+        fenPosition = if (!tempLine.isEmpty()) {
+            tempLine.trim { it <= ' ' }
         } else {
-            fenPosition = ""
+            ""
         }
 
         return EpdInfo(fenPosition, bestMoveList, avoidMoveList, moveScoreList, result, comment)
