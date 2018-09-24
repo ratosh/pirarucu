@@ -11,6 +11,7 @@ import pirarucu.game.GameConstants
 import pirarucu.hash.HashConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
+import pirarucu.move.MovePicker
 import pirarucu.move.MoveType
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.Utils
@@ -221,6 +222,9 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
         var movesPerformed = 0
         var searchAlpha = currentAlpha
         var skipQuiets = false
+
+        val powerDepth = newDepth * newDepth
+
         while (true) {
             val move = movePicker.next(skipQuiets)
             if (move == Move.NONE) {
@@ -254,10 +258,11 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
                     skipQuiets = true
                 }
 
-                if (newDepth < SearchConstants.NEGATIVE_SEE_DEPTH) {
-                    if (!StaticExchangeEvaluator.seeInThreshold(board, move, 0)) {
-                        continue
-                    }
+                if (newDepth < SearchConstants.NEGATIVE_SEE_DEPTH &&
+                    movePicker.phase < MovePicker.PHASE_GOOD_MATERIAL_EXCHANGE &&
+                    !StaticExchangeEvaluator.seeInThreshold(board, move,
+                        SearchConstants.NEGATIVE_SEE_MARGIN * powerDepth)) {
+                    continue
                 }
             }
 
@@ -319,12 +324,12 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
             if (searchAlpha >= currentBeta) {
                 if (isQuiet) {
                     currentNode.addKillerMove(move)
-                    searchInfo.history.addHistory(board.colorToMove, move, depth * depth)
+                    searchInfo.history.addHistory(board.colorToMove, move, powerDepth)
                 }
                 break
             }
             if (isQuiet) {
-                searchInfo.history.addHistory(board.colorToMove, move, -depth * depth)
+                searchInfo.history.addHistory(board.colorToMove, move, -powerDepth)
             }
         }
 
@@ -475,14 +480,5 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
 
             aspirationWindow += aspirationWindow / 4
         }
-    }
-
-    companion object {
-        private const val PHASE_END = 0
-        private const val PHASE_QUIET = 1
-        private const val PHASE_KILLER_2 = 2
-        private const val PHASE_KILLER_1 = 3
-        private const val PHASE_ATTACK = 4
-        private const val PHASE_TT = 5
     }
 }
