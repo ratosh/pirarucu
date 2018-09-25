@@ -138,8 +138,6 @@ object PawnEvaluator {
             }
 
             if (passed) {
-                val relativeRank = Rank.getRelativeRank(ourColor, Rank.getRank(pawnSquare))
-                result += TunableConstants.PASSED_PAWN[relativeRank]
                 board.evalInfo.passedPawnBitboard = board.evalInfo.passedPawnBitboard or
                     Bitboard.getBitboard(pawnSquare)
             }
@@ -170,12 +168,16 @@ object PawnEvaluator {
             val defended = bitboard and ourAttacks != Bitboard.EMPTY
             val defendedAdvance = pawnAdvance and ourAttacks != Bitboard.EMPTY
 
+            val relativeRank = Rank.getRelativeRank(ourColor, Rank.getRank(pawnSquare))
+
             if (safe) {
                 result += TunableConstants.PASSED_PAWN_BONUS[TunableConstants.PASSED_PAWN_SAFE]
             }
 
             if (canAdvance) {
-                result += TunableConstants.PASSED_PAWN_BONUS[TunableConstants.PASSED_PAWN_CAN_ADVANCE]
+                result += TunableConstants.PASSED_PAWN[relativeRank]
+            } else {
+                result += TunableConstants.PASSED_PAWN_BLOCKED[relativeRank]
             }
 
             if (safeAdvance) {

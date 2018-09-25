@@ -307,6 +307,7 @@ object TexelTuningApplication {
                 TunableConstants.PAWN_BONUS_EG,
                 intArrayOf(8, 8, 8, 8, 8),
                 true, intArrayOf(), 1))
+                */
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PASSED_PAWN_MG",
@@ -321,17 +322,30 @@ object TexelTuningApplication {
                 true, intArrayOf(0, 7), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
+                "PASSED_PAWN_BLOCKED_MG",
+                TunableConstants.PASSED_PAWN_BLOCKED_MG,
+                intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
+                true, intArrayOf(0, 7), 1))
+
+            tuningObject.registerTuningData(TexelTuningData(
+                "PASSED_PAWN_BLOCKED_EG",
+                TunableConstants.PASSED_PAWN_BLOCKED_EG,
+                intArrayOf(0, 8, 8, 8, 8, 8, 8, 0),
+                true, intArrayOf(0, 7), 1))
+
+            tuningObject.registerTuningData(TexelTuningData(
                 "PASSED_PAWN_BONUS_MG",
                 TunableConstants.PASSED_PAWN_BONUS_MG,
-                intArrayOf(8, 8, 8, 8, 8, 8, 8),
-                false, intArrayOf(), 1))
+                intArrayOf(8, 8, 8, 8, 8, 8),
+                true, intArrayOf(), 1))
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PASSED_PAWN_BONUS_EG",
                 TunableConstants.PASSED_PAWN_BONUS_EG,
-                intArrayOf(8, 8, 8, 8, 8, 8, 8),
-                false, intArrayOf(), 1))
+                intArrayOf(8, 8, 8, 8, 8, 8),
+                true, intArrayOf(), 1))
 
+            /*
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_MG[0][0]",
                 TunableConstants.PAWN_SHIELD_MG[0][0],
@@ -451,7 +465,6 @@ object TexelTuningApplication {
                 TunableConstants.SAFE_CHECK_THREAT_EG,
                 intArrayOf(0, 0, 8, 8, 8, 8, 0),
                 false, intArrayOf(0, 1, 6), 1))
-                */
 
             tuningObject.registerTuningData(TexelTuningData(
                 "OTHER_BONUS_MG",
@@ -465,7 +478,6 @@ object TexelTuningApplication {
                 intArrayOf(8, 8, 8, 8),
                 false, intArrayOf(), 1))
 
-            /*
             tuningObject.registerTuningData(TexelTuningData(
                 "THREATEN_BY_KNIGHT_MG",
                 TunableConstants.THREATEN_BY_KNIGHT_MG,

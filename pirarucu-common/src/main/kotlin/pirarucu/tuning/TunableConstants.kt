@@ -143,20 +143,23 @@ object TunableConstants {
     val PAWN_BONUS_EG = intArrayOf(5, -2, -10, -11, -2)
     val PAWN_BONUS = IntArray(PAWN_BONUS_EG.size)
 
-    val PASSED_PAWN_MG = intArrayOf(0, -34, -36, -49, -21, -23, 49, 0)
-    val PASSED_PAWN_EG = intArrayOf(0, -41, -34, -4, 22, 100, 180, 0)
+    val PASSED_PAWN_MG = intArrayOf(0, -8, -9, -20, 2, 8, 103, 0)
+    val PASSED_PAWN_EG = intArrayOf(0, -45, -38, -2, 34, 127, 228, 0)
     val PASSED_PAWN = IntArray(Rank.SIZE)
 
-    const val PASSED_PAWN_SAFE = 0
-    const val PASSED_PAWN_CAN_ADVANCE = 1
-    const val PASSED_PAWN_SAFE_ADVANCE = 2
-    const val PASSED_PAWN_SAFE_PATH = 3
-    const val PASSED_PAWN_DEFENDED = 4
-    const val PASSED_PAWN_DEFENDED_ADVANCE = 5
-    const val PASSED_PAWN_KING_DISTANCE = 6
+    val PASSED_PAWN_BLOCKED_MG = intArrayOf(0, -26, -19, -26, -8, 12, 96, 0)
+    val PASSED_PAWN_BLOCKED_EG = intArrayOf(0, -58, -38, -15, 8, 33, 66, 0)
+    val PASSED_PAWN_BLOCKED = IntArray(Rank.SIZE)
 
-    val PASSED_PAWN_BONUS_MG = intArrayOf(0, 29, 1, 0, 22, 0, 0)
-    val PASSED_PAWN_BONUS_EG = intArrayOf(4, 14, 20, 22, 0, 11, 7)
+    const val PASSED_PAWN_SAFE = 0
+    const val PASSED_PAWN_SAFE_ADVANCE = 1
+    const val PASSED_PAWN_SAFE_PATH = 2
+    const val PASSED_PAWN_DEFENDED = 3
+    const val PASSED_PAWN_DEFENDED_ADVANCE = 4
+    const val PASSED_PAWN_KING_DISTANCE = 5
+
+    val PASSED_PAWN_BONUS_MG = intArrayOf(-7, 1, -13, 34, 10, -5)
+    val PASSED_PAWN_BONUS_EG = intArrayOf(9, 29, 22, -3, 11, 9)
     val PASSED_PAWN_BONUS = IntArray(PASSED_PAWN_BONUS_EG.size)
 
     val PAWN_SHIELD_MG = arrayOf(
@@ -296,6 +299,10 @@ object TunableConstants {
 
         for (index in 0 until PASSED_PAWN_BONUS.size) {
             PASSED_PAWN_BONUS[index] = SplitValue.mergeParts(PASSED_PAWN_BONUS_MG[index], PASSED_PAWN_BONUS_EG[index])
+        }
+
+        for (index in 0 until PASSED_PAWN_BLOCKED.size) {
+            PASSED_PAWN_BLOCKED[index] = SplitValue.mergeParts(PASSED_PAWN_BLOCKED_MG[index], PASSED_PAWN_BLOCKED_EG[index])
         }
 
         for (index in 0 until OTHER_BONUS.size) {
