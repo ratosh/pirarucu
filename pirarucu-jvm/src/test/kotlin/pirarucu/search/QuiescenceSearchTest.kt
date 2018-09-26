@@ -6,7 +6,6 @@ import pirarucu.eval.EvalConstants
 import pirarucu.eval.Evaluator
 import pirarucu.game.GameConstants
 import pirarucu.hash.TranspositionTable
-import pirarucu.move.MoveList
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -39,7 +38,7 @@ class QuiescenceSearchTest {
 
     @Test
     fun testCapture() {
-        testSearch("1k6/8/8/4p3/8/8/8/2K1R3 w - -", 60, 250)
+        testSearch("1k6/8/8/4p3/8/8/8/2K1R3 w - -", 50, 250)
     }
 
     @Test
