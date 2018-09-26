@@ -12,7 +12,7 @@ class SearchInfo {
     var searchNodes = 0L
     val history = History()
     val moveGenerator = MoveGenerator(history)
-    val plyInfoList = Array(GameConstants.MAX_PLIES + 4) { SearchPlyInfo(it, moveGenerator) }
+    val plyInfoList = Array(GameConstants.MAX_PLIES + 4) { SearchPlyInfo(moveGenerator) }
 
     fun reset() {
         searchNodes = 0
