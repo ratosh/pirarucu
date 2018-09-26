@@ -24,12 +24,10 @@ class History {
     fun addHistory(color: Int, move: Int, value: Int) {
         val fromTo = Move.getFromTo(move)
 
-        val colour = color
-
         val delta = max(-400, min(400, value))
 
-        var entry = history[colour][fromTo]
+        var entry = history[color][fromTo]
         entry += 32 * delta - entry * abs(delta) / 512
-        history[colour][fromTo] = entry
+        history[color][fromTo] = entry
     }
 }
