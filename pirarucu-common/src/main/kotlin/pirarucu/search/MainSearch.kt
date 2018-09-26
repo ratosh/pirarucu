@@ -153,7 +153,7 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
                 val probBeta = min(beta + SearchConstants.PROB_CUT_MARGIN, EvalConstants.SCORE_MATE - 1)
 
                 // Use good capture move picker
-                val movePicker = searchInfo.plyInfoList[ply].setupMovePicker(board, probBeta - eval)
+                val movePicker = currentNode.setupMovePicker(board, probBeta - eval)
 
                 // Limit the number of moves
                 var probMoves = 0
@@ -208,7 +208,7 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
             currentNode.setTTMove(ttMove)
         }
 
-        val movePicker = searchInfo.plyInfoList[ply].setupMovePicker(board, 0, ttMove)
+        val movePicker = currentNode.setupMovePicker(board, 0, ttMove)
 
         val futilityValue = if (newDepth < TunableConstants.FUTILITY_PARENT_MARGIN.size) {
             eval + TunableConstants.FUTILITY_PARENT_MARGIN[newDepth]
