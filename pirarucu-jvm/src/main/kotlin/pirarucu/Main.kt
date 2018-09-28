@@ -1,6 +1,6 @@
 package pirarucu
 
-import pirarucu.benchmark.BenchmarkApplication
+import pirarucu.benchmark.Benchmark
 import pirarucu.uci.InputHandler
 import pirarucu.uci.UciInput
 
@@ -11,9 +11,9 @@ fun main(args: Array<String>) {
                 val benchDepth = if (args.size > 1) {
                     Integer.parseInt(args[1])
                 } else {
-                    BenchmarkApplication.DEFAULT_BENCHMARK_DEPTH
+                    Benchmark.DEFAULT_BENCHMARK_DEPTH
                 }
-                BenchmarkApplication.runBenchmark(benchDepth)
+                Benchmark.runBenchmark(benchDepth)
             }
             else -> {
                 println("Unknown argument")

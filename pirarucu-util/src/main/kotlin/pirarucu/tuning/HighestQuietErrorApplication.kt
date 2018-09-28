@@ -5,11 +5,12 @@ import java.util.ArrayList
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
+import kotlin.system.measureNanoTime
 
-object HighestErrorApplication {
+object HighestQuietErrorApplication {
 
     private const val numberOfThreads = 1
-    private val workers = arrayOfNulls<HighestErrorCalculator>(numberOfThreads)
+    private val workers = arrayOfNulls<HighestQuietErrorCalculator>(numberOfThreads)
     private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
     private val epdFileLoader = EpdFileLoader("g:\\chess\\epds\\quiet_labeled.epd")
 
@@ -18,15 +19,18 @@ object HighestErrorApplication {
     fun main(args: Array<String>) {
         // setup
         for (i in workers.indices) {
-            workers[i] = HighestErrorCalculator(100)
+            workers[i] = HighestQuietErrorCalculator(10)
         }
-        var workerIndex = 0
         val iterator = epdFileLoader.getEpdInfoList()
+        var workerIndex = 0
         for (epdInfo in iterator) {
             workers[workerIndex]!!.addEpdInfo(epdInfo)
             workerIndex = if (workerIndex == numberOfThreads - 1) 0 else workerIndex + 1
         }
-        executeTest()
+        val time = measureNanoTime {
+            println("Quiet error " + executeQuietTest())
+        }
+        println("Time taken " + time / 1_000_000)
         for (worker in workers) {
             println(worker.toString())
         }
@@ -34,7 +38,7 @@ object HighestErrorApplication {
     }
 
     @Throws(ExecutionException::class, InterruptedException::class)
-    private fun executeTest(): Double {
+    private fun executeQuietTest(): Double {
         val list = ArrayList<Future<Double>>()
         for (i in workers.indices) {
             val submit = executor.submit(workers[i])

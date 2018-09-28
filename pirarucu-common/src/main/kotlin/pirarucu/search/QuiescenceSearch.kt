@@ -98,5 +98,4 @@ class QuiescenceSearch(private val searchInfo: SearchInfo) {
             }
         }
     }
-
 }

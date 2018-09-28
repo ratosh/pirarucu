@@ -11,22 +11,10 @@ import pirarucu.util.EpdFileLoader
 import pirarucu.util.Utils
 import java.util.concurrent.ExecutionException
 
-object BenchmarkApplication {
+object Benchmark {
 
-    private val epdFileLoader = EpdFileLoader(BenchmarkApplication::class.java.getResourceAsStream("/benchmark.epd"))
+    private val epdFileLoader = EpdFileLoader(Benchmark::class.java.getResourceAsStream("/benchmark.epd"))
     const val DEFAULT_BENCHMARK_DEPTH = 13
-
-    @Throws(ExecutionException::class, InterruptedException::class)
-    @JvmStatic
-    fun main(args: Array<String>) {
-        var speed = LongArray(1)
-        for (tries in 0 until speed.size) {
-            speed[tries] = runBenchmark(DEFAULT_BENCHMARK_DEPTH)
-        }
-        println("Time taken " + speed.sum())
-        println("Max " + speed.max()!!)
-        println("Min " + speed.min()!!)
-    }
 
     fun runBenchmark(depth: Int): Long {
         println("Running benchmark depth $depth")

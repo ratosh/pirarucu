@@ -50,4 +50,9 @@ class QuiescenceSearchTest {
     fun testCapture2() {
         testSearch("1k2r3/8/5p2/4p3/5P2/8/8/2K1R3 w - -", -60, 60)
     }
+
+    @Test
+    fun testCapture3() {
+        testSearch("3r3r/pb2q2k/1ppRppp1/P4Q2/2P5/7P/5PP1/3R2K1 w - -", -60, 60)
+    }
 }

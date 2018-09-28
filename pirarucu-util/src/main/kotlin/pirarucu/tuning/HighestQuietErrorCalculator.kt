@@ -7,7 +7,7 @@ import pirarucu.eval.Evaluator
 import pirarucu.util.EpdInfo
 import java.util.concurrent.Callable
 
-class HighestErrorCalculator(size: Int) : Callable<Double> {
+class HighestQuietErrorCalculator(size: Int) : Callable<Double> {
     private var constantCalculated: Boolean = false
     private var constant: Double = 0.toDouble()
 
@@ -40,9 +40,11 @@ class HighestErrorCalculator(size: Int) : Callable<Double> {
                 val entryError = Math.pow(entry.result - calculateSigmoid(Evaluator.evaluate(board, attackInfo),
                     currentConstant), 2.0)
 
-                if (error < entryError) {
-                    error = entryError
+                error += entryError
+                if (highestError < entryError) {
+                    highestError = entryError
                 }
+
                 var replaceIndex = -1
                 for (index in largestError.size - 1 downTo 0) {
                     if (entryError > largestError[index]) {
@@ -64,7 +66,7 @@ class HighestErrorCalculator(size: Int) : Callable<Double> {
             }
         }
 
-        return highestError
+        return error / epdInfoList.size
     }
 
     override fun toString(): String {
