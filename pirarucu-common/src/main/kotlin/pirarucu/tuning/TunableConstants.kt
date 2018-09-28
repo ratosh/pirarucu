@@ -8,7 +8,7 @@ import pirarucu.board.Square
 import pirarucu.game.GameConstants
 import pirarucu.util.SplitValue
 import kotlin.math.ln
-import kotlin.math.min
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 object TunableConstants {
@@ -34,11 +34,11 @@ object TunableConstants {
     val MATERIAL_SCORE = IntArray(Piece.SIZE)
 
     val QS_FUTILITY_VALUE = intArrayOf(0,
-        min(MATERIAL_SCORE_MG[1], MATERIAL_SCORE_EG[1]),
-        min(MATERIAL_SCORE_MG[2], MATERIAL_SCORE_EG[2]),
-        min(MATERIAL_SCORE_MG[3], MATERIAL_SCORE_EG[3]),
-        min(MATERIAL_SCORE_MG[4], MATERIAL_SCORE_EG[4]),
-        min(MATERIAL_SCORE_MG[5], MATERIAL_SCORE_EG[5]))
+        max(MATERIAL_SCORE_MG[1], MATERIAL_SCORE_EG[1]),
+        max(MATERIAL_SCORE_MG[2], MATERIAL_SCORE_EG[2]),
+        max(MATERIAL_SCORE_MG[3], MATERIAL_SCORE_EG[3]),
+        max(MATERIAL_SCORE_MG[4], MATERIAL_SCORE_EG[4]),
+        max(MATERIAL_SCORE_MG[5], MATERIAL_SCORE_EG[5]))
 
     val SEE_VALUE = intArrayOf(0, 100, 325, 330, 550, 900, 0)
 
@@ -123,7 +123,7 @@ object TunableConstants {
         intArrayOf(-20, -25, 9, 14, 21, 24, 35, 31, 31, 29, 30, 33, 34, 39, 34),
         intArrayOf(-6, -82, -43, -41, -54, -60, -26, -15, -7, 9, 18, 26, 33, 27, 28, 39, 49, 22, 41, 27, 32, 13, 22, 0, 6, -69, 42, -68),
         intArrayOf(-10, 33, 20, 16, 14, 4, 1, 4, -20))
-    val MOBILITY = Array(Piece.SIZE) { IntArray(32) }
+    val MOBILITY = Array(Piece.SIZE) { IntArray(28) }
 
     val PAWN_SUPPORT_MG = intArrayOf(0, 0, 4, 1, 0, 0, 0)
     val PAWN_SUPPORT_EG = intArrayOf(0, 0, 18, 17, 0, 0, 0)
