@@ -1,5 +1,6 @@
 package pirarucu.tuning
 
+import pirarucu.hash.TranspositionTable
 import pirarucu.uci.UciOutput
 import pirarucu.util.EpdFileLoader
 import java.util.ArrayList
@@ -7,21 +8,22 @@ import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 
-object HighestNoisyErrorApplication {
+object HighestSearchErrorApplication {
 
     private const val numberOfThreads = 1
-    private val workers = arrayOfNulls<HighestNoisyErrorCalculator>(numberOfThreads)
+    private val workers = arrayOfNulls<HighestSearchErrorCalculator>(numberOfThreads)
     private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
-    private val epdFileLoader = EpdFileLoader("g:\\chess\\epds\\quiet_labeled.epd")
+    private val epdFileLoader = EpdFileLoader("g:\\chess\\epds\\FENS_jeffrey.epd")
 
     @Throws(ExecutionException::class, InterruptedException::class)
     @JvmStatic
     fun main(args: Array<String>) {
 
+        TranspositionTable.resize(2)
         UciOutput.silent = true
         // setup
         for (i in workers.indices) {
-            workers[i] = HighestNoisyErrorCalculator(10)
+            workers[i] = HighestSearchErrorCalculator(10, 8)
         }
         var workerIndex = 0
         val iterator = epdFileLoader.getEpdInfoList()
