@@ -23,7 +23,7 @@ object HighestSearchErrorApplication {
         UciOutput.silent = true
         // setup
         for (i in workers.indices) {
-            workers[i] = HighestSearchErrorCalculator(10, 8)
+            workers[i] = HighestSearchErrorCalculator(10, 10)
         }
         var workerIndex = 0
         val iterator = epdFileLoader.getEpdInfoList()

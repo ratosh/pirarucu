@@ -1,7 +1,6 @@
 package pirarucu.tuning
 
 import pirarucu.board.Board
-import pirarucu.board.Piece
 import pirarucu.board.factory.BoardFactory
 import pirarucu.game.GameConstants
 import pirarucu.hash.TranspositionTable
