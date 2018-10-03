@@ -31,7 +31,6 @@ class QuiescenceSearch(private val searchInfo: SearchInfo) {
 
         var bestScore = max(alpha, eval)
 
-
         val futilityQueenValue = eval + TunableConstants.QS_FUTILITY_VALUE[Piece.QUEEN]
         if (futilityQueenValue <= bestScore) {
             return futilityQueenValue
