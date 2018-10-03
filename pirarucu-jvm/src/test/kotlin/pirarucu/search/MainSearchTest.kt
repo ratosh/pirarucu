@@ -181,4 +181,10 @@ class MainSearchTest {
         // Found a1e1
         testSearch("3r1b1k/6p1/1n3p2/2n5/1p6/1Np3B1/2B2PPP/R5K1 w - -", 10000L)
     }
+
+    @Ignore
+    @Test
+    fun test7P() {
+        testSearch("4K2k/5p2/p7/7p/P3P3/8/8/8 w - -", 10000L)
+    }
 }

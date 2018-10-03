@@ -45,7 +45,7 @@ class HighestSearchErrorCalculator(size: Int, depth: Int) : Callable<Double> {
 
     private fun calculateError(currentConstant: Double): Double {
         var error = 0.0
-        for (entry in epdInfoList) {
+        for ((index, entry) in epdInfoList.withIndex()) {
             BoardFactory.setBoard(entry.fenPosition, board)
             TranspositionTable.reset()
             searchInfo.history.reset()
@@ -57,8 +57,8 @@ class HighestSearchErrorCalculator(size: Int, depth: Int) : Callable<Double> {
             val entryError = Math.pow(entry.result - calculateSigmoid(searchValue, currentConstant), 2.0)
 
             error += entryError
-            if (0.9 < entryError) {
-                println("Big error $entryError ($searchValue) | ${entry.fenPosition}")
+            if (0.89 < entryError) {
+                println("$index Big error $entryError ($searchValue) | ${entry.fenPosition}")
             }
 
             var replaceIndex = -1

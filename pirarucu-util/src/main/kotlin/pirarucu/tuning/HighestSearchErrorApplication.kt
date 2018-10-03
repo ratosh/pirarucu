@@ -19,7 +19,7 @@ object HighestSearchErrorApplication {
     @JvmStatic
     fun main(args: Array<String>) {
 
-        TranspositionTable.resize(2)
+        TranspositionTable.resize(1)
         UciOutput.silent = true
         // setup
         for (i in workers.indices) {
