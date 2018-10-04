@@ -1,6 +1,5 @@
 package pirarucu.util
 
-import pirarucu.eval.EvalConstants
 import pirarucu.tuning.TunableConstants
 import java.security.SecureRandom
 import java.util.Arrays
@@ -81,7 +80,7 @@ actual class PlatformSpecific actual constructor() {
         when (optionList.size) {
             1 -> {
                 field.isAccessible = true
-                field.set(EvalConstants::class.java, value)
+                field.set(TunableConstants::class.java, value)
             }
             2 -> {
                 field.isAccessible = true

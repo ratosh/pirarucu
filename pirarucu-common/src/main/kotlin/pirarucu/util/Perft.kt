@@ -2,6 +2,7 @@ package pirarucu.util
 
 import pirarucu.board.Board
 import pirarucu.eval.AttackInfo
+import pirarucu.game.GameConstants
 import pirarucu.move.MoveGenerator
 import pirarucu.move.OrderedMoveList
 import pirarucu.search.History
@@ -10,6 +11,7 @@ object Perft {
 
     private val attackInfo = AttackInfo()
     private val moveGenerator = MoveGenerator(History())
+    private val orderedMoveList = Array(GameConstants.MAX_PLIES) { OrderedMoveList() }
 
     fun perft(board: Board, depth: Int): Long {
         var nodes: Long = 0
@@ -18,12 +20,14 @@ object Perft {
             return 1L
         }
 
-        val orderedMoveList = OrderedMoveList()
-        moveGenerator.legalMoves(board, attackInfo, orderedMoveList)
-        moveGenerator.legalAttacks(board, attackInfo, orderedMoveList)
+        val moveList = orderedMoveList[depth]
+        moveList.reset()
 
-        while (orderedMoveList.hasNext()) {
-            val move = orderedMoveList.next()
+        moveGenerator.legalMoves(board, attackInfo, moveList)
+        moveGenerator.legalAttacks(board, attackInfo, moveList)
+
+        while (moveList.hasNext()) {
+            val move = moveList.next()
             if (board.isLegalMove(move)) {
                 board.doMove(move)
                 nodes += perft(board, depth - 1)

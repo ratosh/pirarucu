@@ -1,24 +1,27 @@
 package pirarucu.tuning
 
+import pirarucu.uci.UciOutput
 import pirarucu.util.EpdFileLoader
 import java.util.ArrayList
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 
-object HighestErrorApplication {
+object HighestNoisyErrorApplication {
 
     private const val numberOfThreads = 1
-    private val workers = arrayOfNulls<HighestErrorCalculator>(numberOfThreads)
+    private val workers = arrayOfNulls<HighestNoisyErrorCalculator>(numberOfThreads)
     private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
     private val epdFileLoader = EpdFileLoader("g:\\chess\\epds\\quiet_labeled.epd")
 
     @Throws(ExecutionException::class, InterruptedException::class)
     @JvmStatic
     fun main(args: Array<String>) {
+
+        UciOutput.silent = true
         // setup
         for (i in workers.indices) {
-            workers[i] = HighestErrorCalculator(100)
+            workers[i] = HighestNoisyErrorCalculator(10)
         }
         var workerIndex = 0
         val iterator = epdFileLoader.getEpdInfoList()
@@ -26,7 +29,7 @@ object HighestErrorApplication {
             workers[workerIndex]!!.addEpdInfo(epdInfo)
             workerIndex = if (workerIndex == numberOfThreads - 1) 0 else workerIndex + 1
         }
-        executeTest()
+        println("Total error " + executeTest())
         for (worker in workers) {
             println(worker.toString())
         }
