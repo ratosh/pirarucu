@@ -4,8 +4,8 @@ import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory
 import pirarucu.eval.EvalConstants
 import pirarucu.game.GameConstants
+import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
-import pirarucu.move.MoveList
 import pirarucu.uci.UciOutput
 import kotlin.math.max
 
@@ -14,6 +14,8 @@ object MultiThreadedSearch {
     private val threadListLock = java.lang.Object()
 
     private val searchInfoListener = MultiThreadedSearchInfoListener()
+
+    val transpositionTable = TranspositionTable()
 
     private val board = BoardFactory.getBoard()
     val searchOptions = SearchOptions()
@@ -125,6 +127,7 @@ object MultiThreadedSearch {
 
     fun reset() {
         mainThread.reset()
+        transpositionTable.reset()
     }
 
     fun setBoard(fen: String) {
@@ -141,7 +144,7 @@ object MultiThreadedSearch {
 
     class HelperThread(val innerId: Int) : Thread() {
         private val board = BoardFactory.getBoard()
-        private val search = MainSearch(searchOptions, searchInfoListener)
+        private val search = MainSearch(searchOptions, searchInfoListener, transpositionTable)
 
         var searchDepth = 4
             private set
@@ -181,7 +184,7 @@ object MultiThreadedSearch {
 
     class MainThread : Thread() {
         private val board = BoardFactory.getBoard()
-        private val search = MainSearch(searchOptions, searchInfoListener)
+        private val search = MainSearch(searchOptions, searchInfoListener, transpositionTable)
 
         var searchDepth = 1
             private set

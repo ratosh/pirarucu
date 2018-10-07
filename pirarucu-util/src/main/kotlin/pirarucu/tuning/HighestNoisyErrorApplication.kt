@@ -17,7 +17,6 @@ object HighestNoisyErrorApplication {
     @Throws(ExecutionException::class, InterruptedException::class)
     @JvmStatic
     fun main(args: Array<String>) {
-
         UciOutput.silent = true
         // setup
         for (i in workers.indices) {

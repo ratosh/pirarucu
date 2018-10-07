@@ -25,9 +25,7 @@ import kotlin.math.min
  *
  * 1KB = 64 Entries
  */
-object TranspositionTable {
-
-    const val EMPTY_INFO = 0L
+class TranspositionTable {
 
     var baseDepth = 0
 
@@ -39,18 +37,6 @@ object TranspositionTable {
 
     private var keys = LongArray(tableLimit)
     private var infos = LongArray(tableLimit)
-
-    private const val MOVE_SHIFT = 0
-    private const val EVAL_SHIFT = 16
-    private const val SCORE_SHIFT = 32
-    private const val DEPTH_SHIFT = 48
-    private const val SCORE_TYPE_SHIFT = 62
-
-    private const val MOVE_MASK = 0xFFFFL
-    private const val EVAL_MASK = 0xFFFFL
-    private const val SCORE_MASK = 0xFFFFL
-    private const val DEPTH_MASK = 0x3FFL
-    private const val SCORE_TYPE_MASK = 0x3L
 
     fun resize(sizeMb: Int) {
         tableBits = Square.getSquare(sizeMb) + 16
@@ -78,10 +64,10 @@ object TranspositionTable {
         var index = startIndex
         val wantedKey = board.zobristKey
         while (index < maxIndex) {
-            // Unpopulated entry
             val info = infos[index]
             val key = keys[index]
             val savedKey = key xor info
+            // Unpopulated entry
             if (key == 0L && savedKey == 0L) {
                 break
             }
@@ -90,7 +76,7 @@ object TranspositionTable {
             }
             index++
         }
-        return EMPTY_INFO
+        return HashConstants.EMPTY_INFO
     }
 
     fun save(board: Board, eval: Int, score: Int, scoreType: Int, depth: Int, ply: Int, bestMove: Int) {
@@ -183,5 +169,19 @@ object TranspositionTable {
             ((score.toLong() and SCORE_MASK) shl SCORE_SHIFT) or
             (depth.toLong() shl DEPTH_SHIFT) or
             (scoreType.toLong() shl SCORE_TYPE_SHIFT)
+    }
+
+    companion object {
+        private const val MOVE_SHIFT = 0
+        private const val EVAL_SHIFT = 16
+        private const val SCORE_SHIFT = 32
+        private const val DEPTH_SHIFT = 48
+        private const val SCORE_TYPE_SHIFT = 62
+
+        private const val MOVE_MASK = 0xFFFFL
+        private const val EVAL_MASK = 0xFFFFL
+        private const val SCORE_MASK = 0xFFFFL
+        private const val DEPTH_MASK = 0x3FFL
+        private const val SCORE_TYPE_MASK = 0x3L
     }
 }

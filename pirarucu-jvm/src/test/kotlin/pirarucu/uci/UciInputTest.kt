@@ -1,6 +1,5 @@
 package pirarucu.uci
 
-import pirarucu.hash.TranspositionTable
 import pirarucu.search.MultiThreadedSearch
 import pirarucu.tuning.TunableConstants
 import kotlin.test.AfterTest
@@ -17,7 +16,7 @@ class UciInputTest {
 
     @BeforeTest
     fun setup() {
-        TranspositionTable.reset()
+        MultiThreadedSearch.transpositionTable.reset()
         searching = false
     }
 
@@ -44,7 +43,7 @@ class UciInputTest {
     fun testHash() {
         val size = 2
         uciInput.process("setoption name Hash value $size")
-        assertEquals(size, TranspositionTable.tableLimit / 64 / 1000)
+        assertEquals(size, MultiThreadedSearch.transpositionTable.tableLimit / 64 / 1000)
     }
 
     @Ignore

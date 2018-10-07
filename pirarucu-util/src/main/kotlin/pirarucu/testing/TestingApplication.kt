@@ -30,17 +30,18 @@ object TestingApplication {
 
         var testScore = 0
         val searchOptions = SearchOptions()
-        val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener())
+        val transpositionTable = TranspositionTable()
+        transpositionTable.resize(4)
+        val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable)
         searchOptions.depth = depth
         searchOptions.minSearchTime = 60000L
         searchOptions.maxSearchTime = 60000L
         searchOptions.searchTimeIncrement = 60000L
         val board = BoardFactory.getBoard()
         var partialScore = 0
-        TranspositionTable.resize(4)
         for ((index, epdInfo) in testFile.getEpdInfoList().withIndex()) {
             BoardFactory.setBoard(epdInfo.fenPosition, board)
-            TranspositionTable.reset()
+            transpositionTable.reset()
             searchOptions.startControl()
             mainSearch.searchInfo.history.reset()
 

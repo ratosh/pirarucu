@@ -19,9 +19,11 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-class MainSearch(private val searchOptions: SearchOptions, private val searchInfoListener: SearchInfoListener) {
+class MainSearch(private val searchOptions: SearchOptions,
+                 private val searchInfoListener: SearchInfoListener,
+                 private val transpositionTable: TranspositionTable) {
 
-    val searchInfo = SearchInfo()
+    val searchInfo = SearchInfo(transpositionTable)
 
     private val quiescenceSearch = QuiescenceSearch(searchInfo)
 
@@ -68,14 +70,14 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
 
         var eval = EvalConstants.SCORE_UNKNOWN
 
-        var foundInfo = TranspositionTable.EMPTY_INFO
+        var foundInfo = HashConstants.EMPTY_INFO
         if (SearchConstants.USE_TT) {
-            foundInfo = TranspositionTable.findEntry(board)
-            if (foundInfo != TranspositionTable.EMPTY_INFO) {
-                eval = TranspositionTable.getEval(foundInfo)
-                if (!pvNode && TranspositionTable.getDepth(foundInfo) >= newDepth) {
-                    val ttScore = TranspositionTable.getScore(foundInfo, ply)
-                    val ttScoreType = TranspositionTable.getScoreType(foundInfo)
+            foundInfo = transpositionTable.findEntry(board)
+            if (foundInfo != HashConstants.EMPTY_INFO) {
+                eval = transpositionTable.getEval(foundInfo)
+                if (!pvNode && transpositionTable.getDepth(foundInfo) >= newDepth) {
+                    val ttScore = transpositionTable.getScore(foundInfo, ply)
+                    val ttScoreType = transpositionTable.getScoreType(foundInfo)
                     when (ttScoreType) {
                         HashConstants.SCORE_TYPE_EXACT_SCORE -> {
                             return ttScore
@@ -195,16 +197,16 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
         // IID
         if (SearchConstants.USE_TT &&
             pvNode &&
-            foundInfo == TranspositionTable.EMPTY_INFO &&
+            foundInfo == HashConstants.EMPTY_INFO &&
             newDepth > SearchConstants.IID_DEPTH) {
             search(board, newDepth - SearchConstants.IID_DEPTH, ply, currentAlpha,
                 currentBeta, false)
-            foundInfo = TranspositionTable.findEntry(board)
+            foundInfo = transpositionTable.findEntry(board)
         }
 
         var ttMove = Move.NONE
-        if (foundInfo != TranspositionTable.EMPTY_INFO) {
-            ttMove = TranspositionTable.getMove(foundInfo)
+        if (foundInfo != HashConstants.EMPTY_INFO) {
+            ttMove = transpositionTable.getMove(foundInfo)
             currentNode.setTTMove(ttMove)
         }
 
@@ -351,7 +353,7 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
         }
 
         if (!searchOptions.stop) {
-            TranspositionTable.save(board, eval, bestScore, scoreType, newDepth, ply, bestMove)
+            transpositionTable.save(board, eval, bestScore, scoreType, newDepth, ply, bestMove)
         }
 
         return bestScore
@@ -361,7 +363,7 @@ class MainSearch(private val searchOptions: SearchOptions, private val searchInf
     fun search(board: Board) {
         searchInfo.reset()
 
-        TranspositionTable.baseDepth = board.moveNumber
+        transpositionTable.baseDepth = board.moveNumber
 
         var depth = 1
         var alpha = EvalConstants.SCORE_MIN

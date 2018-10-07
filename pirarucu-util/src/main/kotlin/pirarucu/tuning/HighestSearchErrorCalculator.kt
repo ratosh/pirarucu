@@ -5,7 +5,6 @@ import pirarucu.board.factory.BoardFactory
 import pirarucu.game.GameConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.search.MainSearch
-import pirarucu.search.SearchInfo
 import pirarucu.search.SearchOptions
 import pirarucu.search.SimpleSearchInfoListener
 import pirarucu.util.EpdInfo
@@ -15,9 +14,9 @@ class HighestSearchErrorCalculator(size: Int, depth: Int) : Callable<Double> {
     private var constantCalculated: Boolean = false
     private var constant: Double = 0.toDouble()
 
-    private val searchInfo = SearchInfo()
+    private val transpositionTable = TranspositionTable()
     private val searchOptions = SearchOptions()
-    private val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener())
+    private val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable)
 
     private val epdInfoList = mutableListOf<EpdInfo>()
     private var board: Board = Board()
@@ -29,6 +28,8 @@ class HighestSearchErrorCalculator(size: Int, depth: Int) : Callable<Double> {
         searchOptions.depth = depth
         searchOptions.minSearchTime = 60000L
         searchOptions.maxSearchTime = 60000L
+
+        transpositionTable.resize(1)
     }
 
     fun addEpdInfo(epdInfo: EpdInfo) {
@@ -45,10 +46,11 @@ class HighestSearchErrorCalculator(size: Int, depth: Int) : Callable<Double> {
 
     private fun calculateError(currentConstant: Double): Double {
         var error = 0.0
+        println(Thread.currentThread().name)
         for ((index, entry) in epdInfoList.withIndex()) {
             BoardFactory.setBoard(entry.fenPosition, board)
-            TranspositionTable.reset()
-            searchInfo.history.reset()
+            transpositionTable.reset()
+            mainSearch.searchInfo.history.reset()
             searchOptions.startControl()
             searchOptions.stop = false
             mainSearch.search(board)

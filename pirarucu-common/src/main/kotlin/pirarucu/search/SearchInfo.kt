@@ -2,12 +2,13 @@ package pirarucu.search
 
 import pirarucu.board.Board
 import pirarucu.game.GameConstants
+import pirarucu.hash.HashConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
 import pirarucu.move.MoveGenerator
 import pirarucu.util.Utils
 
-class SearchInfo {
+class SearchInfo(val transpositionTable: TranspositionTable) {
 
     var searchNodes = 0L
     val history = History()
@@ -31,15 +32,15 @@ class SearchInfo {
     fun save(board: Board) {
         var ply = 0
         while (ply < PV_DEPTH) {
-            val info = TranspositionTable.findEntry(board)
-            if (info == TranspositionTable.EMPTY_INFO) {
+            val info = transpositionTable.findEntry(board)
+            if (info == HashConstants.EMPTY_INFO) {
                 break
             }
-            val firstMove = TranspositionTable.getMove(info)
+            val firstMove = transpositionTable.getMove(info)
             if (firstMove != Move.NONE) {
                 if (ply == 0) {
                     bestMove = firstMove
-                    bestScore = TranspositionTable.getScore(info, ply)
+                    bestScore = transpositionTable.getScore(info, ply)
                 }
                 bestMoveList[ply] = firstMove
                 board.doMove(firstMove)

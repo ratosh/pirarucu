@@ -23,7 +23,10 @@ object UciOutput {
         println("bestmove " + Move.toString(move))
     }
 
-    fun searchInfo(depth: Int, time: Long, nodeCount: Long, searchInfo: SearchInfo) {
+    fun searchInfo(depth: Int,
+                   time: Long,
+                   nodeCount: Long,
+                   searchInfo: SearchInfo) {
         val nps = if (nodeCount > 0 && time > 0) {
             " nps " + nodeCount * 1000 / time
         } else {
@@ -34,7 +37,7 @@ object UciOutput {
             " score cp " + searchInfo.bestScore +
             nps +
             " nodes " + nodeCount +
-            " hashfull " + TranspositionTable.ttUsage * 1000 / TranspositionTable.tableLimit +
+            " hashfull " + searchInfo.transpositionTable.ttUsage * 1000 / searchInfo.transpositionTable.tableLimit +
             " pv " + searchInfo.toString())
     }
 }

@@ -6,6 +6,7 @@ import pirarucu.board.factory.BoardFactory
 import pirarucu.board.factory.FenFactory
 import pirarucu.eval.EvalConstants
 import pirarucu.game.GameConstants
+import pirarucu.hash.HashConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
 import kotlin.test.Ignore
@@ -15,10 +16,11 @@ import kotlin.test.assertEquals
 class MainSearchTest {
 
     private var searchOptions = SearchOptions()
-    private val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener())
+    private val transpositionTable = TranspositionTable()
+    private val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable)
 
     fun testSearch(fen: String, searchTime: Long) {
-        TranspositionTable.reset()
+        transpositionTable.reset()
         val board = BoardFactory.getBoard(fen)
         BoardFactory.setBoard(fen, board)
         searchOptions.minSearchTime = searchTime
@@ -39,15 +41,15 @@ class MainSearchTest {
         val infoMove = Move.getMove(board, move)
         board.doMove(infoMove)
         while (true) {
-            val info = TranspositionTable.findEntry(board)
-            if (info == TranspositionTable.EMPTY_INFO) {
+            val info = transpositionTable.findEntry(board)
+            if (info == HashConstants.EMPTY_INFO) {
                 break
             }
 
-            val score = TranspositionTable.getScore(info, ply)
+            val score = transpositionTable.getScore(info, ply)
             val fen = FenFactory.getFen(board)
             println("Fen $fen $score")
-            val ttMove = TranspositionTable.getMove(info)
+            val ttMove = transpositionTable.getMove(info)
             if (ttMove != Move.NONE) {
                 pvInfo[ply] = ttMove
                 board.doMove(ttMove)
