@@ -264,7 +264,7 @@ class MainSearch(private val searchOptions: SearchOptions,
                     newDepth < TunableConstants.FUTILITY_HISTORY_MARGIN.size &&
                     searchInfo.history.getHistoryScore(board.colorToMove, move) <
                     TunableConstants.FUTILITY_HISTORY_MARGIN[newDepth]) {
-                    skipQuiets = true
+                    continue
                 }
 
                 if (newDepth < SearchConstants.NEGATIVE_SEE_DEPTH &&
