@@ -9,7 +9,6 @@ import pirarucu.search.SimpleSearchInfoListener
 import pirarucu.uci.UciOutput
 import pirarucu.util.EpdFileLoader
 import pirarucu.util.Utils
-import java.util.concurrent.ExecutionException
 
 object Benchmark {
 
@@ -24,17 +23,18 @@ object Benchmark {
         val iterator = epdFileLoader.getEpdInfoList()
         var nodeCount = 0L
         val searchOptions = SearchOptions()
-        val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener())
+        val transpositionTable = TranspositionTable()
+        transpositionTable.resize(16)
+        val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable)
         searchOptions.depth = depth
         searchOptions.minSearchTime = 60000L
         searchOptions.maxSearchTime = 60000L
         searchOptions.searchTimeIncrement = 1000L
-        TranspositionTable.resize(16)
         val board = BoardFactory.getBoard()
         val startTime = Utils.specific.currentTimeMillis()
         for (epdInfo in iterator) {
             BoardFactory.setBoard(epdInfo.fenPosition, board)
-            TranspositionTable.reset()
+            transpositionTable.reset()
             searchOptions.startControl()
 
             mainSearch.search(board)

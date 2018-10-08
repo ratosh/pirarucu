@@ -13,7 +13,7 @@ import kotlin.test.assertTrue
 
 class QuiescenceSearchTest {
 
-    private var searchInfo = SearchInfo()
+    private var searchInfo = SearchInfo(TranspositionTable())
     private var quiescenceSearch = QuiescenceSearch(searchInfo)
 
     private fun testSearch(fen: String, minDiff: Int, maxDiff: Int) {
@@ -33,7 +33,6 @@ class QuiescenceSearchTest {
 
     @BeforeTest
     fun setup() {
-        TranspositionTable.reset()
         searchInfo.reset()
     }
 

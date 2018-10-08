@@ -26,9 +26,12 @@ class PawnEvaluationCache(sizeMb: Int) {
     fun findEntry(board: Board): Int {
         val wantedKey = getKey(board)
         val index = getIndex(wantedKey)
-        if (keys[index] == wantedKey) {
-            board.evalInfo.passedPawnBitboard = passed[index]
-            return values[index]
+        val passedPawnInfo = passed[index]
+        val value = values[index]
+        val savedKey = keys[index] xor passedPawnInfo xor value.toLong()
+        if (savedKey == wantedKey) {
+            board.evalInfo.passedPawnBitboard = passedPawnInfo
+            return value
         }
         return EvalConstants.SCORE_UNKNOWN
     }
@@ -37,7 +40,7 @@ class PawnEvaluationCache(sizeMb: Int) {
         if (EvalConstants.PAWN_EVAL_CACHE) {
             val key = getKey(board)
             val index = getIndex(key)
-            keys[index] = key
+            keys[index] = key xor value.toLong() xor passedPawnBitboard
             values[index] = value
             passed[index] = passedPawnBitboard
         }

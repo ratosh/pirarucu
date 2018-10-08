@@ -1,7 +1,6 @@
 package pirarucu.uci
 
 import pirarucu.board.factory.BoardFactory
-import pirarucu.hash.TranspositionTable
 import pirarucu.search.MultiThreadedSearch
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.Perft
@@ -9,7 +8,6 @@ import pirarucu.util.Utils
 
 class InputHandler : IInputHandler {
     override fun newGame() {
-        TranspositionTable.reset()
         MultiThreadedSearch.reset()
     }
 
@@ -46,7 +44,7 @@ class InputHandler : IInputHandler {
         }
         when (option.toLowerCase()) {
             "hash" -> {
-                TranspositionTable.resize(value.toInt())
+                MultiThreadedSearch.transpositionTable.resize(value.toInt())
             }
             "threads" -> {
                 MultiThreadedSearch.threads = value.toInt()

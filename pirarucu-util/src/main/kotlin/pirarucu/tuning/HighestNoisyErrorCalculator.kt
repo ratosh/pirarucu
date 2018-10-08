@@ -4,6 +4,7 @@ import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory
 import pirarucu.eval.EvalConstants
 import pirarucu.game.GameConstants
+import pirarucu.hash.TranspositionTable
 import pirarucu.search.QuiescenceSearch
 import pirarucu.search.SearchInfo
 import pirarucu.util.EpdInfo
@@ -13,7 +14,7 @@ class HighestNoisyErrorCalculator(size: Int) : Callable<Double> {
     private var constantCalculated: Boolean = false
     private var constant: Double = 0.toDouble()
 
-    private val searchInfo = SearchInfo()
+    private val searchInfo = SearchInfo(TranspositionTable())
     private val qSearch = QuiescenceSearch(searchInfo)
 
     private val epdInfoList = mutableListOf<EpdInfo>()
@@ -48,7 +49,7 @@ class HighestNoisyErrorCalculator(size: Int) : Callable<Double> {
 
             error += entryError
             if (highestError < entryError) {
-                println("New highest error $entryError ($searchValue) | ${entry.fenPosition}")
+                println(Thread.currentThread().name + " New highest error $entryError ($searchValue) | ${entry.fenPosition}")
                 highestError = entryError
             }
 
