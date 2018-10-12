@@ -1,6 +1,6 @@
-package pirarucu.util.factory
+package pirarucu.util.epd.factory
 
-import pirarucu.util.EpdInfo
+import pirarucu.util.epd.EpdInfo
 import java.text.NumberFormat
 import java.text.ParseException
 import java.util.Arrays
@@ -40,6 +40,11 @@ object EpdInfoFactory {
         } else {
             result = 0.5
         }
+        val c1Index = tempLine.indexOf("c1")
+        if (c1Index >= 0) {
+            tempLine = tempLine.substring(0, c1Index)
+        }
+
         val c0Index = tempLine.indexOf("c0")
         if (c0Index >= 0) {
             var c0String = tempLine.substring(c0Index + 3, tempLine.length).replace("\"", "").replace(" ", "")
