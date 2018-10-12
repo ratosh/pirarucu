@@ -7,13 +7,13 @@ import pirarucu.tuning.EvaluationErrorEvaluator
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.Utils
 import pirarucu.util.epd.EpdFileLoader
+import pirarucu.util.epd.EpdInfo
 import pirarucu.util.position.InvalidPositionFilter
 import java.util.concurrent.ExecutionException
 
 object TexelTuningApplication {
 
-    private const val numberOfThreads = 6
-    private val epdFileLoader = EpdFileLoader("G:/chess/epds/quiet_labeled.epd")
+    private const val THREADS = 2
 
     private val tuningObjects: TexelTuningController
         get() {
@@ -519,10 +519,16 @@ object TexelTuningApplication {
 
     @Throws(ExecutionException::class, InterruptedException::class)
     private fun optimize(tuningController: TexelTuningController) {
-        val list = InvalidPositionFilter(numberOfThreads).filter(epdFileLoader.getEpdInfoList())
-        val evaluator = EvaluationErrorEvaluator(numberOfThreads)
-        evaluator.evaluate(list)
-        var bestError = ErrorUtil.calculate(list, ErrorUtil.ORIGINAL_CONSTANT)
+        val list = mutableListOf<EpdInfo>()
+        val zurichess = EpdFileLoader("g:\\chess\\epds\\quiet_labeled.epd")
+        val alvaro = EpdFileLoader("g:\\chess\\epds\\quiescent_positions_with_results.epd")
+        list.addAll(zurichess.getEpdInfoList())
+        list.addAll(alvaro.getEpdInfoList())
+        val epdList = InvalidPositionFilter(THREADS).filter(list)
+
+        val evaluator = EvaluationErrorEvaluator(THREADS)
+        evaluator.evaluate(epdList)
+        var bestError = ErrorUtil.calculate(epdList)
         println("Starting error $bestError")
         val startTime = Utils.specific.currentTimeMillis()
         tuningController.initialResult(bestError)
@@ -531,8 +537,8 @@ object TexelTuningApplication {
             while (tuningController.hasNext()) {
                 if (tuningController.next()) {
                     TunableConstants.update()
-                    evaluator.evaluate(list)
-                    val error = ErrorUtil.calculate(list, ErrorUtil.ORIGINAL_CONSTANT)
+                    evaluator.evaluate(epdList)
+                    val error = ErrorUtil.calculate(epdList, ErrorUtil.ORIGINAL_CONSTANT)
                     tuningController.reportCurrent(error)
                     if (error < bestError) {
                         bestError = error

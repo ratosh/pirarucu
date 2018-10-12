@@ -6,11 +6,11 @@ object ErrorUtil {
 
     const val ORIGINAL_CONSTANT = 1.4
 
-    fun calculateSigmoid(score: Int, constant: Double): Double {
+    fun calculateSigmoid(score: Int, constant: Double = ORIGINAL_CONSTANT): Double {
         return 1 / (1 + Math.pow(10.0, -constant * score / 400))
     }
 
-    fun calculate(list: List<EpdInfo>, constant: Double): Double {
+    fun calculate(list: List<EpdInfo>, constant: Double = ORIGINAL_CONSTANT): Double {
         var result = 0.0
         for (entry in list) {
             result += Math.pow(entry.result - ErrorUtil.calculateSigmoid(entry.eval, constant), 2.0)
