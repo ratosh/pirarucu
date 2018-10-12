@@ -1,9 +1,7 @@
 package pirarucu.util.position
 
-import pirarucu.util.epd.EpdFileLoader
 import pirarucu.util.epd.EpdInfo
 import pirarucu.util.epd.factory.EpdInfoFactory
-import kotlin.system.measureNanoTime
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -25,23 +23,6 @@ class InvalidPositionFilterTest {
 
         val filter = InvalidPositionFilter(1)
         assertTrue(filter.filter(list).isNotEmpty())
-    }
-
-    @Test
-    fun testSpeed() {
-        val epdFileLoader = EpdFileLoader("g:\\chess\\epds\\big3.epd")
-        val filter = InvalidPositionFilter(1)
-        val timeTaken1 = measureNanoTime {
-            val list = filter.filter(epdFileLoader.getEpdInfoList())
-            println(list.size)
-        }
-        println("time taken 1 " + (timeTaken1 / 1_000_000))
-        filter.threads = 6
-        val timeTaken2 = measureNanoTime {
-            val list = filter.filter(epdFileLoader.getEpdInfoList())
-            println(list.size)
-        }
-        println("time taken 2 " + (timeTaken2 / 1_000_000))
     }
 
 }
