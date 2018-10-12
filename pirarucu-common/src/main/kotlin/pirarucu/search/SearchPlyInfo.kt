@@ -42,10 +42,6 @@ class SearchPlyInfo(private val moveGenerator: MoveGenerator) {
         ttMove = move
     }
 
-    fun isTTMove(move: Int): Boolean {
-        return ttMove == move
-    }
-
     fun isKillerMove(move: Int): Boolean {
         return move == killerMove1 || move == killerMove2
     }

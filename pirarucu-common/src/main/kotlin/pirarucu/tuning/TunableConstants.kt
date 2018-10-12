@@ -16,6 +16,8 @@ object TunableConstants {
     val FUTILITY_CHILD_MARGIN = intArrayOf(0, 120, 180, 250, 330, 420, 520)
     val FUTILITY_PARENT_MARGIN = intArrayOf(0, 100, 200, 310, 430, 550, 660)
 
+    val FUTILITY_HISTORY_MARGIN = intArrayOf(0, -14000, -14500, -14500, -15000, -15500, -16000)
+
     val TEMPO_TUNING = intArrayOf(23, 13)
     val TEMPO = IntArray(Color.SIZE)
 

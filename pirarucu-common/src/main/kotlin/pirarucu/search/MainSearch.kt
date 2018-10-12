@@ -260,6 +260,13 @@ class MainSearch(private val searchOptions: SearchOptions,
                     skipQuiets = true
                 }
 
+                if (!isCapture &&
+                    newDepth < TunableConstants.FUTILITY_HISTORY_MARGIN.size &&
+                    searchInfo.history.getHistoryScore(board.colorToMove, move) <
+                    TunableConstants.FUTILITY_HISTORY_MARGIN[newDepth]) {
+                    skipQuiets = true
+                }
+
                 if (newDepth < SearchConstants.NEGATIVE_SEE_DEPTH &&
                     movePicker.phase < MovePicker.PHASE_GOOD_MATERIAL_EXCHANGE &&
                     !StaticExchangeEvaluator.seeInThreshold(board, move,
