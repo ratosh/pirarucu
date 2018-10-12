@@ -2,7 +2,7 @@
 
 # Pirarucu
 
-A Kotlin Chess Engine with UCI protocol support.
+A Kotlin Chess Engine with Universal Chess Interface protocol support. 
 
 ## Concepts
 
@@ -18,8 +18,8 @@ A Kotlin Chess Engine with UCI protocol support.
 - Bitboard representation
 - Magic bitboard
 - Transposition table
+- Static Exchange Evaluation
 - Quiescence search
-    - Static Exchange Evaluation
 - Alpha-beta search
     - Aspiration window
     - Interactive deepening
@@ -27,8 +27,10 @@ A Kotlin Chess Engine with UCI protocol support.
     - Razoring pruning
     - Futility pruning
     - Late Move Reduction
-    - Killer moves
+    - Late move pruning
+    - History futility pruning
 - Evaluation
+    - Material value
     - Piece square table
     - Tapered evaluation
     - Mobility
@@ -36,6 +38,11 @@ A Kotlin Chess Engine with UCI protocol support.
     - Passed pawn evaluation
     - King safety
     - Safe check
+- Move Ordering
+    - Most value victim / Lowest Value Attacker
+    - Killer moves
+    - Butterfly history
+- Multi Thread
     
 ## How to use
 
@@ -48,6 +55,12 @@ The engine runs on JRE (Java Runtime Environment) version 8 and above.
 - Download the latest [release](https://github.com/ratosh/pirarucu/releases/latest).
 - Uncompress the downloaded file in a empty directory.
 - Run the bash file in bin directory. 
+
+### Compatible Interfaces
+
+- [Arena](http://www.playwitharena.com)
+- [Cutechess](https://github.com/cutechess/cutechess)
+- [Lucaschess](https://lucaschess.pythonanywhere.com)
 
 ## Contributions
 
