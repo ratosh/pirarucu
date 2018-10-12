@@ -1,22 +1,18 @@
 package pirarucu.tuning.texel
 
+import pirarucu.board.Piece
 import pirarucu.eval.EvalConstants
-import pirarucu.tuning.ErrorCalculator
+import pirarucu.tuning.ErrorUtil
+import pirarucu.tuning.EvaluationErrorEvaluator
 import pirarucu.tuning.TunableConstants
-import pirarucu.util.EpdFileLoader
 import pirarucu.util.Utils
-import java.util.ArrayList
+import pirarucu.util.epd.EpdFileLoader
+import pirarucu.util.position.InvalidPositionFilter
 import java.util.concurrent.ExecutionException
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
 
 object TexelTuningApplication {
 
-    private const val INTERACTIONS = 10000
-
-    private const val numberOfThreads = 2
-    private val workers = arrayOfNulls<ErrorCalculator>(numberOfThreads)
-    private val executor = Executors.newFixedThreadPool(numberOfThreads)!!
+    private const val numberOfThreads = 6
     private val epdFileLoader = EpdFileLoader("G:/chess/epds/quiet_labeled.epd")
 
     private val tuningObjects: TexelTuningController
@@ -31,7 +27,6 @@ object TexelTuningApplication {
                 false, 0, 6))
                 */
 
-            /*
             tuningObject.registerTuningData(TexelTuningData(
                 "MATERIAL_SCORE_MG",
                 TunableConstants.MATERIAL_SCORE_MG,
@@ -307,7 +302,6 @@ object TexelTuningApplication {
                 TunableConstants.PAWN_BONUS_EG,
                 intArrayOf(8, 8, 8, 8, 8),
                 true, intArrayOf(), 1))
-                */
 
             tuningObject.registerTuningData(TexelTuningData(
                 "PASSED_PAWN_MG",
@@ -345,7 +339,6 @@ object TexelTuningApplication {
                 intArrayOf(8, 8, 8, 8, 8, 8),
                 true, intArrayOf(), 1))
 
-            /*
             tuningObject.registerTuningData(TexelTuningData(
                 "PAWN_SHIELD_MG[0][0]",
                 TunableConstants.PAWN_SHIELD_MG[0][0],
@@ -513,7 +506,6 @@ object TexelTuningApplication {
                 TunableConstants.THREATEN_BY_ROOK_EG,
                 intArrayOf(0, 8, 8, 8, 0, 8, 0),
                 false, intArrayOf(0, 4, 6), 1))
-                */
 
             return tuningObject
         }
@@ -522,34 +514,25 @@ object TexelTuningApplication {
     @JvmStatic
     fun main(args: Array<String>) {
         EvalConstants.PAWN_EVAL_CACHE = false
-
-        // setup
-        for (i in workers.indices) {
-            workers[i] = ErrorCalculator()
-        }
-        var workerIndex = 0
-        val iterator = epdFileLoader.getEpdInfoList()
-        for (epdInfo in iterator) {
-            workers[workerIndex]!!.addEpdInfo(epdInfo)
-            workerIndex = if (workerIndex == numberOfThreads - 1) 0 else workerIndex + 1
-        }
         optimize(tuningObjects)
-        executor.shutdown()
     }
 
     @Throws(ExecutionException::class, InterruptedException::class)
     private fun optimize(tuningController: TexelTuningController) {
-        var bestError = executeTest()
+        val list = InvalidPositionFilter(numberOfThreads).filter(epdFileLoader.getEpdInfoList())
+        val evaluator = EvaluationErrorEvaluator(numberOfThreads)
+        evaluator.evaluate(list)
+        var bestError = ErrorUtil.calculate(list, ErrorUtil.ORIGINAL_CONSTANT)
         println("Starting error $bestError")
         val startTime = Utils.specific.currentTimeMillis()
         tuningController.initialResult(bestError)
 
-        for (i in 0 until INTERACTIONS) {
-            println("Starting interaction $i")
+        while (true) {
             while (tuningController.hasNext()) {
                 if (tuningController.next()) {
                     TunableConstants.update()
-                    val error = executeTest()
+                    evaluator.evaluate(list)
+                    val error = ErrorUtil.calculate(list, ErrorUtil.ORIGINAL_CONSTANT)
                     tuningController.reportCurrent(error)
                     if (error < bestError) {
                         bestError = error
@@ -557,7 +540,7 @@ object TexelTuningApplication {
                 }
             }
             val timeTaken = Utils.specific.currentTimeMillis() - startTime
-            println("Current time taken $timeTaken millis")
+            println("Total time taken $timeTaken millis")
             if (tuningController.finishInteraction()) {
                 println("Seems like we are not improving")
                 break
@@ -566,20 +549,5 @@ object TexelTuningApplication {
 
         println("Optimization done.")
         tuningController.printBestElements()
-    }
-
-    @Throws(ExecutionException::class, InterruptedException::class)
-    private fun executeTest(): Double {
-        val list = ArrayList<Future<Double>>()
-        for (i in workers.indices) {
-            val submit = executor.submit(workers[i])
-            list.add(submit)
-        }
-        var totalError = 0.0
-        for (future in list) {
-            val value = future.get()
-            totalError += value!!
-        }
-        return totalError / numberOfThreads
     }
 }
