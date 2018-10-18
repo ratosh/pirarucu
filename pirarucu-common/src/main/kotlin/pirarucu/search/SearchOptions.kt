@@ -33,15 +33,12 @@ class SearchOptions {
             blackTime
         }
         val moves = when {
-            movesToGo != 0L -> movesToGo * 2
+            movesToGo != 0L -> movesToGo + MIN_GAME_MOVES
             else -> GAME_MOVES
         }
 
         minSearchTime = totalTime / moves
-        maxSearchTime = when (movesToGo) {
-            1L -> (totalTime - 1000)
-            else -> (minSearchTime * MAX_TIME_RATIO).toLong()
-        }
+        maxSearchTime = minSearchTime * MAX_TIME_RATIO
 
         searchTimeIncrement = max(1, (maxSearchTime - minSearchTime) / INCREMENT_RATIO)
     }
@@ -54,8 +51,11 @@ class SearchOptions {
     }
 
     companion object {
-        private const val MAX_TIME_RATIO = 5.0
+        // NOTE: this should be equal or below MIN_GAME_MOVES
+        private const val MAX_TIME_RATIO = 5L
+
         private const val GAME_MOVES = 40L
+        private const val MIN_GAME_MOVES = 5L
 
         private const val INCREMENT_RATIO = 30
     }
