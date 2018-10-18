@@ -1,4 +1,4 @@
-package pirarucu.util
+package pirarucu.util.epd
 
 import pirarucu.board.Board
 import pirarucu.move.Move
@@ -9,7 +9,7 @@ data class EpdInfo(val fenPosition: String,
                    val moveScoreList: Map<String, Int>?,
                    val result: Double,
                    val comment: String?) {
-
+    var eval = 0
 
     fun getMoveScore(board: Board, foundMove: Int): Int {
         if (null != bestMoveList) {

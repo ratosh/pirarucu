@@ -7,7 +7,7 @@ import pirarucu.search.MainSearch
 import pirarucu.search.SearchOptions
 import pirarucu.search.SimpleSearchInfoListener
 import pirarucu.uci.UciOutput
-import pirarucu.util.EpdFileLoader
+import pirarucu.util.epd.EpdFileLoader
 import pirarucu.util.Utils
 import java.util.concurrent.ExecutionException
 

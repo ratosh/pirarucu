@@ -137,5 +137,17 @@ class UciInputTest {
         uciInput.process("position fen rn1qkbnr/ppp1pppp/8/3p4/6b1/3P2P1/PPP1PP1P/RNBQKBNR w KQkq - 0 1 moves h2h3 g4f5 g3g4 f5e6 g1f3 b8c6 c1f4 f7f6 e2e3 g7g5 f4h2 e6f7 d3d4 e7e6 b1c3 a7a6 a2a3 h7h5 f1d3 h5g4 h3g4 e6e5 d3f1 e5d4 f3d4 c6d4 d1d4 f8d6 f2f4 g5f4 e3f4 d8e7 f1e2 c7c5 d4f2 d5d4 c3a4 b7b5 f2g2 a8b8 a4c5 d6c5 b2b4 c5b6 f4f5 b8c8 e1d1 e7d7 h2f4 f7d5 e2f3 c8c2 h1e1 g8e7")
         uciInput.process("go wtime 4429 btime 5086 winc 100 binc 100")
     }
+
+    @Ignore
+    @Test
+    fun testGame9() {
+        searching = true
+        uciInput.process("uci")
+        uciInput.process("ucinewgame")
+        uciInput.process("isready")
+        uciInput.process("position startpos moves e2e4 g7g6 d2d4 f8g7 g1f3 d7d6 c2c3 g8f6 f1d3 e8g8 e1g1 c7c5 h2h3 d6d5 e4e5 f6e4 b1d2 c5d4 c3d4 c8f5 d1e2 e4d2 c1d2 f5d3 e2d3 e7e6 b2b4 b8d7 b4b5 d7b6 d2b4 f8e8 a2a4 d8d7 f1b1 b6c4 b4c3 b7b6 f3d2 a8c8 g2g3 c8c7 d2c4 c7c4 a4a5 b6a5 a1a5 d7c7 a5a3 g7f8 c3a5 c7d7 a3b3 e8b8 g1g2 h7h5 d3d2 c4a4 h3h4 a4c4 d2e3 c4c2 a5d2 f8e7 e3d3 d7c7 b1a1 c2c4 a1a6 e7f8 b3b1 c7d7 d3e3 b8b5 b1b5 d7b5 a6a7")
+        uciInput.process("isready")
+        uciInput.process("go wtime 66888 btime 80769 movestogo 1")
+    }
 }
 
