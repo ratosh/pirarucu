@@ -1,8 +1,6 @@
 package pirarucu.search
 
 object SearchConstants {
-    var USE_TT = true
-
     const val ASPIRATION_WINDOW_SIZE = 20
 
     const val NEGATIVE_SEE_DEPTH = 7
@@ -21,4 +19,7 @@ object SearchConstants {
     const val PROB_CUT_DEPTH = 4
     const val PROB_CUT_MARGIN = 100
     const val PROB_CUT_MOVES = 3
+
+    const val SINGULAR_DETECTION_DEPTH = 8
+    const val SINGULAR_DETECTION_MOVES = 5
 }
