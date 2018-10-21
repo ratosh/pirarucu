@@ -70,27 +70,28 @@ class MainSearch(private val searchOptions: SearchOptions,
 
         var eval = EvalConstants.SCORE_UNKNOWN
 
-        var foundInfo = HashConstants.EMPTY_INFO
-        if (SearchConstants.USE_TT) {
-            foundInfo = transpositionTable.findEntry(board)
-            if (foundInfo != HashConstants.EMPTY_INFO) {
-                eval = transpositionTable.getEval(foundInfo)
-                if (!pvNode && transpositionTable.getDepth(foundInfo) >= newDepth) {
-                    val ttScore = transpositionTable.getScore(foundInfo, ply)
-                    val ttScoreType = transpositionTable.getScoreType(foundInfo)
-                    when (ttScoreType) {
-                        HashConstants.SCORE_TYPE_EXACT_SCORE -> {
+        var foundInfo = transpositionTable.findEntry(board)
+        var ttScore = EvalConstants.SCORE_UNKNOWN
+        var ttScoreType = HashConstants.SCORE_TYPE_EXACT_SCORE
+        var ttDepth = 0
+        if (foundInfo != HashConstants.EMPTY_INFO) {
+            eval = transpositionTable.getEval(foundInfo)
+            ttScore = transpositionTable.getScore(foundInfo, ply)
+            ttScoreType = transpositionTable.getScoreType(foundInfo)
+            ttDepth = transpositionTable.getDepth(foundInfo)
+            if (!pvNode && ttDepth >= newDepth) {
+                when (ttScoreType) {
+                    HashConstants.SCORE_TYPE_EXACT_SCORE -> {
+                        return ttScore
+                    }
+                    HashConstants.SCORE_TYPE_BOUND_LOWER -> {
+                        if (ttScore >= currentBeta) {
                             return ttScore
                         }
-                        HashConstants.SCORE_TYPE_BOUND_LOWER -> {
-                            if (ttScore >= currentBeta) {
-                                return ttScore
-                            }
-                        }
-                        HashConstants.SCORE_TYPE_BOUND_UPPER -> {
-                            if (ttScore <= currentAlpha) {
-                                return ttScore
-                            }
+                    }
+                    HashConstants.SCORE_TYPE_BOUND_UPPER -> {
+                        if (ttScore <= currentAlpha) {
+                            return ttScore
                         }
                     }
                 }
@@ -193,21 +194,71 @@ class MainSearch(private val searchOptions: SearchOptions,
             }
         }
 
+        var ttMove = Move.NONE
+        var ttMoveSingular = false
 
-        // IID
-        if (SearchConstants.USE_TT &&
-            pvNode &&
-            foundInfo == HashConstants.EMPTY_INFO &&
-            newDepth > SearchConstants.IID_DEPTH) {
+        if (foundInfo != HashConstants.EMPTY_INFO) {
+            ttMove = transpositionTable.getMove(foundInfo)
+            // Singular TT move detection
+            if (!rootNode &&
+                ttMove != Move.NONE &&
+                newDepth > SearchConstants.SINGULAR_DETECTION_DEPTH &&
+                ttScoreType == HashConstants.SCORE_TYPE_BOUND_LOWER &&
+                ttDepth >= newDepth - 3) {
+
+                board.doMove(ttMove)
+                if (board.basicEvalInfo.checkBitboard == Bitboard.EMPTY) {
+                    ttMoveSingular = true
+                }
+                board.undoMove(ttMove)
+
+                if (ttMoveSingular) {
+                    // Singular bound
+                    val singularCut = max(ttScore - 2 * newDepth, -EvalConstants.SCORE_MATE)
+
+                    // Use move picker
+                    val movePicker = currentNode.setupMovePicker(board, 0, Move.NONE)
+
+                    var singularMoveCount = 0
+
+                    while (singularMoveCount < SearchConstants.SINGULAR_DETECTION_MOVES) {
+                        val move = movePicker.next(false)
+                        // Move picker finish
+                        if (move == Move.NONE) {
+                            break
+                        }
+
+                        // Move is not legal
+                        if (move == ttMove || !board.isLegalMove(move)) {
+                            continue
+                        }
+
+                        singularMoveCount++
+
+                        board.doMove(move)
+
+                        // Verify the move using a low depth search
+                        val value = -search(board, newDepth / 2, ply + 1, -singularCut - 1, -singularCut)
+
+                        board.undoMove(move)
+
+                        // Value is above beta cut
+                        if (value > singularCut) {
+                            ttMoveSingular = false
+                            break
+                        }
+                    }
+                }
+            }
+            // IID
+        } else if (pvNode && newDepth > SearchConstants.IID_DEPTH) {
             search(board, newDepth - SearchConstants.IID_DEPTH, ply, currentAlpha,
                 currentBeta, false)
             foundInfo = transpositionTable.findEntry(board)
-        }
 
-        var ttMove = Move.NONE
-        if (foundInfo != HashConstants.EMPTY_INFO) {
-            ttMove = transpositionTable.getMove(foundInfo)
-            currentNode.setTTMove(ttMove)
+            if (foundInfo != HashConstants.EMPTY_INFO) {
+                ttMove = transpositionTable.getMove(foundInfo)
+            }
         }
 
         val movePicker = currentNode.setupMovePicker(board, 0, ttMove)
@@ -249,7 +300,7 @@ class MainSearch(private val searchOptions: SearchOptions,
                 movesPerformed > 0) {
 
                 if (newDepth < SearchConstants.LMP_DEPTH) {
-                    if (movesPerformed > depth * SearchConstants.LMP_MULTIPLIER + SearchConstants.LMP_MIN_MOVES) {
+                    if (movesPerformed > newDepth * SearchConstants.LMP_MULTIPLIER + SearchConstants.LMP_MIN_MOVES) {
                         skipQuiets = true
                     }
                 }
@@ -301,23 +352,27 @@ class MainSearch(private val searchOptions: SearchOptions,
                     reduction = min(newDepth - 1, max(reduction, 1))
                 }
 
-                val searchDepth = newDepth - 1
+                var searchDepth = newDepth
+
+                if (move == ttMove && ttMoveSingular) {
+                    searchDepth += 1
+                }
 
                 // LMR Search
                 if (reduction != 1 || !pvNode || movesPerformed != 1) {
-                    score = -search(board, newDepth - reduction, ply + 1, -searchAlpha - 1,
+                    score = -search(board, searchDepth - reduction, ply + 1, -searchAlpha - 1,
                         -searchAlpha, false)
                 }
 
                 // PVS Search
                 if (reduction != 1 && score > searchAlpha) {
-                    score = -search(board, searchDepth, ply + 1, -searchAlpha - 1, -searchAlpha, false)
+                    score = -search(board, searchDepth - 1, ply + 1, -searchAlpha - 1, -searchAlpha, false)
                 }
 
                 // Normal search for nodes with similar score on previous search
                 // Only pvNodes or it will be equal to PVS
                 if (pvNode && score > searchAlpha) {
-                    score = -search(board, searchDepth, ply + 1, -currentBeta, -searchAlpha, false)
+                    score = -search(board, searchDepth - 1, ply + 1, -currentBeta, -searchAlpha, false)
                 }
             }
 
