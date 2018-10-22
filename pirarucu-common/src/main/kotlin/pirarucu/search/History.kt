@@ -9,11 +9,10 @@ import kotlin.math.max
 import kotlin.math.min
 
 class History {
-    val history = Array(Color.SIZE) { IntArray(Square.SIZE * Square.SIZE) }
+    private val history = Array(Color.SIZE) { IntArray(Square.SIZE * Square.SIZE) }
 
     fun reset() {
-        Utils.specific.arrayFill(history[0], 0)
-        Utils.specific.arrayFill(history[1], 0)
+        Utils.specific.arrayFill(history, 0)
     }
 
     fun getHistoryScore(color: Int, move: Int): Int {

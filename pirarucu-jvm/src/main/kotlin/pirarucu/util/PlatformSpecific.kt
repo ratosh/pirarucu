@@ -48,6 +48,14 @@ actual class PlatformSpecific actual constructor() {
         Arrays.fill(array, value)
     }
 
+    actual fun arrayFill(array: Array<IntArray>, value: Int) {
+        array.forEach { arrayFill(it, value) }
+    }
+
+    actual fun arrayFill(array: Array<Array<IntArray>>, value: Int) {
+        array.forEach { arrayFill(it, value) }
+    }
+
     actual fun arrayCopy(src: IntArray, srcPos: Int, dest: IntArray, destPos: Int, length: Int) {
         System.arraycopy(src, srcPos, dest, destPos, length)
     }
