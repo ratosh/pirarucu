@@ -22,6 +22,10 @@ expect class PlatformSpecific() {
 
     fun arrayFill(array: LongArray, value: Long)
 
+    fun arrayFill(array: Array<IntArray>, value: Int)
+
+    fun arrayFill(array: Array<Array<IntArray>>, value: Int)
+
     fun arrayCopy(src: IntArray, srcPos: Int, dest: IntArray, destPos: Int, length: Int)
 
     fun arrayCopy(src: Array<IntArray>, dest: Array<IntArray>)
