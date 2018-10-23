@@ -156,13 +156,13 @@ class MainSearch(private val searchOptions: SearchOptions,
                 val probBeta = min(beta + SearchConstants.PROB_CUT_MARGIN, EvalConstants.SCORE_MATE - 1)
 
                 // Use good capture move picker
-                val movePicker = currentNode.setupMovePicker(board, probBeta - eval)
+                currentNode.setupMovePicker(board, probBeta - eval)
 
                 // Limit the number of moves
                 var probMoves = 0
 
                 while (probMoves < SearchConstants.PROB_CUT_MOVES) {
-                    val move = movePicker.next(true)
+                    val move = currentNode.next(true)
                     // Move picker finish
                     if (move == Move.NONE) {
                         break
@@ -217,12 +217,12 @@ class MainSearch(private val searchOptions: SearchOptions,
                     val singularCut = max(ttScore - 2 * newDepth, -EvalConstants.SCORE_MATE)
 
                     // Use move picker
-                    val movePicker = currentNode.setupMovePicker(board, 0, Move.NONE)
+                    currentNode.setupMovePicker(board, 0, Move.NONE)
 
                     var singularMoveCount = 0
 
                     while (singularMoveCount < SearchConstants.SINGULAR_DETECTION_MOVES) {
-                        val move = movePicker.next(false)
+                        val move = currentNode.next(false)
                         // Move picker finish
                         if (move == Move.NONE) {
                             break
@@ -261,7 +261,7 @@ class MainSearch(private val searchOptions: SearchOptions,
             }
         }
 
-        val movePicker = currentNode.setupMovePicker(board, 0, ttMove)
+        currentNode.setupMovePicker(board, 0, ttMove)
 
         val futilityValue = if (newDepth < TunableConstants.FUTILITY_PARENT_MARGIN.size) {
             eval + TunableConstants.FUTILITY_PARENT_MARGIN[newDepth]
@@ -279,7 +279,7 @@ class MainSearch(private val searchOptions: SearchOptions,
         val powerDepth = newDepth * newDepth
 
         while (true) {
-            val move = movePicker.next(skipQuiets)
+            val move = currentNode.next(skipQuiets)
             if (move == Move.NONE) {
                 break
             }
@@ -319,7 +319,7 @@ class MainSearch(private val searchOptions: SearchOptions,
                 }
 
                 if (newDepth < SearchConstants.NEGATIVE_SEE_DEPTH &&
-                    movePicker.phase < MovePicker.PHASE_GOOD_MATERIAL_EXCHANGE &&
+                    currentNode.phase < MovePicker.PHASE_GOOD_MATERIAL_EXCHANGE &&
                     !StaticExchangeEvaluator.seeInThreshold(board, move,
                         SearchConstants.NEGATIVE_SEE_MARGIN * powerDepth)) {
                     continue

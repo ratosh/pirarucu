@@ -39,12 +39,12 @@ class QuiescenceSearch(private val searchInfo: SearchInfo) {
         if (ply >= GameConstants.MAX_PLIES) {
             return bestScore
         }
-        val movePicker = searchInfo.plyInfoList[ply].setupMovePicker(board, 1)
+        currentNode.setupMovePicker(board, 1)
 
         var moveCount = 0
 
         while (true) {
-            val move = movePicker.next(true)
+            val move = currentNode.next(true)
             if (move == Move.NONE) {
                 break
             }
