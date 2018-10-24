@@ -42,6 +42,8 @@ class SearchErrorEvaluator(var threads: Int = 1) {
 
         init {
             searchOptions.depth = depth
+            searchOptions.minSearchTime = 60000L
+            searchOptions.maxSearchTime = 60000L
             transpositionTable.resize(ttSize)
         }
 

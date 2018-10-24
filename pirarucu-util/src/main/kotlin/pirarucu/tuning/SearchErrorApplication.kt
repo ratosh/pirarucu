@@ -12,7 +12,6 @@ object SearchErrorApplication {
 
     private const val WANTED_DEPTH = 4
     private const val THREADS = 4
-    private val epdFileLoader = EpdFileLoader("g:\\chess\\epds\\big3.epd")
 
     @Throws(ExecutionException::class, InterruptedException::class)
     @JvmStatic

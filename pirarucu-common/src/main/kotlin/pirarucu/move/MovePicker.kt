@@ -15,18 +15,18 @@ class MovePicker {
     private var killerMove1 = Move.NONE
     private var killerMove2 = Move.NONE
 
-    private var board: Board? = null
-    private var attackInfo: AttackInfo? = null
-    private var moveGenerator: MoveGenerator? = null
-
-    var currentMove = Move.NONE
-        private set
+    private lateinit var board: Board
+    private lateinit var attackInfo: AttackInfo
+    private lateinit var moveGenerator: MoveGenerator
 
     private var threshold = 0
 
     private val exchangeMoveList = OrderedMoveList()
     private val quietMoveList = OrderedMoveList()
     private val badExchangeMoveList = SimpleMoveList()
+
+    var currentMove = Move.NONE
+        private set
 
     fun setup(board: Board,
               attackInfo: AttackInfo,
@@ -90,7 +90,7 @@ class MovePicker {
                     }
                 }
                 PHASE_GEN_MATERIAL_EXCHANGE_MOVES -> {
-                    generateExchangeMoves(board!!, attackInfo!!)
+                    generateExchangeMoves(board, attackInfo)
                     phase--
                 }
                 PHASE_GOOD_MATERIAL_EXCHANGE -> {
@@ -99,7 +99,7 @@ class MovePicker {
                         if (currentMove == ttMove) {
                             continue
                         }
-                        if (!StaticExchangeEvaluator.seeInThreshold(board!!, currentMove, threshold)) {
+                        if (!StaticExchangeEvaluator.seeInThreshold(board, currentMove, threshold)) {
                             if (searchType == MAIN_SEARCH) {
                                 badExchangeMoveList.addMove(currentMove)
                             }
@@ -124,7 +124,7 @@ class MovePicker {
                     if (!skipQuiets &&
                         killerMove1 != Move.NONE &&
                         killerMove1 != ttMove &&
-                        MoveGenerator.isLegalQuietMove(board!!, attackInfo!!, killerMove1)) {
+                        MoveGenerator.isLegalQuietMove(board, attackInfo, killerMove1)) {
                         currentMove = killerMove1
                         return currentMove
                     }
@@ -134,14 +134,14 @@ class MovePicker {
                     if (!skipQuiets &&
                         killerMove2 != Move.NONE &&
                         killerMove2 != ttMove &&
-                        MoveGenerator.isLegalQuietMove(board!!, attackInfo!!, killerMove2)) {
+                        MoveGenerator.isLegalQuietMove(board, attackInfo, killerMove2)) {
                         currentMove = killerMove2
                         return currentMove
                     }
                 }
                 PHASE_GEN_QUIET -> {
                     if (!skipQuiets) {
-                        generateQuietMoves(board!!, attackInfo!!)
+                        generateQuietMoves(board, attackInfo)
                     }
                     phase--
                 }
@@ -178,11 +178,11 @@ class MovePicker {
     }
 
     private fun generateExchangeMoves(board: Board, attackInfo: AttackInfo) {
-        moveGenerator!!.legalAttacks(board, attackInfo, exchangeMoveList)
+        moveGenerator.legalAttacks(board, attackInfo, exchangeMoveList)
     }
 
     private fun generateQuietMoves(board: Board, attackInfo: AttackInfo) {
-        moveGenerator!!.legalMoves(board, attackInfo, quietMoveList)
+        moveGenerator.legalMoves(board, attackInfo, quietMoveList)
     }
 
     companion object {
