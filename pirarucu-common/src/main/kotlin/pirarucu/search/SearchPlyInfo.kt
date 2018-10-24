@@ -12,11 +12,13 @@ class SearchPlyInfo(private val moveGenerator: MoveGenerator) {
 
     private val movePicker = MovePicker()
 
-    var killerMove1 = Move.NONE
-    var killerMove2 = Move.NONE
+    private var killerMove1 = Move.NONE
+    private var killerMove2 = Move.NONE
 
-    var currentMove = Move.NONE
-        private set
+    val currentMove: Int
+        get() {
+            return movePicker.currentMove
+        }
 
     val phase: Int
         get() {
@@ -33,8 +35,7 @@ class SearchPlyInfo(private val moveGenerator: MoveGenerator) {
     }
 
     fun next(skipQuiets: Boolean): Int {
-        currentMove = movePicker.next(skipQuiets)
-        return currentMove
+        return movePicker.next(skipQuiets)
     }
 
     fun setupMovePicker(board: Board, threshold: Int) {

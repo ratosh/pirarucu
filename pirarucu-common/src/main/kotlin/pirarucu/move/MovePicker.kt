@@ -25,6 +25,9 @@ class MovePicker {
     private val quietMoveList = OrderedMoveList()
     private val badExchangeMoveList = SimpleMoveList()
 
+    var currentMove = Move.NONE
+        private set
+
     fun setup(board: Board,
               attackInfo: AttackInfo,
               moveGenerator: MoveGenerator,
@@ -82,7 +85,8 @@ class MovePicker {
                 PHASE_TT -> {
                     phase--
                     if (ttMove != Move.NONE) {
-                        return ttMove
+                        currentMove = ttMove
+                        return currentMove
                     }
                 }
                 PHASE_GEN_MATERIAL_EXCHANGE_MOVES -> {
@@ -91,7 +95,7 @@ class MovePicker {
                 }
                 PHASE_GOOD_MATERIAL_EXCHANGE -> {
                     while (exchangeMoveList.hasNext()) {
-                        val currentMove = exchangeMoveList.next()
+                        currentMove = exchangeMoveList.next()
                         if (currentMove == ttMove) {
                             continue
                         }
@@ -121,7 +125,8 @@ class MovePicker {
                         killerMove1 != Move.NONE &&
                         killerMove1 != ttMove &&
                         MoveGenerator.isLegalQuietMove(board, attackInfo, killerMove1)) {
-                        return killerMove1
+                        currentMove = killerMove1
+                        return currentMove
                     }
                 }
                 PHASE_KILLER2 -> {
@@ -130,7 +135,8 @@ class MovePicker {
                         killerMove2 != Move.NONE &&
                         killerMove2 != ttMove &&
                         MoveGenerator.isLegalQuietMove(board, attackInfo, killerMove2)) {
-                        return killerMove2
+                        currentMove = killerMove2
+                        return currentMove
                     }
                 }
                 PHASE_GEN_QUIET -> {
@@ -142,7 +148,7 @@ class MovePicker {
                 PHASE_QUIET -> {
                     if (!skipQuiets) {
                         while (quietMoveList.hasNext()) {
-                            val currentMove = quietMoveList.next()
+                            currentMove = quietMoveList.next()
                             if (currentMove == ttMove ||
                                 currentMove == killerMove1 ||
                                 currentMove == killerMove2) {
@@ -155,7 +161,7 @@ class MovePicker {
                 }
                 PHASE_BAD_MATERIAL_EXCHANGE -> {
                     while (badExchangeMoveList.hasNext()) {
-                        val currentMove = badExchangeMoveList.next()
+                        currentMove = badExchangeMoveList.next()
                         if (currentMove == killerMove1 ||
                             currentMove == killerMove2) {
                             continue
