@@ -397,18 +397,18 @@ class MainSearch(private val searchOptions: SearchOptions,
             }
         }
 
-        if (movesPerformed == 0) {
-            bestMove = Move.NONE
-            bestScore = if (inCheck) {
-                // MATED
-                currentAlpha
-            } else {
-                // STALEMATE
-                EvalConstants.SCORE_DRAW
-            }
-        }
-
         val scoreType = when {
+            movesPerformed == 0 -> {
+                bestMove = Move.NONE
+                bestScore = if (inCheck) {
+                    // MATED
+                    EvalConstants.SCORE_MIN + ply
+                } else {
+                    // STALEMATE
+                    EvalConstants.SCORE_DRAW
+                }
+                HashConstants.SCORE_TYPE_EXACT_SCORE
+            }
             bestScore >= beta -> HashConstants.SCORE_TYPE_BOUND_LOWER
             bestScore <= alpha -> HashConstants.SCORE_TYPE_BOUND_UPPER
             else -> HashConstants.SCORE_TYPE_EXACT_SCORE
