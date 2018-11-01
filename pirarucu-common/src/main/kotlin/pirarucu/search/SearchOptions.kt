@@ -55,7 +55,7 @@ class SearchOptions {
         private const val MAX_TIME_RATIO = 5L
 
         private const val GAME_MOVES = 40L
-        private const val MIN_GAME_MOVES = 5L
+        private const val MIN_GAME_MOVES = 15L
 
         private const val INCREMENT_RATIO = 30
     }
