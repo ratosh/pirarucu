@@ -175,6 +175,7 @@ object MultiThreadedSearch {
 
         private fun helperSearch() {
             var score = EvalConstants.SCORE_MIN
+            searchDepth = 0
             search.searchInfo.reset()
             while (!searchOptions.stop) {
                 searchDepth++
