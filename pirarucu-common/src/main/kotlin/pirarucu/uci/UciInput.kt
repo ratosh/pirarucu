@@ -1,18 +1,16 @@
 package pirarucu.uci
 
-import pirarucu.hash.TranspositionTable
-import pirarucu.search.History
 import pirarucu.util.Utils
 
 class UciInput(private val inputHandler: IInputHandler) {
 
     fun process(command: String) {
-        val tokens = command.split(" ".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
+        val tokens = command.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         when (tokens[0]) {
             "uci" -> {
                 UciOutput.println("id name Pirarucu v" + Utils.specific.getVersion())
                 UciOutput.println("option name Hash type spin default 256 min 1 max 32768")
-                UciOutput.println("option name Threads type spin default 1 min 1 max 32")
+                UciOutput.println("option name Threads type spin default 1 min 1 max 64")
                 UciOutput.println("id author Raoni Campos")
                 UciOutput.println("uciok")
             }

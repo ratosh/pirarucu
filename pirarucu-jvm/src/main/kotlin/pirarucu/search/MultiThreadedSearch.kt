@@ -69,9 +69,9 @@ object MultiThreadedSearch {
                 helperThread.start()
             }
             while (searchThreads.size > threadCount - 1) {
-                val helperThread = searchThreads[0]
+                val helperThread = searchThreads.last()
                 UciOutput.info(" removing helper thread ${helperThread.name}")
-                searchThreads.removeAt(0)
+                searchThreads.remove(helperThread)
             }
         }
     }
