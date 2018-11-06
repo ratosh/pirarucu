@@ -10,6 +10,13 @@ import pirarucu.uci.UciOutput
 import kotlin.math.max
 
 object MultiThreadedSearch {
+
+    // Laser based SMP skip
+    private val SMP_SKIP_DEPTHS = mutableListOf(1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4)
+    private val SMP_SKIP_AMOUNT = mutableListOf(1, 2, 1, 2, 3, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6)
+
+    private val SMP_MAX_CYCLES = SMP_SKIP_AMOUNT.size
+
     private val startLock = java.lang.Object()
     private val threadListLock = java.lang.Object()
 
@@ -50,6 +57,7 @@ object MultiThreadedSearch {
         get() = threadCount
         set(value) {
             threadCount = max(1, value)
+            createHelperThreads()
         }
 
     private fun createHelperThreads() {
@@ -58,6 +66,12 @@ object MultiThreadedSearch {
                 val helperThread = HelperThread(searchThreads.size)
                 UciOutput.info(" creating helper thread ${helperThread.name}")
                 searchThreads.add(helperThread)
+                helperThread.start()
+            }
+            while (searchThreads.size > threadCount - 1) {
+                val helperThread = searchThreads[0]
+                UciOutput.info(" removing helper thread ${helperThread.name}")
+                searchThreads.removeAt(0)
             }
         }
     }
@@ -69,13 +83,17 @@ object MultiThreadedSearch {
 
         synchronized(startLock) {
             mainThread.running = true
+            // Let the main search go into search as soon as possible
             startLock.notifyAll()
-        }
-
-        createHelperThreads()
-        for (thread in searchThreads) {
-            thread.setBoard(mainBoard())
-            thread.start()
+            if (threadCount > 1) {
+                synchronized(threadListLock) {
+                    for (searchThread in searchThreads) {
+                        searchThread.running = true
+                    }
+                }
+                // Other threads start search
+                startLock.notifyAll()
+            }
         }
     }
 
@@ -84,26 +102,6 @@ object MultiThreadedSearch {
         while (isRunning()) {
             Thread.sleep(10)
         }
-    }
-
-    fun nextHelperDepth(depth: Int, index: Int): Int {
-        var result = depth + 1
-        var threadCount = 0
-        if (mainThread.searchDepth >= result) {
-            threadCount++
-        }
-        synchronized(threadListLock) {
-            for (searchThread in searchThreads) {
-                if (searchThread.innerId != index && searchThread.searchDepth >= result) {
-                    threadCount++
-                }
-            }
-        }
-        // Skip one depth if more than half of threads are on that depth or above
-        if (threadCount >= threads * 0.5) {
-            result++
-        }
-        return result
     }
 
     fun countNodes(): Long {
@@ -118,16 +116,16 @@ object MultiThreadedSearch {
         return result
     }
 
-    private fun removeThread(helperThread: HelperThread) {
-        synchronized(threadListLock) {
-            UciOutput.info(" removing helper thread ${helperThread.name}")
-            searchThreads.remove(helperThread)
-        }
-    }
-
     fun reset() {
         mainThread.reset()
         transpositionTable.reset()
+        if (threadCount > 1) {
+            synchronized(threadListLock) {
+                for (searchThread in searchThreads) {
+                    searchThread.reset()
+                }
+            }
+        }
     }
 
     fun setBoard(fen: String) {
@@ -140,14 +138,22 @@ object MultiThreadedSearch {
 
     fun flushBoard() {
         mainThread.setBoard(board)
+        if (threadCount > 1) {
+            synchronized(threadListLock) {
+                for (searchThread in searchThreads) {
+                    searchThread.setBoard(board)
+                }
+            }
+        }
     }
 
-    class HelperThread(val innerId: Int) : Thread() {
+    class HelperThread(innerId: Int) : Thread() {
         private val board = BoardFactory.getBoard()
         private val search = MainSearch(searchOptions, searchInfoListener, transpositionTable)
 
-        var searchDepth = 4
-            private set
+        private val cycleIndex = innerId % SMP_MAX_CYCLES
+
+        private var searchDepth = 1
 
         var running = false
 
@@ -155,18 +161,28 @@ object MultiThreadedSearch {
             name = "HelperSearch-$innerId"
         }
 
-        fun nodeCount(): Long {
-            return search.searchInfo.searchNodes
+        fun reset() {
+            search.searchInfo.history.reset()
         }
 
         fun setBoard(board: Board) {
             this.board.copy(board)
         }
 
+        fun nodeCount(): Long {
+            return search.searchInfo.searchNodes
+        }
+
         private fun helperSearch() {
             var score = EvalConstants.SCORE_MIN
+            search.searchInfo.reset()
             while (!searchOptions.stop) {
-                searchDepth = nextHelperDepth(searchDepth, innerId)
+                searchDepth++
+
+                if ((searchDepth + cycleIndex) % SMP_SKIP_DEPTHS[cycleIndex] == 0) {
+                    searchDepth += SMP_SKIP_AMOUNT[cycleIndex]
+                }
+
                 if (searchDepth >= GameConstants.MAX_PLIES) {
                     break
                 }
@@ -175,19 +191,24 @@ object MultiThreadedSearch {
         }
 
         override fun run() {
-            running = true
-            helperSearch()
-            removeThread(this)
-            running = false
+            while (true) {
+                synchronized(startLock) {
+                    while (!running) {
+                        startLock.wait()
+                    }
+                }
+
+                helperSearch()
+                synchronized(startLock) {
+                    running = false
+                }
+            }
         }
     }
 
     class MainThread : Thread() {
         private val board = BoardFactory.getBoard()
         private val search = MainSearch(searchOptions, searchInfoListener, transpositionTable)
-
-        var searchDepth = 1
-            private set
 
         var running = false
 
