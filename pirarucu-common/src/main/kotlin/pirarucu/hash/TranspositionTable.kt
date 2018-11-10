@@ -27,11 +27,13 @@ import kotlin.math.min
  */
 class TranspositionTable {
 
+    var currentHashSize = HashConstants.TRANSPOSITION_TABLE_SIZE
+
     var baseDepth = 0
 
     var ttUsage = 0L
 
-    private var tableBits = Square.getSquare(HashConstants.TRANSPOSITION_TABLE_SIZE) + 16
+    private var tableBits = Square.getSquare(currentHashSize) + 16
     var tableLimit = Bitboard.getBitboard(tableBits).toInt()
     private var indexShift = Square.SIZE - tableBits
 
@@ -39,6 +41,10 @@ class TranspositionTable {
     private var infos = LongArray(tableLimit)
 
     fun resize(sizeMb: Int) {
+        if (currentHashSize == sizeMb) {
+            return
+        }
+        currentHashSize = sizeMb
         tableBits = Square.getSquare(sizeMb) + 16
         tableLimit = Bitboard.getBitboard(tableBits).toInt()
         indexShift = Square.SIZE - tableBits
