@@ -33,6 +33,7 @@ import kotlin.system.measureNanoTime
 
 fun main(args: Array<String>) {
     initialize()
+    var threads = "1"
     if (args.isNotEmpty()) {
         when (args[0]) {
             "bench" -> {
@@ -42,21 +43,29 @@ fun main(args: Array<String>) {
                     Benchmark.DEFAULT_BENCHMARK_DEPTH
                 }
                 Benchmark.runBenchmark(benchDepth)
+                return
+            }
+            "threads" -> {
+                if (args.size > 1) {
+                    threads = args[1]
+                }
             }
             else -> {
                 println("Unknown argument")
             }
         }
-    } else {
-        val uciInput = UciInput(InputHandler())
-        while (true) {
-            try {
-                val line = readLine()
-                line ?: return
-                uciInput.process(line)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+    }
+
+    val inputHandler = InputHandler()
+    val uciInput = UciInput(inputHandler)
+    inputHandler.setOption("threads", threads)
+    while (true) {
+        try {
+            val line = readLine()
+            line ?: return
+            uciInput.process(line)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }
