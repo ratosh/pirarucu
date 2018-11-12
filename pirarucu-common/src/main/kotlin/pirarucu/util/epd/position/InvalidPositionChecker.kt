@@ -1,4 +1,4 @@
-package pirarucu.util.position
+package pirarucu.util.epd.position
 
 import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory

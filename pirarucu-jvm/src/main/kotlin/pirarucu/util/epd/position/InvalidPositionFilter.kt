@@ -1,29 +1,28 @@
-package pirarucu.tuning
+package pirarucu.util.epd.position
 
-import pirarucu.board.Board
-import pirarucu.board.factory.BoardFactory
-import pirarucu.eval.AttackInfo
-import pirarucu.eval.EvalConstants
-import pirarucu.eval.Evaluator
 import pirarucu.util.epd.BasicWorkSplitter
 import pirarucu.util.epd.EpdInfo
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.Phaser
 
-
-class EvaluationErrorEvaluator(threads: Int = 1) {
+class InvalidPositionFilter(threads: Int = 1) {
     private val forkJoinPool = ForkJoinPool(threads)
 
-    init {
-        EvalConstants.PAWN_EVAL_CACHE = false
-    }
-
-    fun evaluate(list: List<EpdInfo>) {
+    fun filter(list: List<EpdInfo>): List<EpdInfo> {
         val phaser = Phaser()
         phaser.register()
         val worker = WorkerThread(list, phaser)
         forkJoinPool.invoke(worker)
         phaser.arriveAndAwaitAdvance()
+
+        val result = mutableListOf<EpdInfo>()
+        for (entry in list) {
+            if (entry.valid) {
+                result.add(entry)
+            }
+        }
+
+        return result
     }
 
     class WorkerThread(
@@ -47,12 +46,10 @@ class EvaluationErrorEvaluator(threads: Int = 1) {
         }
 
         override fun evaluate() {
-            val board = Board()
-            val attackInfo = AttackInfo()
+            val invalidPositionChecker = InvalidPositionChecker()
             for (index in start until end) {
                 val entry = list[index]
-                BoardFactory.setBoard(entry.fenPosition, board)
-                entry.eval = Evaluator.evaluate(board, attackInfo)
+                entry.valid = invalidPositionChecker.isValid(entry.fenPosition)
             }
         }
     }

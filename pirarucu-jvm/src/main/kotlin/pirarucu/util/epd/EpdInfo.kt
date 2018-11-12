@@ -10,6 +10,7 @@ data class EpdInfo(val fenPosition: String,
                    val result: Double,
                    val comment: String?) {
     var eval = 0
+    var valid = true
 
     fun getMoveScore(board: Board, foundMove: Int): Int {
         if (null != bestMoveList) {

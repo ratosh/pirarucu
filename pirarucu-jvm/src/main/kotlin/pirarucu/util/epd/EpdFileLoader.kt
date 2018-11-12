@@ -1,7 +1,5 @@
 package pirarucu.util.epd
 
-import pirarucu.move.MoveGenerator
-import pirarucu.search.History
 import pirarucu.util.epd.factory.EpdInfoFactory
 import java.io.File
 import java.io.FileInputStream
@@ -24,8 +22,9 @@ class EpdFileLoader(inputStream: InputStream) {
 
                 epdInfoList.add(epdInfo)
             }
-            println(String.format("Found %d good positions in %d possibilities.", epdInfoList.size,
-                lines))
+            println(
+                String.format("Found %d good positions in %d possibilities.", epdInfoList.size, lines)
+            )
         } catch (ex: Exception) {
             ex.printStackTrace()
         }

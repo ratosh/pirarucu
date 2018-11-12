@@ -8,7 +8,7 @@ import pirarucu.tuning.TunableConstants
 import pirarucu.util.Utils
 import pirarucu.util.epd.EpdFileLoader
 import pirarucu.util.epd.EpdInfo
-import pirarucu.util.position.InvalidPositionFilter
+import pirarucu.util.epd.position.InvalidPositionFilter
 import java.util.concurrent.ExecutionException
 
 object TexelTuningApplication {
@@ -521,9 +521,7 @@ object TexelTuningApplication {
     private fun optimize(tuningController: TexelTuningController) {
         val list = mutableListOf<EpdInfo>()
         val zurichess = EpdFileLoader("g:\\chess\\epds\\quiet_labeled.epd")
-        val alvaro = EpdFileLoader("g:\\chess\\epds\\quiescent_positions_with_results.epd")
         list.addAll(zurichess.getEpdInfoList())
-        list.addAll(alvaro.getEpdInfoList())
         val epdList = InvalidPositionFilter(THREADS).filter(list)
 
         val evaluator = EvaluationErrorEvaluator(THREADS)

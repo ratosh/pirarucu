@@ -1,4 +1,4 @@
-package pirarucu.util.position
+package pirarucu.util.epd.position
 
 import pirarucu.util.epd.EpdInfo
 import pirarucu.util.epd.factory.EpdInfoFactory
@@ -12,7 +12,7 @@ class InvalidPositionFilterTest {
         val list = mutableListOf<EpdInfo>()
         list.add(EpdInfoFactory.getEpdInfo("4r1k1/1bp1bpQp/1p2q3/3p4/1r6/4P1P1/PB3PBP/R2R2K1 b - - c9 \"1-0\";"))
 
-        val filter = InvalidPositionFilter(1)
+        val filter = InvalidPositionFilter(2)
         assertTrue(filter.filter(list).isEmpty())
     }
 
