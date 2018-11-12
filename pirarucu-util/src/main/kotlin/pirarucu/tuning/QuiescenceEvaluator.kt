@@ -7,44 +7,55 @@ import pirarucu.game.GameConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.search.QuiescenceSearch
 import pirarucu.search.SearchInfo
+import pirarucu.util.epd.BasicWorkSplitter
 import pirarucu.util.epd.EpdInfo
-import java.util.Queue
-import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
+import java.util.concurrent.ForkJoinPool
+import java.util.concurrent.Phaser
 
-class QuiescenceEvaluator(var threads: Int = 1) {
+class QuiescenceEvaluator(threads: Int = 1) {
+    private val forkJoinPool = ForkJoinPool(threads)
 
-    fun evaluate(list: List<EpdInfo>) {
-        val threadList = mutableListOf<Future<*>>()
-        val executor = Executors.newFixedThreadPool(threads)!!
-        val pool = ConcurrentLinkedQueue(list)
-
-        for (index in 0 until threads) {
-            threadList.add(executor.submit(ErrorCalculatorThread(pool)))
-        }
-        for (thread in threadList) {
-            thread.get()
-        }
-        executor.shutdown()
+    init {
+        EvalConstants.PAWN_EVAL_CACHE = false
     }
 
-    class ErrorCalculatorThread(
-        private val pool: Queue<EpdInfo>) : Runnable {
+    fun evaluate(list: List<EpdInfo>) {
+        val phaser = Phaser()
+        phaser.register()
+        val worker = WorkerThread(list, phaser)
+        forkJoinPool.invoke(worker)
+        phaser.arriveAndAwaitAdvance()
+    }
 
-        private var board: Board = Board()
+    class WorkerThread(
+        list: List<EpdInfo>,
+        start: Int,
+        end: Int,
+        workload: Int,
+        phaser: Phaser
+    ) : BasicWorkSplitter(list, start, end, workload, phaser) {
 
-        private val quiescenceSearch = QuiescenceSearch(SearchInfo(TranspositionTable()))
+        constructor(list: List<EpdInfo>, phaser: Phaser) : this(list, 0, list.size, WORKLOAD, phaser)
 
-        override fun run() {
-            while (pool.isNotEmpty()) {
-                val epdInfo = pool.poll()
-                if (epdInfo != null) {
-                    BoardFactory.setBoard(epdInfo.fenPosition, board)
-                    epdInfo.eval =
-                        quiescenceSearch.search(board, 0, EvalConstants.SCORE_MIN, EvalConstants.SCORE_MAX) *
-                        GameConstants.COLOR_FACTOR[board.colorToMove]
-                }
+        override fun createSubTask(
+            list: List<EpdInfo>,
+            start: Int,
+            end: Int,
+            workload: Int,
+            phaser: Phaser
+        ): WorkerThread {
+            return WorkerThread(list, start, end, workload, phaser)
+        }
+
+        override fun evaluate() {
+            val board = Board()
+            val quiescenceSearch = QuiescenceSearch(SearchInfo(TranspositionTable(1)))
+
+            for (index in start until end) {
+                val epdInfo = list[index]
+                BoardFactory.setBoard(epdInfo.fenPosition, board)
+                epdInfo.eval = quiescenceSearch.search(board, 0, EvalConstants.SCORE_MIN, EvalConstants.SCORE_MAX) *
+                    GameConstants.COLOR_FACTOR[board.colorToMove]
             }
         }
     }

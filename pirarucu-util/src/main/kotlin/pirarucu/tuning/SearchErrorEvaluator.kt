@@ -2,62 +2,86 @@ package pirarucu.tuning
 
 import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory
+import pirarucu.eval.EvalConstants
 import pirarucu.game.GameConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.search.MainSearch
 import pirarucu.search.SearchOptions
 import pirarucu.search.SimpleSearchInfoListener
+import pirarucu.uci.UciOutput
+import pirarucu.util.epd.BasicWorkSplitter
 import pirarucu.util.epd.EpdInfo
-import java.util.Queue
-import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
+import java.util.concurrent.ForkJoinPool
+import java.util.concurrent.Phaser
 
-class SearchErrorEvaluator(var threads: Int = 1) {
+class SearchErrorEvaluator(threads: Int = 1) {
 
-    fun evaluate(list: List<EpdInfo>, depth: Int, cacheSize: Int) {
-        val threadList = mutableListOf<Future<*>>()
-        val executor = Executors.newFixedThreadPool(threads)!!
-        val pool = ConcurrentLinkedQueue(list)
+    private val forkJoinPool = ForkJoinPool(threads)
 
-        for (index in 0 until threads) {
-            threadList.add(executor.submit(ErrorCalculatorThread(pool, depth, cacheSize)))
-        }
-        for (thread in threadList) {
-            thread.get()
-        }
-        executor.shutdown()
+    init {
+        EvalConstants.PAWN_EVAL_CACHE = false
+        UciOutput.silent = true
     }
 
-    class ErrorCalculatorThread(
-        private val pool: Queue<EpdInfo>,
-        depth: Int,
-        ttSize: Int) : Runnable {
+    init {
+        EvalConstants.PAWN_EVAL_CACHE = false
+    }
 
-        private var board: Board = Board()
+    fun evaluate(list: List<EpdInfo>, depth: Int, cacheSize: Int) {
+        val phaser = Phaser()
+        phaser.register()
+        val worker = WorkerThread(list, phaser, depth, cacheSize)
+        forkJoinPool.invoke(worker)
+        phaser.arriveAndAwaitAdvance()
+    }
 
-        private val searchOptions = SearchOptions()
-        private val transpositionTable = TranspositionTable()
-        private val search = MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable)
+    class WorkerThread(
+        list: List<EpdInfo>,
+        start: Int,
+        end: Int,
+        workload: Int,
+        phaser: Phaser,
+        private val depth: Int,
+        private val ttSize: Int
+    ) : BasicWorkSplitter(list, start, end, workload, phaser) {
 
-        init {
+        constructor(list: List<EpdInfo>, phaser: Phaser, depth: Int, ttSize: Int) : this(
+            list,
+            0,
+            list.size,
+            WORKLOAD,
+            phaser,
+            depth,
+            ttSize
+        )
+
+        override fun createSubTask(
+            list: List<EpdInfo>,
+            start: Int,
+            end: Int,
+            workload: Int,
+            phaser: Phaser
+        ): WorkerThread {
+            return WorkerThread(list, start, end, workload, phaser, depth, ttSize)
+        }
+
+        override fun evaluate() {
+            val searchOptions = SearchOptions()
             searchOptions.depth = depth
             searchOptions.minSearchTime = 60000L
             searchOptions.maxSearchTime = 60000L
-            transpositionTable.resize(ttSize)
-        }
 
-        override fun run() {
-            while (pool.isNotEmpty()) {
-                val epdInfo = pool.poll()
-                if (epdInfo != null) {
-                    BoardFactory.setBoard(epdInfo.fenPosition, board)
-                    searchOptions.startControl()
-                    transpositionTable.reset()
-                    search.search(board)
-                    epdInfo.eval = search.searchInfo.bestScore *
-                        GameConstants.COLOR_FACTOR[board.colorToMove]
-                }
+            val transpositionTable = TranspositionTable(ttSize)
+            val search = MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable)
+            val board = Board()
+
+            for (index in start until end) {
+                val epdInfo = list[index]
+                BoardFactory.setBoard(epdInfo.fenPosition, board)
+                searchOptions.startControl()
+                transpositionTable.reset()
+                search.search(board)
+                epdInfo.eval = search.searchInfo.bestScore * GameConstants.COLOR_FACTOR[board.colorToMove]
             }
         }
     }
