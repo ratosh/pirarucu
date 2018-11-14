@@ -502,8 +502,6 @@ class MainSearch(private val searchOptions: SearchOptions,
             depth++
         }
         searchOptions.stop = true
-
-        searchInfoListener.bestMove(searchInfo.bestMove)
     }
 
     // Used by helper threads
