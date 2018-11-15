@@ -50,6 +50,10 @@ dependencies {
 shadowDistZip {
     baseName = project.name
     version = ''
+    into(project.name) {
+        from '.'
+        include 'bin/*'
+    }
 }
 
 shadowDistTar {

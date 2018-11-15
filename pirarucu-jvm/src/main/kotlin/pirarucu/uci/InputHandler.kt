@@ -30,6 +30,7 @@ class InputHandler : IInputHandler {
             }
             index += 2
         }
+        MultiThreadedSearch.flushBoard()
         MultiThreadedSearch.search()
     }
 
@@ -58,10 +59,6 @@ class InputHandler : IInputHandler {
     }
 
     override fun position(tokens: Array<String>) {
-        if (MultiThreadedSearch.isRunning()) {
-            UciOutput.info("Search is running, please wait.")
-            return
-        }
         var index = 1
         var moves = false
         while (index < tokens.size) {
@@ -87,7 +84,6 @@ class InputHandler : IInputHandler {
                 }
             }
         }
-        MultiThreadedSearch.flushBoard()
     }
 
     override fun perft(tokens: Array<String>) {

@@ -243,6 +243,10 @@ object MultiThreadedSearch {
                 synchronized(startLock) {
                     running = false
                 }
+                while (isRunning()) {
+                    Thread.yield()
+                }
+                searchInfoListener.bestMove(search.searchInfo.bestMove)
             }
         }
     }
