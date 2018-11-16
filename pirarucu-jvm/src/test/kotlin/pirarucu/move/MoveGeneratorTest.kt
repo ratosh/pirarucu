@@ -443,7 +443,6 @@ class MoveGeneratorTest {
         val moveList = OrderedMoveList()
         moveGenerator.legalMoves(board, attackInfo, moveList)
 
-        println("quiet moves " + moveList.toString())
         while (moveList.hasNext()) {
             val move = moveList.next()
 
@@ -451,7 +450,28 @@ class MoveGeneratorTest {
         }
         moveGenerator.legalAttacks(board, attackInfo, moveList)
 
-        println("capture moves " + moveList.toString())
+        while (moveList.hasNext()) {
+            val move = moveList.next()
+
+            assertFalse(MoveGenerator.isLegalQuietMove(board, attackInfo, move))
+        }
+        println(moveList.toString())
+    }
+
+    @Test
+    fun testLegalQuietMove2() {
+        // g7g5 was not being considered a valid move
+        val board = BoardFactory.getBoard("8/3r2p1/2b1Rp1k/7P/PR4P1/4B3/7K/3r4 b - -")
+        val moveList = OrderedMoveList()
+        moveGenerator.legalMoves(board, attackInfo, moveList)
+
+        while (moveList.hasNext()) {
+            val move = moveList.next()
+
+            assertTrue(MoveGenerator.isLegalQuietMove(board, attackInfo, move))
+        }
+        moveGenerator.legalAttacks(board, attackInfo, moveList)
+
         while (moveList.hasNext()) {
             val move = moveList.next()
 
