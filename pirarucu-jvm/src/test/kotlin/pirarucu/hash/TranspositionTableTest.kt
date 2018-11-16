@@ -9,11 +9,81 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
 class TranspositionTableTest {
-    val transpositionTable = TranspositionTable()
+    private val transpositionTable = TranspositionTable()
+
     @BeforeTest
     fun setup() {
         transpositionTable.reset()
         transpositionTable.baseDepth = 19
+    }
+
+    @Test
+    fun testTableBits() {
+        for (size in 0 until 15) {
+            val sizeMb = 1 shl size
+            val tableBits = TranspositionTable.calculateTableBits(sizeMb)
+            assertEquals(size + 16, tableBits)
+        }
+    }
+
+    @Test
+    fun testTableElements() {
+        for (size in 0 until 15) {
+            val sizeMb = 1 shl size
+            val tableBits = TranspositionTable.calculateTableBits(sizeMb)
+            val maxIndex = TranspositionTable.calculateTableElements(tableBits)
+            assertEquals(sizeMb shl 16, maxIndex)
+        }
+    }
+
+    @Test
+    fun testIndexShift() {
+        for (size in 0 until 15) {
+            val sizeMb = 1 shl size
+            val tableBits = TranspositionTable.calculateTableBits(sizeMb)
+            val indexShift = TranspositionTable.calculateIndexShift(tableBits)
+
+            assertEquals(64 - size - 16, indexShift)
+        }
+    }
+
+    @Test
+    fun testIndex() {
+        for (size in 0 until 15) {
+            val sizeMb = 1 shl size
+            val tableBits = TranspositionTable.calculateTableBits(sizeMb)
+            val indexShift = TranspositionTable.calculateIndexShift(tableBits)
+            val maxIndex = TranspositionTable.calculateTableElements(tableBits)
+            val index0 = TranspositionTable.getIndex(0, indexShift)
+            val index1 = TranspositionTable.getIndex(Long.MAX_VALUE, indexShift)
+            val index2 = TranspositionTable.getIndex(-1, indexShift)
+
+            assertEquals(index0, 0)
+            assertEquals(index1, maxIndex / 2 - 1)
+            assertEquals(index2, maxIndex - 1)
+        }
+    }
+
+    @Test
+    fun testMaxIndex() {
+        for (size in 0 until 15) {
+            val sizeMb = 1 shl size
+            val tableBits = TranspositionTable.calculateTableBits(sizeMb)
+            val indexShift = TranspositionTable.calculateIndexShift(tableBits)
+            val totalElements = TranspositionTable.calculateTableElements(tableBits)
+
+            val index0 = TranspositionTable.getIndex(0, indexShift)
+            val index1 = TranspositionTable.getIndex(Long.MAX_VALUE, indexShift)
+            val index2 = TranspositionTable.getIndex(-1, indexShift)
+
+            val maxIndex0 = TranspositionTable.getMaxIndex(index0, totalElements)
+            val maxIndex1 = TranspositionTable.getMaxIndex(index1, totalElements)
+            val maxIndex2 = TranspositionTable.getMaxIndex(index2, totalElements)
+
+            assertEquals(index0 + HashConstants.TRANSPOSITION_TABLE_BUCKET_SIZE, maxIndex0)
+            assertEquals(index1 + HashConstants.TRANSPOSITION_TABLE_BUCKET_SIZE, maxIndex1)
+            assertEquals(index2 + 1, maxIndex2)
+        }
     }
 
     @Test

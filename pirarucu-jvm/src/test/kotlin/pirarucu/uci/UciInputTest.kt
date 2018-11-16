@@ -43,7 +43,7 @@ class UciInputTest {
     fun testHash() {
         val size = 2
         uciInput.process("setoption name Hash value $size")
-        assertEquals(size, MultiThreadedSearch.transpositionTable.tableLimit / 64 / 1000)
+        assertEquals(size, MultiThreadedSearch.transpositionTable.tableElementCount / 64 / 1000)
     }
 
     @Ignore
