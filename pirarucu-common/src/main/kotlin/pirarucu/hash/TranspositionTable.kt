@@ -32,14 +32,17 @@ class TranspositionTable(sizeMb: Int) {
     var baseDepth = 0
 
     var ttUsage = 0L
+        private set
 
-    private var tableBits = Square.getSquare(currentHashSize) + 16
+    private var tableBits = calculateTableBits(currentHashSize)
 
-    var tableLimit = Bitboard.getBitboard(tableBits).toInt()
-    private var indexShift = Square.SIZE - tableBits
+    var tableElementCount = calculateTableElements(tableBits)
+        private set
 
-    private var keys = LongArray(tableLimit)
-    private var infos = LongArray(tableLimit)
+    private var indexShift = calculateIndexShift(tableBits)
+
+    private var keys = LongArray(tableElementCount)
+    private var infos = LongArray(tableElementCount)
 
     constructor() : this(HashConstants.TRANSPOSITION_TABLE_SIZE)
 
@@ -48,12 +51,12 @@ class TranspositionTable(sizeMb: Int) {
             return
         }
         currentHashSize = sizeMb
-        tableBits = Square.getSquare(sizeMb) + 16
-        tableLimit = Bitboard.getBitboard(tableBits).toInt()
-        indexShift = Square.SIZE - tableBits
+        tableBits = calculateTableBits(sizeMb)
+        tableElementCount = calculateTableElements(tableBits)
+        indexShift = calculateIndexShift(tableBits)
 
-        keys = LongArray(tableLimit)
-        infos = LongArray(tableLimit)
+        keys = LongArray(tableElementCount)
+        infos = LongArray(tableElementCount)
 
         ttUsage = 0
         baseDepth = 0
@@ -68,8 +71,8 @@ class TranspositionTable(sizeMb: Int) {
     }
 
     fun findEntry(board: Board): Long {
-        val startIndex = getIndex(board)
-        val maxIndex = getMaxIndex(startIndex)
+        val startIndex = getIndex(board.zobristKey, indexShift)
+        val maxIndex = getMaxIndex(startIndex, tableElementCount)
         var index = startIndex
         val wantedKey = board.zobristKey
         while (index < maxIndex) {
@@ -77,7 +80,7 @@ class TranspositionTable(sizeMb: Int) {
             val key = keys[index]
             val savedKey = key xor info
             // Unpopulated entry
-            if (key == 0L && savedKey == 0L) {
+            if (key == 0L && info == 0L) {
                 break
             }
             if (wantedKey == savedKey) {
@@ -89,8 +92,8 @@ class TranspositionTable(sizeMb: Int) {
     }
 
     fun save(board: Board, eval: Int, score: Int, scoreType: Int, depth: Int, ply: Int, bestMove: Int) {
-        val startIndex = getIndex(board)
-        val maxIndex = getMaxIndex(startIndex)
+        val startIndex = getIndex(board.zobristKey, indexShift)
+        val endIndex = getMaxIndex(startIndex, tableElementCount)
         var index = startIndex
 
         var usedIndex = -1
@@ -99,12 +102,12 @@ class TranspositionTable(sizeMb: Int) {
 
         var replacedDepth = Int.MAX_VALUE
 
-        while (index < maxIndex) {
+        while (index < endIndex) {
             val info = infos[index]
             val key = keys[index]
             val savedKey = key xor info
             // Unpopulated entry
-            if (key == 0L && savedKey == 0L) {
+            if (key == 0L && info == 0L) {
                 ttUsage++
                 usedIndex = index
                 break
@@ -137,14 +140,6 @@ class TranspositionTable(sizeMb: Int) {
         val info = buildInfo(bestMove, eval, realScore, depth + baseDepth, scoreType)
         infos[usedIndex] = info
         keys[usedIndex] = wantedKey xor info
-    }
-
-    private fun getIndex(board: Board): Int {
-        return (board.zobristKey ushr indexShift).toInt()
-    }
-
-    private fun getMaxIndex(startIndex: Int): Int {
-        return min(startIndex + HashConstants.TRANSPOSITION_TABLE_BUCKET_SIZE, tableLimit)
     }
 
     fun getScore(value: Long, ply: Int): Int {
@@ -192,5 +187,29 @@ class TranspositionTable(sizeMb: Int) {
         private const val SCORE_MASK = 0xFFFFL
         private const val DEPTH_MASK = 0x3FFL
         private const val SCORE_TYPE_MASK = 0x3L
+
+        fun calculateTableBits(sizeMb: Int): Int {
+            return Square.getSquare(sizeMb) + 16
+        }
+
+        fun calculateTableElements(tableBits: Int): Int {
+            return if (tableBits == 0) {
+                0
+            } else {
+                Bitboard.getBitboard(tableBits).toInt()
+            }
+        }
+
+        fun calculateIndexShift(tableBits: Int): Int {
+            return Square.SIZE - tableBits
+        }
+
+        fun getIndex(zobristKey: Long, indexShift: Int): Int {
+            return (zobristKey ushr indexShift).toInt()
+        }
+
+        fun getMaxIndex(index: Int, tableSize: Int): Int {
+            return min(index + HashConstants.TRANSPOSITION_TABLE_BUCKET_SIZE, tableSize)
+        }
     }
 }
