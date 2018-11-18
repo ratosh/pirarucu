@@ -48,9 +48,8 @@ dependencies {
 }
 
 shadowDistZip {
-    baseName = project.name
-    version = ''
-    into(project.name) {
+    baseName = project.name + '-jvm'
+    into(baseName + '-' + version) {
         from '.'
         include 'bin/*'
     }

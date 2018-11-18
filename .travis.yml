@@ -11,7 +11,8 @@ branches:
 script: ./gradlew clean build
 deploy:
   provider: releases
-  file: build/distributions/pirarucu.zip
+  file_glob: true
+  file: /build/distribution/pirarucu-jvm*.jar
   api_key: $GITHUB_API_KEY
   skip_cleanup: true
   on:
