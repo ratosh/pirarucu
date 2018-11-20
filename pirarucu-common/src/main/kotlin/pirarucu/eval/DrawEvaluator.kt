@@ -49,7 +49,7 @@ object DrawEvaluator {
     }
 
     fun isDrawByRules(board: Board): Boolean {
-        if (board.rule50 >= FIFTY_RULE) {
+        if (board.rule50 > FIFTY_RULE) {
             return true
         }
         // A repetition can only happen under rule50 moves as we should not be able to repeat a
