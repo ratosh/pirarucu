@@ -16,7 +16,7 @@ object BoardUtil {
         }
         for (square in Square.A1 until Square.SIZE) {
             val piece = board.pieceTypeBoard[square]
-            val colorAt = board.colorAt(square)
+            val colorAt = board.pieceColorAt(square)
             when (piece) {
                 Piece.NONE -> {
                     // DO NOTHING
@@ -81,7 +81,7 @@ object BoardUtil {
         for (square in Square.A1 until Square.SIZE) {
             val piece = board.pieceTypeBoard[square]
             if (piece != Piece.NONE) {
-                val color = board.colorAt(square)
+                val color = board.pieceColorAt(square)
                 val relativeSquare = Square.getRelativeSquare(color, square)
                 result += TunableConstants.PSQT[piece][relativeSquare] * GameConstants.COLOR_FACTOR[color]
             }
