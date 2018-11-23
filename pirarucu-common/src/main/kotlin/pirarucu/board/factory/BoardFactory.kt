@@ -91,7 +91,7 @@ object BoardFactory {
         board.rule50 = rule50
         board.moveNumber = moveNumber
 
-        board.setInitialStuff()
+        board.updateBoardExtra()
         BoardUtil.updateZobristKeys(board)
     }
 }
