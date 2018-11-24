@@ -1,7 +1,8 @@
 package pirarucu.board
 
 /**
- * Bitboard class.
+ * Bitboard singleton class.
+ * Use a long to represent a chess board.
  */
 object Bitboard {
 
@@ -122,8 +123,10 @@ object Bitboard {
 
     val RANKS = longArrayOf(RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8)
 
-    val FILES_ADJACENT = longArrayOf(FILE_B, FILE_A or FILE_C, FILE_B or FILE_D, FILE_C or FILE_E,
-        FILE_D or FILE_F, FILE_E or FILE_G, FILE_F or FILE_H, FILE_G)
+    val FILES_ADJACENT = longArrayOf(
+        FILE_B, FILE_A or FILE_C, FILE_B or FILE_D, FILE_C or FILE_E,
+        FILE_D or FILE_F, FILE_E or FILE_G, FILE_F or FILE_H, FILE_G
+    )
 
     val KING_SIDE = FILE_F or FILE_G or FILE_H
     val QUEEN_SIDE = FILE_A or FILE_B or FILE_C
@@ -137,7 +140,7 @@ object Bitboard {
     /**
      * Get bitboard info from a square.
      */
-    fun getBitboard(square: Int): Long {
+    inline fun getBitboard(square: Int): Long {
         return 1L shl square
     }
 
@@ -160,7 +163,7 @@ object Bitboard {
     }
 
     /**
-     * Get a string representation of a bitboard.
+     * Gets a bitboard and returns its string representation.
      */
     fun toString(bitboard: Long): String {
         val buffer = StringBuilder()
