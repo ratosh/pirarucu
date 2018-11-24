@@ -19,20 +19,24 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-class MainSearch(private val searchOptions: SearchOptions,
-                 private val searchInfoListener: SearchInfoListener,
-                 private val transpositionTable: TranspositionTable) {
+class MainSearch(
+    private val searchOptions: SearchOptions,
+    private val searchInfoListener: SearchInfoListener,
+    private val transpositionTable: TranspositionTable
+) {
 
     val searchInfo = SearchInfo(transpositionTable)
 
     private val quiescenceSearch = QuiescenceSearch(searchInfo)
 
-    private fun search(board: Board,
-                       depth: Int,
-                       ply: Int,
-                       alpha: Int,
-                       beta: Int,
-                       skipNullMove: Boolean = false): Int {
+    private fun search(
+        board: Board,
+        depth: Int,
+        ply: Int,
+        alpha: Int,
+        beta: Int,
+        skipNullMove: Boolean = false
+    ): Int {
         if (searchOptions.stop) {
             return 0
         }
@@ -54,7 +58,8 @@ class MainSearch(private val searchOptions: SearchOptions,
         searchInfo.searchNodes++
         if (!rootNode &&
             searchInfo.searchNodes and 0xFFFL == 0xFFFL &&
-            searchOptions.maxSearchTimeLimit < Utils.specific.currentTimeMillis()) {
+            searchOptions.maxSearchTimeLimit < Utils.specific.currentTimeMillis()
+        ) {
             searchOptions.stop = true
             return 0
         }
@@ -116,7 +121,8 @@ class MainSearch(private val searchOptions: SearchOptions,
 
             // Futility pruning
             if (newDepth < TunableConstants.FUTILITY_CHILD_MARGIN.size &&
-                eval < EvalConstants.SCORE_KNOW_WIN) {
+                eval < EvalConstants.SCORE_KNOW_WIN
+            ) {
                 if (eval - TunableConstants.FUTILITY_CHILD_MARGIN[newDepth] >= currentBeta) {
                     return eval
                 }
@@ -136,11 +142,14 @@ class MainSearch(private val searchOptions: SearchOptions,
             // Null move pruning
             if (!skipNullMove &&
                 eval >= currentBeta &&
-                board.hasNonPawnMaterial(board.colorToMove)) {
+                board.hasNonPawnMaterial(board.colorToMove)
+            ) {
                 board.doNullMove()
                 val reduction = 3 + newDepth / 3
-                val score = -search(board, newDepth - reduction, ply + 1, -currentBeta, -currentBeta + 1,
-                    true)
+                val score = -search(
+                    board, newDepth - reduction, ply + 1, -currentBeta, -currentBeta + 1,
+                    true
+                )
                 board.undoNullMove()
                 if (score >= currentBeta) {
                     return score
@@ -150,7 +159,8 @@ class MainSearch(private val searchOptions: SearchOptions,
             // ProbCut
             // Prune the previous move if we find a capture above prob cut in a lower search.
             if (newDepth > SearchConstants.PROB_CUT_DEPTH &&
-                abs(beta) < EvalConstants.SCORE_MATE) {
+                abs(beta) < EvalConstants.SCORE_MATE
+            ) {
 
                 // Cut beta bound
                 val probBeta = min(beta + SearchConstants.PROB_CUT_MARGIN, EvalConstants.SCORE_MATE - 1)
@@ -181,8 +191,10 @@ class MainSearch(private val searchOptions: SearchOptions,
 
                     // Verify the move using a deeper search
                     if (value >= probBeta &&
-                        newDepth > SearchConstants.PROB_CUT_DEPTH + SearchConstants.PROB_CUT_LOW_DEPTH) {
-                        value = -search(board, newDepth - SearchConstants.PROB_CUT_DEPTH, ply + 1, -probBeta, -probBeta + 1)
+                        newDepth > SearchConstants.PROB_CUT_DEPTH + SearchConstants.PROB_CUT_LOW_DEPTH
+                    ) {
+                        value =
+                            -search(board, newDepth - SearchConstants.PROB_CUT_DEPTH, ply + 1, -probBeta, -probBeta + 1)
                     }
                     board.undoMove(move)
 
@@ -204,7 +216,8 @@ class MainSearch(private val searchOptions: SearchOptions,
                 ttMove != Move.NONE &&
                 newDepth > SearchConstants.SINGULAR_DETECTION_DEPTH &&
                 ttScoreType == HashConstants.SCORE_TYPE_BOUND_LOWER &&
-                ttDepth >= newDepth - 3) {
+                ttDepth >= newDepth - 3
+            ) {
 
                 board.doMove(ttMove)
                 if (board.basicEvalInfo.checkBitboard == Bitboard.EMPTY) {
@@ -252,8 +265,10 @@ class MainSearch(private val searchOptions: SearchOptions,
             }
             // IID
         } else if (pvNode && newDepth > SearchConstants.IID_DEPTH) {
-            search(board, newDepth - SearchConstants.IID_DEPTH, ply, currentAlpha,
-                currentBeta, false)
+            search(
+                board, newDepth - SearchConstants.IID_DEPTH, ply, currentAlpha,
+                currentBeta, false
+            )
             foundInfo = transpositionTable.findEntry(board)
 
             if (foundInfo != HashConstants.EMPTY_INFO) {
@@ -297,7 +312,8 @@ class MainSearch(private val searchOptions: SearchOptions,
 
             if (prunable &&
                 !isPromotion &&
-                movesPerformed > 0) {
+                movesPerformed > 0
+            ) {
 
                 if (newDepth < SearchConstants.LMP_DEPTH) {
                     if (movesPerformed > newDepth * SearchConstants.LMP_MULTIPLIER + SearchConstants.LMP_MIN_MOVES) {
@@ -307,21 +323,26 @@ class MainSearch(private val searchOptions: SearchOptions,
 
                 if (!isCapture &&
                     newDepth < TunableConstants.FUTILITY_PARENT_MARGIN.size &&
-                    futilityValue <= searchAlpha) {
+                    futilityValue <= searchAlpha
+                ) {
                     skipQuiets = true
                 }
 
                 if (!isCapture &&
                     newDepth < TunableConstants.FUTILITY_HISTORY_MARGIN.size &&
                     searchInfo.history.getHistoryScore(board.colorToMove, move) <
-                    TunableConstants.FUTILITY_HISTORY_MARGIN[newDepth]) {
+                    TunableConstants.FUTILITY_HISTORY_MARGIN[newDepth]
+                ) {
                     skipQuiets = true
                 }
 
                 if (newDepth < SearchConstants.NEGATIVE_SEE_DEPTH &&
                     currentNode.phase < MovePicker.PHASE_GOOD_MATERIAL_EXCHANGE &&
-                    !StaticExchangeEvaluator.seeInThreshold(board, move,
-                        SearchConstants.NEGATIVE_SEE_MARGIN * powerDepth)) {
+                    !StaticExchangeEvaluator.seeInThreshold(
+                        board, move,
+                        SearchConstants.NEGATIVE_SEE_MARGIN * powerDepth
+                    )
+                ) {
                     continue
                 }
             }
@@ -339,7 +360,8 @@ class MainSearch(private val searchOptions: SearchOptions,
                 if (newDepth > SearchConstants.LMR_MIN_DEPTH &&
                     movesPerformed > SearchConstants.LMR_MIN_MOVES &&
                     !isCapture &&
-                    !isPromotion) {
+                    !isPromotion
+                ) {
 
                     reduction = TunableConstants.LMR_TABLE[min(newDepth, 63)][min(movesPerformed, 63)]
 
@@ -360,8 +382,10 @@ class MainSearch(private val searchOptions: SearchOptions,
 
                 // LMR Search
                 if (reduction != 1 || !pvNode || movesPerformed != 1) {
-                    score = -search(board, searchDepth - reduction, ply + 1, -searchAlpha - 1,
-                        -searchAlpha, false)
+                    score = -search(
+                        board, searchDepth - reduction, ply + 1, -searchAlpha - 1,
+                        -searchAlpha, false
+                    )
                 }
 
                 // PVS Search
@@ -440,6 +464,10 @@ class MainSearch(private val searchOptions: SearchOptions,
                 break
             }
             var aspirationWindow = SearchConstants.ASPIRATION_WINDOW_SIZE
+            if (depth > 4) {
+                alpha = max(score - aspirationWindow, EvalConstants.SCORE_MIN)
+                beta = min(score + aspirationWindow, EvalConstants.SCORE_MAX)
+            }
 
             while (true) {
                 val previousScore = score
@@ -453,23 +481,28 @@ class MainSearch(private val searchOptions: SearchOptions,
 
                 if (depth > 4) {
                     if (score < previousScore &&
-                        wantedSearchTime < searchOptions.maxSearchTimeLimit) {
+                        wantedSearchTime < searchOptions.maxSearchTimeLimit
+                    ) {
                         wantedSearchTime += searchTimeIncrement
                     }
                     if (score + 10 < previousScore &&
-                        wantedSearchTime < searchOptions.maxSearchTimeLimit) {
+                        wantedSearchTime < searchOptions.maxSearchTimeLimit
+                    ) {
                         wantedSearchTime += searchTimeIncrement
                     }
                     if (score + 50 < previousScore &&
-                        wantedSearchTime < searchOptions.maxSearchTimeLimit) {
+                        wantedSearchTime < searchOptions.maxSearchTimeLimit
+                    ) {
                         wantedSearchTime += searchTimeIncrement
                     }
                     if (score + 100 < previousScore &&
-                        wantedSearchTime < searchOptions.maxSearchTimeLimit) {
+                        wantedSearchTime < searchOptions.maxSearchTimeLimit
+                    ) {
                         wantedSearchTime += searchTimeIncrement
                     }
                     if (score > previousScore &&
-                        wantedSearchTime > searchOptions.minSearchTimeLimit) {
+                        wantedSearchTime > searchOptions.minSearchTimeLimit
+                    ) {
                         wantedSearchTime -= searchTimeIncrement
                     }
                 }
@@ -479,21 +512,15 @@ class MainSearch(private val searchOptions: SearchOptions,
                     break
                 }
 
+                // fail low
                 if (score <= alpha) {
-                    alpha = if (score < -EvalConstants.SCORE_MATE) {
-                        EvalConstants.SCORE_MIN
-                    } else {
-                        max(score - aspirationWindow, EvalConstants.SCORE_MIN)
-                    }
-                } else if (score >= beta) {
-                    beta = if (score > EvalConstants.SCORE_MATE) {
-                        EvalConstants.SCORE_MAX
-                    } else {
-                        min(score + aspirationWindow, EvalConstants.SCORE_MAX)
-                    }
-                } else {
                     alpha = max(score - aspirationWindow, EvalConstants.SCORE_MIN)
+                    beta = (alpha + beta) / 2
+                    // fail high
+                } else if (score >= beta) {
                     beta = min(score + aspirationWindow, EvalConstants.SCORE_MAX)
+                    // Search result inside window
+                } else {
                     break
                 }
 
@@ -519,25 +546,16 @@ class MainSearch(private val searchOptions: SearchOptions,
         while (true) {
             val score = search(board, depth, 0, alpha, beta)
 
-            when {
-                score <= alpha -> {
-                    alpha = if (score < -EvalConstants.SCORE_MATE) {
-                        EvalConstants.SCORE_MIN
-                    } else {
-                        max(score - aspirationWindow, EvalConstants.SCORE_MIN)
-                    }
-                }
-                score >= beta -> {
-                    beta = if (score > EvalConstants.SCORE_MATE) {
-                        EvalConstants.SCORE_MAX
-                    } else {
-                        min(score + aspirationWindow, EvalConstants.SCORE_MAX)
-                    }
-                }
-                else -> {
-                    searchInfo.save(board)
-                    return score
-                }
+            if (score <= alpha) {
+                alpha = max(score - aspirationWindow, EvalConstants.SCORE_MIN)
+                beta = (alpha + beta) / 2
+                // fail high
+            } else if (score >= beta) {
+                beta = min(score + aspirationWindow, EvalConstants.SCORE_MAX)
+                // Search result inside window
+            } else {
+                searchInfo.save(board)
+                return score
             }
 
             aspirationWindow += aspirationWindow / 4
