@@ -158,10 +158,7 @@ class MainSearch(private val searchOptions: SearchOptions,
                 // Use good capture move picker
                 currentNode.setupMovePicker(board, probBeta - eval)
 
-                // Limit the number of moves
-                var probMoves = 0
-
-                while (probMoves < SearchConstants.PROB_CUT_MOVES) {
+                while (true) {
                     val move = currentNode.next(true)
                     // Move picker finish
                     if (move == Move.NONE) {
@@ -172,7 +169,6 @@ class MainSearch(private val searchOptions: SearchOptions,
                     if (!board.isLegalMove(move)) {
                         continue
                     }
-                    probMoves++
 
                     board.doMove(move)
 
