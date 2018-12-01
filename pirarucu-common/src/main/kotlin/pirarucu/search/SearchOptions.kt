@@ -42,7 +42,7 @@ class SearchOptions {
         } else {
             blackIncrement
         }
-        val expectedTime = usableTime + increment * (moves - MIN_GAME_MOVES)
+        val expectedTime = usableTime + increment * MIN_GAME_MOVES
 
         minSearchTime = expectedTime / moves
         maxSearchTime = min(usableTime - MOVE_OVERHEAD, minSearchTime * MAX_TIME_RATIO)
@@ -59,7 +59,7 @@ class SearchOptions {
 
     companion object {
         // NOTE: this should be equal or below MIN_GAME_MOVES
-        private const val MAX_TIME_RATIO = 5L
+        private const val MAX_TIME_RATIO = 10L
 
         private const val GAME_MOVES = 100L
         private const val MIN_GAME_MOVES = 25L
