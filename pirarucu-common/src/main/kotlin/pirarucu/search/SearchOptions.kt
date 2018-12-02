@@ -4,6 +4,7 @@ import pirarucu.board.Color
 import pirarucu.game.GameConstants
 import pirarucu.util.Utils
 import kotlin.math.max
+import kotlin.math.min
 
 class SearchOptions {
 
@@ -27,18 +28,24 @@ class SearchOptions {
     var blackIncrement = 0L
 
     fun setTime(color: Int) {
-        val totalTime = if (color == Color.WHITE) {
+        val moves = when {
+            movesToGo != 0L -> max(movesToGo * 2, movesToGo + MIN_GAME_MOVES)
+            else -> GAME_MOVES
+        }
+        val usableTime = if (color == Color.WHITE) {
             whiteTime
         } else {
             blackTime
         }
-        val moves = when {
-            movesToGo != 0L -> movesToGo + MIN_GAME_MOVES
-            else -> GAME_MOVES
+        val increment = if (color == Color.WHITE) {
+            whiteIncrement
+        } else {
+            blackIncrement
         }
+        val expectedTime = usableTime + increment * MIN_GAME_MOVES
 
-        minSearchTime = totalTime / moves
-        maxSearchTime = minSearchTime * MAX_TIME_RATIO
+        minSearchTime = expectedTime / moves
+        maxSearchTime = min(usableTime - MOVE_OVERHEAD, minSearchTime * MAX_TIME_RATIO)
 
         searchTimeIncrement = max(1, (maxSearchTime - minSearchTime) / INCREMENT_RATIO)
     }
@@ -52,11 +59,13 @@ class SearchOptions {
 
     companion object {
         // NOTE: this should be equal or below MIN_GAME_MOVES
-        private const val MAX_TIME_RATIO = 5L
+        private const val MAX_TIME_RATIO = 10L
 
-        private const val GAME_MOVES = 40L
-        private const val MIN_GAME_MOVES = 15L
+        private const val GAME_MOVES = 100L
+        private const val MIN_GAME_MOVES = 25L
 
         private const val INCREMENT_RATIO = 40
+
+        private const val MOVE_OVERHEAD = 200
     }
 }
