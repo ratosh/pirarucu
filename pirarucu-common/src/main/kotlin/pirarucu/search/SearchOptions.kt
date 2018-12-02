@@ -29,7 +29,7 @@ class SearchOptions {
 
     fun setTime(color: Int) {
         val moves = when {
-            movesToGo != 0L -> movesToGo + MIN_GAME_MOVES
+            movesToGo != 0L -> max(movesToGo * 2, movesToGo + MIN_GAME_MOVES)
             else -> GAME_MOVES
         }
         val usableTime = if (color == Color.WHITE) {
