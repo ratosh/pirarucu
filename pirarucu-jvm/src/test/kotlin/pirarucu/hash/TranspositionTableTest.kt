@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
 class TranspositionTableTest {
-    private val transpositionTable = TranspositionTable()
+    private val transpositionTable = TranspositionTable(1)
 
     @BeforeTest
     fun setup() {

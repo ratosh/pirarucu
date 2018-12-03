@@ -246,7 +246,7 @@ object MultiThreadedSearch {
                 while (isRunning()) {
                     Thread.yield()
                 }
-                searchInfoListener.bestMove(search.searchInfo.bestMove)
+                searchInfoListener.bestMove(search.searchInfo)
             }
         }
     }

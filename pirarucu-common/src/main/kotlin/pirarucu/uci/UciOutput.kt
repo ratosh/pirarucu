@@ -1,7 +1,6 @@
 package pirarucu.uci
 
 
-import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
 import pirarucu.search.SearchInfo
 
@@ -34,15 +33,19 @@ object UciOutput {
         } else {
             " nps 0"
         }
-        println(
-            "info depth " + depth +
+        info(
+            "depth " + depth +
                 " time " + time +
                 " score cp " + searchInfo.bestScore +
                 nps +
                 " nodes " + nodeCount +
-                " hashfull " +
-                searchInfo.transpositionTable.ttUsage * 1000 / searchInfo.transpositionTable.tableElementCount +
                 " pv " + searchInfo.toString()
         )
+    }
+
+    fun hashfullInfo(
+        searchInfo: SearchInfo
+    ) {
+        info("hashfull ${searchInfo.transpositionTable.getUsageSample()}")
     }
 }
