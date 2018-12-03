@@ -3,10 +3,14 @@ package pirarucu.uci
 
 import pirarucu.move.Move
 import pirarucu.search.SearchInfo
+import pirarucu.util.Utils
 
 object UciOutput {
 
+    private const val HASHFULL_DELAY = 2000L
+
     var silent = false
+    var latestHashfull = 0L
 
     fun println(line: String) {
         if (!silent) {
@@ -46,6 +50,10 @@ object UciOutput {
     fun hashfullInfo(
         searchInfo: SearchInfo
     ) {
-        info("hashfull ${searchInfo.transpositionTable.getUsageSample()}")
+        val currentTime = Utils.specific.currentTimeMillis()
+        if (currentTime - latestHashfull >= HASHFULL_DELAY) {
+            info("hashfull ${searchInfo.transpositionTable.getUsageSample()}")
+            latestHashfull = currentTime
+        }
     }
 }
