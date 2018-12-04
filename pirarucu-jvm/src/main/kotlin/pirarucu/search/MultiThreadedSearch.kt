@@ -152,6 +152,7 @@ object MultiThreadedSearch {
         private val search = MainSearch(searchOptions, searchInfoListener, transpositionTable)
 
         private val cycleIndex = innerId % SMP_MAX_CYCLES
+        private val aspirationIndex = innerId / SMP_MAX_CYCLES
 
         private var searchDepth = 1
 
@@ -187,7 +188,12 @@ object MultiThreadedSearch {
                 if (searchDepth >= GameConstants.MAX_PLIES) {
                     break
                 }
-                score = search.searchStep(board, score, searchDepth)
+                score = search.searchStep(
+                    board,
+                    score,
+                    searchDepth,
+                    SearchConstants.ASPIRATION_WINDOW_SIZE[aspirationIndex]
+                )
             }
         }
 

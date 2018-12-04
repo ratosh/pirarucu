@@ -10,7 +10,7 @@ class UciInput(private val inputHandler: IInputHandler) {
             "uci" -> {
                 UciOutput.println("id name Pirarucu v" + Utils.specific.getVersion())
                 UciOutput.println("option name Hash type spin default 256 min 1 max 8192")
-                UciOutput.println("option name Threads type spin default 1 min 1 max 64")
+                UciOutput.println("option name Threads type spin default 1 min 1 max 128")
                 UciOutput.println("id author Raoni Campos")
                 UciOutput.println("uciok")
             }
