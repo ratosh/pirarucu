@@ -16,7 +16,7 @@ import kotlin.test.assertEquals
 class MainSearchTest {
 
     private var searchOptions = SearchOptions()
-    private val transpositionTable = TranspositionTable()
+    private val transpositionTable = TranspositionTable(1)
     private val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable)
 
     fun testSearch(fen: String, searchTime: Long) {

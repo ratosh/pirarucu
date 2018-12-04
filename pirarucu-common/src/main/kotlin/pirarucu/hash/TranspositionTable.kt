@@ -31,9 +31,6 @@ class TranspositionTable(sizeMb: Int) {
 
     var baseDepth = 0
 
-    var ttUsage = 0L
-        private set
-
     private var tableBits = calculateTableBits(currentHashSize)
 
     var tableElementCount = calculateTableElements(tableBits)
@@ -58,12 +55,10 @@ class TranspositionTable(sizeMb: Int) {
         keys = LongArray(tableElementCount)
         infos = LongArray(tableElementCount)
 
-        ttUsage = 0
         baseDepth = 0
     }
 
     fun reset() {
-        ttUsage = 0
         baseDepth = 0
 
         Utils.specific.arrayFill(keys, 0)
@@ -108,7 +103,6 @@ class TranspositionTable(sizeMb: Int) {
             val savedKey = key xor info
             // Unpopulated entry
             if (key == 0L && info == 0L) {
-                ttUsage++
                 usedIndex = index
                 break
             }
@@ -173,6 +167,17 @@ class TranspositionTable(sizeMb: Int) {
             ((score.toLong() and SCORE_MASK) shl SCORE_SHIFT) or
             (depth.toLong() shl DEPTH_SHIFT) or
             (scoreType.toLong() shl SCORE_TYPE_SHIFT)
+    }
+
+    fun getUsageSample(): Int {
+        var result = 0
+        for (index in 0 until 1_000) {
+            if (infos[index] != 0L && keys[index] != 0L) {
+                result++
+            }
+        }
+
+        return result
     }
 
     companion object {

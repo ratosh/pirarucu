@@ -30,7 +30,7 @@ object TestingApplication {
 
         var testScore = 0
         val searchOptions = SearchOptions()
-        val transpositionTable = TranspositionTable()
+        val transpositionTable = TranspositionTable(1)
         transpositionTable.resize(4)
         val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable)
         searchOptions.depth = depth

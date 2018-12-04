@@ -8,7 +8,8 @@ class SimpleSearchInfoListener : SearchInfoListener {
         UciOutput.searchInfo(depth, elapsedTime, searchInfo.searchNodes, searchInfo)
     }
 
-    override fun bestMove(move: Int) {
-        UciOutput.bestMove(move)
+    override fun bestMove(searchInfo: SearchInfo) {
+        UciOutput.hashfullInfo(searchInfo)
+        UciOutput.bestMove(searchInfo.bestMove)
     }
 }

@@ -1,13 +1,16 @@
 package pirarucu.uci
 
 
-import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
 import pirarucu.search.SearchInfo
+import pirarucu.util.Utils
 
 object UciOutput {
 
+    private const val HASHFULL_DELAY = 2000L
+
     var silent = false
+    var latestHashfull = 0L
 
     fun println(line: String) {
         if (!silent) {
@@ -34,15 +37,23 @@ object UciOutput {
         } else {
             " nps 0"
         }
-        println(
-            "info depth " + depth +
+        info(
+            "depth " + depth +
                 " time " + time +
                 " score cp " + searchInfo.bestScore +
                 nps +
                 " nodes " + nodeCount +
-                " hashfull " +
-                searchInfo.transpositionTable.ttUsage * 1000 / searchInfo.transpositionTable.tableElementCount +
                 " pv " + searchInfo.toString()
         )
+    }
+
+    fun hashfullInfo(
+        searchInfo: SearchInfo
+    ) {
+        val currentTime = Utils.specific.currentTimeMillis()
+        if (currentTime - latestHashfull >= HASHFULL_DELAY) {
+            info("hashfull ${searchInfo.transpositionTable.getUsageSample()}")
+            latestHashfull = currentTime
+        }
     }
 }
