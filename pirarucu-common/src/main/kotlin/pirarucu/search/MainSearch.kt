@@ -459,7 +459,7 @@ class MainSearch(
             if (searchOptions.stop && searchInfo.bestMove != Move.NONE) {
                 break
             }
-            var aspirationWindow = SearchConstants.ASPIRATION_WINDOW_SIZE
+            var aspirationWindow = SearchConstants.ASPIRATION_WINDOW_SIZE[0]
             if (depth > 4) {
                 alpha = max(score - aspirationWindow, EvalConstants.SCORE_MIN)
                 beta = min(score + aspirationWindow, EvalConstants.SCORE_MAX)
@@ -528,14 +528,14 @@ class MainSearch(
     }
 
     // Used by helper threads
-    fun searchStep(board: Board, previousScore: Int, depth: Int): Int {
+    fun searchStep(board: Board, previousScore: Int, depth: Int, initialAspirationWindow: Int): Int {
         if (previousScore == EvalConstants.SCORE_UNKNOWN) {
             val score = search(board, depth, 0, EvalConstants.SCORE_MIN, EvalConstants.SCORE_MAX)
             searchInfo.save(board)
             return score
         }
 
-        var aspirationWindow = SearchConstants.ASPIRATION_WINDOW_SIZE
+        var aspirationWindow = initialAspirationWindow
         var alpha = max(previousScore - aspirationWindow, EvalConstants.SCORE_MIN)
         var beta = min(previousScore + aspirationWindow, EvalConstants.SCORE_MAX)
 
