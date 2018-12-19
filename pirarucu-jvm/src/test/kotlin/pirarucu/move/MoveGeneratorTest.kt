@@ -43,8 +43,50 @@ class MoveGeneratorTest {
     }
 
     @Test
+    fun testCantPromote() {
+        val board = BoardFactory.getBoard("2r2k2/2P5/8/8/8/8/8/5K2 w - -")
+        val moveList = OrderedMoveList()
+        moveGenerator.legalAttacks(board, attackInfo, moveList)
+        var legalMoves = 0
+        while (moveList.hasNext()) {
+            if (board.isLegalMove(moveList.next())) {
+                legalMoves++
+            }
+        }
+        assertEquals(legalMoves, 0)
+    }
+
+    @Test
     fun testPromotion() {
         val board = BoardFactory.getBoard("5k2/2P5/8/8/8/8/8/5K2 w - -")
+        val moveList = OrderedMoveList()
+        moveGenerator.legalAttacks(board, attackInfo, moveList)
+        var legalMoves = 0
+        while (moveList.hasNext()) {
+            if (board.isLegalMove(moveList.next())) {
+                legalMoves++
+            }
+        }
+        assertEquals(legalMoves, 4)
+    }
+
+    @Test
+    fun testPromotionDeniedByCheck() {
+        val board = BoardFactory.getBoard("5k2/3P4/1q6/8/8/8/5K2/8 w - -")
+        val moveList = OrderedMoveList()
+        moveGenerator.legalAttacks(board, attackInfo, moveList)
+        var legalMoves = 0
+        while (moveList.hasNext()) {
+            if (board.isLegalMove(moveList.next())) {
+                legalMoves++
+            }
+        }
+        assertEquals(legalMoves, 0)
+    }
+
+    @Test
+    fun testPinnedPromotion() {
+        val board = BoardFactory.getBoard("1b3k2/2P5/8/8/5K2/8/8/8 w - -")
         val moveList = OrderedMoveList()
         moveGenerator.legalAttacks(board, attackInfo, moveList)
         var legalMoves = 0
@@ -423,7 +465,7 @@ class MoveGeneratorTest {
     }
 
     @Test
-    fun testPinnedPromotion() {
+    fun testLongPromotion() {
         val board = BoardFactory.getBoard("1Qq2knr/pp1n1p1p/6p1/8/2Pb4/2N4P/PP2PPP1/R1B1KB1R b KQ -")
         val moveList = OrderedMoveList()
         moveGenerator.legalMoves(board, attackInfo, moveList)

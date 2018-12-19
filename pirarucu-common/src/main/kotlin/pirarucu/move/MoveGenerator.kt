@@ -192,7 +192,8 @@ class MoveGenerator(private val history: History) {
         val pawnBitboard = board.pieceBitboard[ourColor][Piece.PAWN] and board.basicEvalInfo.pinnedBitboard.inv()
         var promotionLocation = BitboardMove.pawnForward(ourColor, pawnBitboard) and
             Bitboard.PROMOTION_BITBOARD and
-            board.emptyBitboard
+            board.emptyBitboard and
+            attackInfo.movementMask[ourColor]
         while (promotionLocation != Bitboard.EMPTY) {
             val toSquare = Square.getSquare(promotionLocation)
             val fromSquare = toSquare + BitboardMove.PAWN_FORWARD[theirColor]
