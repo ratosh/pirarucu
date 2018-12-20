@@ -1,8 +1,6 @@
 package pirarucu.util
 
-expect class PlatformSpecific() {
-
-    fun randomLong(): Long
+expect object PlatformSpecific {
 
     fun currentTimeMillis(): Long
 

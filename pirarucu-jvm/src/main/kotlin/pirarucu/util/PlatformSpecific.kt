@@ -4,13 +4,7 @@ import pirarucu.tuning.TunableConstants
 import java.security.SecureRandom
 import java.util.Arrays
 
-actual class PlatformSpecific actual constructor() {
-
-    private val random = SecureRandom()
-
-    actual fun randomLong(): Long {
-        return random.nextLong()
-    }
+actual object PlatformSpecific {
 
     actual fun currentTimeMillis(): Long {
         return System.currentTimeMillis()

@@ -8,8 +8,8 @@ import pirarucu.board.Piece
 import pirarucu.board.Rank
 import pirarucu.board.Square
 import pirarucu.tuning.TunableConstants
+import pirarucu.util.PlatformSpecific
 import pirarucu.util.SplitValue
-import pirarucu.util.Utils
 import kotlin.math.min
 
 object Evaluator {
@@ -92,7 +92,8 @@ object Evaluator {
 
             // Attacking undefended pawns
             if (attackBitboard and board.pieceBitboard[theirColor][Piece.PAWN] and
-                attackInfo.attacksBitboard[theirColor][Piece.NONE].inv() != Bitboard.EMPTY) {
+                attackInfo.attacksBitboard[theirColor][Piece.NONE].inv() != Bitboard.EMPTY
+            ) {
                 result += TunableConstants.THREATEN_BY_KNIGHT[Piece.PAWN]
             }
 
@@ -112,11 +113,11 @@ object Evaluator {
             }
 
             val pieceMobilityBitboard = attackBitboard and mobilityBitboard
-            result += TunableConstants.MOBILITY[Piece.KNIGHT][Utils.specific.bitCount(pieceMobilityBitboard)]
+            result += TunableConstants.MOBILITY[Piece.KNIGHT][PlatformSpecific.bitCount(pieceMobilityBitboard)]
 
             val kingAreaAttacks = attackBitboard and board.evalInfo.kingArea[theirColor]
             if (kingAreaAttacks != Bitboard.EMPTY) {
-                result += Utils.specific.bitCount(kingAreaAttacks) * TunableConstants.KING_THREAT[Piece.KNIGHT]
+                result += PlatformSpecific.bitCount(kingAreaAttacks) * TunableConstants.KING_THREAT[Piece.KNIGHT]
             }
 
             val safeChecks = possibleSafeCheck and attackBitboard
@@ -168,7 +169,8 @@ object Evaluator {
             }
             // Attacking undefended pawns
             if (attackBitboard and board.pieceBitboard[theirColor][Piece.PAWN] and
-                attackInfo.attacksBitboard[theirColor][Piece.NONE].inv() != Bitboard.EMPTY) {
+                attackInfo.attacksBitboard[theirColor][Piece.NONE].inv() != Bitboard.EMPTY
+            ) {
                 result += TunableConstants.THREATEN_BY_BISHOP[Piece.PAWN]
             }
 
@@ -184,16 +186,17 @@ object Evaluator {
 
             // Protected bishop attacking queen
             if (attackBitboard and board.pieceBitboard[theirColor][Piece.QUEEN] != Bitboard.EMPTY &&
-                bitboard and attackInfo.attacksBitboard[ourColor][Piece.NONE] != Bitboard.EMPTY) {
+                bitboard and attackInfo.attacksBitboard[ourColor][Piece.NONE] != Bitboard.EMPTY
+            ) {
                 result += TunableConstants.THREATEN_BY_BISHOP[Piece.QUEEN]
             }
 
             val pieceMobilityBitboard = attackBitboard and mobilityBitboard
-            result += TunableConstants.MOBILITY[Piece.BISHOP][Utils.specific.bitCount(pieceMobilityBitboard)]
+            result += TunableConstants.MOBILITY[Piece.BISHOP][PlatformSpecific.bitCount(pieceMobilityBitboard)]
 
             val kingAreaAttacks = attackBitboard and board.evalInfo.kingArea[theirColor]
             if (kingAreaAttacks != Bitboard.EMPTY) {
-                result += Utils.specific.bitCount(kingAreaAttacks) * TunableConstants.KING_THREAT[Piece.BISHOP]
+                result += PlatformSpecific.bitCount(kingAreaAttacks) * TunableConstants.KING_THREAT[Piece.BISHOP]
             }
 
             val safeChecks = possibleSafeCheck and attackBitboard
@@ -230,34 +233,38 @@ object Evaluator {
             val attackBitboard = attackInfo.pieceMovement[ourColor][square]
             // Attacking undefended pawns
             if (attackBitboard and board.pieceBitboard[theirColor][Piece.PAWN] and
-                attackInfo.attacksBitboard[theirColor][Piece.NONE].inv() != Bitboard.EMPTY) {
+                attackInfo.attacksBitboard[theirColor][Piece.NONE].inv() != Bitboard.EMPTY
+            ) {
                 result += TunableConstants.THREATEN_BY_ROOK[Piece.PAWN]
             }
 
             // Attacking undefended knights
             if (attackBitboard and board.pieceBitboard[theirColor][Piece.KNIGHT] and
-                attackInfo.attacksBitboard[theirColor][Piece.NONE].inv() != Bitboard.EMPTY) {
+                attackInfo.attacksBitboard[theirColor][Piece.NONE].inv() != Bitboard.EMPTY
+            ) {
                 result += TunableConstants.THREATEN_BY_ROOK[Piece.KNIGHT]
             }
 
             // Attacking undefended bishops
             if (attackBitboard and board.pieceBitboard[theirColor][Piece.BISHOP] and
-                attackInfo.attacksBitboard[theirColor][Piece.NONE].inv() != Bitboard.EMPTY) {
+                attackInfo.attacksBitboard[theirColor][Piece.NONE].inv() != Bitboard.EMPTY
+            ) {
                 result += TunableConstants.THREATEN_BY_ROOK[Piece.BISHOP]
             }
 
             // Protected rook attacking queen
             if (attackBitboard and board.pieceBitboard[theirColor][Piece.QUEEN] != Bitboard.EMPTY &&
-                bitboard and attackInfo.attacksBitboard[ourColor][Piece.NONE] != Bitboard.EMPTY) {
+                bitboard and attackInfo.attacksBitboard[ourColor][Piece.NONE] != Bitboard.EMPTY
+            ) {
                 result += TunableConstants.THREATEN_BY_ROOK[Piece.QUEEN]
             }
 
             val pieceMobilityBitboard = attackBitboard and mobilityBitboard
-            result += TunableConstants.MOBILITY[Piece.ROOK][Utils.specific.bitCount(pieceMobilityBitboard)]
+            result += TunableConstants.MOBILITY[Piece.ROOK][PlatformSpecific.bitCount(pieceMobilityBitboard)]
 
             val kingAreaAttacks = attackBitboard and board.evalInfo.kingArea[theirColor]
             if (kingAreaAttacks != Bitboard.EMPTY) {
-                result += Utils.specific.bitCount(kingAreaAttacks) * TunableConstants.KING_THREAT[Piece.ROOK]
+                result += PlatformSpecific.bitCount(kingAreaAttacks) * TunableConstants.KING_THREAT[Piece.ROOK]
             }
 
             val safeChecks = possibleSafeCheck and attackBitboard
@@ -267,7 +274,8 @@ object Evaluator {
             }
             if (Rank.getRelativeRank(ourColor, Rank.getRank(square)) == Rank.RANK_7 &&
                 Rank.getRelativeRank(ourColor, Rank.getRank(board.kingSquare[theirColor])) >=
-                Rank.RANK_7) {
+                Rank.RANK_7
+            ) {
                 result += TunableConstants.OTHER_BONUS[TunableConstants.OTHER_BONUS_ROOK_ON_SEVENTH]
             }
 
@@ -305,11 +313,11 @@ object Evaluator {
 
             val attackBitboard = attackInfo.pieceMovement[ourColor][square]
             val pieceMobilityBitboard = attackBitboard and mobilityBitboard
-            result += TunableConstants.MOBILITY[Piece.QUEEN][Utils.specific.bitCount(pieceMobilityBitboard)]
+            result += TunableConstants.MOBILITY[Piece.QUEEN][PlatformSpecific.bitCount(pieceMobilityBitboard)]
 
             val kingAreaAttacks = attackBitboard and board.evalInfo.kingArea[theirColor]
             if (kingAreaAttacks != Bitboard.EMPTY) {
-                result += Utils.specific.bitCount(kingAreaAttacks) * TunableConstants.KING_THREAT[Piece.QUEEN]
+                result += PlatformSpecific.bitCount(kingAreaAttacks) * TunableConstants.KING_THREAT[Piece.QUEEN]
             }
 
             val safeChecks = possibleSafeCheck and attackBitboard
@@ -350,7 +358,7 @@ object Evaluator {
         val attackBitboard = attackInfo.pieceMovement[ourColor][kingSquare]
 
         val kingMobility = attackBitboard and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
-        result += TunableConstants.MOBILITY[Piece.KING][Utils.specific.bitCount(kingMobility)]
+        result += TunableConstants.MOBILITY[Piece.KING][PlatformSpecific.bitCount(kingMobility)]
 
         return result
     }

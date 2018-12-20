@@ -6,7 +6,7 @@ import pirarucu.hash.HashConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
 import pirarucu.move.MoveGenerator
-import pirarucu.util.Utils
+import pirarucu.util.PlatformSpecific
 
 class SearchInfo(val transpositionTable: TranspositionTable) {
 
@@ -20,7 +20,7 @@ class SearchInfo(val transpositionTable: TranspositionTable) {
         for (info in plyInfoList) {
             info.clear()
         }
-        Utils.specific.arrayFill(bestMoveList, 0)
+        PlatformSpecific.arrayFill(bestMoveList, 0)
         bestMove = Move.NONE
         bestScore = 0
     }

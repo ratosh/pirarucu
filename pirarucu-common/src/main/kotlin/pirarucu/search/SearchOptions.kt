@@ -2,7 +2,7 @@ package pirarucu.search
 
 import pirarucu.board.Color
 import pirarucu.game.GameConstants
-import pirarucu.util.Utils
+import pirarucu.util.PlatformSpecific
 import kotlin.math.max
 import kotlin.math.min
 
@@ -52,7 +52,7 @@ class SearchOptions {
 
     fun startControl() {
         stop = false
-        startTime = Utils.specific.currentTimeMillis()
+        startTime = PlatformSpecific.currentTimeMillis()
         maxSearchTimeLimit = startTime + maxSearchTime
         minSearchTimeLimit = startTime + minSearchTime
     }

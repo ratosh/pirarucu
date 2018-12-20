@@ -1,7 +1,7 @@
 package pirarucu.move
 
 import pirarucu.game.GameConstants
-import pirarucu.util.Utils
+import pirarucu.util.PlatformSpecific
 
 /**
  * https://chessprogramming.wikispaces.com/Move%20List
@@ -67,7 +67,7 @@ class MoveList {
         val left = nextToMove[currentPly]
         val right = nextToGenerate[currentPly]
         if (left < right) {
-            Utils.specific.arraySort(moves, left, right)
+            PlatformSpecific.arraySort(moves, left, right)
         }
     }
 

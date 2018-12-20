@@ -3,7 +3,7 @@ package pirarucu.search
 import pirarucu.board.Color
 import pirarucu.board.Square
 import pirarucu.move.Move
-import pirarucu.util.Utils
+import pirarucu.util.PlatformSpecific
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -12,7 +12,7 @@ class History {
     private val history = Array(Color.SIZE) { IntArray(Square.SIZE * Square.SIZE) }
 
     fun reset() {
-        Utils.specific.arrayFill(history, 0)
+        PlatformSpecific.arrayFill(history, 0)
     }
 
     fun getHistoryScore(color: Int, move: Int): Int {

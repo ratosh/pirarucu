@@ -10,7 +10,7 @@ import pirarucu.move.Move
 import pirarucu.move.MoveGenerator
 import pirarucu.move.MoveType
 import pirarucu.tuning.TunableConstants
-import pirarucu.util.Utils
+import pirarucu.util.PlatformSpecific
 
 class Board {
 
@@ -65,7 +65,7 @@ class Board {
      * Setup some initial information.
      */
     init {
-        Utils.specific.arrayFill(pieceTypeBoard, Piece.NONE)
+        PlatformSpecific.arrayFill(pieceTypeBoard, Piece.NONE)
 
         castlingRightsSquare[initialKingSquare[Color.WHITE]] = CastlingRights.WHITE_CASTLING_RIGHTS
         castlingRightsSquare[initialKingSquare[Color.BLACK]] = CastlingRights.BLACK_CASTLING_RIGHTS
@@ -90,8 +90,8 @@ class Board {
         zobristKey = 0L
         pawnZobristKey = 0L
 
-        Utils.specific.arrayFill(psqScore, 0)
-        Utils.specific.arrayFill(materialScore, 0)
+        PlatformSpecific.arrayFill(psqScore, 0)
+        PlatformSpecific.arrayFill(materialScore, 0)
         phase = 0
 
         gameBitboard = 0L
@@ -103,15 +103,15 @@ class Board {
         nextColorToMove = Color.BLACK
         capturedPiece = Piece.NONE
 
-        Utils.specific.arrayFill(pieceTypeBoard, Piece.NONE)
+        PlatformSpecific.arrayFill(pieceTypeBoard, Piece.NONE)
 
-        Utils.specific.arrayFill(pieceBitboard[Color.WHITE], Bitboard.EMPTY)
-        Utils.specific.arrayFill(pieceBitboard[Color.BLACK], Bitboard.EMPTY)
-        Utils.specific.arrayFill(colorBitboard, Bitboard.EMPTY)
+        PlatformSpecific.arrayFill(pieceBitboard[Color.WHITE], Bitboard.EMPTY)
+        PlatformSpecific.arrayFill(pieceBitboard[Color.BLACK], Bitboard.EMPTY)
+        PlatformSpecific.arrayFill(colorBitboard, Bitboard.EMPTY)
 
-        Utils.specific.arrayFill(pieceCountType, 0)
-        Utils.specific.arrayFill(pieceCountColorType[Color.WHITE], 0)
-        Utils.specific.arrayFill(pieceCountColorType[Color.BLACK], 0)
+        PlatformSpecific.arrayFill(pieceCountType, 0)
+        PlatformSpecific.arrayFill(pieceCountColorType[Color.WHITE], 0)
+        PlatformSpecific.arrayFill(pieceCountColorType[Color.BLACK], 0)
     }
 
     private fun pushToHistory() {
@@ -507,6 +507,7 @@ class Board {
         basicInfoIndex--
         return historyBasicEvalInfo[basicInfoIndex]
     }
+
     /**
      * Copy the object state from another board.
      */
@@ -520,12 +521,12 @@ class Board {
         colorToMove = board.colorToMove
         nextColorToMove = board.nextColorToMove
 
-        Utils.specific.arrayCopy(board.pieceTypeBoard, 0, pieceTypeBoard, 0, pieceTypeBoard.size)
-        Utils.specific.arrayCopy(board.pieceBitboard, pieceBitboard)
-        Utils.specific.arrayCopy(board.colorBitboard, 0, colorBitboard, 0, colorBitboard.size)
+        PlatformSpecific.arrayCopy(board.pieceTypeBoard, 0, pieceTypeBoard, 0, pieceTypeBoard.size)
+        PlatformSpecific.arrayCopy(board.pieceBitboard, pieceBitboard)
+        PlatformSpecific.arrayCopy(board.colorBitboard, 0, colorBitboard, 0, colorBitboard.size)
 
-        Utils.specific.arrayCopy(board.pieceCountType, 0, pieceCountType, 0, pieceCountType.size)
-        Utils.specific.arrayCopy(board.pieceCountColorType, pieceCountColorType)
+        PlatformSpecific.arrayCopy(board.pieceCountType, 0, pieceCountType, 0, pieceCountType.size)
+        PlatformSpecific.arrayCopy(board.pieceCountColorType, pieceCountColorType)
 
         rule50 = board.rule50
         castlingRights = board.castlingRights
@@ -533,21 +534,21 @@ class Board {
         zobristKey = board.zobristKey
         pawnZobristKey = board.pawnZobristKey
 
-        Utils.specific.arrayCopy(board.kingSquare, 0, kingSquare, 0, kingSquare.size)
-        Utils.specific.arrayCopy(board.psqScore, 0, psqScore, 0, psqScore.size)
-        Utils.specific.arrayCopy(board.materialScore, 0, materialScore, 0, materialScore.size)
+        PlatformSpecific.arrayCopy(board.kingSquare, 0, kingSquare, 0, kingSquare.size)
+        PlatformSpecific.arrayCopy(board.psqScore, 0, psqScore, 0, psqScore.size)
+        PlatformSpecific.arrayCopy(board.materialScore, 0, materialScore, 0, materialScore.size)
 
         phase = board.phase
 
         capturedPiece = board.capturedPiece
 
         // History
-        Utils.specific.arrayCopy(board.historyZobristKey, 0, historyZobristKey, 0, historyZobristKey.size)
-        Utils.specific.arrayCopy(board.historyRule50, 0, historyRule50, 0, historyZobristKey.size)
-        Utils.specific.arrayCopy(board.historyCastlingRights, 0, historyCastlingRights, 0, historyZobristKey.size)
-        Utils.specific.arrayCopy(board.historyEpSquare, 0, historyEpSquare, 0, historyZobristKey.size)
-        Utils.specific.arrayCopy(board.historyPawnZobristKey, 0, historyPawnZobristKey, 0, historyZobristKey.size)
-        Utils.specific.arrayCopy(board.historyCapturedPiece, 0, historyCapturedPiece, 0, historyZobristKey.size)
+        PlatformSpecific.arrayCopy(board.historyZobristKey, 0, historyZobristKey, 0, historyZobristKey.size)
+        PlatformSpecific.arrayCopy(board.historyRule50, 0, historyRule50, 0, historyZobristKey.size)
+        PlatformSpecific.arrayCopy(board.historyCastlingRights, 0, historyCastlingRights, 0, historyZobristKey.size)
+        PlatformSpecific.arrayCopy(board.historyEpSquare, 0, historyEpSquare, 0, historyZobristKey.size)
+        PlatformSpecific.arrayCopy(board.historyPawnZobristKey, 0, historyPawnZobristKey, 0, historyZobristKey.size)
+        PlatformSpecific.arrayCopy(board.historyCapturedPiece, 0, historyCapturedPiece, 0, historyZobristKey.size)
         for (index in historyBasicEvalInfo.indices) {
             historyBasicEvalInfo[index].copy(board.historyBasicEvalInfo[index])
         }

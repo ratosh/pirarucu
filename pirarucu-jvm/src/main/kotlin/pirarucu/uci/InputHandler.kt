@@ -4,7 +4,7 @@ import pirarucu.board.factory.BoardFactory
 import pirarucu.search.MultiThreadedSearch
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.Perft
-import pirarucu.util.Utils
+import pirarucu.util.PlatformSpecific
 
 class InputHandler : IInputHandler {
     override fun newGame() {
@@ -51,7 +51,7 @@ class InputHandler : IInputHandler {
                 MultiThreadedSearch.threads = value.toInt()
             }
             else -> {
-                Utils.specific.applyConfig(option, value.toInt())
+                PlatformSpecific.applyConfig(option, value.toInt())
 
                 TunableConstants.update()
             }
@@ -87,9 +87,9 @@ class InputHandler : IInputHandler {
     }
 
     override fun perft(tokens: Array<String>) {
-        val startTime = Utils.specific.currentTimeMillis()
+        val startTime = PlatformSpecific.currentTimeMillis()
         val perftResult = Perft.perft(MultiThreadedSearch.mainBoard(), tokens[1].toInt())
-        val totalTime = Utils.specific.currentTimeMillis() - startTime
+        val totalTime = PlatformSpecific.currentTimeMillis() - startTime
         val nps = perftResult * 1000 / totalTime
         UciOutput.println("$perftResult nodes in ${totalTime}ms ($nps nps)")
     }

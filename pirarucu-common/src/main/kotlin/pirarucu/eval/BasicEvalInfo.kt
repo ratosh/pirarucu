@@ -6,7 +6,7 @@ import pirarucu.board.Color
 import pirarucu.board.Piece
 import pirarucu.board.Square
 import pirarucu.move.BitboardMove
-import pirarucu.util.Utils
+import pirarucu.util.PlatformSpecific
 
 class BasicEvalInfo {
 
@@ -27,11 +27,13 @@ class BasicEvalInfo {
             val theirColor = Color.invertColor(ourColor)
             val theirPieceBitboard = board.pieceBitboard[theirColor]
             val kingSquarePosition = board.kingSquare[ourColor]
-            setPinned(kingSquarePosition,
+            setPinned(
+                kingSquarePosition,
                 ourColor,
                 theirColor,
                 theirPieceBitboard,
-                board.colorBitboard)
+                board.colorBitboard
+            )
         }
 
         val ourColor = board.colorToMove
@@ -63,16 +65,19 @@ class BasicEvalInfo {
     /**
      * Updates pinnedBitboard
      */
-    private fun setPinned(kingSquare: Int,
-                          ourColor: Int,
-                          theirColor: Int,
-                          theirPieceBitboard: LongArray,
-                          colorBitboard: LongArray) {
+    private fun setPinned(
+        kingSquare: Int,
+        ourColor: Int,
+        theirColor: Int,
+        theirPieceBitboard: LongArray,
+        colorBitboard: LongArray
+    ) {
 
         val theirColorBitboard = colorBitboard[theirColor]
         if (theirPieceBitboard[Piece.BISHOP] or
             theirPieceBitboard[Piece.ROOK] or
-            theirPieceBitboard[Piece.QUEEN] != Bitboard.EMPTY) {
+            theirPieceBitboard[Piece.QUEEN] != Bitboard.EMPTY
+        ) {
 
             var pinned = 0L
 
@@ -100,6 +105,6 @@ class BasicEvalInfo {
     fun copy(basicEvalInfo: BasicEvalInfo) {
         checkBitboard = basicEvalInfo.checkBitboard
         pinnedBitboard = basicEvalInfo.pinnedBitboard
-        Utils.specific.arrayCopy(basicEvalInfo.dangerBitboard, dangerBitboard)
+        PlatformSpecific.arrayCopy(basicEvalInfo.dangerBitboard, dangerBitboard)
     }
 }

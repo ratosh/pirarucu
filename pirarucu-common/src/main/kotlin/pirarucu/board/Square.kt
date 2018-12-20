@@ -1,6 +1,6 @@
 package pirarucu.board
 
-import pirarucu.util.Utils
+import pirarucu.util.PlatformSpecific
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -94,7 +94,8 @@ object Square {
         "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5",
         "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
         "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
-        "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8", "-")
+        "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8", "-"
+    )
 
     init {
         populateDistance()
@@ -105,11 +106,11 @@ object Square {
     }
 
     fun getSquare(bitboard: Long): Int {
-        return Utils.specific.numberOfTrailingZeros(bitboard)
+        return PlatformSpecific.numberOfTrailingZeros(bitboard)
     }
 
     fun getSquare(bitboard: Int): Int {
-        return Utils.specific.numberOfTrailingZeros(bitboard)
+        return PlatformSpecific.numberOfTrailingZeros(bitboard)
     }
 
     fun getSquare(square: String): Int {
@@ -141,7 +142,7 @@ object Square {
         if (bitboard == 0L) {
             return IntArray(0)
         }
-        val squareCount = Utils.specific.bitCount(bitboard)
+        val squareCount = PlatformSpecific.bitCount(bitboard)
         val result = IntArray(squareCount)
         var index = 0
         for (i in 0 until Square.SIZE) {
@@ -194,8 +195,10 @@ object Square {
     }
 
     private fun calculateDistance(square1: Int, square2: Int): Int {
-        return max(abs(File.getFile(square1) - File.getFile(square2)),
-            abs(Rank.getRank(square1) - Rank.getRank(square2)))
+        return max(
+            abs(File.getFile(square1) - File.getFile(square2)),
+            abs(Rank.getRank(square1) - Rank.getRank(square2))
+        )
     }
 
     fun flipHorizontal(square: Int): Int {
