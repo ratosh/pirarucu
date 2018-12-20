@@ -99,6 +99,20 @@ class MoveGeneratorTest {
     }
 
     @Test
+    fun testInCheckPromotion() {
+        val board = BoardFactory.getBoard("1q3K2/2P5/8/8/5k2/8/8/8 w - -")
+        val moveList = OrderedMoveList()
+        moveGenerator.legalAttacks(board, attackInfo, moveList)
+        var legalMoves = 0
+        while (moveList.hasNext()) {
+            if (board.isLegalMove(moveList.next())) {
+                legalMoves++
+            }
+        }
+        assertEquals(legalMoves, 8)
+    }
+
+    @Test
     fun testPawnBlockedMove() {
         val board = BoardFactory.getBoard("5k2/8/8/3p4/3P4/8/8/5K2 w - -")
         val moveList = OrderedMoveList()
