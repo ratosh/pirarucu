@@ -227,8 +227,7 @@ class Board {
                 val tmpBitboard = gameBitboard xor fromBitboard xor
                     Bitboard.getBitboard(epSquare) xor BitboardMove.PAWN_MOVES[nextColorToMove][epSquare]
                 return MoveGenerator.squareAttackedBitboard(
-                    kingSquare[colorToMove], colorToMove,
-                    pieceBitboard[nextColorToMove], tmpBitboard
+                    kingSquare[colorToMove], colorToMove, pieceBitboard[nextColorToMove], tmpBitboard
                 ) == Bitboard.EMPTY
             }
             else -> {
@@ -239,8 +238,7 @@ class Board {
                     val toSquare = Move.getToSquare(move)
 
                     return MoveGenerator.squareAttackedBitboard(
-                        toSquare, colorToMove, pieceBitboard[nextColorToMove],
-                        tmpBitboard
+                        toSquare, colorToMove, pieceBitboard[nextColorToMove], tmpBitboard
                     ) == Bitboard.EMPTY
                 }
                 return true
