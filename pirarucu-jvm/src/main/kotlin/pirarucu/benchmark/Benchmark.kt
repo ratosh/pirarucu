@@ -7,8 +7,8 @@ import pirarucu.search.MainSearch
 import pirarucu.search.SearchOptions
 import pirarucu.search.SimpleSearchInfoListener
 import pirarucu.uci.UciOutput
+import pirarucu.util.PlatformSpecific
 import pirarucu.util.epd.EpdFileLoader
-import pirarucu.util.Utils
 
 object Benchmark {
 
@@ -31,7 +31,7 @@ object Benchmark {
         searchOptions.maxSearchTime = 60000L
         searchOptions.searchTimeIncrement = 1000L
         val board = BoardFactory.getBoard()
-        val startTime = Utils.specific.currentTimeMillis()
+        val startTime = PlatformSpecific.currentTimeMillis()
         for (epdInfo in iterator) {
             BoardFactory.setBoard(epdInfo.fenPosition, board)
             transpositionTable.reset()
@@ -41,7 +41,7 @@ object Benchmark {
             nodeCount += mainSearch.searchInfo.searchNodes
             println("Board (" + epdInfo.fenPosition + ") | Nodes: " + mainSearch.searchInfo.searchNodes)
         }
-        val timeTaken = Utils.specific.currentTimeMillis() - startTime
+        val timeTaken = PlatformSpecific.currentTimeMillis() - startTime
 
         println("-")
         println("Time  : ${timeTaken}ms")

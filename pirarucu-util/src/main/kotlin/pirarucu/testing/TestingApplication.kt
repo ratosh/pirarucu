@@ -8,20 +8,20 @@ import pirarucu.search.SearchOptions
 import pirarucu.search.SimpleSearchInfoListener
 import pirarucu.uci.UciOutput
 import pirarucu.util.epd.EpdFileLoader
-import pirarucu.util.Utils
 import java.util.concurrent.ExecutionException
+import kotlin.system.measureTimeMillis
 
 object TestingApplication {
 
     @Throws(ExecutionException::class, InterruptedException::class)
     @JvmStatic
     fun main(args: Array<String>) {
-        val startTime = Utils.specific.currentTimeMillis()
-        val fileLoader = EpdFileLoader("G:/chess/epds/STS/STS.epd")
-        val testScore = test(fileLoader, 8)
-        val timeTaken = Utils.specific.currentTimeMillis() - startTime
+        val timeTaken = measureTimeMillis {
+            val fileLoader = EpdFileLoader("G:/chess/epds/STS/STS.epd")
+            val testScore = test(fileLoader, 8)
+            println("Test score $testScore.")
+        }
         println("Time taken (ms) $timeTaken")
-        println("Test score $testScore.")
     }
 
     fun test(testFile: EpdFileLoader, depth: Int): Int {

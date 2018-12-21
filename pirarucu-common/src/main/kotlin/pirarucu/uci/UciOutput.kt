@@ -3,7 +3,7 @@ package pirarucu.uci
 
 import pirarucu.move.Move
 import pirarucu.search.SearchInfo
-import pirarucu.util.Utils
+import pirarucu.util.PlatformSpecific
 
 object UciOutput {
 
@@ -50,7 +50,7 @@ object UciOutput {
     fun hashfullInfo(
         searchInfo: SearchInfo
     ) {
-        val currentTime = Utils.specific.currentTimeMillis()
+        val currentTime = PlatformSpecific.currentTimeMillis()
         if (currentTime - latestHashfull >= HASHFULL_DELAY) {
             info("hashfull ${searchInfo.transpositionTable.getUsageSample()}")
             latestHashfull = currentTime

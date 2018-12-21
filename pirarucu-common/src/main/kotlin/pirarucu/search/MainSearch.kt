@@ -14,7 +14,7 @@ import pirarucu.move.Move
 import pirarucu.move.MovePicker
 import pirarucu.move.MoveType
 import pirarucu.tuning.TunableConstants
-import pirarucu.util.Utils
+import pirarucu.util.PlatformSpecific
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -58,7 +58,7 @@ class MainSearch(
         searchInfo.searchNodes++
         if (!rootNode &&
             searchInfo.searchNodes and 0xFFFL == 0xFFFL &&
-            searchOptions.maxSearchTimeLimit < Utils.specific.currentTimeMillis()
+            searchOptions.maxSearchTimeLimit < PlatformSpecific.currentTimeMillis()
         ) {
             searchOptions.stop = true
             return 0
@@ -501,7 +501,7 @@ class MainSearch(
                     }
                 }
 
-                val currentTime = Utils.specific.currentTimeMillis()
+                val currentTime = PlatformSpecific.currentTimeMillis()
 
                 searchInfo.save(board)
                 searchInfoListener.searchInfo(depth, currentTime - searchOptions.startTime, searchInfo)

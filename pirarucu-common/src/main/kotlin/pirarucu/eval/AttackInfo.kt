@@ -6,7 +6,7 @@ import pirarucu.board.Color
 import pirarucu.board.Piece
 import pirarucu.board.Square
 import pirarucu.move.BitboardMove
-import pirarucu.util.Utils
+import pirarucu.util.PlatformSpecific
 
 class AttackInfo {
 
@@ -25,8 +25,8 @@ class AttackInfo {
             return
         }
         zobristKey[color] = board.zobristKey
-        Utils.specific.arrayFill(pieceMovement[color], 0)
-        Utils.specific.arrayFill(attacksBitboard[color], 0)
+        PlatformSpecific.arrayFill(pieceMovement[color], 0)
+        PlatformSpecific.arrayFill(attacksBitboard[color], 0)
         val checkBitboard = board.basicEvalInfo.checkBitboard
 
         val mask = when {

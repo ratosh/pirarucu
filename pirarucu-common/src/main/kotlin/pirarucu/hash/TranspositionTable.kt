@@ -4,7 +4,7 @@ import pirarucu.board.Bitboard
 import pirarucu.board.Board
 import pirarucu.board.Square
 import pirarucu.eval.EvalConstants
-import pirarucu.util.Utils
+import pirarucu.util.PlatformSpecific
 import kotlin.math.min
 
 /**
@@ -61,8 +61,8 @@ class TranspositionTable(sizeMb: Int) {
     fun reset() {
         baseDepth = 0
 
-        Utils.specific.arrayFill(keys, 0)
-        Utils.specific.arrayFill(infos, 0)
+        PlatformSpecific.arrayFill(keys, 0)
+        PlatformSpecific.arrayFill(infos, 0)
     }
 
     fun findEntry(board: Board): Long {

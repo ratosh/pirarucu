@@ -4,7 +4,7 @@ import pirarucu.board.Bitboard
 import pirarucu.board.Board
 import pirarucu.board.Square
 import pirarucu.eval.EvalConstants
-import pirarucu.util.Utils
+import pirarucu.util.PlatformSpecific
 
 /**
  * 160 Bits per cache entry
@@ -20,7 +20,7 @@ class PawnEvaluationCache(sizeMb: Int) {
     private val passed = LongArray(tableLimit)
 
     fun reset() {
-        Utils.specific.arrayFill(keys, 0)
+        PlatformSpecific.arrayFill(keys, 0)
     }
 
     fun findEntry(board: Board): Int {

@@ -1,11 +1,13 @@
 package pirarucu.tuning.texel
 
-import pirarucu.util.Utils
+import pirarucu.util.PlatformSpecific
 import java.util.Arrays
 import java.util.BitSet
 
-data class TexelTuningData(val name: String, val elementList: IntArray, val bitsPerValue: IntArray,
-                           val allowNegatives: Boolean, val ignoreElementList: IntArray, val increment: Int) {
+data class TexelTuningData(
+    val name: String, val elementList: IntArray, val bitsPerValue: IntArray,
+    val allowNegatives: Boolean, val ignoreElementList: IntArray, val increment: Int
+) {
 
     private var upperBounds = IntArray(elementList.size)
     private var lowerBounds = IntArray(elementList.size)
@@ -48,7 +50,7 @@ data class TexelTuningData(val name: String, val elementList: IntArray, val bits
         }
         totalBits = bitsPerValue.sum()
         geneIndex = 0
-        Utils.specific.arrayCopy(elementList, 0, originalElementList, 0, elementList.size)
+        PlatformSpecific.arrayCopy(elementList, 0, originalElementList, 0, elementList.size)
         bestResult()
     }
 
@@ -115,11 +117,11 @@ data class TexelTuningData(val name: String, val elementList: IntArray, val bits
     }
 
     fun bestResult() {
-        Utils.specific.arrayCopy(elementList, 0, bestElementList, 0, elementList.size)
+        PlatformSpecific.arrayCopy(elementList, 0, bestElementList, 0, elementList.size)
     }
 
     fun bestInteractionResult() {
-        Utils.specific.arrayCopy(elementList, 0, bestInteractionElementList, 0, elementList.size)
+        PlatformSpecific.arrayCopy(elementList, 0, bestInteractionElementList, 0, elementList.size)
     }
 
     fun getBestInteractionElement(): String {
@@ -147,7 +149,8 @@ data class TexelTuningData(val name: String, val elementList: IntArray, val bits
     fun hasNext(): Boolean {
         while (currentIndex < elementList.size &&
             (Arrays.binarySearch(ignoreElementList, currentIndex) >= 0 ||
-                !insideBounds(currentIndex, currentIncrement))) {
+                !insideBounds(currentIndex, currentIncrement))
+        ) {
             currentIndex++
         }
         if (currentIndex >= elementList.size) {
