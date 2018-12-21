@@ -469,11 +469,9 @@ class MainSearch(
                 val previousScore = score
 
                 score = search(board, depth, 0, alpha, beta, true)
-
-                searchInfo.save(board)
-
-                val currentTime = Utils.specific.currentTimeMillis()
-                searchInfoListener.searchInfo(depth, currentTime - searchOptions.startTime, searchInfo)
+                if (searchOptions.stop) {
+                    break
+                }
 
                 if (depth > 4) {
                     if (score < previousScore &&
@@ -502,6 +500,11 @@ class MainSearch(
                         wantedSearchTime -= searchTimeIncrement
                     }
                 }
+
+                val currentTime = Utils.specific.currentTimeMillis()
+
+                searchInfo.save(board)
+                searchInfoListener.searchInfo(depth, currentTime - searchOptions.startTime, searchInfo)
 
                 if (wantedSearchTime < currentTime) {
                     searchOptions.stop = true
