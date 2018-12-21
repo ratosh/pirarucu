@@ -189,28 +189,16 @@ class MoveGenerator(private val history: History) {
     ) {
         val ourColor = board.colorToMove
         val theirColor = board.nextColorToMove
-        val pawnBitboard = board.pieceBitboard[ourColor][Piece.PAWN]
+        val pawnBitboard = board.pieceBitboard[ourColor][Piece.PAWN] and board.basicEvalInfo.pinnedBitboard.inv()
         var promotionLocation = BitboardMove.pawnForward(ourColor, pawnBitboard) and
             Bitboard.PROMOTION_BITBOARD and
             board.emptyBitboard and
             attackInfo.movementMask[ourColor]
-        val kingSquare = board.kingSquare[ourColor]
         while (promotionLocation != Bitboard.EMPTY) {
             val toSquare = Square.getSquare(promotionLocation)
-            val toBitboard = Bitboard.getBitboard(toSquare)
-            var bitboard = BitboardMove.PAWN_MOVES[theirColor][toSquare] and pawnBitboard
+            val fromSquare = toSquare + BitboardMove.PAWN_FORWARD[theirColor]
 
-            while (bitboard != Bitboard.EMPTY) {
-                val fromSquare = Square.getSquare(bitboard)
-                val fromBitboard = Bitboard.getBitboard(fromSquare)
-                // Skip pinned pieces not attacking the pinner
-                if (fromBitboard and board.basicEvalInfo.pinnedBitboard == Bitboard.EMPTY ||
-                    BitboardMove.PINNED_MOVE_MASK[kingSquare][fromSquare] and toBitboard != Bitboard.EMPTY
-                ) {
-                    createPromotions(board, moveList, fromSquare, toSquare)
-                }
-                bitboard = bitboard and bitboard - 1
-            }
+            createPromotions(board, moveList, fromSquare, toSquare)
 
             promotionLocation = promotionLocation and promotionLocation - 1
         }
