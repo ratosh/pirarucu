@@ -1,6 +1,5 @@
 package pirarucu.tuning.texel
 
-import pirarucu.board.Piece
 import pirarucu.eval.EvalConstants
 import pirarucu.tuning.ErrorUtil
 import pirarucu.tuning.EvaluationErrorEvaluator
@@ -25,7 +24,6 @@ object TexelTuningApplication {
                 TunableConstants.PHASE_PIECE_VALUE,
                 intArrayOf(0, 4, 5, 5, 6, 7, 0),
                 false, 0, 6))
-                */
 
             tuningObject.registerTuningData(
                 TexelTuningData(
@@ -386,25 +384,27 @@ object TexelTuningApplication {
                     true, intArrayOf(0, 1, 4, 5, 6), 1
                 )
             )
+            */
 
             tuningObject.registerTuningData(
                 TexelTuningData(
-                    "PAWN_BONUS_MG",
-                    TunableConstants.PAWN_BONUS_MG,
-                    intArrayOf(8, 8, 8, 8, 8),
+                    "PAWN_STRUCTURE_MG",
+                    TunableConstants.PAWN_STRUCTURE_MG,
+                    intArrayOf(8, 8, 8, 8, 8, 8),
                     true, intArrayOf(), 1
                 )
             )
 
             tuningObject.registerTuningData(
                 TexelTuningData(
-                    "PAWN_BONUS_EG",
-                    TunableConstants.PAWN_BONUS_EG,
-                    intArrayOf(8, 8, 8, 8, 8),
+                    "PAWN_STRUCTURE_EG",
+                    TunableConstants.PAWN_STRUCTURE_EG,
+                    intArrayOf(8, 8, 8, 8, 8, 8),
                     true, intArrayOf(), 1
                 )
             )
 
+            /*
             tuningObject.registerTuningData(
                 TexelTuningData(
                     "PASSED_PAWN_MG",
@@ -710,6 +710,7 @@ object TexelTuningApplication {
                     false, intArrayOf(0, 4, 6), 1
                 )
             )
+            */
 
             return tuningObject
         }
