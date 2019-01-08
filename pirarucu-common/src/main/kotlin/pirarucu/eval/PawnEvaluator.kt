@@ -104,13 +104,16 @@ object PawnEvaluator {
         var result = 0
         while (tmpPieces != Bitboard.EMPTY) {
             val pawnSquare = Square.getSquare(tmpPieces)
+            val pawnMoves = BitboardMove.PAWN_MOVES[ourColor][pawnSquare]
 
             val stoppers = PASSED_MASK[ourColor][pawnSquare] and theirPawns
-            val supporters = PASSED_MASK[theirColor][pawnSquare] and ourPawns
             val stack = FRONTSPAN_MASK[ourColor][pawnSquare] and ourPawns
+            val blockers = FRONTSPAN_MASK[ourColor][pawnSquare] and theirPawns
             val neighbours = NEIGHBOURS_MASK[pawnSquare] and ourPawns
-            val defended = BitboardMove.PAWN_ATTACKS[theirColor][pawnSquare] and ourPawns
+            val defense = BitboardMove.PAWN_ATTACKS[theirColor][pawnSquare] and ourPawns
             val phalanx = BitboardMove.NEIGHBOURS[pawnSquare] and ourPawns
+            val supporters = PASSED_MASK[theirColor][pawnSquare] and ourPawns
+            val dangerAdvance = attackInfo.attacksBitboard[theirColor][Piece.PAWN] and pawnMoves
 
             if (stack != Bitboard.EMPTY) {
                 result += TunableConstants.PAWN_STRUCTURE[TunableConstants.PAWN_STRUCTURE_STACKED]
@@ -122,13 +125,16 @@ object PawnEvaluator {
             if (neighbours == Bitboard.EMPTY) {
                 result += TunableConstants.PAWN_STRUCTURE[TunableConstants.PAWN_STRUCTURE_ISOLATED]
             } else {
-                if (defended != Bitboard.EMPTY) {
+                if (defense != Bitboard.EMPTY) {
                     result += TunableConstants.PAWN_STRUCTURE[TunableConstants.PAWN_STRUCTURE_DEFENDED]
-                } else if (supporters == Bitboard.EMPTY) {
-                    result += TunableConstants.PAWN_STRUCTURE[TunableConstants.PAWN_STRUCTURE_BACKWARD]
-                }
-                if (phalanx != Bitboard.EMPTY) {
+                } else if (phalanx != Bitboard.EMPTY) {
                     result += TunableConstants.PAWN_STRUCTURE[TunableConstants.PAWN_STRUCTURE_PHALANX]
+                } else if (supporters == Bitboard.EMPTY && dangerAdvance != Bitboard.EMPTY) {
+                    result += if (blockers == Bitboard.EMPTY) {
+                        TunableConstants.PAWN_STRUCTURE[TunableConstants.PAWN_STRUCTURE_BACKWARD_HALF_OPEN]
+                    } else {
+                        TunableConstants.PAWN_STRUCTURE[TunableConstants.PAWN_STRUCTURE_BACKWARD]
+                    }
                 }
             }
 

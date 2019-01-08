@@ -155,9 +155,10 @@ object TunableConstants {
     const val PAWN_STRUCTURE_ISOLATED = 2
     const val PAWN_STRUCTURE_STACKED = 3
     const val PAWN_STRUCTURE_BACKWARD = 4
+    const val PAWN_STRUCTURE_BACKWARD_HALF_OPEN = 5
 
-    val PAWN_STRUCTURE_MG = intArrayOf(21, 11, -13, -6, -4)
-    val PAWN_STRUCTURE_EG = intArrayOf(5, 5, -13, -10, -9)
+    val PAWN_STRUCTURE_MG = intArrayOf(23, 9, -12, -6, -2, -20)
+    val PAWN_STRUCTURE_EG = intArrayOf(4, -1, -12, -11, -9, -16)
     val PAWN_STRUCTURE = IntArray(PAWN_STRUCTURE_EG.size)
 
     val PASSED_PAWN_MG = intArrayOf(0, -7, -8, -18, 3, 7, 104, 0)
