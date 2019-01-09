@@ -35,14 +35,7 @@ object TunableConstants {
     val MATERIAL_SCORE_EG = intArrayOf(0, 116, 327, 352, 606, 1066)
     val MATERIAL_SCORE = IntArray(Piece.SIZE)
 
-    val QS_FUTILITY_VALUE = intArrayOf(
-        0,
-        max(MATERIAL_SCORE_MG[1], MATERIAL_SCORE_EG[1]),
-        max(MATERIAL_SCORE_MG[2], MATERIAL_SCORE_EG[2]),
-        max(MATERIAL_SCORE_MG[3], MATERIAL_SCORE_EG[3]),
-        max(MATERIAL_SCORE_MG[4], MATERIAL_SCORE_EG[4]),
-        max(MATERIAL_SCORE_MG[5], MATERIAL_SCORE_EG[5])
-    )
+    val QS_FUTILITY_VALUE = IntArray(Piece.SIZE)
 
     val SEE_VALUE = intArrayOf(0, 100, 325, 330, 550, 900, 0)
 
@@ -157,15 +150,16 @@ object TunableConstants {
     val PAWN_THREAT_EG = intArrayOf(0, 0, 18, 46, 0, 0, 0)
     val PAWN_THREAT = IntArray(Piece.SIZE)
 
-    const val PAWN_BONUS_SUPPORTED = 0
-    const val PAWN_BONUS_PHALANX = 1
-    const val PAWN_BONUS_ISOLATED = 2
-    const val PAWN_BONUS_STACKED = 3
-    const val PAWN_BONUS_BACKWARD = 4
+    const val PAWN_STRUCTURE_DEFENDED = 0
+    const val PAWN_STRUCTURE_PHALANX = 1
+    const val PAWN_STRUCTURE_ISOLATED = 2
+    const val PAWN_STRUCTURE_STACKED = 3
+    const val PAWN_STRUCTURE_BACKWARD = 4
+    const val PAWN_STRUCTURE_BACKWARD_HALF_OPEN = 5
 
-    val PAWN_BONUS_MG = intArrayOf(22, 9, -9, -5, 0)
-    val PAWN_BONUS_EG = intArrayOf(5, -1, -9, -13, -3)
-    val PAWN_BONUS = IntArray(PAWN_BONUS_EG.size)
+    val PAWN_STRUCTURE_MG = intArrayOf(23, 9, -12, -6, -2, -20)
+    val PAWN_STRUCTURE_EG = intArrayOf(4, -1, -12, -11, -9, -16)
+    val PAWN_STRUCTURE = IntArray(PAWN_STRUCTURE_EG.size)
 
     val PASSED_PAWN_MG = intArrayOf(0, -7, -8, -18, 3, 7, 104, 0)
     val PASSED_PAWN_EG = intArrayOf(0, -47, -39, -2, 34, 126, 230, 0)
@@ -268,6 +262,13 @@ object TunableConstants {
             MATERIAL_SCORE[piece] = SplitValue.mergeParts(MATERIAL_SCORE_MG[piece], MATERIAL_SCORE_EG[piece])
         }
 
+        for (index in QS_FUTILITY_VALUE.indices) {
+            QS_FUTILITY_VALUE[index] = max(
+                SplitValue.getFirstPart(MATERIAL_SCORE[index]),
+                SplitValue.getSecondPart(MATERIAL_SCORE[index])
+            )
+        }
+
         for (piece in Piece.PAWN until Piece.SIZE) {
             var psqPosition = 0
             for (rank in Rank.RANK_1 until Rank.SIZE) {
@@ -299,8 +300,8 @@ object TunableConstants {
             PAWN_THREAT[piece] = SplitValue.mergeParts(PAWN_THREAT_MG[piece], PAWN_THREAT_EG[piece])
         }
 
-        for (index in 0 until PAWN_BONUS.size) {
-            PAWN_BONUS[index] = SplitValue.mergeParts(PAWN_BONUS_MG[index], PAWN_BONUS_EG[index])
+        for (index in 0 until PAWN_STRUCTURE.size) {
+            PAWN_STRUCTURE[index] = SplitValue.mergeParts(PAWN_STRUCTURE_MG[index], PAWN_STRUCTURE_EG[index])
         }
 
         for (index in 0 until PASSED_PAWN.size) {

@@ -82,64 +82,60 @@ object PawnEvaluator {
     }
 
     fun evaluate(board: Board, attackInfo: AttackInfo): Int {
+        var structureScore = EvalConstants.SCORE_UNKNOWN
         if (EvalConstants.PAWN_EVAL_CACHE) {
-            val info = pawnEvalCache.findEntry(board)
-            if (info != EvalConstants.SCORE_UNKNOWN) {
-                return info +
-                    evaluatePassedPawn(board, attackInfo, Color.WHITE, Color.BLACK) -
-                    evaluatePassedPawn(board, attackInfo, Color.BLACK, Color.WHITE)
-            }
+            structureScore = pawnEvalCache.findEntry(board)
+        }
+        if (structureScore == EvalConstants.SCORE_UNKNOWN) {
+            structureScore = evaluatePawnStructure(board, attackInfo, Color.WHITE, Color.BLACK) -
+                evaluatePawnStructure(board, attackInfo, Color.BLACK, Color.WHITE)
+            pawnEvalCache.saveEntry(board, structureScore, board.evalInfo.passedPawnBitboard)
         }
 
-        val result = evaluatePawn(board, attackInfo, Color.WHITE, Color.BLACK) -
-            evaluatePawn(board, attackInfo, Color.BLACK, Color.WHITE)
-
-        pawnEvalCache.saveEntry(board, result, board.evalInfo.passedPawnBitboard)
-
-        return result +
+        return structureScore +
             evaluatePassedPawn(board, attackInfo, Color.WHITE, Color.BLACK) -
             evaluatePassedPawn(board, attackInfo, Color.BLACK, Color.WHITE)
     }
 
-    private fun evaluatePawn(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
+    private fun evaluatePawnStructure(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
         var tmpPieces = board.pieceBitboard[ourColor][Piece.PAWN]
         val ourPawns = board.pieceBitboard[ourColor][Piece.PAWN]
         val theirPawns = board.pieceBitboard[theirColor][Piece.PAWN]
         var result = 0
         while (tmpPieces != Bitboard.EMPTY) {
             val pawnSquare = Square.getSquare(tmpPieces)
+            val pawnMoves = BitboardMove.PAWN_MOVES[ourColor][pawnSquare]
 
-            val passed = PASSED_MASK[ourColor][pawnSquare] and theirPawns == Bitboard.EMPTY
+            val stoppers = PASSED_MASK[ourColor][pawnSquare] and theirPawns
+            val stack = FRONTSPAN_MASK[ourColor][pawnSquare] and ourPawns
+            val blockers = FRONTSPAN_MASK[ourColor][pawnSquare] and theirPawns
+            val neighbours = NEIGHBOURS_MASK[pawnSquare] and ourPawns
+            val defense = BitboardMove.PAWN_ATTACKS[theirColor][pawnSquare] and ourPawns
+            val phalanx = BitboardMove.NEIGHBOURS[pawnSquare] and ourPawns
+            val supporters = PASSED_MASK[theirColor][pawnSquare] and ourPawns
+            val dangerAdvance = attackInfo.attacksBitboard[theirColor][Piece.PAWN] and pawnMoves
 
-            val isolated = NEIGHBOURS_MASK[pawnSquare] and ourPawns == Bitboard.EMPTY
-            val phalanx = BitboardMove.NEIGHBOURS[pawnSquare] and ourPawns != Bitboard.EMPTY
-            val supported = BitboardMove.PAWN_ATTACKS[theirColor][pawnSquare] and ourPawns != Bitboard.EMPTY
-            val stacked = FRONTSPAN_MASK[ourColor][pawnSquare] and ourPawns != Bitboard.EMPTY
-            val backward = PASSED_MASK[theirColor][pawnSquare] and ourPawns != Bitboard.EMPTY
-
-            if (supported) {
-                result += TunableConstants.PAWN_BONUS[TunableConstants.PAWN_BONUS_SUPPORTED]
-            }
-
-            if (phalanx) {
-                result += TunableConstants.PAWN_BONUS[TunableConstants.PAWN_BONUS_PHALANX]
-            }
-
-            if (isolated) {
-                result += TunableConstants.PAWN_BONUS[TunableConstants.PAWN_BONUS_ISOLATED]
-            }
-
-            if (stacked) {
-                result += TunableConstants.PAWN_BONUS[TunableConstants.PAWN_BONUS_STACKED]
-            }
-
-            if (backward) {
-                result += TunableConstants.PAWN_BONUS[TunableConstants.PAWN_BONUS_BACKWARD]
-            }
-
-            if (passed) {
+            if (stack != Bitboard.EMPTY) {
+                result += TunableConstants.PAWN_STRUCTURE[TunableConstants.PAWN_STRUCTURE_STACKED]
+            } else if (stoppers == Bitboard.EMPTY) {
                 board.evalInfo.passedPawnBitboard = board.evalInfo.passedPawnBitboard or
                     Bitboard.getBitboard(pawnSquare)
+            }
+
+            if (neighbours == Bitboard.EMPTY) {
+                result += TunableConstants.PAWN_STRUCTURE[TunableConstants.PAWN_STRUCTURE_ISOLATED]
+            } else {
+                if (defense != Bitboard.EMPTY) {
+                    result += TunableConstants.PAWN_STRUCTURE[TunableConstants.PAWN_STRUCTURE_DEFENDED]
+                } else if (phalanx != Bitboard.EMPTY) {
+                    result += TunableConstants.PAWN_STRUCTURE[TunableConstants.PAWN_STRUCTURE_PHALANX]
+                } else if (supporters == Bitboard.EMPTY && dangerAdvance != Bitboard.EMPTY) {
+                    result += if (blockers == Bitboard.EMPTY) {
+                        TunableConstants.PAWN_STRUCTURE[TunableConstants.PAWN_STRUCTURE_BACKWARD_HALF_OPEN]
+                    } else {
+                        TunableConstants.PAWN_STRUCTURE[TunableConstants.PAWN_STRUCTURE_BACKWARD]
+                    }
+                }
             }
 
             tmpPieces = tmpPieces and tmpPieces - 1
