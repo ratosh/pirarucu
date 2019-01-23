@@ -2,7 +2,12 @@
 
 # Pirarucu
 
-A Kotlin Chess Engine with Universal Chess Interface protocol support with more than 2900 CCRL Rating.
+A Kotlin Chess Engine with Universal Chess Interface protocol support with more than 2950 CCRL Rating.
+
+## Results
+
+- [Computer Chess Rating Lists 40/4](http://www.computerchess.org.uk/ccrl/404/cgi/compare_engines.cgi?family=Pirarucu&print=Rating+list&print=Results+table&print=LOS+table&print=Ponder+hit+table&print=Eval+difference+table&print=Comopp+gamenum+table&print=Overlap+table&print=Score+with+common+opponents)
+- [Computer Chess Rating Lists 40/40](http://www.computerchess.org.uk/ccrl/4040/cgi/compare_engines.cgi?family=Pirarucu&print=Rating+list&print=Results+table&print=LOS+table&print=Ponder+hit+table&print=Eval+difference+table&print=Comopp+gamenum+table&print=Overlap+table&print=Score+with+common+opponents)
 
 ## Concepts
 
@@ -60,16 +65,10 @@ The engine runs on JRE (Java Runtime Environment) version 8 and above.
 
 - [Arena](http://www.playwitharena.com)
 - [Cutechess](https://github.com/cutechess/cutechess)
-- [Lucaschess](https://lucaschess.pythonanywhere.com)
 
 ## Contributions
 
 You are welcome to contribute, please follow the [instructions](CONTRIBUTING.md).
-
-## Results
-
-- [Computer Chess Rating Lists 40/4](http://www.computerchess.org.uk/ccrl/404/cgi/compare_engines.cgi?family=Pirarucu&print=Rating+list&print=Results+table&print=LOS+table&print=Ponder+hit+table&print=Eval+difference+table&print=Comopp+gamenum+table&print=Overlap+table&print=Score+with+common+opponents)
-- [Computer Chess Rating Lists 40/40](http://www.computerchess.org.uk/ccrl/4040/cgi/compare_engines.cgi?family=Pirarucu&print=Rating+list&print=Results+table&print=LOS+table&print=Ponder+hit+table&print=Eval+difference+table&print=Comopp+gamenum+table&print=Overlap+table&print=Score+with+common+opponents)
 
 ## Appreciation
 
