@@ -55,8 +55,8 @@ object TunableConstants {
             0, 0, 0
         ),
         intArrayOf(
-            -205, -133, -130, -23, -94, -53, 36, -15, -19, 36, 25, 42, 3, 17, 14, 27, -6, 15, 17, 20, -17, 10, 14, 23,
-            -12, -20, 6, 20, -54, -5, -26, -1
+            -203, -132, -129, -23, -94, -51, 37, 13, -22, 38, 19, 43, 4, 14, 10, 28, -4, 14, 22, 25, -18, -8, 14, 26,
+            -14, -16, 4, 19, -50, -9, -22, -9
         ),
         intArrayOf(
             -42, -53, -142, -128, -80, -35, -21, -50, 3, 24, 26, 19, -11, -8, 8, 23, -11, 1, -2, 22, -6, 11, 19, 10, 2,
@@ -92,8 +92,8 @@ object TunableConstants {
             -18, -11, -14, 0, 0, 0, 0
         ),
         intArrayOf(
-            -47, -31, -1, -19, -20, -6, -26, 3, -30, -19, 8, 10, -10, 1, 24, 27, -9, -4, 15, 21, -18, -20, -6, 9, -34,
-            -15, -16, -8, -30, -33, -14, -12
+            -43, -31, -2, -19, -25, -8, -28, 8, -26, -16, 8, 0, -3, 5, 22, 29, -17, -7, 12, 22, -15, -22, -6, 10, -34,
+            -12, -15, -3, -30, -35, -17, -13
         ),
         intArrayOf(
             -9, -5, 10, 13, 5, 0, 1, 2, -3, -12, -4, -11, 0, -4, 3, 4, -8, -9, 2, 2, -7, -9, -5, 1, -18, -23, -13, -8,
@@ -218,10 +218,10 @@ object TunableConstants {
     val SAFE_CHECK_THREAT_EG = intArrayOf(0, 0, 2, 33, 0, 94, 0)
     val SAFE_CHECK_THREAT = IntArray(Piece.SIZE)
 
-    val OTHER_BONUS_BISHOP_PAIR = 0
-    val OTHER_BONUS_ROOK_ON_SEVENTH = 1
-    val OTHER_BONUS_ROOK_OPEN_FILE = 2
-    val OTHER_BONUS_ROOK_HALF_OPEN_FILE = 3
+    const val OTHER_BONUS_BISHOP_PAIR = 0
+    const val OTHER_BONUS_ROOK_ON_SEVENTH = 1
+    const val OTHER_BONUS_ROOK_OPEN_FILE = 2
+    const val OTHER_BONUS_ROOK_HALF_OPEN_FILE = 3
 
     val OTHER_BONUS_MG = intArrayOf(25, 0, 33, 11)
     val OTHER_BONUS_EG = intArrayOf(55, 14, 2, 4)
