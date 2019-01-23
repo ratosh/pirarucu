@@ -39,10 +39,7 @@ class InputHandler : IInputHandler {
     }
 
     override fun setOption(option: String, value: String) {
-        if (MultiThreadedSearch.isRunning()) {
-            UciOutput.info("Search is running, please wait.")
-            return
-        }
+        println("Handling setoption $option $value")
         when (option.toLowerCase()) {
             "hash" -> {
                 MultiThreadedSearch.transpositionTable.resize(value.toInt())

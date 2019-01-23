@@ -1,6 +1,7 @@
 package pirarucu.util
 
 import pirarucu.tuning.TunableConstants
+import pirarucu.uci.UciOutput
 import java.security.SecureRandom
 import java.util.Arrays
 
@@ -75,6 +76,7 @@ actual object PlatformSpecific {
     }
 
     actual fun applyConfig(option: String, value: Int) {
+        UciOutput.println("Setting $option with value $value")
         val optionList = option.split('-')
 
         val field = TunableConstants::class.java.getDeclaredField(optionList[0])
@@ -83,6 +85,7 @@ actual object PlatformSpecific {
             1 -> {
                 field.isAccessible = true
                 field.set(TunableConstants::class.java, value)
+                println("Result " + field.get(TunableConstants::class.java))
             }
             2 -> {
                 field.isAccessible = true
@@ -96,6 +99,7 @@ actual object PlatformSpecific {
         }
         if (constant != null) {
             updateArray(constant, optionList[optionList.size - 1].toInt(), value)
+            UciOutput.println("Result ${constant.toList()}")
         }
     }
 
