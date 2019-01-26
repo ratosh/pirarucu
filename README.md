@@ -2,7 +2,7 @@
 
 # Pirarucu
 
-A Kotlin Chess Engine with Universal Chess Interface protocol support with more than 2950 CCRL Rating.
+A Kotlin Chess Engine with Universal Chess Interface protocol support and more than 2950 CCRL Rating.
 
 ## Results
 
