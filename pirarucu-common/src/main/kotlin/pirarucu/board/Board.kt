@@ -306,7 +306,9 @@ class Board {
                     zobristKey = zobristKey xor
                         Zobrist.PIECE_SQUARE_TABLE[ourColor][promotedPiece][toSquare]
                 } else {
-                    if (fromSquare xor toSquare == 16) {
+                    if (fromSquare xor toSquare == 16 &&
+                        BitboardMove.NEIGHBOURS[toSquare] and pieceBitboard[theirColor][Piece.PAWN] != 0L
+                    ) {
                         epSquare = toSquare xor 8
                         zobristKey = zobristKey xor Zobrist.PASSANT_SQUARE[epSquare]
                     }
