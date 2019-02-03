@@ -306,12 +306,10 @@ class Board {
                     zobristKey = zobristKey xor
                         Zobrist.PIECE_SQUARE_TABLE[ourColor][promotedPiece][toSquare]
                 } else {
-                    val betweenBitboard =
-                        BitboardMove.BETWEEN_BITBOARD[fromSquare][toSquare]
-                    if (betweenBitboard != 0L && BitboardMove.NEIGHBOURS[toSquare]
-                        and pieceBitboard[theirColor][Piece.PAWN] != 0L
+                    if (fromSquare xor toSquare == 16 &&
+                        BitboardMove.NEIGHBOURS[toSquare] and pieceBitboard[theirColor][Piece.PAWN] != 0L
                     ) {
-                        epSquare = Square.getSquare(betweenBitboard)
+                        epSquare = toSquare xor 8
                         zobristKey = zobristKey xor Zobrist.PASSANT_SQUARE[epSquare]
                     }
                     pawnZobristKey = pawnZobristKey xor
