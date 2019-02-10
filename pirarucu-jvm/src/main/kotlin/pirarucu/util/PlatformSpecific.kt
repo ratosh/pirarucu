@@ -96,6 +96,11 @@ actual object PlatformSpecific {
                 val arrayConstant = field.get(null) as Array<IntArray>
                 constant = arrayConstant[optionList[1].toInt()]
             }
+            4 -> {
+                field.isAccessible = true
+                val arrayConstant = field.get(null) as Array<Array<IntArray>>
+                constant = arrayConstant[optionList[1].toInt()][optionList[2].toInt()]
+            }
         }
         if (constant != null) {
             updateArray(constant, optionList[optionList.size - 1].toInt(), value)
