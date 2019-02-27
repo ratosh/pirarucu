@@ -2,9 +2,11 @@ package pirarucu.tuning
 
 import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory
+import pirarucu.cache.PawnEvaluationCache
 import pirarucu.eval.EvalConstants
 import pirarucu.game.GameConstants
 import pirarucu.hash.TranspositionTable
+import pirarucu.search.History
 import pirarucu.search.MainSearch
 import pirarucu.search.SearchOptions
 import pirarucu.search.SimpleSearchInfoListener
@@ -72,7 +74,10 @@ class SearchErrorEvaluator(threads: Int = 1) {
             searchOptions.maxSearchTime = 60000L
 
             val transpositionTable = TranspositionTable(ttSize)
-            val search = MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable)
+            val pawnEvaluationCache = PawnEvaluationCache(ttSize)
+            val history = History()
+            val search =
+                MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable, pawnEvaluationCache, history)
             val board = Board()
 
             for (index in start until end) {

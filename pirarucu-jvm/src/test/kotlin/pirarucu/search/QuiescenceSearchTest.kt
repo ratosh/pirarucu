@@ -1,6 +1,7 @@
 package pirarucu.search
 
 import pirarucu.board.factory.BoardFactory
+import pirarucu.cache.PawnEvaluationCache
 import pirarucu.eval.AttackInfo
 import pirarucu.eval.EvalConstants
 import pirarucu.eval.Evaluator
@@ -13,16 +14,20 @@ import kotlin.test.assertTrue
 
 class QuiescenceSearchTest {
 
-    private var searchInfo = SearchInfo(TranspositionTable(1))
-    private var quiescenceSearch = QuiescenceSearch(searchInfo)
+    private var searchInfo = SearchInfo(TranspositionTable(1), History())
+    private val pawnCache = PawnEvaluationCache(1)
+    private var quiescenceSearch = QuiescenceSearch(searchInfo, pawnCache)
 
     private fun testSearch(fen: String, minDiff: Int, maxDiff: Int) {
         val board = BoardFactory.getBoard(fen)
-        val evalValue = Evaluator.evaluate(board, AttackInfo()) * GameConstants.COLOR_FACTOR[board.colorToMove]
-        val searchValue = quiescenceSearch.search(board,
+        val evalValue =
+            Evaluator.evaluate(board, AttackInfo(), pawnCache) * GameConstants.COLOR_FACTOR[board.colorToMove]
+        val searchValue = quiescenceSearch.search(
+            board,
             0,
             EvalConstants.SCORE_MIN,
-            EvalConstants.SCORE_MAX)
+            EvalConstants.SCORE_MAX
+        )
 
         println("ev $evalValue")
         println("sv $searchValue")

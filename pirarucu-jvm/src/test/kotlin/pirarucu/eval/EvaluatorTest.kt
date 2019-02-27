@@ -1,6 +1,7 @@
 package pirarucu.eval
 
 import pirarucu.board.factory.BoardFactory
+import pirarucu.cache.PawnEvaluationCache
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -18,39 +19,35 @@ class EvaluatorTest {
     fun tearDown() {
     }
 
-    fun evaluate(fen: String): Int {
+    private fun evaluate(fen: String): Int {
         val board = BoardFactory.getBoard(fen)
-        return Evaluator.evaluate(board, AttackInfo())
+        return Evaluator.evaluate(board, AttackInfo(), PawnEvaluationCache(1))
     }
 
     @Test
     fun testEqualKing() {
-        val board = BoardFactory.getBoard("4k3/8/8/8/8/8/8/4K3 b - -")
-        val eval = Evaluator.evaluate(board, attackInfo)
+        val eval = evaluate("4k3/8/8/8/8/8/8/4K3 b - -")
         println("eval $eval")
         assertTrue(eval < 0)
     }
 
     @Test
     fun testPawnAdvantage1() {
-        val board = BoardFactory.getBoard("4k3/4p3/8/8/8/8/8/4K3 b - -")
-        val eval = Evaluator.evaluate(board, attackInfo)
+        val eval = evaluate("4k3/4p3/8/8/8/8/8/4K3 b - -")
         println("eval $eval")
         assertTrue(eval < 0)
     }
 
     @Test
     fun testPawnAdvantage2() {
-        val board = BoardFactory.getBoard("4k3/4p3/8/8/8/8/3PP3/4K3 b - -")
-        val eval = Evaluator.evaluate(board, attackInfo)
+        val eval = evaluate("4k3/4p3/8/8/8/8/3PP3/4K3 b - -")
         println("eval $eval")
         assertTrue(eval > 0)
     }
 
     @Test
     fun testKnightVsPawn() {
-        val board = BoardFactory.getBoard("4k3/3pp3/8/8/8/8/4N3/4K3 b - -")
-        val eval = Evaluator.evaluate(board, attackInfo)
+        val eval = evaluate("4k3/3pp3/8/8/8/8/4N3/4K3 b - -")
         println("eval $eval")
         assertTrue(eval >= 0)
     }

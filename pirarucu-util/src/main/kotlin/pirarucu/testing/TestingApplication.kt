@@ -1,8 +1,10 @@
 package pirarucu.testing
 
 import pirarucu.board.factory.BoardFactory
+import pirarucu.cache.PawnEvaluationCache
 import pirarucu.eval.EvalConstants
 import pirarucu.hash.TranspositionTable
+import pirarucu.search.History
 import pirarucu.search.MainSearch
 import pirarucu.search.SearchOptions
 import pirarucu.search.SimpleSearchInfoListener
@@ -32,7 +34,9 @@ object TestingApplication {
         val searchOptions = SearchOptions()
         val transpositionTable = TranspositionTable(1)
         transpositionTable.resize(4)
-        val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable)
+        val pawnCache = PawnEvaluationCache()
+        val history = History()
+        val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable, pawnCache, history)
         searchOptions.depth = depth
         searchOptions.minSearchTime = 60000L
         searchOptions.maxSearchTime = 60000L
@@ -43,7 +47,7 @@ object TestingApplication {
             BoardFactory.setBoard(epdInfo.fenPosition, board)
             transpositionTable.reset()
             searchOptions.startControl()
-            mainSearch.searchInfo.history.reset()
+            history.reset()
 
             mainSearch.search(board)
 
