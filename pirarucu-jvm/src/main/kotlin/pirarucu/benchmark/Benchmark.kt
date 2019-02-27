@@ -1,8 +1,10 @@
 package pirarucu.benchmark
 
 import pirarucu.board.factory.BoardFactory
+import pirarucu.cache.PawnEvaluationCache
 import pirarucu.eval.EvalConstants
 import pirarucu.hash.TranspositionTable
+import pirarucu.search.History
 import pirarucu.search.MainSearch
 import pirarucu.search.SearchOptions
 import pirarucu.search.SimpleSearchInfoListener
@@ -23,9 +25,9 @@ object Benchmark {
         val iterator = epdFileLoader.getEpdInfoList()
         var nodeCount = 0L
         val searchOptions = SearchOptions()
-        val transpositionTable = TranspositionTable()
-        transpositionTable.resize(16)
-        val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable)
+        val transpositionTable = TranspositionTable(16)
+        val mainSearch =
+            MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable, PawnEvaluationCache(4), History())
         searchOptions.depth = depth
         searchOptions.minSearchTime = 60000L
         searchOptions.maxSearchTime = 60000L

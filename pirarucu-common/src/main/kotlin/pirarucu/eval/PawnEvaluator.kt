@@ -17,16 +17,10 @@ object PawnEvaluator {
     private val PASSED_MASK = Array(Color.SIZE) { LongArray(Square.SIZE) }
     private val NEIGHBOURS_MASK = LongArray(Square.SIZE)
 
-    private val pawnEvalCache = PawnEvaluationCache(32)
-
     init {
         initializeFrontSpan()
         initializePassed()
         initializeNeighbours()
-    }
-
-    fun reset() {
-        pawnEvalCache.reset()
     }
 
     private fun initializeFrontSpan() {
@@ -81,15 +75,15 @@ object PawnEvaluator {
         return Bitboard.FILES_ADJACENT[File.getFile(square)]
     }
 
-    fun evaluate(board: Board, attackInfo: AttackInfo): Int {
+    fun evaluate(board: Board, attackInfo: AttackInfo, pawnEvaluationCache: PawnEvaluationCache): Int {
         var structureScore = EvalConstants.SCORE_UNKNOWN
         if (EvalConstants.PAWN_EVAL_CACHE) {
-            structureScore = pawnEvalCache.findEntry(board)
+            structureScore = pawnEvaluationCache.findEntry(board)
         }
         if (structureScore == EvalConstants.SCORE_UNKNOWN) {
             structureScore = evaluatePawnStructure(board, attackInfo, Color.WHITE, Color.BLACK) -
                 evaluatePawnStructure(board, attackInfo, Color.BLACK, Color.WHITE)
-            pawnEvalCache.saveEntry(board, structureScore, board.evalInfo.passedPawnBitboard)
+            pawnEvaluationCache.saveEntry(board, structureScore, board.evalInfo.passedPawnBitboard)
         }
 
         return structureScore +
