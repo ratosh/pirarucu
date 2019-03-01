@@ -172,7 +172,7 @@ object MultiThreadedSearch {
 
     class HelperThread(innerId: Int) : Thread() {
         private val board = BoardFactory.getBoard()
-        private val pawnEvaluationCache = PawnEvaluationCache(32)
+        private val pawnEvaluationCache = PawnEvaluationCache()
         private val history = History()
         private val search = MainSearch(
             searchOptions, searchInfoListener, transpositionTable, pawnEvaluationCache, history
@@ -247,7 +247,7 @@ object MultiThreadedSearch {
 
     class MainThread : Thread() {
         private val board = BoardFactory.getBoard()
-        private val pawnEvaluationCache = PawnEvaluationCache(32)
+        private val pawnEvaluationCache = PawnEvaluationCache()
         private val history = History()
         private val search = MainSearch(
             searchOptions, searchInfoListener, transpositionTable, pawnEvaluationCache, history

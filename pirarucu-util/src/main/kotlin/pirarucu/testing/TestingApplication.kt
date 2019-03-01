@@ -32,9 +32,8 @@ object TestingApplication {
 
         var testScore = 0
         val searchOptions = SearchOptions()
-        val transpositionTable = TranspositionTable(1)
-        transpositionTable.resize(4)
-        val pawnCache = PawnEvaluationCache()
+        val transpositionTable = TranspositionTable(4)
+        val pawnCache = PawnEvaluationCache(1)
         val history = History()
         val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable, pawnCache, history)
         searchOptions.depth = depth
