@@ -2,8 +2,10 @@ package pirarucu.search
 
 import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory
+import pirarucu.cache.PawnEvaluationCache
 import pirarucu.eval.EvalConstants
 import pirarucu.game.GameConstants
+import pirarucu.hash.HashConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
 import pirarucu.uci.UciOutput
@@ -30,6 +32,8 @@ object MultiThreadedSearch {
     private val mainThread = MainThread()
     private val searchThreads = mutableListOf<HelperThread>()
     private var threadCount = 1
+
+    private var pawnHashSize = HashConstants.PAWN_HASH_DEFAULT_SIZE
 
     fun mainBoard(): Board {
         return board
@@ -59,6 +63,25 @@ object MultiThreadedSearch {
             threadCount = max(1, value)
             createHelperThreads()
         }
+
+    var pawnHash: Int
+        get() = pawnHashSize
+        set(value) {
+            pawnHashSize = max(1, value)
+            resizePawnHash()
+        }
+
+    private fun resizePawnHash() {
+        mainThread.resizePawnCache(pawnHashSize)
+        if (threadCount > 1) {
+            synchronized(threadListLock) {
+                for (searchThread in searchThreads) {
+                    searchThread.resizePawnCache(pawnHashSize)
+                }
+            }
+        }
+    }
+
 
     private fun createHelperThreads() {
         synchronized(threadListLock) {
@@ -149,7 +172,11 @@ object MultiThreadedSearch {
 
     class HelperThread(innerId: Int) : Thread() {
         private val board = BoardFactory.getBoard()
-        private val search = MainSearch(searchOptions, searchInfoListener, transpositionTable)
+        private val pawnEvaluationCache = PawnEvaluationCache()
+        private val history = History()
+        private val search = MainSearch(
+            searchOptions, searchInfoListener, transpositionTable, pawnEvaluationCache, history
+        )
 
         private val cycleIndex = innerId % SMP_MAX_CYCLES
         private val aspirationIndex = innerId / SMP_MAX_CYCLES
@@ -163,11 +190,16 @@ object MultiThreadedSearch {
         }
 
         fun reset() {
-            search.searchInfo.history.reset()
+            history.reset()
+            pawnEvaluationCache.reset()
         }
 
         fun setBoard(board: Board) {
             this.board.copy(board)
+        }
+
+        fun resizePawnCache(value: Int) {
+            pawnEvaluationCache.resize(value)
         }
 
         fun nodeCount(): Long {
@@ -215,7 +247,11 @@ object MultiThreadedSearch {
 
     class MainThread : Thread() {
         private val board = BoardFactory.getBoard()
-        private val search = MainSearch(searchOptions, searchInfoListener, transpositionTable)
+        private val pawnEvaluationCache = PawnEvaluationCache()
+        private val history = History()
+        private val search = MainSearch(
+            searchOptions, searchInfoListener, transpositionTable, pawnEvaluationCache, history
+        )
 
         var running = false
 
@@ -226,11 +262,16 @@ object MultiThreadedSearch {
         }
 
         fun reset() {
-            search.searchInfo.history.reset()
+            history.reset()
+            pawnEvaluationCache.reset()
         }
 
         fun setBoard(board: Board) {
             this.board.copy(board)
+        }
+
+        fun resizePawnCache(value: Int) {
+            pawnEvaluationCache.resize(value)
         }
 
         fun nodeCount(): Long {

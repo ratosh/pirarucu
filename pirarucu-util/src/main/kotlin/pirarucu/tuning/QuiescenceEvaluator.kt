@@ -2,9 +2,11 @@ package pirarucu.tuning
 
 import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory
+import pirarucu.cache.PawnEvaluationCache
 import pirarucu.eval.EvalConstants
 import pirarucu.game.GameConstants
 import pirarucu.hash.TranspositionTable
+import pirarucu.search.History
 import pirarucu.search.QuiescenceSearch
 import pirarucu.search.SearchInfo
 import pirarucu.util.epd.BasicWorkSplitter
@@ -49,7 +51,8 @@ class QuiescenceEvaluator(threads: Int = 1) {
 
         override fun evaluate() {
             val board = Board()
-            val quiescenceSearch = QuiescenceSearch(SearchInfo(TranspositionTable(1)))
+            val quiescenceSearch =
+                QuiescenceSearch(SearchInfo(TranspositionTable(1), History()), PawnEvaluationCache(1))
 
             for (index in start until end) {
                 val epdInfo = list[index]

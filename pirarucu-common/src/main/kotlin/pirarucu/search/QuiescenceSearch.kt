@@ -2,6 +2,7 @@ package pirarucu.search
 
 import pirarucu.board.Board
 import pirarucu.board.Piece
+import pirarucu.cache.PawnEvaluationCache
 import pirarucu.eval.DrawEvaluator
 import pirarucu.eval.EvalConstants
 import pirarucu.eval.Evaluator
@@ -14,16 +15,22 @@ import kotlin.math.max
 /**
  * https://chessprogramming.wikispaces.com/Quiescence+Search
  */
-class QuiescenceSearch(private val searchInfo: SearchInfo) {
+class QuiescenceSearch(private val searchInfo: SearchInfo, private val pawnEvaluationCache: PawnEvaluationCache) {
 
-    fun search(board: Board,
-               ply: Int,
-               alpha: Int,
-               beta: Int): Int {
+    fun search(
+        board: Board,
+        ply: Int,
+        alpha: Int,
+        beta: Int
+    ): Int {
         searchInfo.searchNodes++
 
         val currentNode = searchInfo.plyInfoList[ply]
-        val eval = GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board, currentNode.attackInfo)
+        val eval = GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(
+            board,
+            currentNode.attackInfo,
+            pawnEvaluationCache
+        )
 
         if (eval >= beta) {
             return eval

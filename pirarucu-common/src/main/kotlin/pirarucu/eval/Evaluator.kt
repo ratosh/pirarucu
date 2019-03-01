@@ -7,6 +7,7 @@ import pirarucu.board.File
 import pirarucu.board.Piece
 import pirarucu.board.Rank
 import pirarucu.board.Square
+import pirarucu.cache.PawnEvaluationCache
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.PlatformSpecific
 import pirarucu.util.SplitValue
@@ -14,7 +15,7 @@ import kotlin.math.min
 
 object Evaluator {
 
-    fun evaluate(board: Board, attackInfo: AttackInfo): Int {
+    fun evaluate(board: Board, attackInfo: AttackInfo, pawnEvaluationCache: PawnEvaluationCache): Int {
         board.updateEval(attackInfo)
 
         val materialScore = board.materialScore[Color.WHITE] - board.materialScore[Color.BLACK]
@@ -32,7 +33,7 @@ object Evaluator {
             board.psqScore[Color.WHITE] - board.psqScore[Color.BLACK] +
             materialScore
 
-        score += PawnEvaluator.evaluate(board, attackInfo)
+        score += PawnEvaluator.evaluate(board, attackInfo, pawnEvaluationCache)
 
         score += evalKnight(board, attackInfo, Color.WHITE, Color.BLACK) -
             evalKnight(board, attackInfo, Color.BLACK, Color.WHITE)

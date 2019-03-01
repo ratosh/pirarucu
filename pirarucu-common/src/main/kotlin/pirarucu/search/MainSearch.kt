@@ -3,6 +3,7 @@ package pirarucu.search
 import pirarucu.board.Bitboard
 import pirarucu.board.Board
 import pirarucu.board.Piece
+import pirarucu.cache.PawnEvaluationCache
 import pirarucu.eval.DrawEvaluator
 import pirarucu.eval.EvalConstants
 import pirarucu.eval.Evaluator
@@ -22,12 +23,14 @@ import kotlin.math.min
 class MainSearch(
     private val searchOptions: SearchOptions,
     private val searchInfoListener: SearchInfoListener,
-    private val transpositionTable: TranspositionTable
+    private val transpositionTable: TranspositionTable,
+    private val pawnEvaluationCache: PawnEvaluationCache,
+    val history: History
 ) {
 
-    val searchInfo = SearchInfo(transpositionTable)
+    val searchInfo = SearchInfo(transpositionTable, history)
 
-    private val quiescenceSearch = QuiescenceSearch(searchInfo)
+    private val quiescenceSearch = QuiescenceSearch(searchInfo, pawnEvaluationCache)
 
     private fun search(
         board: Board,
@@ -107,7 +110,11 @@ class MainSearch(
 
         if (ply >= GameConstants.MAX_PLIES) {
             return if (eval == EvalConstants.SCORE_UNKNOWN) {
-                GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board, currentNode.attackInfo)
+                GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(
+                    board,
+                    currentNode.attackInfo,
+                    pawnEvaluationCache
+                )
             } else {
                 eval
             }
@@ -116,7 +123,10 @@ class MainSearch(
         // Prunes
         if (prunable) {
             if (eval == EvalConstants.SCORE_UNKNOWN) {
-                eval = GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(board, currentNode.attackInfo)
+                eval = GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(
+                    board, currentNode.attackInfo,
+                    pawnEvaluationCache
+                )
             }
 
             // Futility pruning
@@ -326,7 +336,7 @@ class MainSearch(
 
                 if (!isCapture &&
                     newDepth < TunableConstants.FUTILITY_HISTORY_MARGIN.size &&
-                    searchInfo.history.getHistoryScore(board.colorToMove, move) <
+                    history.getHistoryScore(board.colorToMove, move) <
                     TunableConstants.FUTILITY_HISTORY_MARGIN[newDepth]
                 ) {
                     skipQuiets = true
@@ -408,12 +418,12 @@ class MainSearch(
             if (searchAlpha >= currentBeta) {
                 if (isQuiet) {
                     currentNode.addKillerMove(move)
-                    searchInfo.history.addHistory(board.colorToMove, move, powerDepth)
+                    history.addHistory(board.colorToMove, move, powerDepth)
                 }
                 break
             }
             if (isQuiet) {
-                searchInfo.history.addHistory(board.colorToMove, move, -powerDepth)
+                history.addHistory(board.colorToMove, move, -powerDepth)
             }
         }
 
