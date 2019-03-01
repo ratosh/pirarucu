@@ -4,6 +4,7 @@ import pirarucu.board.Board
 import pirarucu.board.Square
 import pirarucu.board.factory.BoardFactory
 import pirarucu.board.factory.FenFactory
+import pirarucu.cache.PawnEvaluationCache
 import pirarucu.eval.EvalConstants
 import pirarucu.game.GameConstants
 import pirarucu.hash.HashConstants
@@ -17,7 +18,8 @@ class MainSearchTest {
 
     private var searchOptions = SearchOptions()
     private val transpositionTable = TranspositionTable(1)
-    private val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable)
+    private val mainSearch =
+        MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable, PawnEvaluationCache(1), History())
 
     fun testSearch(fen: String, searchTime: Long) {
         transpositionTable.reset()

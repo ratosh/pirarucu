@@ -2,6 +2,7 @@ package pirarucu.tuning
 
 import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory
+import pirarucu.cache.PawnEvaluationCache
 import pirarucu.eval.AttackInfo
 import pirarucu.eval.EvalConstants
 import pirarucu.eval.Evaluator
@@ -49,10 +50,11 @@ class EvaluationErrorEvaluator(threads: Int = 1) {
         override fun evaluate() {
             val board = Board()
             val attackInfo = AttackInfo()
+            val pawnEvalCache = PawnEvaluationCache(1)
             for (index in start until end) {
                 val entry = list[index]
                 BoardFactory.setBoard(entry.fenPosition, board)
-                entry.eval = Evaluator.evaluate(board, attackInfo)
+                entry.eval = Evaluator.evaluate(board, attackInfo, pawnEvalCache)
             }
         }
     }

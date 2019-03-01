@@ -1,9 +1,9 @@
 package pirarucu.cache
 
-import pirarucu.board.Bitboard
 import pirarucu.board.Board
-import pirarucu.board.Square
 import pirarucu.eval.EvalConstants
+import pirarucu.hash.HashConstants
+import pirarucu.hash.TranspositionTable
 import pirarucu.util.PlatformSpecific
 
 /**
@@ -11,13 +11,31 @@ import pirarucu.util.PlatformSpecific
  */
 class PawnEvaluationCache(sizeMb: Int) {
 
-    private val tableBits = Square.getSquare(sizeMb) + 16
-    var tableLimit = Bitboard.getBitboard(tableBits).toInt()
-    private val indexShift = 64 - tableBits
+    private var currentHashSize = sizeMb
 
-    private val keys = LongArray(tableLimit)
-    private val values = IntArray(tableLimit)
-    private val passed = LongArray(tableLimit)
+    private var tableBits = TranspositionTable.calculateTableBits(sizeMb)
+    var tableElementCount = TranspositionTable.calculateTableElements(tableBits)
+    private var indexShift = TranspositionTable.calculateIndexShift(tableBits)
+
+    private var keys = LongArray(tableElementCount)
+    private var values = IntArray(tableElementCount)
+    private var passed = LongArray(tableElementCount)
+
+    constructor() : this(HashConstants.PAWN_HASH_DEFAULT_SIZE)
+
+    fun resize(sizeMb: Int) {
+        if (currentHashSize == sizeMb) {
+            return
+        }
+        currentHashSize = sizeMb
+        tableBits = TranspositionTable.calculateTableBits(sizeMb)
+        tableElementCount = TranspositionTable.calculateTableElements(tableBits)
+        indexShift = TranspositionTable.calculateIndexShift(tableBits)
+
+        keys = LongArray(tableElementCount)
+        values = IntArray(tableElementCount)
+        passed = LongArray(tableElementCount)
+    }
 
     fun reset() {
         PlatformSpecific.arrayFill(keys, 0)

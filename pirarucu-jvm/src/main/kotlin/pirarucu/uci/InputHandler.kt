@@ -44,6 +44,9 @@ class InputHandler : IInputHandler {
             "hash" -> {
                 MultiThreadedSearch.transpositionTable.resize(value.toInt())
             }
+            "pawnhash" -> {
+                MultiThreadedSearch.pawnHash = value.toInt()
+            }
             "threads" -> {
                 MultiThreadedSearch.threads = value.toInt()
             }

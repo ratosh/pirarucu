@@ -1,6 +1,8 @@
 package pirarucu.hash
 
 object HashConstants {
+    const val PAWN_HASH_DEFAULT_SIZE = 32
+
     const val TRANSPOSITION_TABLE_SIZE = 256
     const val TRANSPOSITION_TABLE_BUCKET_SIZE = 4
 
