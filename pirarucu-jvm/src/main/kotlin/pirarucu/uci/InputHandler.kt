@@ -30,7 +30,6 @@ class InputHandler : IInputHandler {
             }
             index += 2
         }
-        MultiThreadedSearch.flushBoard()
         MultiThreadedSearch.search()
     }
 

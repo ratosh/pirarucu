@@ -39,8 +39,16 @@ class CastlingRightsTest {
     fun testFilterCastlingRight() {
         assertEquals(CastlingRights.filterCastlingRight(Color.WHITE, CastlingRights.ANY_CASTLING),
             CastlingRights.WHITE_CASTLING_RIGHTS)
+        assertEquals(CastlingRights.filterCastlingRight(Color.WHITE, CastlingRights.WHITE_CASTLING_RIGHTS),
+            CastlingRights.WHITE_CASTLING_RIGHTS)
+        assertEquals(CastlingRights.filterCastlingRight(Color.WHITE, CastlingRights.BLACK_CASTLING_RIGHTS),
+            CastlingRights.NO_CASTLING)
         assertEquals(CastlingRights.filterCastlingRight(Color.BLACK, CastlingRights.ANY_CASTLING),
             CastlingRights.BLACK_CASTLING_RIGHTS)
+        assertEquals(CastlingRights.filterCastlingRight(Color.BLACK, CastlingRights.BLACK_CASTLING_RIGHTS),
+            CastlingRights.BLACK_CASTLING_RIGHTS)
+        assertEquals(CastlingRights.filterCastlingRight(Color.BLACK, CastlingRights.WHITE_CASTLING_RIGHTS),
+            CastlingRights.NO_CASTLING)
     }
 
     @Test
