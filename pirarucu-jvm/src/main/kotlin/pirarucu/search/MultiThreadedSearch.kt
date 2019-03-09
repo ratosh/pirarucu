@@ -47,10 +47,12 @@ object MultiThreadedSearch {
         if (mainThread.running) {
             return true
         }
-        synchronized(threadListLock) {
-            for (thread in searchThreads) {
-                if (thread.running) {
-                    return true
+        if (threadCount > 1) {
+            synchronized(threadListLock) {
+                for (thread in searchThreads) {
+                    if (thread.running) {
+                        return true
+                    }
                 }
             }
         }
@@ -87,13 +89,13 @@ object MultiThreadedSearch {
         synchronized(threadListLock) {
             while (searchThreads.size < threadCount - 1) {
                 val helperThread = HelperThread(searchThreads.size)
-                UciOutput.info(" creating helper thread ${helperThread.name}")
+                UciOutput.info("creating helper thread ${helperThread.name}")
                 searchThreads.add(helperThread)
                 helperThread.start()
             }
             while (searchThreads.size > threadCount - 1) {
                 val helperThread = searchThreads.last()
-                UciOutput.info(" removing helper thread ${helperThread.name}")
+                UciOutput.info("removing helper thread ${helperThread.name}")
                 searchThreads.remove(helperThread)
             }
         }
@@ -132,7 +134,9 @@ object MultiThreadedSearch {
         if (threadCount > 1) {
             synchronized(threadListLock) {
                 for (searchThread in searchThreads) {
-                    result += searchThread.nodeCount()
+                    if (searchThread.running) {
+                        result += searchThread.nodeCount()
+                    }
                 }
             }
         }
@@ -159,17 +163,6 @@ object MultiThreadedSearch {
         board.doMove(Move.getMove(board, moveString))
     }
 
-    fun flushBoard() {
-        mainThread.setBoard(board)
-        if (threadCount > 1) {
-            synchronized(threadListLock) {
-                for (searchThread in searchThreads) {
-                    searchThread.setBoard(board)
-                }
-            }
-        }
-    }
-
     class HelperThread(innerId: Int) : Thread() {
         private val board = BoardFactory.getBoard()
         private val pawnEvaluationCache = PawnEvaluationCache()
@@ -194,7 +187,7 @@ object MultiThreadedSearch {
             pawnEvaluationCache.reset()
         }
 
-        fun setBoard(board: Board) {
+        private fun setBoard(board: Board) {
             this.board.copy(board)
         }
 
@@ -207,6 +200,7 @@ object MultiThreadedSearch {
         }
 
         private fun helperSearch() {
+            setBoard(MultiThreadedSearch.board)
             var score = EvalConstants.SCORE_MIN
             searchDepth = 0
             search.searchInfo.reset()
@@ -266,7 +260,7 @@ object MultiThreadedSearch {
             pawnEvaluationCache.reset()
         }
 
-        fun setBoard(board: Board) {
+        private fun setBoard(board: Board) {
             this.board.copy(board)
         }
 
@@ -285,6 +279,7 @@ object MultiThreadedSearch {
                         startLock.wait()
                     }
                 }
+                setBoard(MultiThreadedSearch.board)
 
                 search.search(board)
                 synchronized(startLock) {
