@@ -214,8 +214,8 @@ object TunableConstants {
     val KING_THREAT_EG = intArrayOf(0, 0, -1, 2, 1, 8, 0)
     val KING_THREAT = IntArray(Piece.SIZE)
 
-    val SAFE_CHECK_THREAT_MG = intArrayOf(0, 0, 115, 14, 87, 28, 0)
-    val SAFE_CHECK_THREAT_EG = intArrayOf(0, 0, 2, 33, 0, 94, 0)
+    val SAFE_CHECK_THREAT_MG = intArrayOf(0, 0, 117, 14, 87, 30, 0)
+    val SAFE_CHECK_THREAT_EG = intArrayOf(0, 0, 5, 33, 1, 99, 0)
     val SAFE_CHECK_THREAT = IntArray(Piece.SIZE)
 
     const val OTHER_BONUS_BISHOP_PAIR = 0
