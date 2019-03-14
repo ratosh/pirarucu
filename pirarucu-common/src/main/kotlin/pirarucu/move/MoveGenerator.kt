@@ -391,6 +391,10 @@ class MoveGenerator(private val history: History) {
                     return false
                 }
                 Piece.PAWN -> {
+                    val toBitboard = Bitboard.getBitboard(toSquare)
+                    if (toBitboard and Bitboard.PROMOTION_BITBOARD != Bitboard.EMPTY) {
+                        return false
+                    }
                     val checkBitboard = board.basicEvalInfo.checkBitboard
                     val mask = when {
                         checkBitboard == Bitboard.EMPTY -> {
@@ -417,7 +421,6 @@ class MoveGenerator(private val history: History) {
                         bitboard = bitboard and BitboardMove.PINNED_MOVE_MASK[kingSquare][fromSquare]
                     }
 
-                    val toBitboard = Bitboard.getBitboard(toSquare)
                     return (toBitboard and bitboard != Bitboard.EMPTY)
                 }
                 else -> {
