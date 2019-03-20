@@ -218,9 +218,6 @@ object PawnEvaluator {
         while (pawnPush != Bitboard.EMPTY) {
             val square = Square.getSquare(pawnPush)
 
-            if (board.pieceTypeBoard[square] == Piece.BISHOP) {
-                result = result
-            }
             result += TunableConstants.PAWN_PUSH_THREAT[board.pieceTypeBoard[square]]
 
             pawnPush = pawnPush and pawnPush - 1
