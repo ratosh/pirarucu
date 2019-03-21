@@ -210,8 +210,8 @@ object TunableConstants {
     )
     val PAWN_SHIELD = Array(2) { Array(File.SIZE / 2) { IntArray(Rank.SIZE) } }
 
-    val PAWN_PUSH_THREAT_MG = intArrayOf(0, 0, 22, 14, 13, 9, 46)
-    val PAWN_PUSH_THREAT_EG = intArrayOf(0, 0, 10, 14, 10, 9, 17)
+    val PAWN_PUSH_THREAT_MG = intArrayOf(0, 0, 23, 17, 25, 15, 40)
+    val PAWN_PUSH_THREAT_EG = intArrayOf(0, 0, 18, 11, 8, 9, 15)
     val PAWN_PUSH_THREAT = IntArray(PAWN_PUSH_THREAT_EG.size)
 
     val KING_THREAT_MG = intArrayOf(0, 0, 10, 11, 7, 10, 0)
