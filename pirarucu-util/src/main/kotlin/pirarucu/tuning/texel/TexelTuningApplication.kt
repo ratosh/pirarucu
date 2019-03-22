@@ -384,7 +384,6 @@ object TexelTuningApplication {
                     true, intArrayOf(0, 1, 4, 5, 6), 1
                 )
             )
-            */
 
             tuningObject.registerTuningData(
                 TexelTuningData(
@@ -404,7 +403,6 @@ object TexelTuningApplication {
                 )
             )
 
-            /*
             tuningObject.registerTuningData(
                 TexelTuningData(
                     "PASSED_PAWN_MG",
@@ -602,7 +600,27 @@ object TexelTuningApplication {
                     true, intArrayOf(7), 1
                 )
             )
+            */
 
+            tuningObject.registerTuningData(
+                TexelTuningData(
+                    "PAWN_PUSH_THREAT_MG",
+                    TunableConstants.PAWN_PUSH_THREAT_MG,
+                    intArrayOf(0, 0, 8, 8, 8, 8, 8),
+                    true, intArrayOf(0, 1), 1
+                )
+            )
+
+            tuningObject.registerTuningData(
+                TexelTuningData(
+                    "PAWN_PUSH_THREAT_EG",
+                    TunableConstants.PAWN_PUSH_THREAT_EG,
+                    intArrayOf(0, 0, 8, 8, 8, 8, 8),
+                    true, intArrayOf(0, 1), 1
+                )
+            )
+
+            /*
             tuningObject.registerTuningData(
                 TexelTuningData(
                     "KING_THREAT_MG",

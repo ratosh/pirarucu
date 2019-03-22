@@ -88,7 +88,9 @@ object PawnEvaluator {
 
         return structureScore +
             evaluatePassedPawn(board, attackInfo, Color.WHITE, Color.BLACK) -
-            evaluatePassedPawn(board, attackInfo, Color.BLACK, Color.WHITE)
+            evaluatePassedPawn(board, attackInfo, Color.BLACK, Color.WHITE) +
+            evalPawn(board, attackInfo, Color.WHITE, Color.BLACK) -
+            evalPawn(board, attackInfo, Color.BLACK, Color.WHITE)
     }
 
     private fun evaluatePawnStructure(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
@@ -193,6 +195,33 @@ object PawnEvaluator {
             tmpPieces = tmpPieces and tmpPieces - 1
         }
 
+        return result
+    }
+
+    private fun evalPawn(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
+        var pawnPush = BitboardMove.pawnForward(ourColor, board.pieceBitboard[ourColor][Piece.PAWN]) and
+            board.emptyBitboard and attackInfo.attacksBitboard[theirColor][Piece.PAWN].inv()
+        pawnPush = pawnPush or
+            (board.emptyBitboard and
+                attackInfo.attacksBitboard[theirColor][Piece.PAWN].inv() and
+                BitboardMove.pawnForward(
+                    ourColor,
+                    pawnPush and Bitboard.RANKS[Rank.getRelativeRank(ourColor, Rank.RANK_3)]
+                ))
+        pawnPush = pawnPush and
+            (attackInfo.attacksBitboard[ourColor][Piece.NONE] or
+                attackInfo.attacksBitboard[theirColor][Piece.NONE].inv())
+        pawnPush = BitboardMove.pawnAttacks(ourColor, pawnPush) and board.colorBitboard[theirColor]
+
+        var result = 0
+
+        while (pawnPush != Bitboard.EMPTY) {
+            val square = Square.getSquare(pawnPush)
+
+            result += TunableConstants.PAWN_PUSH_THREAT[board.pieceTypeBoard[square]]
+
+            pawnPush = pawnPush and pawnPush - 1
+        }
         return result
     }
 }
