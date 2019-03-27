@@ -214,8 +214,8 @@ object TunableConstants {
     val PAWN_PUSH_THREAT_EG = intArrayOf(0, 0, 18, 11, 8, 9, 15)
     val PAWN_PUSH_THREAT = IntArray(PAWN_PUSH_THREAT_EG.size)
 
-    val KING_THREAT_MG = intArrayOf(0, 0, 10, 11, 7, 10, 0)
-    val KING_THREAT_EG = intArrayOf(0, 0, -1, 2, 1, 8, 0)
+    val KING_THREAT_MG = intArrayOf(0, 0, 12, 13, 11, 14, 0)
+    val KING_THREAT_EG = intArrayOf(0, 0, -2, 2, -2, 11, 0)
     val KING_THREAT = IntArray(Piece.SIZE)
 
     val SAFE_CHECK_THREAT_MG = intArrayOf(0, 0, 117, 14, 87, 30, 0)
