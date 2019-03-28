@@ -118,7 +118,7 @@ object TunableConstants {
     val MOBILITY_MG = arrayOf(
         intArrayOf(),
         intArrayOf(),
-        intArrayOf(-31, -24, -14, -10, 2, 8, 17, 23, 42),
+        intArrayOf(-30, -30, -14, -12, 2, 10, 18, 22, 38),
         intArrayOf(-30, -16, -3, 3, 7, 13, 17, 18, 19, 24, 41, 62, -18, 73),
         intArrayOf(-69, -51, -46, -38, -36, -26, -21, -13, -1, 8, 17, 30, 35, 34, 48),
         intArrayOf(
@@ -131,7 +131,7 @@ object TunableConstants {
     val MOBILITY_EG = arrayOf(
         intArrayOf(),
         intArrayOf(),
-        intArrayOf(-21, -22, 5, 15, 17, 23, 19, 15, 1),
+        intArrayOf(-22, -13, 8, 14, 17, 21, 23, 14, 1),
         intArrayOf(-31, -38, -19, -8, 4, 8, 13, 16, 19, 20, 12, 13, 43, 12),
         intArrayOf(-16, -22, 12, 16, 22, 26, 32, 31, 30, 29, 29, 31, 33, 35, 32),
         intArrayOf(
