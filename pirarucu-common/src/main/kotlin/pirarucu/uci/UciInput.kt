@@ -9,10 +9,10 @@ class UciInput(private val inputHandler: IInputHandler) {
         when (tokens[0]) {
             "uci" -> {
                 UciOutput.println("id name Pirarucu v" + PlatformSpecific.getVersion())
+                UciOutput.println("id author Raoni Campos")
                 UciOutput.println("option name Hash type spin default 256 min 1 max 8192")
                 UciOutput.println("option name PawnHash type spin default 32 min 1 max 1024")
                 UciOutput.println("option name Threads type spin default 1 min 1 max 128")
-                UciOutput.println("id author Raoni Campos")
                 UciOutput.println("uciok")
             }
             "isready" -> {
