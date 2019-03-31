@@ -108,26 +108,29 @@ class MainSearch(
 
         val currentNode = searchInfo.plyInfoList[ply]
 
-        if (ply >= GameConstants.MAX_PLIES) {
-            return if (eval == EvalConstants.SCORE_UNKNOWN) {
-                GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(
-                    board,
-                    currentNode.attackInfo,
-                    pawnEvaluationCache
-                )
-            } else {
-                eval
+        if (eval == EvalConstants.SCORE_UNKNOWN) {
+            eval = GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(
+                board, currentNode.attackInfo,
+                pawnEvaluationCache
+            )
+        }
+        val staticEval = eval
+
+        if (foundInfo != HashConstants.EMPTY_INFO) {
+            if (ttScoreType == HashConstants.SCORE_TYPE_EXACT_SCORE ||
+                ttScoreType == HashConstants.SCORE_TYPE_BOUND_UPPER && ttScore < eval ||
+                ttScoreType == HashConstants.SCORE_TYPE_BOUND_LOWER && ttScore > eval
+            ) {
+                eval = ttScore
             }
+        }
+
+        if (ply >= GameConstants.MAX_PLIES) {
+            return eval
         }
 
         // Prunes
         if (prunable) {
-            if (eval == EvalConstants.SCORE_UNKNOWN) {
-                eval = GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(
-                    board, currentNode.attackInfo,
-                    pawnEvaluationCache
-                )
-            }
 
             // Futility pruning
             if (newDepth < TunableConstants.FUTILITY_CHILD_MARGIN.size &&
@@ -445,7 +448,7 @@ class MainSearch(
         }
 
         if (!searchOptions.stop) {
-            transpositionTable.save(board, eval, bestScore, scoreType, newDepth, ply, bestMove)
+            transpositionTable.save(board, staticEval, bestScore, scoreType, newDepth, ply, bestMove)
         }
 
         return bestScore
