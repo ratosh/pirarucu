@@ -154,11 +154,12 @@ class MainSearch(
 
             // Null move pruning
             if (!skipNullMove &&
+                newDepth > SearchConstants.NMP_DEPTH &&
                 eval >= currentBeta &&
                 board.hasNonPawnMaterial(board.colorToMove)
             ) {
                 board.doNullMove()
-                val reduction = 3 + newDepth / 3
+                val reduction = SearchConstants.NMP_DEPTH + newDepth / 3
                 val score = -search(
                     board, newDepth - reduction, ply + 1, -currentBeta, -currentBeta + 1,
                     true
