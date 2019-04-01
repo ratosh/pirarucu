@@ -3,7 +3,9 @@ package pirarucu.search
 object SearchConstants {
     val ASPIRATION_WINDOW_SIZE = arrayOf(20, 22, 24, 26, 28, 30, 32, 34)
 
-    const val NMP_DEPTH = 3
+    const val NMP_MIN_DEPTH = 1
+    const val NMP_REDUCTION = 3
+    const val NMP_REDUCTION_DIVISOR = 3
 
     const val NEGATIVE_SEE_DEPTH = 7
     const val NEGATIVE_SEE_MARGIN = -20
