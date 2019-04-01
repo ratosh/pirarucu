@@ -4,7 +4,6 @@ import pirarucu.board.factory.BoardFactory
 import pirarucu.eval.AttackInfo
 import pirarucu.move.Move
 import pirarucu.move.MoveGenerator
-import pirarucu.move.MoveList
 import pirarucu.move.MoveType
 import pirarucu.move.OrderedMoveList
 import pirarucu.search.History
