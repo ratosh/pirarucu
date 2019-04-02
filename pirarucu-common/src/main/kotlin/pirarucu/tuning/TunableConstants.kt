@@ -222,6 +222,10 @@ object TunableConstants {
     val SAFE_CHECK_THREAT_EG = intArrayOf(0, 0, 5, 33, 1, 99, 0)
     val SAFE_CHECK_THREAT = IntArray(Piece.SIZE)
 
+    val PINNED_BONUS_MG = intArrayOf(0, 18, -44, 0, -9, -1, 0)
+    val PINNED_BONUS_EG = intArrayOf(0, 17, -57, -30, -8, 0, 0)
+    val PINNED_BONUS = IntArray(Piece.SIZE)
+
     const val OTHER_BONUS_BISHOP_PAIR = 0
     const val OTHER_BONUS_ROOK_ON_SEVENTH = 1
     const val OTHER_BONUS_ROOK_OPEN_FILE = 2
@@ -333,6 +337,10 @@ object TunableConstants {
 
         for (index in 0 until SAFE_CHECK_THREAT.size) {
             SAFE_CHECK_THREAT[index] = SplitValue.mergeParts(SAFE_CHECK_THREAT_MG[index], SAFE_CHECK_THREAT_EG[index])
+        }
+
+        for (index in 0 until PINNED_BONUS.size) {
+            PINNED_BONUS[index] = SplitValue.mergeParts(PINNED_BONUS_MG[index], PINNED_BONUS_EG[index])
         }
 
         for (index in 0 until PASSED_PAWN_BONUS.size) {

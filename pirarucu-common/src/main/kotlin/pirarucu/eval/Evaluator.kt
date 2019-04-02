@@ -50,6 +50,9 @@ object Evaluator {
         score += evalKing(board, attackInfo, Color.WHITE, Color.BLACK) -
             evalKing(board, attackInfo, Color.BLACK, Color.WHITE)
 
+        score += evalOther(board, attackInfo, Color.WHITE, Color.BLACK) -
+            evalOther(board, attackInfo, Color.BLACK, Color.WHITE)
+
         val mgScore = SplitValue.getFirstPart(score)
         val egScore = SplitValue.getSecondPart(score)
 
@@ -361,6 +364,18 @@ object Evaluator {
         val kingMobility = attackBitboard and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
         result += TunableConstants.MOBILITY[Piece.KING][PlatformSpecific.bitCount(kingMobility)]
 
+        return result
+    }
+
+    private fun evalOther(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
+        var result = 0
+        var pinnedUndefended = board.basicEvalInfo.pinnedBitboard and board.colorBitboard[ourColor] and
+            attackInfo.attacksBitboard[ourColor][Piece.NONE].inv()
+        while (pinnedUndefended != Bitboard.EMPTY) {
+            val square = Square.getSquare(pinnedUndefended)
+            result += TunableConstants.PINNED_BONUS[board.pieceTypeBoard[square]]
+            pinnedUndefended = pinnedUndefended and pinnedUndefended - 1
+        }
         return result
     }
 }
