@@ -369,12 +369,11 @@ object Evaluator {
 
     private fun evalOther(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
         var result = 0
-        var pinnedUndefended = board.basicEvalInfo.pinnedBitboard and board.colorBitboard[ourColor] and
-            attackInfo.attacksBitboard[ourColor][Piece.NONE].inv()
-        while (pinnedUndefended != Bitboard.EMPTY) {
-            val square = Square.getSquare(pinnedUndefended)
+        var pinnedPieces = board.basicEvalInfo.pinnedBitboard and board.colorBitboard[ourColor]
+        while (pinnedPieces != Bitboard.EMPTY) {
+            val square = Square.getSquare(pinnedPieces)
             result += TunableConstants.PINNED_BONUS[board.pieceTypeBoard[square]]
-            pinnedUndefended = pinnedUndefended and pinnedUndefended - 1
+            pinnedPieces = pinnedPieces and pinnedPieces - 1
         }
         return result
     }
