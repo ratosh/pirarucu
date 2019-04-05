@@ -222,8 +222,8 @@ object TunableConstants {
     val SAFE_CHECK_THREAT_EG = intArrayOf(0, 0, 5, 33, 1, 99, 0)
     val SAFE_CHECK_THREAT = IntArray(Piece.SIZE)
 
-    val PINNED_BONUS_MG = intArrayOf(0, 0, -17, -17, -25, -30, 0)
-    val PINNED_BONUS_EG = intArrayOf(0, 0, -20, -21, -25, -40, 0)
+    val PINNED_BONUS_MG = intArrayOf(0, -14, -14, -8, -19, -8, 0)
+    val PINNED_BONUS_EG = intArrayOf(0, 8, -18, -11, -13, -18, 0)
     val PINNED_BONUS = IntArray(Piece.SIZE)
 
     const val OTHER_BONUS_BISHOP_PAIR = 0
