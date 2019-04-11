@@ -600,7 +600,6 @@ object TexelTuningApplication {
                     true, intArrayOf(7), 1
                 )
             )
-            */
 
             tuningObject.registerTuningData(
                 TexelTuningData(
@@ -620,7 +619,6 @@ object TexelTuningApplication {
                 )
             )
 
-            /*
             tuningObject.registerTuningData(
                 TexelTuningData(
                     "KING_THREAT_MG",
@@ -656,7 +654,27 @@ object TexelTuningApplication {
                     false, intArrayOf(0, 1, 6), 1
                 )
             )
+            */
 
+            tuningObject.registerTuningData(
+                TexelTuningData(
+                    "PINNED_BONUS_MG",
+                    TunableConstants.PINNED_BONUS_MG,
+                    intArrayOf(0, 8, 8, 8, 8, 8, 0),
+                    true, intArrayOf(0, 6), 1
+                )
+            )
+
+            tuningObject.registerTuningData(
+                TexelTuningData(
+                    "PINNED_BONUS_EG",
+                    TunableConstants.PINNED_BONUS_EG,
+                    intArrayOf(0, 8, 8, 8, 8, 8, 0),
+                    true, intArrayOf(0, 6), 1
+                )
+            )
+
+            /*
             tuningObject.registerTuningData(
                 TexelTuningData(
                     "OTHER_BONUS_MG",
