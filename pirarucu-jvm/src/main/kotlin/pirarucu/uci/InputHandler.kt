@@ -22,6 +22,13 @@ class InputHandler : IInputHandler {
         var index = 1
         while (index < tokens.size) {
             when (tokens[index]) {
+                "infinite" -> {
+                    MultiThreadedSearch.searchOptions.whiteTime = Long.MAX_VALUE
+                    MultiThreadedSearch.searchOptions.blackTime = Long.MAX_VALUE
+                    MultiThreadedSearch.searchOptions.whiteIncrement = 0L
+                    MultiThreadedSearch.searchOptions.blackIncrement = 0L
+                    MultiThreadedSearch.searchOptions.movesToGo = 1L
+                }
                 "wtime" -> MultiThreadedSearch.searchOptions.whiteTime = tokens[index + 1].toLong()
                 "btime" -> MultiThreadedSearch.searchOptions.blackTime = tokens[index + 1].toLong()
                 "winc" -> MultiThreadedSearch.searchOptions.whiteIncrement = tokens[index + 1].toLong()
