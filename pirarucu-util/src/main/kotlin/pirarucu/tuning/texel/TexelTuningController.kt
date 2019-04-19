@@ -15,10 +15,12 @@ class TexelTuningController {
     private var currentTuningObject = 0
 
     private var bestElementResult = 0.0
+    private var prevInteractionResult = 1.0
     private var bestInteractionResult = 1.0
 
     fun initialResult(result: Double) {
         bestElementResult = result
+        prevInteractionResult = result
         reset()
     }
 
@@ -73,8 +75,10 @@ class TexelTuningController {
         if (bestElementResult > result) {
             bestElementResult = result
             setBestResult()
-            println("Improvement found -> $bestInteractionResult | " +
-                tuningDataList[currentTuningObject].getElementString())
+            println(
+                "Improvement found -> $bestInteractionResult | " +
+                    tuningDataList[currentTuningObject].getElementString()
+            )
         }
         geneCache.add(currentGenes, result)
     }
@@ -107,9 +111,10 @@ class TexelTuningController {
         printInteractionResult()
         printBestElements()
         reportList()
-        val interactionResult = bestInteractionResult
+        val oldResult = prevInteractionResult
+        prevInteractionResult = bestInteractionResult
         reset()
-        return interactionResult != bestElementResult
+        return prevInteractionResult >= oldResult
     }
 
     private fun reportList() {
