@@ -1,4 +1,6 @@
 language: java
+dist: xenial
+sudo: required
 jdk:
   - oraclejdk9
 before_install:
