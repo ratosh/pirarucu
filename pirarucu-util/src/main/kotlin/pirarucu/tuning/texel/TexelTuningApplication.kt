@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutionException
 
 object TexelTuningApplication {
 
-    private const val THREADS = 2
+    private const val THREADS = 6
 
     private val tuningObjects: TexelTuningController
         get() {
@@ -29,8 +29,8 @@ object TexelTuningApplication {
                 TexelTuningData(
                     "MATERIAL_SCORE_MG",
                     TunableConstants.MATERIAL_SCORE_MG,
-                    intArrayOf(0, 8, 10, 10, 10, 11),
-                    false, intArrayOf(0), 1
+                    intArrayOf(0, 0, 10, 10, 10, 11),
+                    false, intArrayOf(0, 1), 1
                 )
             )
 
