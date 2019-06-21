@@ -22,7 +22,7 @@ object Benchmark {
         EvalConstants.PAWN_EVAL_CACHE = false
         UciOutput.silent = true
 
-        val iterator = epdFileLoader.getEpdInfoList()
+        val iterator = epdFileLoader.epdList
         var nodeCount = 0L
         val searchOptions = SearchOptions()
         val transpositionTable = TranspositionTable(16)

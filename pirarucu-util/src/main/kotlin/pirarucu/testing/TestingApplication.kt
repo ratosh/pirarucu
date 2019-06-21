@@ -42,7 +42,7 @@ object TestingApplication {
         searchOptions.searchTimeIncrement = 60000L
         val board = BoardFactory.getBoard()
         var partialScore = 0
-        for ((index, epdInfo) in testFile.getEpdInfoList().withIndex()) {
+        for ((index, epdInfo) in testFile.epdList.withIndex()) {
             BoardFactory.setBoard(epdInfo.fenPosition, board)
             transpositionTable.reset()
             searchOptions.startControl()

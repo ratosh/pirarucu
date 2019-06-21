@@ -40,12 +40,12 @@ object EpdInfoFactory {
         } else {
             result = 0.5
         }
-        val c1Index = tempLine.indexOf("c1")
+        val c1Index = tempLine.indexOf(" c1 ")
         if (c1Index >= 0) {
             tempLine = tempLine.substring(0, c1Index)
         }
 
-        val c0Index = tempLine.indexOf("c0")
+        val c0Index = tempLine.indexOf(" c0 ")
         if (c0Index >= 0) {
             var c0String = tempLine.substring(c0Index + 3, tempLine.length).replace("\"", "").replace(" ", "")
             val c0End = c0String.indexOf(";")
