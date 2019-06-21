@@ -10,6 +10,9 @@ class EpdFileLoader(inputStream: InputStream) {
 
     private val epdInfoList = mutableListOf<EpdInfo>()
 
+    val epdList : List<EpdInfo>
+        get() = epdInfoList
+
     init {
         try {
             val scanner = Scanner(inputStream)
@@ -25,14 +28,11 @@ class EpdFileLoader(inputStream: InputStream) {
             println(
                 String.format("Found %d good positions in %d possibilities.", epdInfoList.size, lines)
             )
+            inputStream.close()
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
 
     constructor(file: String) : this(FileInputStream(File(file)))
-
-    fun getEpdInfoList(): List<EpdInfo> {
-        return epdInfoList
-    }
 }

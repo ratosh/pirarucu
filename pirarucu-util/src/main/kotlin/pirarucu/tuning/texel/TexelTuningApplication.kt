@@ -1,8 +1,11 @@
 package pirarucu.tuning.texel
 
+import pirarucu.board.Piece
 import pirarucu.eval.EvalConstants
 import pirarucu.tuning.ErrorUtil
 import pirarucu.tuning.EvaluationErrorEvaluator
+import pirarucu.tuning.QuiescenceEvaluator
+import pirarucu.tuning.SearchErrorEvaluator
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.PlatformSpecific
 import pirarucu.util.epd.EpdFileLoader
@@ -258,6 +261,7 @@ object TexelTuningApplication {
                     true, intArrayOf(), 1
                 )
             )
+            */
 
             tuningObject.registerTuningData(
                 TexelTuningData(
@@ -277,6 +281,7 @@ object TexelTuningApplication {
                 )
             )
 
+            /*
             tuningObject.registerTuningData(
                 TexelTuningData(
                     "MOBILITY_MG[BISHOP]",
@@ -654,7 +659,6 @@ object TexelTuningApplication {
                     false, intArrayOf(0, 1, 6), 1
                 )
             )
-            */
 
             tuningObject.registerTuningData(
                 TexelTuningData(
@@ -674,7 +678,6 @@ object TexelTuningApplication {
                 )
             )
 
-            /*
             tuningObject.registerTuningData(
                 TexelTuningData(
                     "OTHER_BONUS_MG",
@@ -761,11 +764,11 @@ object TexelTuningApplication {
     @Throws(ExecutionException::class, InterruptedException::class)
     private fun optimize(tuningController: TexelTuningController) {
         val list = mutableListOf<EpdInfo>()
-        val zurichess = EpdFileLoader("g:\\chess\\epds\\quiet_labeled.epd")
-        list.addAll(zurichess.getEpdInfoList())
+        val zurichess = EpdFileLoader("g:\\chess\\epds\\texel-sets\\zuri_quiet_labeled_revised.epd")
+        list.addAll(zurichess.epdList)
         val epdList = InvalidPositionFilter(THREADS).filter(list)
 
-        val evaluator = EvaluationErrorEvaluator(THREADS)
+        val evaluator = QuiescenceEvaluator(THREADS)
         evaluator.evaluate(epdList)
         var bestError = ErrorUtil.calculate(epdList)
         println("Starting error $bestError")

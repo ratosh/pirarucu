@@ -121,50 +121,58 @@ object Move {
             .replace("0", "o").replace("O", "o")
 
         // Fixing castle string
-        if (move == "oo") {
-            val castlingIndex = CastlingRights.getCastlingRightIndex(board.colorToMove, CastlingRights.KING_SIDE)
-            move = Square.toString(board.kingSquare[board.colorToMove]) +
-                Square.toString(CastlingRights.KING_FINAL_SQUARE[castlingIndex])
-        } else if (move == "ooo") {
-            val castlingIndex = CastlingRights.getCastlingRightIndex(board.colorToMove, CastlingRights.QUEEN_SIDE)
-            move = Square.toString(board.kingSquare[board.colorToMove]) +
-                Square.toString(CastlingRights.KING_FINAL_SQUARE[castlingIndex])
-        } else {
-            when (move.length) {
+        when (move) {
+            "oo" -> {
+                val castlingIndex = CastlingRights.getCastlingRightIndex(board.colorToMove, CastlingRights.KING_SIDE)
+                move = Square.toString(board.kingSquare[board.colorToMove]) +
+                    Square.toString(CastlingRights.KING_FINAL_SQUARE[castlingIndex])
+            }
+            "ooo" -> {
+                val castlingIndex = CastlingRights.getCastlingRightIndex(board.colorToMove, CastlingRights.QUEEN_SIDE)
+                move = Square.toString(board.kingSquare[board.colorToMove]) +
+                    Square.toString(CastlingRights.KING_FINAL_SQUARE[castlingIndex])
+            }
+            else -> when (move.length) {
                 2 -> {
-                    move = Square.toString(Move.getFromSquare(ourMove)) + move
+                    move = Square.toString(getFromSquare(ourMove)) + move
                 }
                 3 -> {
-                    val piece = Piece.getPiece(move[0])
-                    if (board.pieceTypeBoard[Move.getFromSquare(ourMove)] != piece) {
-                        return false
+                    if (board.pieceTypeBoard[getFromSquare(ourMove)] == Piece.PAWN) {
+                        if (File.toString(File.getFile(getFromSquare(ourMove))) != move[0]) {
+                            return false
+                        }
+                    } else {
+                        val piece = Piece.getPiece(move[0])
+                        if (board.pieceTypeBoard[getFromSquare(ourMove)] != piece) {
+                            return false
+                        }
                     }
-                    move = Square.toString(Move.getFromSquare(ourMove)) + move.substring(1, move.length)
+                    move = Square.toString(getFromSquare(ourMove)) + move.substring(1, move.length)
                 }
                 4 -> {
                     val piece = Piece.getPiece(move[0])
-                    if (board.pieceTypeBoard[Move.getFromSquare(ourMove)] != piece) {
+                    if (board.pieceTypeBoard[getFromSquare(ourMove)] != piece) {
                         return false
                     }
                     val file = File.getFile(move[1])
                     if (file != File.INVALID) {
-                        if (File.getFile(Move.getFromSquare(ourMove)) != file) {
+                        if (File.getFile(getFromSquare(ourMove)) != file) {
                             return false
                         }
                     } else {
                         val rank = Rank.getRank(move[1])
-                        if (rank != Rank.INVALID && Rank.getRank(Move.getFromSquare(ourMove)) != rank) {
+                        if (rank != Rank.INVALID && Rank.getRank(getFromSquare(ourMove)) != rank) {
                             return false
                         }
                     }
-                    move = Square.toString(Move.getFromSquare(ourMove)) + move.substring(2, move.length)
+                    move = Square.toString(getFromSquare(ourMove)) + move.substring(2, move.length)
                 }
                 5 -> {
                     move = move.substring(1, move.length)
                 }
             }
         }
-        return Move.getMove(board, move) == ourMove
+        return getMove(board, move) == ourMove
     }
 
     fun getFromTo(move: Int): Int {

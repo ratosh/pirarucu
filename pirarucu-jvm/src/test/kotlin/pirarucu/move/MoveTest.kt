@@ -40,6 +40,18 @@ class MoveTest {
     }
 
     @Test
+    fun testMoveCompatiblePawnCapture() {
+        val board = BoardFactory.getBoard("rqr3k1/4bpp1/pBbp1n1p/Pp2p3/3PPP2/2N1QNP1/1P4P1/R4R1K w - -")
+        assertTrue(Move.areMovesCompatibles(board, Move.createMove(Square.F4, Square.E5), "fxe5"))
+    }
+
+    @Test
+    fun testMoveCompatiblePawnCapture2() {
+        val board = BoardFactory.getBoard("r1qr2k1/4bp1p/2p1p1p1/2pb4/PP1P1P2/3NQ3/5BPP/R2R2K1 w - -")
+        assertTrue(Move.areMovesCompatibles(board, Move.createMove(Square.B4, Square.C5), "bxc5"))
+    }
+
+    @Test
     fun testMoveCompatibleKnightMove() {
         val board = BoardFactory.getBoard("5k2/8/8/3Np3/8/8/8/4K3 w - -")
         assertTrue(Move.areMovesCompatibles(board, Move.createMove(Square.D5, Square.C7), "Nc7"))
