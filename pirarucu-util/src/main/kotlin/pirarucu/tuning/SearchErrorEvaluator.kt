@@ -15,8 +15,10 @@ import pirarucu.util.epd.BasicWorkSplitter
 import pirarucu.util.epd.EpdInfo
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.Phaser
+import kotlin.math.max
+import kotlin.math.min
 
-class SearchErrorEvaluator(threads: Int = 1) {
+class SearchErrorEvaluator(private val threads: Int = 1) {
 
     private val forkJoinPool = ForkJoinPool(threads)
 
@@ -29,10 +31,10 @@ class SearchErrorEvaluator(threads: Int = 1) {
         EvalConstants.PAWN_EVAL_CACHE = false
     }
 
-    fun evaluate(list: List<EpdInfo>, depth: Int, cacheSize: Int) {
+    fun evaluate(list: List<EpdInfo>, depth: Int = 1, cacheSize: Int = 1) {
         val phaser = Phaser()
         phaser.register()
-        val worker = WorkerThread(list, phaser, depth, cacheSize)
+        val worker = WorkerThread(list, phaser, threads, depth, cacheSize)
         forkJoinPool.invoke(worker)
         phaser.arriveAndAwaitAdvance()
     }
@@ -47,11 +49,11 @@ class SearchErrorEvaluator(threads: Int = 1) {
         private val ttSize: Int
     ) : BasicWorkSplitter(list, start, end, workload, phaser) {
 
-        constructor(list: List<EpdInfo>, phaser: Phaser, depth: Int, ttSize: Int) : this(
+        constructor(list: List<EpdInfo>, phaser: Phaser, threads: Int, depth: Int, ttSize: Int) : this(
             list,
             0,
             list.size,
-            WORKLOAD,
+            min(max(1, list.size / threads / 100), WORKLOAD),
             phaser,
             depth,
             ttSize

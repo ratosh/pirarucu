@@ -8,14 +8,14 @@ import kotlin.system.measureTimeMillis
 
 object EvaluationErrorApplication {
 
-    private const val THREADS = 2
+    private const val THREADS = 6
 
     @Throws(ExecutionException::class, InterruptedException::class)
     @JvmStatic
     fun main(args: Array<String>) {
         val list = mutableListOf<EpdInfo>()
-        val zurichess = EpdFileLoader("g:\\chess\\epds\\quiet_labeled.epd")
-        list.addAll(zurichess.getEpdInfoList())
+        val fileLoader = EpdFileLoader("g:\\chess\\epds\\texel-sets\\zuri_quiet_labeled.epd")
+        list.addAll(fileLoader.epdList)
         val epdList = InvalidPositionFilter(THREADS).filter(list)
         println("Using ${epdList.size} positions")
         val evaluator = EvaluationErrorEvaluator(THREADS)

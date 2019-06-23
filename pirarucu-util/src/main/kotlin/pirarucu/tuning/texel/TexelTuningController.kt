@@ -28,7 +28,7 @@ class TexelTuningController {
         tuningData.geneIndex = totalBits
         totalBits += tuningData.totalBits
         tuningDataList.add(tuningData)
-        geneCache.size = totalBits * 1000
+        geneCache.size = totalBits * 10
     }
 
     private fun reset() {
