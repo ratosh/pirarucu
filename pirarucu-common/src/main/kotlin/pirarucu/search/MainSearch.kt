@@ -60,6 +60,7 @@ class MainSearch(
 
         searchInfo.searchNodes++
         if (!rootNode &&
+            searchOptions.hasTimeLimit &&
             searchInfo.searchNodes and 0xFFFL == 0xFFFL &&
             searchOptions.maxSearchTimeLimit < PlatformSpecific.currentTimeMillis()
         ) {
@@ -487,7 +488,10 @@ class MainSearch(
                     break
                 }
 
-                if (depth > 4) {
+                if (searchOptions.hasTimeLimit &&
+                    !searchOptions.hasFixedTime &&
+                    depth > 4
+                ) {
                     if (score < previousScore &&
                         wantedSearchTime < searchOptions.maxSearchTimeLimit
                     ) {
@@ -520,7 +524,7 @@ class MainSearch(
                 searchInfo.save(board)
                 searchInfoListener.searchInfo(depth, currentTime - searchOptions.startTime, searchInfo)
 
-                if (wantedSearchTime < currentTime) {
+                if (searchOptions.hasTimeLimit && wantedSearchTime < currentTime) {
                     searchOptions.stop = true
                     break
                 }

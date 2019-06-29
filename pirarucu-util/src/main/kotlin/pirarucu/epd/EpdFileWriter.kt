@@ -19,7 +19,7 @@ class EpdFileWriter(private val file: File) {
                     val epdInfo = findPosition(line, epdInfoList)
                     writer.println(
                         when {
-                            epdInfo != null -> "${epdInfo.fenPosition} c9 ${Math.round(ErrorUtil.calculateSigmoid(epdInfo.eval))}.0"
+                            epdInfo != null -> "${epdInfo.fenPosition} c9 %.1f".format(ErrorUtil.calculateSigmoid(epdInfo.eval))
                             else -> line
                         }
                     )

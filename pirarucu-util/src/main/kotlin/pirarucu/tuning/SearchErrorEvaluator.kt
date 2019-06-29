@@ -72,9 +72,8 @@ class SearchErrorEvaluator(private val threads: Int = 1) {
         override fun evaluate() {
             val searchOptions = SearchOptions()
             searchOptions.depth = depth
-            searchOptions.minSearchTime = 60000L
-            searchOptions.maxSearchTime = 60000L
-
+            searchOptions.hasTimeLimit = false
+            
             val transpositionTable = TranspositionTable(ttSize)
             val pawnEvaluationCache = PawnEvaluationCache(ttSize)
             val history = History()
