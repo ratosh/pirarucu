@@ -60,8 +60,8 @@ class MainSearch(
 
         searchInfo.searchNodes++
         if (!rootNode &&
+            searchInfo.searchNodes and 0xFFFFL == 0xFFFFL &&
             searchOptions.hasTimeLimit &&
-            searchInfo.searchNodes and 0xFFFL == 0xFFFL &&
             searchOptions.maxSearchTimeLimit < PlatformSpecific.currentTimeMillis()
         ) {
             searchOptions.stop = true
