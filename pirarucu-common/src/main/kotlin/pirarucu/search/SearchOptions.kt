@@ -10,6 +10,8 @@ class SearchOptions {
 
     // Search control
     var stop = false
+    var hasTimeLimit = true
+    var hasFixedTime = false
     var startTime = 0L
     var maxSearchTimeLimit = 0L
     var minSearchTimeLimit = 0L
@@ -28,6 +30,9 @@ class SearchOptions {
     var blackIncrement = 0L
 
     fun setTime(color: Int) {
+        if (!hasTimeLimit || hasFixedTime) {
+            return
+        }
         val moves = when {
             movesToGo != 0L -> max(movesToGo * 2, movesToGo + MIN_GAME_MOVES)
             else -> GAME_MOVES
@@ -53,8 +58,11 @@ class SearchOptions {
     fun startControl() {
         stop = false
         startTime = PlatformSpecific.currentTimeMillis()
-        maxSearchTimeLimit = startTime + maxSearchTime
+        if (!hasTimeLimit) {
+            return
+        }
         minSearchTimeLimit = startTime + minSearchTime
+        maxSearchTimeLimit = startTime + maxSearchTime
     }
 
     companion object {

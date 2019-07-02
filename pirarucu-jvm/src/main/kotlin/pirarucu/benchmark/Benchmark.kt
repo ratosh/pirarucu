@@ -29,9 +29,7 @@ object Benchmark {
         val mainSearch =
             MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable, PawnEvaluationCache(4), History())
         searchOptions.depth = depth
-        searchOptions.minSearchTime = 60000L
-        searchOptions.maxSearchTime = 60000L
-        searchOptions.searchTimeIncrement = 1000L
+        searchOptions.hasTimeLimit = false
         val board = BoardFactory.getBoard()
         val startTime = PlatformSpecific.currentTimeMillis()
         for (epdInfo in iterator) {

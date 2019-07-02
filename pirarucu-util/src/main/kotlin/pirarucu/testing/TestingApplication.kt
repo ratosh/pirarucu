@@ -37,9 +37,7 @@ object TestingApplication {
         val history = History()
         val mainSearch = MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable, pawnCache, history)
         searchOptions.depth = depth
-        searchOptions.minSearchTime = 60000L
-        searchOptions.maxSearchTime = 60000L
-        searchOptions.searchTimeIncrement = 60000L
+        searchOptions.hasTimeLimit = false
         val board = BoardFactory.getBoard()
         var partialScore = 0
         for ((index, epdInfo) in testFile.epdList.withIndex()) {

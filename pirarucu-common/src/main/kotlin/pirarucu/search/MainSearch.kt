@@ -60,7 +60,8 @@ class MainSearch(
 
         searchInfo.searchNodes++
         if (!rootNode &&
-            searchInfo.searchNodes and 0xFFFL == 0xFFFL &&
+            searchInfo.searchNodes and 0xFFFFL == 0xFFFFL &&
+            searchOptions.hasTimeLimit &&
             searchOptions.maxSearchTimeLimit < PlatformSpecific.currentTimeMillis()
         ) {
             searchOptions.stop = true
@@ -483,11 +484,17 @@ class MainSearch(
                 val previousScore = score
 
                 score = search(board, depth, 0, alpha, beta, true)
+
+                val currentTime = PlatformSpecific.currentTimeMillis()
                 if (searchOptions.stop) {
+                    searchInfoListener.searchInfo(depth, currentTime - searchOptions.startTime, searchInfo)
                     break
                 }
 
-                if (depth > 4) {
+                if (searchOptions.hasTimeLimit &&
+                    !searchOptions.hasFixedTime &&
+                    depth > 4
+                ) {
                     if (score < previousScore &&
                         wantedSearchTime < searchOptions.maxSearchTimeLimit
                     ) {
@@ -515,12 +522,10 @@ class MainSearch(
                     }
                 }
 
-                val currentTime = PlatformSpecific.currentTimeMillis()
-
                 searchInfo.save(board)
                 searchInfoListener.searchInfo(depth, currentTime - searchOptions.startTime, searchInfo)
 
-                if (wantedSearchTime < currentTime) {
+                if (searchOptions.hasTimeLimit && wantedSearchTime < currentTime) {
                     searchOptions.stop = true
                     break
                 }

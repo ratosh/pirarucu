@@ -1,6 +1,7 @@
 package pirarucu.uci
 
 import pirarucu.board.factory.BoardFactory
+import pirarucu.game.GameConstants
 import pirarucu.search.MultiThreadedSearch
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.Perft
@@ -20,14 +21,23 @@ class InputHandler : IInputHandler {
 
     override fun search(tokens: Array<String>) {
         var index = 1
+        MultiThreadedSearch.searchOptions.hasFixedTime = false
+        MultiThreadedSearch.searchOptions.hasTimeLimit = true
+        MultiThreadedSearch.searchOptions.depth = GameConstants.MAX_PLIES - 1
         while (index < tokens.size) {
             when (tokens[index]) {
                 "infinite" -> {
-                    MultiThreadedSearch.searchOptions.whiteTime = Long.MAX_VALUE
-                    MultiThreadedSearch.searchOptions.blackTime = Long.MAX_VALUE
-                    MultiThreadedSearch.searchOptions.whiteIncrement = 0L
-                    MultiThreadedSearch.searchOptions.blackIncrement = 0L
-                    MultiThreadedSearch.searchOptions.movesToGo = 1L
+                    MultiThreadedSearch.searchOptions.hasTimeLimit = false
+                }
+                "depth" -> {
+                    MultiThreadedSearch.searchOptions.hasTimeLimit = false
+                    MultiThreadedSearch.searchOptions.depth = tokens[index + 1].toInt()
+                }
+                "movetime" -> {
+                    MultiThreadedSearch.searchOptions.hasFixedTime = true
+                    val timeLimit = tokens[index + 1].toLong()
+                    MultiThreadedSearch.searchOptions.minSearchTime = timeLimit
+                    MultiThreadedSearch.searchOptions.maxSearchTime = timeLimit
                 }
                 "wtime" -> MultiThreadedSearch.searchOptions.whiteTime = tokens[index + 1].toLong()
                 "btime" -> MultiThreadedSearch.searchOptions.blackTime = tokens[index + 1].toLong()
