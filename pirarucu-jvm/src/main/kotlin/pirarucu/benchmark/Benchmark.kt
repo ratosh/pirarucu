@@ -11,30 +11,32 @@ import pirarucu.search.SimpleSearchInfoListener
 import pirarucu.uci.UciOutput
 import pirarucu.util.PlatformSpecific
 import pirarucu.util.epd.EpdFileLoader
+import pirarucu.util.epd.EpdInfo
 
 object Benchmark {
 
     private val epdFileLoader = EpdFileLoader(Benchmark::class.java.getResourceAsStream("/benchmark.epd"))
     const val DEFAULT_BENCHMARK_DEPTH = 13
 
-    fun runBenchmark(depth: Int): Long {
+    fun runBenchmark(epdList :List<EpdInfo> = epdFileLoader.epdList, depth: Int = DEFAULT_BENCHMARK_DEPTH): Long {
         println("Running benchmark depth $depth")
         EvalConstants.PAWN_EVAL_CACHE = false
         UciOutput.silent = true
 
-        val iterator = epdFileLoader.epdList
         var nodeCount = 0L
         val searchOptions = SearchOptions()
         val transpositionTable = TranspositionTable(16)
+        var history = History()
         val mainSearch =
-            MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable, PawnEvaluationCache(4), History())
+            MainSearch(searchOptions, SimpleSearchInfoListener(), transpositionTable, PawnEvaluationCache(4), history)
         searchOptions.depth = depth
         searchOptions.hasTimeLimit = false
         val board = BoardFactory.getBoard()
         val startTime = PlatformSpecific.currentTimeMillis()
-        for (epdInfo in iterator) {
+        for (epdInfo in epdList) {
             BoardFactory.setBoard(epdInfo.fenPosition, board)
             transpositionTable.reset()
+            history.reset()
             searchOptions.startControl()
 
             mainSearch.search(board)
@@ -46,7 +48,7 @@ object Benchmark {
         println("-")
         println("Time  : ${timeTaken}ms")
         println("Nodes : $nodeCount")
-        println("NPS   : " + (nodeCount / (timeTaken / 1000)))
+        println("NPS   : " + (nodeCount * 1000 / timeTaken))
         return timeTaken
     }
 }

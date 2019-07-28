@@ -33,7 +33,7 @@ class EpdFileWriter(private val file: File) {
 
     private fun findPosition(line: String, epdInfoList: List<EpdInfo>): EpdInfo? {
         epdInfoList.forEach {
-            if (line.contains(it.fenPosition)) {
+            if (line.startsWith(it.fenPosition)) {
                 return it
             }
         }
