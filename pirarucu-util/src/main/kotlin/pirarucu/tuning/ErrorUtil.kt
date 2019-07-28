@@ -21,5 +21,26 @@ object ErrorUtil {
     }
 
     private fun calculateError(entry: EpdInfo, constant: Double) =
-        Math.pow(entry.result - calculateSigmoid(entry.eval, constant), 2.0)
+            Math.pow(entry.result - calculateSigmoid(entry.eval, constant), 2.0)
+
+
+    fun bestConstant(list: List<EpdInfo>): Double {
+        var currentConstant = 1.0
+        var constantRange = 1.0
+
+        while (constantRange > 0.00001) {
+            val constant1 = currentConstant - constantRange
+            val error1 = calculate(list, constant1)
+            val constant2 = currentConstant + constantRange
+            val error2 = calculate(list, constant2)
+            if (error1 < error2) {
+                currentConstant -= constantRange / 2
+            } else if (error2 < error1) {
+                currentConstant += constantRange / 2
+            }
+            constantRange /= 2
+        }
+
+        return currentConstant
+    }
 }

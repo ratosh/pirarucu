@@ -11,6 +11,8 @@ data class EpdInfo(val fenPosition: String,
                    val comment: String?) {
     var eval = 0
     var error = 0.0
+    var time = 0L
+    var nodes = 0L
     var valid = true
 
     fun getMoveScore(board: Board, foundMove: Int): Int {
