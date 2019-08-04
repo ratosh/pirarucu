@@ -80,3 +80,7 @@ You are welcome to contribute, please follow the [instructions](CONTRIBUTING.md)
 ## Author
 
 - Raoni Campos
+
+## Supported By
+
+- [JetBrains](https://www.jetbrains.com/?from=pirarucu)

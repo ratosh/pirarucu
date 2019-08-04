@@ -84,10 +84,13 @@ class SearchErrorEvaluator(private val threads: Int = 1) {
             for (index in start until end) {
                 val epdInfo = list[index]
                 BoardFactory.setBoard(epdInfo.fenPosition, board)
-                searchOptions.startControl()
+                history.reset()
                 transpositionTable.reset()
+                searchOptions.startControl()
                 search.search(board)
                 epdInfo.eval = search.searchInfo.bestScore * GameConstants.COLOR_FACTOR[board.colorToMove]
+                epdInfo.time = System.currentTimeMillis() - searchOptions.startTime
+                epdInfo.nodes = search.searchInfo.searchNodes
             }
         }
     }

@@ -1,18 +1,20 @@
 package pirarucu.tuning
 
+import pirarucu.eval.EvalConstants
 import pirarucu.util.epd.EpdFileLoader
 import pirarucu.util.epd.EpdInfo
 import pirarucu.util.epd.position.InvalidPositionFilter
+import java.lang.Math.*
 import java.util.concurrent.ExecutionException
 import kotlin.system.measureTimeMillis
 
 object SearchBigErrorApplication {
 
-    private const val FILE_NAME = "g:\\chess\\epds\\texel-sets\\psf.epd"
+    private const val FILE_NAME = "g:\\chess\\epds\\texel-sets\\zuri_quiet_labeled.epd"
     private const val START_DEPTH = 1
-    private const val FINISH_DEPTH = 11
+    private const val FINISH_DEPTH = 16
     private const val DEPTH_INCREMENT = 1
-    private const val THREADS = 2
+    private const val THREADS = 5
 
     @Throws(ExecutionException::class, InterruptedException::class)
     @JvmStatic
@@ -24,23 +26,30 @@ object SearchBigErrorApplication {
         var currentDepth = START_DEPTH
         val mateList = mutableListOf<EpdInfo>()
         while (currentDepth < FINISH_DEPTH && epdList.isNotEmpty()) {
+            println("Checking ${epdList.size} entries depth $currentDepth")
             val timeTaken = measureTimeMillis {
                 evaluator.evaluate(epdList, currentDepth)
             }
-            println("Search $currentDepth error " + ErrorUtil.calculate(epdList))
-            println("Entries ${epdList.size} | Time taken $timeTaken")
-            ErrorUtil.setError(epdList)
-            mateList.addAll(epdList.filter { it.error == 1.0 })
-            epdList = epdList
-                .filter {
-                    it.error >= 0.8 &&
-                        !mateList.contains(it)
-                }
-                .sortedByDescending { it.error }
-            epdList.forEach {
-                println("Entry error ${it.error} -> ${it.fenPosition}")
+            println("Search depth $currentDepth error " + ErrorUtil.calculate(epdList))
+            val explodedSearch = epdList
+                    .sortedByDescending { it.nodes }
+                    .subList(0, min(epdList.size, min(100, max(10, epdList.size / 10))))
+            explodedSearch.forEach {
+                println("Slow search (${it.time}|${it.nodes}) ${it.eval} = ${it.fenPosition}")
             }
-            currentDepth++
+            println("Time taken $timeTaken")
+            ErrorUtil.setError(epdList)
+            mateList.addAll(epdList
+                    .filter {
+                        it.error >= 0.1 &&
+                                abs(it.eval) > EvalConstants.SCORE_MATE
+                    })
+            epdList = epdList
+                    .filter {
+                        it.error >= 0.2 + currentDepth.toDouble() / 50 &&
+                                !mateList.contains(it)
+                    }
+            currentDepth += DEPTH_INCREMENT
         }
         println("Found ${mateList.size} disagree mates")
         val list = mutableListOf<EpdInfo>()

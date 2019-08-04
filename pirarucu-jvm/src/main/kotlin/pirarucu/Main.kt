@@ -42,7 +42,7 @@ fun main(args: Array<String>) {
                 } else {
                     Benchmark.DEFAULT_BENCHMARK_DEPTH
                 }
-                Benchmark.runBenchmark(benchDepth)
+                Benchmark.runBenchmark(depth = benchDepth)
                 return
             }
             "threads" -> {
