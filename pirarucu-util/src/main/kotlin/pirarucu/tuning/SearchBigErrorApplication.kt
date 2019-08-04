@@ -1,6 +1,5 @@
 package pirarucu.tuning
 
-import pirarucu.epd.EpdFileWriter
 import pirarucu.util.epd.EpdFileLoader
 import pirarucu.util.epd.EpdInfo
 import pirarucu.util.epd.position.InvalidPositionFilter
@@ -9,10 +8,11 @@ import kotlin.system.measureTimeMillis
 
 object SearchBigErrorApplication {
 
-    private const val FILE_NAME = "g:\\chess\\epds\\texel-sets\\ruy_tune_quiescent_positions_revised.epd"
+    private const val FILE_NAME = "g:\\chess\\epds\\texel-sets\\psf.epd"
     private const val START_DEPTH = 1
-    private const val FINISH_DEPTH = 26
-    private const val THREADS = 6
+    private const val FINISH_DEPTH = 11
+    private const val DEPTH_INCREMENT = 1
+    private const val THREADS = 2
 
     @Throws(ExecutionException::class, InterruptedException::class)
     @JvmStatic
@@ -45,14 +45,18 @@ object SearchBigErrorApplication {
             currentDepth++
         }
         mateList
-            .forEach {
-                println("Huge error ${it.eval} -> ${it.fenPosition}")
-            }
-        epdList = epdList
-            .filter { it.error >= 0.8 }
+        println("Found ${mateList.size} disagree mates")
+        val list = mutableListOf<EpdInfo>()
+        list.addAll(epdList.filter { it.error >= 0.8 })
+        println("Result disagree on ${list.size} entries")
+        list.sortedByDescending { it.eval }.forEach {
+            println("Disagree (${it.result}|${it.eval}) -> ${it.fenPosition}")
+        }
+        list.addAll(mateList)
 
-        val writer = EpdFileWriter(FILE_NAME)
-        writer.flush(epdList)
-        writer.flush(mateList)
+        /*
+        val writer = EpdFileUpdater(FILE_NAME)
+        writer.flush(list)
+         */
     }
 }
