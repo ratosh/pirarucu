@@ -1,6 +1,5 @@
 package pirarucu.tuning
 
-import pirarucu.epd.EpdFileWriter
 import pirarucu.eval.EvalConstants
 import pirarucu.util.epd.EpdFileLoader
 import pirarucu.util.epd.EpdInfo
@@ -20,10 +19,8 @@ object SearchBigErrorApplication {
     @Throws(ExecutionException::class, InterruptedException::class)
     @JvmStatic
     fun main(args: Array<String>) {
-        val list = mutableListOf<EpdInfo>()
         val epdFileLoader = EpdFileLoader(FILE_NAME)
-        list.addAll(epdFileLoader.epdList)
-        var epdList = InvalidPositionFilter(THREADS).filter(list)
+        var epdList = InvalidPositionFilter(THREADS).filter(epdFileLoader.epdList)
         println("Using ${epdList.size} positions")
         val evaluator = SearchErrorEvaluator(THREADS)
         var currentDepth = START_DEPTH
@@ -54,16 +51,18 @@ object SearchBigErrorApplication {
                     }
             currentDepth += DEPTH_INCREMENT
         }
-        mateList
-                .forEach {
-                    println("Mate error ${it.eval} -> ${it.fenPosition}")
-                }
-        println("Found ${mateList.size} mates")
-        list.addAll(mateList)
+        println("Found ${mateList.size} disagree mates")
+        val list = mutableListOf<EpdInfo>()
         list.addAll(epdList.filter { it.error >= 0.8 })
-        println("Result disagree on ${epdList.size} entries")
+        println("Result disagree on ${list.size} entries")
+        list.sortedByDescending { it.eval }.forEach {
+            println("Disagree (${it.result}|${it.eval}) -> ${it.fenPosition}")
+        }
+        list.addAll(mateList)
 
-        val writer = EpdFileWriter(FILE_NAME)
+        /*
+        val writer = EpdFileUpdater(FILE_NAME)
         writer.flush(list)
+         */
     }
 }

@@ -1,7 +1,7 @@
 package pirarucu.tuning.texel
 
 import pirarucu.util.FixedSizeMap
-import java.util.BitSet
+import java.util.*
 
 class TexelTuningController {
 
@@ -42,9 +42,7 @@ class TexelTuningController {
     }
 
     fun hasNext(): Boolean {
-        for (entry in tuningDataList) {
-            entry.reset()
-        }
+        tuningDataList[currentTuningObject].reset()
         while (!tuningDataList[currentTuningObject].hasNext()) {
             currentTuningObject++
             if (currentTuningObject >= tuningDataList.size) {
@@ -76,8 +74,8 @@ class TexelTuningController {
             bestElementResult = result
             setBestResult()
             println(
-                "Improvement found -> $bestInteractionResult | " +
-                    tuningDataList[currentTuningObject].getElementString()
+                    "Improvement found -> $bestInteractionResult | " +
+                            tuningDataList[currentTuningObject].getElementString()
             )
         }
         geneCache.add(currentGenes, result)
@@ -114,7 +112,20 @@ class TexelTuningController {
         val oldResult = prevInteractionResult
         prevInteractionResult = bestInteractionResult
         reset()
-        return prevInteractionResult >= oldResult
+        if (prevInteractionResult >= oldResult) {
+            var lowerIncrement = false
+            for (entry in tuningDataList) {
+                if (entry.canLowerIncrement()) {
+                    lowerIncrement = true
+                    break
+                }
+            }
+            if (lowerIncrement) {
+                tuningDataList.forEach { it.lowerIncrement() }
+            }
+            return !lowerIncrement
+        }
+        return  false
     }
 
     private fun reportList() {

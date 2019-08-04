@@ -1,12 +1,13 @@
 package pirarucu.tuning.texel
 
 import pirarucu.util.PlatformSpecific
+import java.lang.Math.abs
 import java.util.Arrays
 import java.util.BitSet
 
 data class TexelTuningData(
     val name: String, val elementList: IntArray, val bitsPerValue: IntArray,
-    val allowNegatives: Boolean, val ignoreElementList: IntArray, val increment: Int
+    val allowNegatives: Boolean, val ignoreElementList: IntArray, var increment: Int
 ) {
 
     private var upperBounds = IntArray(elementList.size)
@@ -147,6 +148,9 @@ data class TexelTuningData(
     }
 
     fun hasNext(): Boolean {
+        if (abs(increment) < 1) {
+            return false
+        }
         while (currentIndex < elementList.size &&
             (Arrays.binarySearch(ignoreElementList, currentIndex) >= 0 ||
                 !insideBounds(currentIndex, currentIncrement))
@@ -154,21 +158,32 @@ data class TexelTuningData(
             currentIndex++
         }
         if (currentIndex >= elementList.size) {
-            if (currentIncrement > 0) {
+            return if (currentIncrement > 0) {
                 currentIndex = 0
                 currentIncrement = -currentIncrement
-                return hasNext()
+                hasNext()
             } else {
                 currentIndex = 0
                 currentIncrement = increment
-                return false
+                false
             }
         }
         return true
     }
 
+    fun canLowerIncrement(): Boolean {
+        return abs(increment) > 1
+    }
+
     private fun insideBounds(index: Int, increment: Int): Boolean {
         val nextEntry = elementList[index] + increment
         return nextEntry <= upperBounds[index] && nextEntry >= lowerBounds[index]
+    }
+
+    fun lowerIncrement() {
+        if (abs(increment) > 1) {
+            increment /= 2
+        }
+        println("increment -> $increment")
     }
 }
