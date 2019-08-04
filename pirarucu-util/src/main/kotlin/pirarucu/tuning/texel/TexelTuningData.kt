@@ -181,7 +181,9 @@ data class TexelTuningData(
     }
 
     fun lowerIncrement() {
-        increment /= 2
+        if (abs(increment) > 1) {
+            increment /= 2
+        }
         println("increment -> $increment")
     }
 }

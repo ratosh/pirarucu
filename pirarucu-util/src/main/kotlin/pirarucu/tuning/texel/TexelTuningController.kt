@@ -123,7 +123,7 @@ class TexelTuningController {
             if (lowerIncrement) {
                 tuningDataList.forEach { it.lowerIncrement() }
             }
-            return lowerIncrement
+            return !lowerIncrement
         }
         return  false
     }
