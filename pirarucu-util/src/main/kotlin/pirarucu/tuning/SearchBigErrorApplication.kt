@@ -17,10 +17,8 @@ object SearchBigErrorApplication {
     @Throws(ExecutionException::class, InterruptedException::class)
     @JvmStatic
     fun main(args: Array<String>) {
-        val list = mutableListOf<EpdInfo>()
-        val zurichess = EpdFileLoader(FILE_NAME)
-        list.addAll(zurichess.epdList)
-        var epdList = InvalidPositionFilter(THREADS).filter(list)
+        val epdFileLoader = EpdFileLoader(FILE_NAME)
+        var epdList = InvalidPositionFilter(THREADS).filter(epdFileLoader.epdList)
         println("Using ${epdList.size} positions")
         val evaluator = SearchErrorEvaluator(THREADS)
         var currentDepth = START_DEPTH
@@ -44,7 +42,6 @@ object SearchBigErrorApplication {
             }
             currentDepth++
         }
-        mateList
         println("Found ${mateList.size} disagree mates")
         val list = mutableListOf<EpdInfo>()
         list.addAll(epdList.filter { it.error >= 0.8 })
