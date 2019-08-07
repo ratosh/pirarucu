@@ -11,7 +11,7 @@ import pirarucu.tuning.TunableConstants
 
 class MoveGenerator(private val history: History) {
 
-    fun legalMoves(board: Board, attackInfo: AttackInfo, moveList: OrderedMoveList) {
+    fun generateQuiet(board: Board, attackInfo: AttackInfo, moveList: OrderedMoveList) {
         attackInfo.update(board, board.colorToMove)
         val ourColor = board.colorToMove
         val checkBitboard = board.basicEvalInfo.checkBitboard
@@ -21,11 +21,11 @@ class MoveGenerator(private val history: History) {
 
         val mask = attackInfo.movementMask[ourColor] and board.emptyBitboard
         if (mask != Bitboard.EMPTY) {
-            generateQuietMoves(board, attackInfo, moveList, Piece.QUEEN, mask)
-            generateQuietMoves(board, attackInfo, moveList, Piece.ROOK, mask)
-            generateQuietMoves(board, attackInfo, moveList, Piece.BISHOP, mask)
-            generateQuietMoves(board, attackInfo, moveList, Piece.KNIGHT, mask)
             generateQuietPawnMoves(board, attackInfo, moveList, mask)
+            generateQuietMoves(board, attackInfo, moveList, Piece.KNIGHT, mask)
+            generateQuietMoves(board, attackInfo, moveList, Piece.BISHOP, mask)
+            generateQuietMoves(board, attackInfo, moveList, Piece.ROOK, mask)
+            generateQuietMoves(board, attackInfo, moveList, Piece.QUEEN, mask)
         }
         generateQuietMoves(board, attackInfo, moveList, Piece.KING, board.emptyBitboard)
     }
@@ -111,7 +111,7 @@ class MoveGenerator(private val history: History) {
         }
     }
 
-    fun legalAttacks(
+    fun generateNoisy(
         board: Board,
         attackInfo: AttackInfo,
         moveList: OrderedMoveList

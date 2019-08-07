@@ -63,8 +63,8 @@ object TestingApplication {
 
             if (index % 100 == 99) {
                 println((index / 100).toString() + " score $partialScore")
-                partialScore = 0
                 testScore += partialScore
+                partialScore = 0
             }
         }
 

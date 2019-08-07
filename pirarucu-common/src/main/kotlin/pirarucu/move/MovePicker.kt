@@ -178,11 +178,11 @@ class MovePicker {
     }
 
     private fun generateExchangeMoves(board: Board, attackInfo: AttackInfo) {
-        moveGenerator.legalAttacks(board, attackInfo, exchangeMoveList)
+        moveGenerator.generateNoisy(board, attackInfo, exchangeMoveList)
     }
 
     private fun generateQuietMoves(board: Board, attackInfo: AttackInfo) {
-        moveGenerator.legalMoves(board, attackInfo, quietMoveList)
+        moveGenerator.generateQuiet(board, attackInfo, quietMoveList)
     }
 
     companion object {

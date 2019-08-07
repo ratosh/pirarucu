@@ -9,12 +9,13 @@ import pirarucu.move.MoveGenerator
 import pirarucu.util.PlatformSpecific
 
 class SearchInfo(
-    val transpositionTable: TranspositionTable,
-    history: History
+        val transpositionTable: TranspositionTable,
+        history: History
 ) {
 
+    private val moveGenerator = MoveGenerator(history)
     var searchNodes = 0L
-    val plyInfoList = Array(GameConstants.MAX_PLIES + 4) { SearchPlyInfo(MoveGenerator(history)) }
+    val plyInfoList = Array(GameConstants.MAX_PLIES + 4) { SearchPlyInfo(moveGenerator) }
 
     fun reset() {
         searchNodes = 0
