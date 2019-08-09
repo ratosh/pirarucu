@@ -1,5 +1,6 @@
 package pirarucu.tuning.texel
 
+import pirarucu.board.Piece
 import pirarucu.eval.EvalConstants
 import pirarucu.tuning.ErrorUtil
 import pirarucu.tuning.QuiescenceEvaluator
