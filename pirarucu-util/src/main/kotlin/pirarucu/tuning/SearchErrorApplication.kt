@@ -19,9 +19,9 @@ object SearchErrorApplication {
         list.addAll(fileLoader.epdList)
         val epdList = InvalidPositionFilter(THREADS).filter(list)
         println("Using ${epdList.size} positions")
-        val evaluator = SearchErrorEvaluator(THREADS)
+        val evaluator = SearchErrorEvaluator(THREADS, WANTED_DEPTH)
         val timeTaken = measureTimeMillis {
-            evaluator.evaluate(epdList, WANTED_DEPTH)
+            evaluator.evaluate(epdList)
         }
         println("Search $WANTED_DEPTH error " + ErrorUtil.calculate(epdList))
         println("Entries ${epdList.size} | Time taken $timeTaken")

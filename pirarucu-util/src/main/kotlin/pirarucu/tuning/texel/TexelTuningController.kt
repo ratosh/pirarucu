@@ -42,7 +42,7 @@ class TexelTuningController {
     }
 
     fun hasNext(): Boolean {
-        tuningDataList[currentTuningObject].reset()
+        tuningDataList.forEach { it.reset() }
         while (!tuningDataList[currentTuningObject].hasNext()) {
             currentTuningObject++
             if (currentTuningObject >= tuningDataList.size) {
@@ -125,7 +125,7 @@ class TexelTuningController {
             }
             return !lowerIncrement
         }
-        return  false
+        return false
     }
 
     private fun reportList() {
