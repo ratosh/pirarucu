@@ -253,8 +253,8 @@ class MoveGeneratorPerftTest {
     fun divide(board: Board,
                wantedDepth: Int) {
         val moveList = OrderedMoveList()
-        moveGenerator.legalAttacks(board, attackInfo, moveList)
-        moveGenerator.legalMoves(board, attackInfo, moveList)
+        moveGenerator.generateNoisy(board, attackInfo, moveList)
+        moveGenerator.generateQuiet(board, attackInfo, moveList)
         while (moveList.hasNext()) {
             val moveInfoArray = Array(wantedDepth) { MoveInfo() }
             val move = moveList.next()
@@ -287,8 +287,8 @@ class MoveGeneratorPerftTest {
         }
 
         val moveList = OrderedMoveList()
-        moveGenerator.legalAttacks(board, attackInfo, moveList)
-        moveGenerator.legalMoves(board, attackInfo, moveList)
+        moveGenerator.generateNoisy(board, attackInfo, moveList)
+        moveGenerator.generateQuiet(board, attackInfo, moveList)
 
         var totalMove = 0
         while (moveList.hasNext()) {

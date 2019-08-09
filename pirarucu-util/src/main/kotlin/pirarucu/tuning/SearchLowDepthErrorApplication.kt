@@ -25,13 +25,13 @@ object SearchLowDepthErrorApplication {
         val epdFileLoader = EpdFileLoader(FILE_NAME)
         var epdList = InvalidPositionFilter(THREADS).filter(epdFileLoader.epdList)
         println("Using ${epdList.size} positions")
-        val evaluator = SearchErrorEvaluator(THREADS)
         var currentDepth = START_DEPTH
         val error = mutableListOf<EpdInfo>()
         while (currentDepth < FINISH_DEPTH && epdList.isNotEmpty()) {
+            val evaluator = SearchErrorEvaluator(THREADS, currentDepth)
             println("Checking ${epdList.size} entries depth $currentDepth")
             val timeTaken = measureTimeMillis {
-                evaluator.evaluate(epdList, currentDepth)
+                evaluator.evaluate(epdList)
             }
             println("Search depth $currentDepth error " + ErrorUtil.calculate(epdList))
 

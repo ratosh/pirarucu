@@ -244,7 +244,7 @@ class BoardTest {
         board.doMove(Move.createMove(Square.A2, Square.A4))
         assertNotEquals(zobristKey, board.zobristKey)
         val moveList = OrderedMoveList()
-        moveGenerator.legalAttacks(board, AttackInfo(), moveList)
+        moveGenerator.generateNoisy(board, AttackInfo(), moveList)
         while (moveList.hasNext()) {
             val move = moveList.next()
             zobristKey = board.zobristKey
