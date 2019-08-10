@@ -109,7 +109,7 @@ class MainSearch(
 
         val currentNode = searchInfo.plyInfoList[ply]
 
-        if (eval == EvalConstants.SCORE_UNKNOWN) {
+        if (prunable && eval == EvalConstants.SCORE_UNKNOWN) {
             eval = GameConstants.COLOR_FACTOR[board.colorToMove] * Evaluator.evaluate(
                 board, currentNode.attackInfo,
                 pawnEvaluationCache
