@@ -183,6 +183,7 @@ data class TexelTuningData(
     fun lowerIncrement() {
         if (abs(increment) > 1) {
             increment /= 2
+            currentIncrement = increment
         }
         println("increment -> $increment")
     }

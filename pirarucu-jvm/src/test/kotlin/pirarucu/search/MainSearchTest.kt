@@ -191,4 +191,17 @@ class MainSearchTest {
     fun test7P() {
         testSearch("4K2k/5p2/p7/7p/P3P3/8/8/8 w - -", 10000L)
     }
+
+    @Ignore
+    @Test
+    fun testTCEC() {
+        testSearch("r5k1/1p1b1r1p/p1n1pbpR/q2p4/3P1B2/2PB1NP1/P3QPK1/R7 w - - 4 21", 10000L)
+    }
+
+    @Ignore
+    @Test
+    fun testDefenchess() {
+        testSearch("2r5/1R3R2/P3p3/4k3/3p4/1P1K1P1r/8/8 b - - 2 74", 10000L)
+        testSearch("8/1R3R2/P3p3/4k3/3p4/1P1r1P2/7r/2K5 b - - 8 77 ", 10000L)
+    }
 }

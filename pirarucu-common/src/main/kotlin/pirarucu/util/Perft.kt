@@ -23,8 +23,8 @@ object Perft {
         val moveList = orderedMoveList[depth]
         moveList.reset()
 
-        moveGenerator.legalMoves(board, attackInfo, moveList)
-        moveGenerator.legalAttacks(board, attackInfo, moveList)
+        moveGenerator.generateQuiet(board, attackInfo, moveList)
+        moveGenerator.generateNoisy(board, attackInfo, moveList)
 
         while (moveList.hasNext()) {
             val move = moveList.next()
