@@ -4,6 +4,7 @@ import pirarucu.tuning.TunableConstants
 import pirarucu.uci.UciOutput
 import java.security.SecureRandom
 import java.util.Arrays
+import kotlin.system.exitProcess
 
 actual object PlatformSpecific {
 
@@ -113,7 +114,7 @@ actual object PlatformSpecific {
     }
 
     actual fun exit(code: Int) {
-        System.exit(code)
+        exitProcess(code)
     }
 
     actual fun gc() {
