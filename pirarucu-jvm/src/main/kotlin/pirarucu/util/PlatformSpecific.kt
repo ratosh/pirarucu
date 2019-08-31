@@ -80,7 +80,7 @@ actual object PlatformSpecific {
         UciOutput.println("Setting $option with value $value")
         val optionList = option.split('-')
 
-        val field = TunableConstants::class.java.getDeclaredField(optionList[0])
+        val field = TunableConstants::class.java.getDeclaredField(optionList[0].toUpperCase())
         var constant: IntArray? = null
         when (optionList.size) {
             1 -> {

@@ -148,8 +148,8 @@ class Board {
      * Update board extra information.
      */
     fun updateBoardExtra() {
-        updateBitboardInfo()
         setInitialKingSquare()
+        updateBitboardInfo()
         basicInfoIndex = 0
         basicEvalInfo = historyBasicEvalInfo[basicInfoIndex]
         basicEvalInfo.update(this)
