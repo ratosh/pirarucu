@@ -68,15 +68,15 @@ object Move {
 
     fun toString(move: Int): String {
         return when (move) {
-            Move.NONE -> NONE_STRING
-            Move.NULL -> NULL_STRING
+            NONE -> NONE_STRING
+            NULL -> NULL_STRING
             else -> {
                 val sb = StringBuilder()
                 val moveType = getMoveType(move)
-                sb.append(Square.toString(Move.getFromSquare(move)))
-                sb.append(Square.toString(Move.getToSquare(move)))
+                sb.append(Square.toString(getFromSquare(move)))
+                sb.append(Square.toString(getToSquare(move)))
                 if (MoveType.isPromotion(moveType)) {
-                    sb.append(Piece.toString(Color.WHITE, MoveType.getPromotedPiece(moveType)))
+                    sb.append(Piece.toString(Color.BLACK, MoveType.getPromotedPiece(moveType)))
                 }
                 sb.toString()
             }
