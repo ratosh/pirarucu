@@ -5,27 +5,29 @@ import pirarucu.util.epd.EpdInfo
 
 object ErrorUtil {
 
+    private const val MAX_SCORE = 1000
     const val ORIGINAL_CONSTANT = 1.4
 
-    fun calculateSigmoid(score: Int, constant: Double = ORIGINAL_CONSTANT): Double {
-        return 1 / (1 + Math.pow(10.0, -constant * score / 400))
-    }
+    fun calculateSigmoid(score: Int, constant: Double = ORIGINAL_CONSTANT) =
+        1 / (1 + Math.pow(10.0, -constant * score / 400))
 
     fun calculate(list: List<EpdInfo>, constant: Double = ORIGINAL_CONSTANT): Double {
         setError(list, constant)
         return list.sumByDouble { it.error } / list.size
     }
 
-    fun setError(list: List<EpdInfo>, constant: Double = ORIGINAL_CONSTANT) {
+    fun getMoveScore(list: List<EpdInfo>): Double =
+            1 - (list.sumByDouble { Math.pow(it.moveScore.toDouble(), 2.0) } / list.size / MAX_SCORE)
+
+    fun setError(list: List<EpdInfo>, constant: Double = ORIGINAL_CONSTANT) =
         list.forEach { it.error = calculateError(it, constant) }
-    }
 
     private fun calculateError(entry: EpdInfo, constant: Double) =
             Math.pow(entry.result - calculateSigmoid(entry.eval, constant), 2.0)
 
 
     fun bestConstant(list: List<EpdInfo>): Double {
-        var currentConstant = 1.0
+        var currentConstant = ORIGINAL_CONSTANT
         var constantRange = 1.0
 
         while (constantRange > 0.00001) {
