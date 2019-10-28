@@ -1,13 +1,11 @@
 package pirarucu.tuning.texel
 
 import pirarucu.util.PlatformSpecific
-import java.lang.Math.abs
-import java.util.Arrays
-import java.util.BitSet
+import java.util.*
 
 data class TexelTuningData(
-    val name: String, val elementList: IntArray, val bitsPerValue: IntArray,
-    val allowNegatives: Boolean, val ignoreElementList: IntArray, var increment: Int
+        val name: String, val elementList: IntArray, val bitsPerValue: IntArray,
+        val allowNegatives: Boolean, val ignoreElementList: IntArray, val increment: Int, val minIncrement: Int = 1
 ) {
 
     private var upperBounds = IntArray(elementList.size)
@@ -23,6 +21,7 @@ data class TexelTuningData(
     private var geneStartIndex = 0
 
     private var currentIndex = 0
+    private var baseIncrement = increment
     private var currentIncrement = increment
 
     var geneIndex: Int
@@ -126,15 +125,15 @@ data class TexelTuningData(
     }
 
     fun getBestInteractionElement(): String {
-        return "$name " + Arrays.toString(bestInteractionElementList)
+        return "$name " + bestInteractionElementList.contentToString()
     }
 
     fun getElementString(): String {
-        return "$name " + Arrays.toString(elementList)
+        return "$name " + elementList.contentToString()
     }
 
     fun getBestElement(): String {
-        return "$name " + Arrays.toString(bestElementList)
+        return "$name " + bestElementList.contentToString()
     }
 
     fun next() {
@@ -148,12 +147,12 @@ data class TexelTuningData(
     }
 
     fun hasNext(): Boolean {
-        if (abs(increment) < 1) {
+        if (kotlin.math.abs(increment) < 1) {
             return false
         }
         while (currentIndex < elementList.size &&
-            (Arrays.binarySearch(ignoreElementList, currentIndex) >= 0 ||
-                !insideBounds(currentIndex, currentIncrement))
+                (Arrays.binarySearch(ignoreElementList, currentIndex) >= 0 ||
+                        !insideBounds(currentIndex, currentIncrement))
         ) {
             currentIndex++
         }
@@ -172,7 +171,7 @@ data class TexelTuningData(
     }
 
     fun canLowerIncrement(): Boolean {
-        return abs(increment) > 1
+        return kotlin.math.abs(currentIncrement) >= minIncrement
     }
 
     private fun insideBounds(index: Int, increment: Int): Boolean {
@@ -181,10 +180,10 @@ data class TexelTuningData(
     }
 
     fun lowerIncrement() {
-        if (abs(increment) > 1) {
-            increment /= 2
-            currentIncrement = increment
+        if (canLowerIncrement()) {
+            baseIncrement /= 2
+            currentIncrement = baseIncrement
         }
-        println("increment -> $increment")
+        println("increment -> $baseIncrement")
     }
 }

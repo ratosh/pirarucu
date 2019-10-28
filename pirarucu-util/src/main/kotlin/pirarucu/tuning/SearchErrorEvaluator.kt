@@ -89,6 +89,7 @@ class SearchErrorEvaluator(private val threads: Int = 1, private val depth: Int 
                 searchOptions.startControl()
                 search.search(board)
                 epdInfo.eval = search.searchInfo.bestScore * GameConstants.COLOR_FACTOR[board.colorToMove]
+                epdInfo.moveScore = epdInfo.getMoveScore(board, search.searchInfo.bestMove)
                 epdInfo.time = System.currentTimeMillis() - searchOptions.startTime
                 epdInfo.nodes = search.searchInfo.searchNodes
             }

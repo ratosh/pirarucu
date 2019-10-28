@@ -4,14 +4,16 @@ import pirarucu.util.epd.factory.EpdInfoFactory
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
-import java.util.Scanner
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.set
 
 class EpdFileLoader(inputStream: InputStream) {
 
-    private val epdInfoList = mutableListOf<EpdInfo>()
+    private val epdInfoList = mutableMapOf<String, EpdInfo>()
 
-    val epdList : List<EpdInfo>
-        get() = epdInfoList
+    val epdList: List<EpdInfo>
+        get() = ArrayList<EpdInfo>(epdInfoList.values)
 
     init {
         try {
@@ -23,11 +25,16 @@ class EpdFileLoader(inputStream: InputStream) {
                 val line = scanner.nextLine()
                 val epdInfo = EpdInfoFactory.getEpdInfo(line)
 
-                epdInfoList.add(epdInfo)
+                val foundEntry = epdInfoList[epdInfo.fenPosition]
+                if (foundEntry != null) {
+                    foundEntry.result += epdInfo.result
+                    foundEntry.result /= 2
+                    println("Found duplicate ${foundEntry.fenPosition} -> ${foundEntry.result}")
+                } else {
+                    epdInfoList[epdInfo.fenPosition] = epdInfo
+                }
             }
-            println(
-                String.format("Found %d good positions in %d possibilities.", epdInfoList.size, lines)
-            )
+            println("Found ${epdInfoList.size} good positions in $lines possibilities.")
             inputStream.close()
         } catch (ex: Exception) {
             ex.printStackTrace()

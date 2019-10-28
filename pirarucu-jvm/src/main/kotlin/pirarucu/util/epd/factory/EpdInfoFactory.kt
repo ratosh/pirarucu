@@ -11,10 +11,10 @@ object EpdInfoFactory {
     fun getEpdInfo(fenLine: String): EpdInfo {
         var tempLine = fenLine
 
-        var fenPosition: String
-        var bestMoveList: Set<String>?
-        var avoidMoveList: Set<String>?
-        var moveScoreList: Map<String, Int>?
+        val fenPosition: String
+        val bestMoveList: MutableSet<String>?
+        val avoidMoveList: Set<String>?
+        val moveScoreList: Map<String, Int>?
         var result = 0.toDouble()
         var comment = ""
 
