@@ -182,30 +182,30 @@ object TunableConstants {
 
     val PAWN_SHIELD_MG = arrayOf(
         arrayOf(
-            intArrayOf(0, 47, 60, 26, 3, 143, 19, 0),
-            intArrayOf(0, 68, 63, 38, 24, 3, -53, 0),
-            intArrayOf(0, 63, 42, 25, 46, 19, -13, 0),
-            intArrayOf(0, 38, 20, 24, 9, -31, 70, 0)
+            intArrayOf(0, 51, 64, 32, 17, 37, -47, 0),
+            intArrayOf(0, 66, 67, 40, 22, 17, -193, 0),
+            intArrayOf(0, 39, 30, 17, 22, -33, -7, 0),
+            intArrayOf(0, 46, 22, 16, 21, -81, 82, 0)
         ),
         arrayOf(
-            intArrayOf(10, 16, 26, 21, 9, 37, -79, 0),
-            intArrayOf(78, 58, 36, 35, 17, 18, -118, 0),
-            intArrayOf(55, 46, 5, 8, 7, 45, 222, 0),
-            intArrayOf(15, 20, 0, 21, 19, -45, -56, 0)
+            intArrayOf(8, 24, 28, 15, 15, 9, -73, 0),
+            intArrayOf(78, 54, 30, 33, 19, 22, -144, 0),
+            intArrayOf(59, 44, 5, 10, 15, 31, 22, 0),
+            intArrayOf(57, 46, 8, 21, 17, -47, -92, 0)
         )
     )
     val PAWN_SHIELD_EG = arrayOf(
         arrayOf(
-            intArrayOf(0, -29, -23, -8, -1, -83, -4, 0),
-            intArrayOf(0, -23, -16, -12, -11, -23, -53, 0),
-            intArrayOf(0, -11, -3, -4, -16, 9, -37, 0),
-            intArrayOf(0, 7, 5, -2, 4, 47, -67, 0)
+            intArrayOf(0, -37, -31, -8, -1, -3, 78, 0),
+            intArrayOf(0, -21, -14, -4, -1, 17, 9, 0),
+            intArrayOf(0, -1, 3, 4, -10, 13, 51, 0),
+            intArrayOf(0, 1, 9, 2, -18, 21, 9, 0)
         ),
         arrayOf(
-            intArrayOf(-6, -9, -2, -4, 2, -16, -1, 0),
-            intArrayOf(-18, -18, -4, -8, 2, 35, 45, 0),
-            intArrayOf(-5, -13, 4, -5, -1, -7, -93, 0),
-            intArrayOf(4, -2, 8, -6, -18, -21, 65, 0)
+            intArrayOf(-2, -11, -6, -4, -6, -20, 3, 0),
+            intArrayOf(-20, -18, -4, -8, -2, 9, -15, 0),
+            intArrayOf(-11, -9, 10, -1, -11, -15, -33, 0),
+            intArrayOf(-6, -8, 4, -4, -22, 3, 7, 0)
         )
     )
     val PAWN_SHIELD = Array(2) { Array(File.SIZE / 2) { IntArray(Rank.SIZE) } }
