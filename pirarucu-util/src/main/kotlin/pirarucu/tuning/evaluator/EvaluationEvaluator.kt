@@ -1,4 +1,4 @@
-package pirarucu.tuning
+package pirarucu.tuning.evaluator
 
 import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory
@@ -12,14 +12,14 @@ import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.Phaser
 
 
-class EvaluationErrorEvaluator(threads: Int = 1) {
+class EvaluationEvaluator(threads: Int = 1) : IEvaluator {
     private val forkJoinPool = ForkJoinPool(threads)
 
     init {
         EvalConstants.PAWN_EVAL_CACHE = false
     }
 
-    fun evaluate(list: List<EpdInfo>) {
+    override fun evaluate(list: List<EpdInfo>) {
         val phaser = Phaser()
         phaser.register()
         val worker = WorkerThread(list, phaser)

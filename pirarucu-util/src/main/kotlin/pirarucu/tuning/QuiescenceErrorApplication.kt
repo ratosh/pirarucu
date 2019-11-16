@@ -1,5 +1,6 @@
 package pirarucu.tuning
 
+import pirarucu.tuning.evaluator.QuiescenceEvaluator
 import pirarucu.util.epd.EpdFileLoader
 import pirarucu.util.epd.EpdInfo
 import pirarucu.util.epd.position.InvalidPositionFilter

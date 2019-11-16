@@ -1,5 +1,6 @@
 package pirarucu.tuning
 
+import pirarucu.tuning.evaluator.EvaluationEvaluator
 import pirarucu.util.epd.EpdFileLoader
 import pirarucu.util.epd.EpdInfo
 import pirarucu.util.epd.position.InvalidPositionFilter
@@ -18,7 +19,7 @@ object EvaluationErrorApplication {
         list.addAll(fileLoader.epdList)
         val epdList = InvalidPositionFilter(THREADS).filter(list)
         println("Using ${epdList.size} positions")
-        val evaluator = EvaluationErrorEvaluator(THREADS)
+        val evaluator = EvaluationEvaluator(THREADS)
         val timeTaken = measureTimeMillis {
             evaluator.evaluate(epdList)
         }

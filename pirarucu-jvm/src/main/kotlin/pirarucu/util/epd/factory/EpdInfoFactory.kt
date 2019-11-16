@@ -14,7 +14,7 @@ object EpdInfoFactory {
         val fenPosition: String
         val bestMoveList: MutableSet<String>?
         val avoidMoveList: Set<String>?
-        val moveScoreList: Map<String, Int>?
+        val moveScoreList: MutableMap<String, Int>?
         var result = 0.toDouble()
         var comment = ""
 

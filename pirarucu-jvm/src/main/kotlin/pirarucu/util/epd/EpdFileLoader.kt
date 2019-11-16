@@ -28,11 +28,14 @@ class EpdFileLoader(inputStream: InputStream) {
                 val foundEntry = epdInfoList[epdInfo.fenPosition]
                 if (foundEntry != null) {
                     foundEntry.result += epdInfo.result
-                    foundEntry.result /= 2
-                    println("Found duplicate ${foundEntry.fenPosition} -> ${foundEntry.result}")
+                    foundEntry.entryAmount += 1
+//                    println("Found duplicate ${foundEntry.fenPosition} ${foundEntry.result / foundEntry.entryAmount}")
                 } else {
                     epdInfoList[epdInfo.fenPosition] = epdInfo
                 }
+            }
+            epdInfoList.values.forEach {
+                it.result /= it.entryAmount
             }
             println("Found ${epdInfoList.size} good positions in $lines possibilities.")
             inputStream.close()

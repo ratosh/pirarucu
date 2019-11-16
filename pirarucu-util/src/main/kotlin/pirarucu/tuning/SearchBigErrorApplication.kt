@@ -1,6 +1,7 @@
 package pirarucu.tuning
 
 import pirarucu.eval.EvalConstants
+import pirarucu.tuning.evaluator.MainSearchEvaluator
 import pirarucu.util.epd.EpdFileLoader
 import pirarucu.util.epd.EpdInfo
 import pirarucu.util.epd.position.InvalidPositionFilter
@@ -25,7 +26,7 @@ object SearchBigErrorApplication {
         var currentDepth = START_DEPTH
         val mateList = mutableListOf<EpdInfo>()
         while (currentDepth < FINISH_DEPTH && epdList.isNotEmpty()) {
-            val evaluator = SearchErrorEvaluator(THREADS, currentDepth)
+            val evaluator = MainSearchEvaluator(THREADS, currentDepth)
             println("Checking ${epdList.size} entries depth $currentDepth")
             val timeTaken = measureTimeMillis {
                 evaluator.evaluate(epdList)
