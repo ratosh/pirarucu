@@ -1,4 +1,4 @@
-package pirarucu.tuning
+package pirarucu.tuning.evaluator
 
 import pirarucu.board.Board
 import pirarucu.board.factory.BoardFactory
@@ -18,7 +18,9 @@ import java.util.concurrent.Phaser
 import kotlin.math.max
 import kotlin.math.min
 
-class SearchErrorEvaluator(private val threads: Int = 1, private val depth: Int = 1, private val cacheSize: Int = 1) {
+class MainSearchEvaluator(private val threads: Int = 1,
+                          private val depth: Int = 1,
+                          private val cacheSize: Int = 1) : IEvaluator {
 
     private val forkJoinPool = ForkJoinPool(threads)
 
@@ -31,7 +33,7 @@ class SearchErrorEvaluator(private val threads: Int = 1, private val depth: Int 
         EvalConstants.PAWN_EVAL_CACHE = false
     }
 
-    fun evaluate(list: List<EpdInfo>) {
+    override fun evaluate(list: List<EpdInfo>) {
         val phaser = Phaser()
         phaser.register()
         val worker = WorkerThread(list, phaser, threads, depth, cacheSize)

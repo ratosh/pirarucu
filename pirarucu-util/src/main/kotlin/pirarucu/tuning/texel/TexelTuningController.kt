@@ -15,8 +15,8 @@ class TexelTuningController {
     private var currentTuningObject = 0
 
     private var bestElementResult = 0.0
-    private var prevInteractionResult = 1.0
-    private var bestInteractionResult = 1.0
+    private var prevInteractionResult = Double.MAX_VALUE
+    private var bestInteractionResult = Double.MAX_VALUE
 
     fun initialResult(result: Double) {
         bestElementResult = result
@@ -32,7 +32,7 @@ class TexelTuningController {
     }
 
     private fun reset() {
-        bestInteractionResult = 1.0
+        bestInteractionResult = Double.MAX_VALUE
         currentTuningObject = 0
         currentGenes = BitSet()
         for (entry in tuningDataList) {

@@ -147,7 +147,7 @@ data class TexelTuningData(
     }
 
     fun hasNext(): Boolean {
-        if (kotlin.math.abs(increment) < 1) {
+        if (kotlin.math.abs(baseIncrement) < minIncrement) {
             return false
         }
         while (currentIndex < elementList.size &&
@@ -163,7 +163,7 @@ data class TexelTuningData(
                 hasNext()
             } else {
                 currentIndex = 0
-                currentIncrement = increment
+                currentIncrement = baseIncrement
                 false
             }
         }
@@ -171,7 +171,7 @@ data class TexelTuningData(
     }
 
     fun canLowerIncrement(): Boolean {
-        return kotlin.math.abs(currentIncrement) >= minIncrement
+        return kotlin.math.abs(baseIncrement) > minIncrement
     }
 
     private fun insideBounds(index: Int, increment: Int): Boolean {

@@ -6,7 +6,7 @@ import pirarucu.move.Move
 data class EpdInfo(val fenPosition: String,
                    val bestMoveList: MutableSet<String>?,
                    val avoidMoveList: Set<String>?,
-                   val moveScoreList: Map<String, Int>?,
+                   val moveScoreList: MutableMap<String, Int>?,
                    var result: Double,
                    val comment: String?) {
     var eval = 0
@@ -15,6 +15,7 @@ data class EpdInfo(val fenPosition: String,
     var nodes = 0L
     var moveScore = 0
     var valid = true
+    var entryAmount = 1
 
     fun getMoveScore(board: Board, foundMove: Int): Int {
         if (null != moveScoreList) {
