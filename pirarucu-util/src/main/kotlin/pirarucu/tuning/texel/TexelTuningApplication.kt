@@ -26,12 +26,12 @@ object TexelTuningApplication {
 //                    intArrayOf(0, 4, 5, 5, 6, 7, 0),
 //                    false, 0, 6))
 
-            tuningObject.registerTuningData(TexelTuningData(
-                    "FUTILITY_CHILD_MARGIN",
-                    TunableConstants.FUTILITY_CHILD_MARGIN,
-                    intArrayOf(0, 8, 8, 9, 9, 9, 10),
-                    false, intArrayOf(0), 32, 2
-            ))
+//            tuningObject.registerTuningData(TexelTuningData(
+//                    "FUTILITY_CHILD_MARGIN",
+//                    TunableConstants.FUTILITY_CHILD_MARGIN,
+//                    intArrayOf(0, 8, 8, 9, 9, 9, 10),
+//                    false, intArrayOf(0), 32, 2
+//            ))
 
 //            tuningObject.registerTuningData(TexelTuningData(
 //                    "FUTILITY_PARENT_MARGIN",
@@ -616,13 +616,14 @@ object TexelTuningApplication {
                             true, intArrayOf(7), 32, 2
                     )
             )
+            */
 
             tuningObject.registerTuningData(
                     TexelTuningData(
                             "PAWN_PUSH_THREAT_MG",
                             TunableConstants.PAWN_PUSH_THREAT_MG,
                             intArrayOf(0, 0, 8, 8, 8, 8, 8),
-                            true, intArrayOf(0, 1), 32, 2
+                            false, intArrayOf(0, 1), 32, 2
                     )
             )
 
@@ -631,10 +632,11 @@ object TexelTuningApplication {
                             "PAWN_PUSH_THREAT_EG",
                             TunableConstants.PAWN_PUSH_THREAT_EG,
                             intArrayOf(0, 0, 8, 8, 8, 8, 8),
-                            true, intArrayOf(0, 1), 32, 2
+                            false, intArrayOf(0, 1), 32, 2
                     )
             )
 
+            /*
             tuningObject.registerTuningData(
                     TexelTuningData(
                             "KING_THREAT_MG",
@@ -769,28 +771,34 @@ object TexelTuningApplication {
     @JvmStatic
     fun main(args: Array<String>) {
         EvalConstants.PAWN_EVAL_CACHE = false
-        val epdList = loadEpdFiles(listOf("g:\\chess\\epds\\texel-sets\\STS.epd"))
-//        val epdList = loadEpdFiles(listOf("g:\\chess\\epds\\texel-sets\\pirarucu.epd"))
+        val epdList = loadEpdFiles(listOf("g:\\chess\\epds\\texel-sets\\pirarucu.epd"))
 //        nodeCountOptimize(tuningObjects, epdList)
-        moveScoreOptimize(tuningObjects, epdList)
-//        qsearchOptimize(tuningObjects, epdList)
+//        moveScoreOptimize(tuningObjects, epdList)
+        qsearchOptimize(tuningObjects, epdList)
+//        searchOptimize(tuningObjects, epdList)
     }
 
     @Throws(ExecutionException::class, InterruptedException::class)
     private fun nodeCountOptimize(tuningController: TexelTuningController, epdList: List<EpdInfo>) {
-        val evaluator = MainSearchEvaluator(THREADS, 16)
+        val evaluator = MainSearchEvaluator(THREADS, 12)
         BasicTuner.optimize(evaluator, NodeCountCalculator(), tuningController, epdList)
     }
 
     @Throws(ExecutionException::class, InterruptedException::class)
     private fun moveScoreOptimize(tuningController: TexelTuningController, epdList: List<EpdInfo>) {
-        val evaluator = MainSearchEvaluator(THREADS, 30)
+        val evaluator = MainSearchEvaluator(THREADS, 12)
         BasicTuner.optimize(evaluator, MoveScoreCalculator(), tuningController, epdList)
     }
 
     @Throws(ExecutionException::class, InterruptedException::class)
     private fun qsearchOptimize(tuningController: TexelTuningController, epdList: List<EpdInfo>) {
         val evaluator = QuiescenceEvaluator(THREADS)
+        BasicTuner.optimize(evaluator, ResultErrorCalculator(), tuningController, epdList)
+    }
+
+    @Throws(ExecutionException::class, InterruptedException::class)
+    private fun searchOptimize(tuningController: TexelTuningController, epdList: List<EpdInfo>) {
+        val evaluator = MainSearchEvaluator(THREADS, 2)
         BasicTuner.optimize(evaluator, ResultErrorCalculator(), tuningController, epdList)
     }
 
