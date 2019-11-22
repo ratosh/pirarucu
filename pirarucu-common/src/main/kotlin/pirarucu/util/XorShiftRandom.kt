@@ -1,8 +1,5 @@
 package pirarucu.util
 
-/**
- *
- */
 object XorShiftRandom {
 
     private const val multiplier = 0x2545F4914F6CDD1DL
@@ -12,6 +9,6 @@ object XorShiftRandom {
         seed = seed xor (seed shr 12)
         seed = seed xor (seed shl 25)
         seed = seed xor (seed shr 27)
-        return seed - multiplier
+        return seed * multiplier
     }
 }
