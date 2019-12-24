@@ -19,8 +19,8 @@ object MultiThreadedSearch {
 
     private val SMP_MAX_CYCLES = SMP_SKIP_AMOUNT.size
 
-    private val startLock = java.lang.Object()
-    private val threadListLock = java.lang.Object()
+    private val startLock = Object()
+    private val threadListLock = Object()
 
     private val searchInfoListener = MultiThreadedSearchInfoListener()
 
@@ -172,7 +172,7 @@ object MultiThreadedSearch {
         )
 
         private val cycleIndex = innerId % SMP_MAX_CYCLES
-        private val aspirationWindow = SearchConstants.ASPIRATION_WINDOW_SIZE[innerId / SMP_MAX_CYCLES]
+        private val aspirationWindow = SearchConstants.ASPIRATION_WINDOW_SIZE - ((innerId / SMP_MAX_CYCLES) % 12)
 
         private var searchDepth = 1
 
@@ -207,7 +207,7 @@ object MultiThreadedSearch {
             while (!searchOptions.stop) {
                 searchDepth++
 
-                if ((searchDepth + cycleIndex) % SMP_SKIP_DEPTHS[cycleIndex] == 0) {
+                if (searchDepth % SMP_SKIP_DEPTHS[cycleIndex] == 0) {
                     searchDepth += SMP_SKIP_AMOUNT[cycleIndex]
                 }
 
@@ -286,7 +286,7 @@ object MultiThreadedSearch {
                     running = false
                 }
                 while (isRunning()) {
-                    Thread.yield()
+                    yield()
                 }
                 searchInfoListener.bestMove(search.searchInfo)
             }

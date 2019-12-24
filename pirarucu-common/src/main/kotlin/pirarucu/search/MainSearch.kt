@@ -474,7 +474,7 @@ class MainSearch(
             if (searchOptions.stop && searchInfo.bestMove != Move.NONE) {
                 break
             }
-            var aspirationWindow = SearchConstants.ASPIRATION_WINDOW_SIZE[0]
+            var aspirationWindow = SearchConstants.ASPIRATION_WINDOW_SIZE
             if (depth > 4) {
                 alpha = max(score - aspirationWindow, EvalConstants.SCORE_MIN)
                 beta = min(score + aspirationWindow, EvalConstants.SCORE_MAX)
