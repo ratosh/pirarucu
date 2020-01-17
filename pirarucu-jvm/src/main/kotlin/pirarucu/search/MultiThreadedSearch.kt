@@ -172,7 +172,7 @@ object MultiThreadedSearch {
         )
 
         private val cycleIndex = innerId % SMP_MAX_CYCLES
-        private val aspirationWindow = SearchConstants.ASPIRATION_WINDOW_SIZE - ((innerId / SMP_MAX_CYCLES) % 12)
+        private val aspirationWindow = SearchConstants.ASPIRATION_WINDOW_SIZE - ((cycleIndex / SMP_MAX_CYCLES) % 6)
 
         private var searchDepth = 1
 
