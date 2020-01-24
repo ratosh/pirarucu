@@ -11,6 +11,7 @@ import pirarucu.cache.PawnEvaluationCache
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.PlatformSpecific
 import pirarucu.util.SplitValue
+import kotlin.math.abs
 import kotlin.math.min
 
 object Evaluator {
@@ -27,6 +28,9 @@ object Evaluator {
             if (!DrawEvaluator.hasSufficientMaterial(board, Color.BLACK)) {
                 return EvalConstants.SCORE_DRAW
             }
+        }
+        if (abs(materialScore) > EvalConstants.SCORE_LAZY_EVAL) {
+            return materialScore
         }
 
         var score = TunableConstants.TEMPO[board.colorToMove] +
