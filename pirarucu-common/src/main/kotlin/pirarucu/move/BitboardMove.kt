@@ -335,7 +335,7 @@ object BitboardMove {
     }
 
     fun queenMoves(square: Int, occupied: Long): Long {
-        return bishopMoves(square, occupied) xor rookMoves(square, occupied)
+        return bishopMoves(square, occupied) or rookMoves(square, occupied)
     }
 
     fun pawnAttacks(color: Int, bitboard: Long): Long {
