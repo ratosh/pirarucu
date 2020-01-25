@@ -29,40 +29,36 @@ object Evaluator {
                 return EvalConstants.SCORE_DRAW
             }
         }
-        if (abs(materialScore) > EvalConstants.SCORE_LAZY_EVAL) {
-            return materialScore
+        var score = materialScore
+        if (abs(materialScore) < EvalConstants.SCORE_LAZY_EVAL) {
+            score += TunableConstants.TEMPO[board.colorToMove] +
+                    board.psqScore[Color.WHITE] - board.psqScore[Color.BLACK]
+
+            score += PawnEvaluator.evaluate(board, attackInfo, pawnEvaluationCache)
+
+            score += evalKnight(board, attackInfo, Color.WHITE, Color.BLACK) -
+                    evalKnight(board, attackInfo, Color.BLACK, Color.WHITE)
+
+            score += evalBishop(board, attackInfo, Color.WHITE, Color.BLACK) -
+                    evalBishop(board, attackInfo, Color.BLACK, Color.WHITE)
+
+            score += evalRook(board, attackInfo, Color.WHITE, Color.BLACK) -
+                    evalRook(board, attackInfo, Color.BLACK, Color.WHITE)
+
+            score += evalQueen(board, attackInfo, Color.WHITE, Color.BLACK) -
+                    evalQueen(board, attackInfo, Color.BLACK, Color.WHITE)
+
+            score += evalKing(board, attackInfo, Color.WHITE, Color.BLACK) -
+                    evalKing(board, attackInfo, Color.BLACK, Color.WHITE)
+
+            score += evalOther(board, attackInfo, Color.WHITE, Color.BLACK) -
+                    evalOther(board, attackInfo, Color.BLACK, Color.WHITE)
         }
-
-        var score = TunableConstants.TEMPO[board.colorToMove] +
-            board.psqScore[Color.WHITE] - board.psqScore[Color.BLACK] +
-            materialScore
-
-        score += PawnEvaluator.evaluate(board, attackInfo, pawnEvaluationCache)
-
-        score += evalKnight(board, attackInfo, Color.WHITE, Color.BLACK) -
-            evalKnight(board, attackInfo, Color.BLACK, Color.WHITE)
-
-        score += evalBishop(board, attackInfo, Color.WHITE, Color.BLACK) -
-            evalBishop(board, attackInfo, Color.BLACK, Color.WHITE)
-
-        score += evalRook(board, attackInfo, Color.WHITE, Color.BLACK) -
-            evalRook(board, attackInfo, Color.BLACK, Color.WHITE)
-
-        score += evalQueen(board, attackInfo, Color.WHITE, Color.BLACK) -
-            evalQueen(board, attackInfo, Color.BLACK, Color.WHITE)
-
-        score += evalKing(board, attackInfo, Color.WHITE, Color.BLACK) -
-            evalKing(board, attackInfo, Color.BLACK, Color.WHITE)
-
-        score += evalOther(board, attackInfo, Color.WHITE, Color.BLACK) -
-            evalOther(board, attackInfo, Color.BLACK, Color.WHITE)
 
         val mgScore = SplitValue.getFirstPart(score)
         val egScore = SplitValue.getSecondPart(score)
 
-        val phase = board.phase
-
-        return (mgScore * phase + egScore * (TunableConstants.PHASE_MAX - phase)) /
+        return (mgScore * board.phase + egScore * (TunableConstants.PHASE_MAX - board.phase)) /
             TunableConstants.PHASE_MAX
     }
 

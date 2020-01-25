@@ -23,7 +23,7 @@ object EvalConstants {
     const val SCORE_KNOW_WIN = 10000
 
     val SCORE_DRAWISH_MATERIAL = TunableConstants.MATERIAL_SCORE[Piece.PAWN]
-    val SCORE_LAZY_EVAL = SCORE_DRAWISH_MATERIAL * 10
+    val SCORE_LAZY_EVAL = SCORE_DRAWISH_MATERIAL * 20
 
     var PAWN_EVAL_CACHE = true
 
