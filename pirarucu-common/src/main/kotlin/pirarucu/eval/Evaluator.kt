@@ -8,6 +8,7 @@ import pirarucu.board.Piece
 import pirarucu.board.Rank
 import pirarucu.board.Square
 import pirarucu.cache.PawnEvaluationCache
+import pirarucu.move.BitboardMove
 import pirarucu.tuning.TunableConstants
 import pirarucu.util.PlatformSpecific
 import pirarucu.util.SplitValue
@@ -77,7 +78,7 @@ object Evaluator {
 
         var result = 0
 
-        val possibleSafeCheck = board.basicEvalInfo.dangerBitboard[theirColor][Piece.KNIGHT] and
+        val possibleSafeCheck = BitboardMove.KNIGHT_MOVES[board.kingSquare[theirColor]] and
             board.colorBitboard[ourColor].inv() and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
 
         while (tmpPieces != Bitboard.EMPTY) {
@@ -149,7 +150,7 @@ object Evaluator {
         val pawnSupportBitboard = attackInfo.attacksBitboard[ourColor][Piece.PAWN]
         val pawnThreatBitboard = attackInfo.attacksBitboard[theirColor][Piece.PAWN]
 
-        val possibleSafeCheck = board.basicEvalInfo.dangerBitboard[theirColor][Piece.BISHOP] and
+        val possibleSafeCheck = BitboardMove.bishopMoves(board.kingSquare[theirColor], board.gameBitboard) and
             board.colorBitboard[ourColor].inv() and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
 
         var result = 0
@@ -227,7 +228,7 @@ object Evaluator {
 
         var result = 0
 
-        val possibleSafeCheck = board.basicEvalInfo.dangerBitboard[theirColor][Piece.ROOK] and
+        val possibleSafeCheck = BitboardMove.rookMoves(board.kingSquare[theirColor], board.gameBitboard) and
             board.colorBitboard[ourColor].inv() and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
 
         while (tmpPieces != Bitboard.EMPTY) {
@@ -309,7 +310,7 @@ object Evaluator {
 
         var result = 0
 
-        val possibleSafeCheck = board.basicEvalInfo.dangerBitboard[theirColor][Piece.QUEEN] and
+        val possibleSafeCheck = BitboardMove.queenMoves(board.kingSquare[theirColor], board.gameBitboard) and
             board.colorBitboard[ourColor].inv() and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
 
         while (tmpPieces != Bitboard.EMPTY) {
