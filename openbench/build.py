@@ -6,8 +6,7 @@ IS_WINDOWS = platform.system() == 'Windows'
 process = subprocess.Popen(
     ['gradlew', 'clean', 'build'],
     cwd='../',
-    shell=IS_WINDOWS,
-    creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+    shell=IS_WINDOWS)
 process.communicate()
 
 for file in os.listdir("../build/distributions"):
