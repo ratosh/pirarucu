@@ -7,7 +7,7 @@ if not IS_WINDOWS:
     os.system('chmod +x ../gradlew')
 
 process = subprocess.Popen(
-    ['gradlew', 'clean', 'build'],
+    ['./gradlew', 'clean', 'build'],
     cwd='../',
     shell=IS_WINDOWS)
 process.communicate()
