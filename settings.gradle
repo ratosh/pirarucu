@@ -1,3 +1,4 @@
+rootProject.name= 'pirarucu'
 include 'pirarucu-common'
 include 'pirarucu-jvm'
 include 'pirarucu-util'

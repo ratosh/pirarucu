@@ -3,11 +3,14 @@ import subprocess, platform, os, zipfile, shutil
 # Windows treated seperatly from Linux
 IS_WINDOWS = platform.system() == 'Windows'
 
+command = 'gradlew clean build'
+
 if not IS_WINDOWS:
     os.system('chmod +x ../gradlew')
+    command = './{0}'.format(command)
 
 process = subprocess.Popen(
-    ['./gradlew', 'clean', 'build'],
+    command.split(),
     cwd='../',
     shell=IS_WINDOWS)
 process.communicate()
