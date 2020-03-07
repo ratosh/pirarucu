@@ -3,6 +3,9 @@ import subprocess, platform, os, zipfile, shutil
 # Windows treated seperatly from Linux
 IS_WINDOWS = platform.system() == 'Windows'
 
+if not IS_WINDOWS:
+    os.system('chmod +x ../gradlew')
+
 process = subprocess.Popen(
     ['gradlew', 'clean', 'build'],
     cwd='../',
