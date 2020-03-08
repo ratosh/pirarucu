@@ -1,7 +1,3 @@
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.7'
-}
-
 allprojects {
     repositories {
         mavenCentral()
@@ -31,7 +27,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
     }
 }
 
@@ -42,18 +38,6 @@ mainClassName = "pirarucu.MainKt"
 
 dependencies {
     compile project('pirarucu-jvm')
-}
-
-shadowDistZip {
-    baseName = project.name + '-jvm'
-    into(baseName + '-' + version) {
-        from '.'
-        include 'bin/*'
-    }
-}
-
-shadowDistTar {
-    baseName = project.name + '-jvm'
 }
 
 jar {
@@ -69,8 +53,21 @@ startShadowScripts {
     optsEnvironmentVar = 'PIRARUCU'
 }
 
+shadowDistZip {
+    baseName = project.name + '-jvm'
+    into(project.name + '-jvm-' + version) {
+        from '.'
+        include 'bin/*'
+    }
+}
+
+shadowDistTar {
+    baseName = project.name + '-jvm'
+}
+
 shadowJar {
+    mainClassName = "pirarucu.MainKt"
     baseName = project.name
     classifier = ''
-    version = ''
+    archiveVersion = ''
 }
