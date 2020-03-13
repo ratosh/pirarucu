@@ -305,7 +305,7 @@ class MoveGeneratorTest {
             val move = moveList.next()
 
             println(Move.toString(move))
-            assertTrue(MoveGenerator.isLegalQuietMove(board, attackInfo, move))
+            assertTrue(MoveGenerator.isPseudoLegalMove(board, attackInfo, move))
         }
         moveGenerator.generateNoisy(board, attackInfo, moveList)
 
@@ -313,7 +313,7 @@ class MoveGeneratorTest {
             val move = moveList.next()
 
             println(Move.toString(move))
-            assertFalse(MoveGenerator.isLegalQuietMove(board, attackInfo, move))
+            assertFalse(MoveGenerator.isPseudoLegalMove(board, attackInfo, move))
         }
         println(moveList.toString())
     }
@@ -329,7 +329,7 @@ class MoveGeneratorTest {
             val move = moveList.next()
             if (board.isLegalMove(move)) {
                 println(Move.toString(move))
-                assertTrue(MoveGenerator.isLegalQuietMove(board, attackInfo, move))
+                assertTrue(MoveGenerator.isPseudoLegalMove(board, attackInfo, move))
             }
         }
         moveGenerator.generateNoisy(board, attackInfo, moveList)
@@ -339,7 +339,7 @@ class MoveGeneratorTest {
 
             if (board.isLegalMove(move)) {
                 println(Move.toString(move))
-                assertFalse(MoveGenerator.isLegalQuietMove(board, attackInfo, move))
+                assertFalse(MoveGenerator.isPseudoLegalMove(board, attackInfo, move))
             }
         }
         println(moveList.toString())

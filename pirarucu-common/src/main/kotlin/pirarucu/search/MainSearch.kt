@@ -310,9 +310,6 @@ class MainSearch(
             if (move == Move.NONE) {
                 break
             }
-            if (move == ttMove && !MoveGenerator.isLegalMove(board, currentNode.attackInfo, move)) {
-                continue
-            }
             if (!board.isLegalMove(move)) {
                 continue
             }
