@@ -232,16 +232,18 @@ class Board {
             }
             else -> {
                 val fromSquare = Move.getFromSquare(move)
+                val fromBitboard = Bitboard.getBitboard(fromSquare)
+                val toSquare = Move.getToSquare(move)
                 if (pieceTypeBoard[fromSquare] == Piece.KING) {
-                    val fromBitboard = Bitboard.getBitboard(fromSquare)
                     val tmpBitboard = gameBitboard xor fromBitboard
-                    val toSquare = Move.getToSquare(move)
 
                     return MoveGenerator.squareAttackedBitboard(
                         toSquare, colorToMove, pieceBitboard[nextColorToMove], tmpBitboard
                     ) == Bitboard.EMPTY
                 }
-                return true
+                val toBitboard = Bitboard.getBitboard(toSquare)
+                return fromBitboard and basicEvalInfo.pinnedBitboard == Bitboard.EMPTY ||
+                        BitboardMove.PINNED_MOVE_MASK[kingSquare[colorToMove]][fromSquare] and toBitboard != Bitboard.EMPTY
             }
         }
     }
