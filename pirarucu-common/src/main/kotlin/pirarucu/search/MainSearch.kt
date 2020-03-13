@@ -12,6 +12,7 @@ import pirarucu.game.GameConstants
 import pirarucu.hash.HashConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
+import pirarucu.move.MoveGenerator
 import pirarucu.move.MovePicker
 import pirarucu.move.MoveType
 import pirarucu.tuning.TunableConstants
@@ -308,6 +309,9 @@ class MainSearch(
             val move = currentNode.next(skipQuiets)
             if (move == Move.NONE) {
                 break
+            }
+            if (move == ttMove && !MoveGenerator.isLegalMove(board, currentNode.attackInfo, move)) {
+                continue
             }
             if (!board.isLegalMove(move)) {
                 continue

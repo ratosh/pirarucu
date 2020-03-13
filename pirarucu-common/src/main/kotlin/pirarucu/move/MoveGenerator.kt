@@ -350,6 +350,18 @@ class MoveGenerator(private val history: History) {
 
     companion object {
 
+        fun isLegalMove(board: Board, attackInfo: AttackInfo, move: Int): Boolean {
+            val toSquare = Move.getToSquare(move)
+            if (board.pieceTypeBoard[toSquare] == Piece.NONE) {
+                return isLegalQuietMove(board, attackInfo, move)
+            }
+            val fromSquare = Move.getFromSquare(move)
+            val ourColor = board.colorToMove
+            val toBitboard = Bitboard.getBitboard(toSquare)
+            attackInfo.update(board, ourColor)
+            return attackInfo.pieceMovement[ourColor][fromSquare] and toBitboard != Bitboard.EMPTY
+        }
+
         fun isLegalQuietMove(board: Board, attackInfo: AttackInfo, move: Int): Boolean {
             val fromSquare = Move.getFromSquare(move)
             val toSquare = Move.getToSquare(move)
@@ -402,7 +414,6 @@ class MoveGenerator(private val history: History) {
                     return attackInfo.pieceMovement[ourColor][fromSquare] and toBitboard != Bitboard.EMPTY
                 }
             }
-            return false
         }
 
         fun pathUnderAttack(
