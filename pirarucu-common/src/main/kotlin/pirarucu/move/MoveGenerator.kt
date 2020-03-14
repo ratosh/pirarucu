@@ -403,7 +403,7 @@ class MoveGenerator(private val history: History) {
                 }
                 Piece.KING -> {
                     if (MoveType.isCastling(moveType)) {
-                        val path = BitboardMove.BETWEEN_BITBOARD[fromSquare][toSquare]
+                        val path = BitboardMove.BETWEEN_BITBOARD[fromSquare][toSquare] or toBitboard
                         return (path and board.gameBitboard == Bitboard.EMPTY)
                     }
                     BitboardMove.KING_MOVES[fromSquare] and
