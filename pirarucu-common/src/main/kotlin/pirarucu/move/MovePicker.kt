@@ -85,8 +85,12 @@ class MovePicker {
                 PHASE_TT -> {
                     phase--
                     if (ttMove != Move.NONE) {
-                        currentMove = ttMove
-                        return currentMove
+                        if (MoveGenerator.isPseudoLegalMove(board, attackInfo, ttMove)) {
+                            currentMove = ttMove
+                            return currentMove
+                        } else {
+                            println(MoveGenerator.isPseudoLegalMove(board, attackInfo, ttMove))
+                        }
                     }
                 }
                 PHASE_GEN_MATERIAL_EXCHANGE_MOVES -> {
@@ -124,7 +128,7 @@ class MovePicker {
                     if (!skipQuiets &&
                         killerMove1 != Move.NONE &&
                         killerMove1 != ttMove &&
-                        MoveGenerator.isLegalQuietMove(board, attackInfo, killerMove1)) {
+                        MoveGenerator.isPseudoLegalMove(board, attackInfo, killerMove1)) {
                         currentMove = killerMove1
                         return currentMove
                     }
@@ -134,7 +138,7 @@ class MovePicker {
                     if (!skipQuiets &&
                         killerMove2 != Move.NONE &&
                         killerMove2 != ttMove &&
-                        MoveGenerator.isLegalQuietMove(board, attackInfo, killerMove2)) {
+                        MoveGenerator.isPseudoLegalMove(board, attackInfo, killerMove2)) {
                         currentMove = killerMove2
                         return currentMove
                     }

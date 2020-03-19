@@ -12,6 +12,7 @@ import pirarucu.game.GameConstants
 import pirarucu.hash.HashConstants
 import pirarucu.hash.TranspositionTable
 import pirarucu.move.Move
+import pirarucu.move.MoveGenerator
 import pirarucu.move.MovePicker
 import pirarucu.move.MoveType
 import pirarucu.tuning.TunableConstants

@@ -350,59 +350,71 @@ class MoveGenerator(private val history: History) {
 
     companion object {
 
-        fun isLegalQuietMove(board: Board, attackInfo: AttackInfo, move: Int): Boolean {
+        fun isPseudoLegalMove(board: Board, attackInfo: AttackInfo, move: Int): Boolean {
             val fromSquare = Move.getFromSquare(move)
             val toSquare = Move.getToSquare(move)
-            if (board.pieceTypeBoard[toSquare] != Piece.NONE) {
-                return false
-            }
             val ourColor = board.colorToMove
-            val fromBitboard = Bitboard.getBitboard(fromSquare)
-            if (board.colorBitboard[ourColor] and fromBitboard == Bitboard.EMPTY) {
-                return false
-            }
             val theirColor = board.nextColorToMove
+            val fromBitboard = Bitboard.getBitboard(fromSquare)
             val toBitboard = Bitboard.getBitboard(toSquare)
-            if (board.colorBitboard[theirColor] and toBitboard != Bitboard.EMPTY) {
+            val moveType = Move.getMoveType(move)
+            if (board.colorBitboard[ourColor] and fromBitboard == Bitboard.EMPTY ||
+                    board.colorBitboard[ourColor] and toBitboard != Bitboard.EMPTY) {
                 return false
             }
-            when (board.pieceTypeBoard[fromSquare]) {
+            return when (board.pieceTypeBoard[fromSquare]) {
                 Piece.NONE -> {
-                    return false
+                    false
                 }
                 Piece.PAWN -> {
-                    if (toBitboard and Bitboard.PROMOTION_BITBOARD != Bitboard.EMPTY) {
+                    if (toBitboard and Bitboard.PROMOTION_BITBOARD != Bitboard.EMPTY &&
+                            !MoveType.isPromotion(moveType)) {
                         return false
+                    }
+                    if (MoveType.TYPE_PASSANT == moveType) {
+                        return toSquare == board.epSquare &&
+                                toBitboard and BitboardMove.PAWN_ATTACKS[ourColor][fromSquare] != Bitboard.EMPTY
                     }
                     val checkBitboard = board.basicEvalInfo.checkBitboard
                     val mask = when {
                         checkBitboard == Bitboard.EMPTY -> {
-                            board.emptyBitboard
+                            Bitboard.ALL
                         }
                         Bitboard.oneElement(checkBitboard) -> {
                             val square = Square.getSquare(checkBitboard)
-                            BitboardMove.BETWEEN_BITBOARD[board.kingSquare[ourColor]][square]
+                            BitboardMove.BETWEEN_BITBOARD[board.kingSquare[ourColor]][square] or checkBitboard
                         }
                         else -> {
                             return false
                         }
                     }
-                    var bitboard = BitboardMove.PAWN_MOVES[ourColor][fromSquare] and board.emptyBitboard
+                    if (toBitboard and board.colorBitboard[theirColor] == Bitboard.EMPTY) {
+                        var bitboard = BitboardMove.PAWN_MOVES[ourColor][fromSquare] and board.emptyBitboard
 
-                    if (bitboard != Bitboard.EMPTY) {
-                        bitboard = bitboard or (BitboardMove.DOUBLE_PAWN_MOVES[ourColor][fromSquare] and
-                            board.emptyBitboard)
+                        if (bitboard != Bitboard.EMPTY) {
+                            bitboard = bitboard or (BitboardMove.DOUBLE_PAWN_MOVES[ourColor][fromSquare] and
+                                    board.emptyBitboard)
+                        }
+                        bitboard = bitboard and mask
+
+                        return (toBitboard and bitboard != Bitboard.EMPTY)
                     }
-                    bitboard = bitboard and mask
-
-                    return (toBitboard and bitboard != Bitboard.EMPTY)
+                    (toBitboard and BitboardMove.PAWN_ATTACKS[ourColor][fromSquare] and mask != Bitboard.EMPTY)
+                }
+                Piece.KING -> {
+                    if (MoveType.isCastling(moveType)) {
+                        val path = BitboardMove.BETWEEN_BITBOARD[fromSquare][toSquare] or toBitboard
+                        return (path and board.gameBitboard == Bitboard.EMPTY)
+                    }
+                    BitboardMove.KING_MOVES[fromSquare] and
+                            BitboardMove.KING_MOVES[board.kingSquare[theirColor]].inv() and
+                            toBitboard != Bitboard.EMPTY
                 }
                 else -> {
                     attackInfo.update(board, ourColor)
-                    return attackInfo.pieceMovement[ourColor][fromSquare] and toBitboard != Bitboard.EMPTY
+                    attackInfo.pieceMovement[ourColor][fromSquare] and toBitboard != Bitboard.EMPTY
                 }
             }
-            return false
         }
 
         fun pathUnderAttack(
