@@ -15,11 +15,6 @@ class SearchPlyInfo(private val moveGenerator: MoveGenerator) {
     private var killerMove1 = Move.NONE
     private var killerMove2 = Move.NONE
 
-    val currentMove: Int
-        get() {
-            return movePicker.currentMove
-        }
-
     val phase: Int
         get() {
             return movePicker.phase

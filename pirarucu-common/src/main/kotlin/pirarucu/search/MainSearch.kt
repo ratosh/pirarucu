@@ -219,62 +219,9 @@ class MainSearch(
         }
 
         var ttMove = Move.NONE
-        var ttMoveSingular = false
 
         if (foundInfo != HashConstants.EMPTY_INFO) {
             ttMove = transpositionTable.getMove(foundInfo)
-            // Singular TT move detection
-            if (!rootNode &&
-                ttMove != Move.NONE &&
-                newDepth > SearchConstants.SINGULAR_DETECTION_DEPTH &&
-                ttScoreType == HashConstants.SCORE_TYPE_BOUND_LOWER &&
-                ttDepth >= newDepth - 3
-            ) {
-
-                board.doMove(ttMove)
-                if (board.basicEvalInfo.checkBitboard == Bitboard.EMPTY) {
-                    ttMoveSingular = true
-                }
-                board.undoMove(ttMove)
-
-                if (ttMoveSingular) {
-                    // Singular bound
-                    val singularCut = max(ttScore - 2 * newDepth, -EvalConstants.SCORE_MATE)
-
-                    // Use move picker
-                    currentNode.setupMovePicker(board, 0, Move.NONE)
-
-                    var singularMoveCount = 0
-
-                    while (singularMoveCount < SearchConstants.SINGULAR_DETECTION_MOVES) {
-                        val move = currentNode.next(false)
-                        // Move picker finish
-                        if (move == Move.NONE) {
-                            break
-                        }
-
-                        // Move is not legal
-                        if (move == ttMove || !board.isLegalMove(move)) {
-                            continue
-                        }
-
-                        singularMoveCount++
-
-                        board.doMove(move)
-
-                        // Verify the move using a low depth search
-                        val value = -search(board, newDepth / 2, ply + 1, -singularCut - 1, -singularCut)
-
-                        board.undoMove(move)
-
-                        // Value is above beta cut
-                        if (value > singularCut) {
-                            ttMoveSingular = false
-                            break
-                        }
-                    }
-                }
-            }
             // IID
         } else if (pvNode && newDepth > SearchConstants.IID_DEPTH) {
             search(
@@ -285,6 +232,65 @@ class MainSearch(
 
             if (foundInfo != HashConstants.EMPTY_INFO) {
                 ttMove = transpositionTable.getMove(foundInfo)
+            }
+        }
+
+        // Only keep valid tt moves
+        if (!MoveGenerator.isPseudoLegalMove(board, currentNode.attackInfo, ttMove) ||
+                !board.isLegalMove(ttMove)) {
+            ttMove = Move.NONE
+        }
+
+        var ttMoveSingular = false
+        // Singular TT move detection
+        if (ttMove != Move.NONE &&
+                !rootNode &&
+                ttMove != Move.NONE &&
+                newDepth > SearchConstants.SINGULAR_DETECTION_DEPTH &&
+                ttScoreType == HashConstants.SCORE_TYPE_BOUND_LOWER &&
+                ttDepth >= newDepth - 3
+        ) {
+            board.doMove(ttMove)
+            if (board.basicEvalInfo.checkBitboard == Bitboard.EMPTY) {
+                ttMoveSingular = true
+            }
+            board.undoMove(ttMove)
+
+            if (ttMoveSingular) {
+                val singularCut = max(ttScore - 2 * newDepth, -EvalConstants.SCORE_MATE)
+
+                // Use move picker
+                currentNode.setupMovePicker(board, 0, Move.NONE)
+
+                var singularMoveCount = 0
+
+                while (singularMoveCount < SearchConstants.SINGULAR_DETECTION_MOVES) {
+                    val move = currentNode.next(false)
+                    // Move picker finish
+                    if (move == Move.NONE) {
+                        break
+                    }
+
+                    // Move is not legal
+                    if (move == ttMove || !board.isLegalMove(move)) {
+                        continue
+                    }
+
+                    singularMoveCount++
+
+                    board.doMove(move)
+
+                    // Verify the move using a low depth search
+                    val value = -search(board, newDepth / 2, ply + 1, -singularCut - 1, -singularCut)
+
+                    board.undoMove(move)
+
+                    // Value is above beta cut
+                    if (value > singularCut) {
+                        ttMoveSingular = false
+                        break
+                    }
+                }
             }
         }
 
@@ -310,7 +316,7 @@ class MainSearch(
             if (move == Move.NONE) {
                 break
             }
-            if (!board.isLegalMove(move)) {
+            if (move != ttMove && !board.isLegalMove(move)) {
                 continue
             }
 
@@ -394,10 +400,7 @@ class MainSearch(
 
                 // LMR Search
                 if (reduction != 1 || !pvNode || movesPerformed != 1) {
-                    score = -search(
-                        board, searchDepth - reduction, ply + 1, -searchAlpha - 1,
-                        -searchAlpha, false
-                    )
+                    score = -search(board, searchDepth - reduction, ply + 1, -searchAlpha - 1, -searchAlpha, false)
                 }
 
                 // PVS Search
