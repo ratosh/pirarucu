@@ -27,8 +27,8 @@ object TunableConstants {
             PHASE_PIECE_VALUE[Piece.ROOK] * 4 +
             PHASE_PIECE_VALUE[Piece.QUEEN] * 2
 
-    val MATERIAL_SCORE_MG = intArrayOf(0, 87, 460, 480, 652, 1294)
-    val MATERIAL_SCORE_EG = intArrayOf(0, 132, 401, 426, 717, 1380)
+    val MATERIAL_SCORE_MG = intArrayOf(0, 87, 448, 460, 626, 1218)
+    val MATERIAL_SCORE_EG = intArrayOf(0, 132, 405, 440, 761, 1492)
     val MATERIAL_SCORE = IntArray(Piece.SIZE)
 
     val QS_FUTILITY_VALUE = IntArray(Piece.SIZE)
@@ -46,12 +46,12 @@ object TunableConstants {
                     0, 0, 0, 0,
                     0, 0, 0, 0
             ),
-            intArrayOf(0, 0, 0, 0, -12, 36, 33, 74, 36, 57, 73, 92, 2, 16, 22, 31, -10, -10, 20, 25, -9, -8, 2, 6, -4, 6, 1, -15, 0, 0, 0, 0),
-            intArrayOf(-183, -117, -107, -81, -62, -45, 2, -47, -26, 10, 0, 36, 16, 16, 35, 32, 2, 17, 28, 29, -18, 6, 12, 24, -8, -1, 3, 15, -52, -15, 0, 5),
-            intArrayOf(-51, -107, -102, -93, -78, -43, -16, -55, 1, 12, 21, 27, -12, 1, 7, 24, -2, 3, 3, 23, -2, 9, 17, 8, -6, 28, 10, 8, -17, -6, -2, 5),
-            intArrayOf(-3, 11, 6, 36, -11, -10, 25, 16, -16, 19, 0, 6, -27, 5, 8, -7, -29, -6, -6, -6, -16, -12, -6, -11, -26, 5, 4, 2, -8, 2, 10, 20),
-            intArrayOf(7, -16, -4, 37, -5, -35, 3, -37, 25, 12, 12, 0, -2, -8, 0, -9, 16, -2, 12, 6, 18, 31, 23, 29, 18, 28, 44, 45, 27, 37, 45, 53),
-            intArrayOf(-23, 92, 39, 60, 24, 45, 25, 86, 35, 108, 126, 88, -18, -5, -6, -32, -89, -66, -64, -29, -55, -24, -68, -51, 18, 4, -50, -28, 34, 29, -5, 21)
+            intArrayOf(0, 0, 0, 0, -42, -6, 65, 96, 22, 29, 69, 80, 4, 10, 18, 27, -2, -8, 10, 19, -11, -10, 2, 4, -4, -8, 1, 3, 0, 0, 0, 0),
+            intArrayOf(-183, -119, -100, -78, -76, -44, -10, -49, -23, -6, 2, 28, 11, 18, 41, 28, -2, 23, 29, 29, -26, 4, 10, 18, -10, -13, -5, 11, -56, -23, -6, -6),
+            intArrayOf(-51, -73, -50, -120, -61, -47, -30, -43, 3, 6, 15, 7, -24, 1, 10, 14, 0, -3, 7, 19, -8, 9, 11, 6, 8, 20, 20, 8, 1, 18, -4, 5),
+            intArrayOf(-3, -24, -15, -25, -3, -18, -3, -2, -11, 12, 2, 0, -13, 3, 8, 1, -11, 0, -8, -4, -10, 4, -2, -1, -16, 1, 8, 4, -8, 2, 10, 16),
+            intArrayOf(7, 6, 19, 5, 21, -13, -10, -19, 33, 15, 6, 4, 24, 20, 20, 7, 26, 26, 28, 28, 36, 39, 37, 31, 55, 46, 46, 49, 45, 43, 42, 49),
+            intArrayOf(-23, 209, 12, 28, 16, 4, 44, -51, -51, -2, -18, -61, -83, -57, -82, -106, -125, -97, -78, -80, -52, -44, -80, -56, 28, -4, -36, -24, 62, 29, 15, 31)
     )
 
     val PSQT_EG = arrayOf(
@@ -65,12 +65,12 @@ object TunableConstants {
                     0, 0, 0, 0,
                     0, 0, 0, 0
             ),
-            intArrayOf(0, 0, 0, 0, 26, 12, -14, -37, 26, -4, -11, -43, 7, -1, -11, -23, -8, -8, -25, -29, -15, -18, -17, -19, -13, -18, -12, -16, 0, 0, 0, 0),
-            intArrayOf(-77, -29, -20, 1, -32, -1, -5, 6, -16, -7, 17, 15, -13, 8, 20, 27, -13, -1, 11, 24, -22, -19, -10, 10, -6, -18, -14, -10, -31, -33, -21, -17),
-            intArrayOf(-17, -5, 22, 25, 9, -1, -1, -12, -1, -14, -10, -15, -1, -4, 0, 2, -13, -8, 0, -5, -6, -9, -6, 0, -11, -20, -9, -9, 3, -3, -10, -14),
-            intArrayOf(26, 29, 33, 23, 15, 24, 20, 12, 13, 13, 14, 13, 15, 7, 9, 12, 5, 3, 5, 6, -9, -10, -6, 0, -14, -18, -12, -13, -14, -11, -11, -19),
-            intArrayOf(4, 13, 19, 10, -13, 23, 15, 47, -20, -13, -11, 37, 6, 27, 17, 41, -14, 25, 5, 30, -1, -32, 0, -16, -32, -57, -48, -40, -55, -70, -63, -44),
-            intArrayOf(-56, -27, -18, -16, -5, 35, 36, 18, 0, 8, 41, 48, 20, 27, 53, 49, 1, 19, 49, 39, -2, 12, 27, 25, -19, 10, 24, 17, -65, -33, -18, -27)
+            intArrayOf(0, 0, 0, 0, 50, 40, 3, -37, 32, 26, -5, -47, 9, 5, -9, -23, -10, -8, -17, -25, -11, -14, -17, -15, -11, -14, -12, -14, 0, 0, 0, 0),
+            intArrayOf(-77, -9, -9, 15, -8, 13, 13, 20, 0, 12, 31, 29, 7, 24, 30, 43, 11, 16, 26, 38, -6, -7, 2, 25, 6, 2, 2, 0, -8, -15, -5, 4),
+            intArrayOf(-17, 11, 6, 20, 4, -1, 0, 6, 3, 0, 0, -9, 17, 8, 3, 10, 0, 0, 8, 5, -8, 1, 0, 10, -13, -12, -18, -5, -13, -15, -10, -6),
+            intArrayOf(26, 33, 41, 39, 5, 24, 22, 15, 13, 12, 22, 9, 11, 13, 12, 8, -3, -5, 9, 6, -16, -22, -8, -8, -20, -22, -18, -13, -14, -15, -11, -19),
+            intArrayOf(4, 1, 16, 28, -25, 45, 53, 57, -26, 16, 55, 47, 2, 21, 27, 52, 8, 13, 17, 30, -42, -20, 10, 2, -82, -54, -32, -24, -82, -58, -47, -44),
+            intArrayOf(-56, -83, -22, 8, -5, 73, 74, 75, 15, 70, 69, 76, 11, 53, 65, 71, 9, 41, 46, 47, 0, 24, 31, 31, -17, 12, 20, 17, -77, -41, -32, -41)
     )
 
     val PSQT = Array(Piece.SIZE) { IntArray(Square.SIZE) }
@@ -78,30 +78,30 @@ object TunableConstants {
     val MOBILITY_MG = arrayOf(
             intArrayOf(),
             intArrayOf(),
-            intArrayOf(-52, -30, -15, -11, -1, 6, 13, 18, 25),
-            intArrayOf(-34, -22, -5, 0, 4, 9, 14, 16, 17, 22, 41, 62, -34, 82),
-            intArrayOf(-68, -46, -38, -31, -29, -19, -16, -11, -5, -2, 3, 6, 12, 11, 12),
-            intArrayOf(-7, -9, 5, -5, -2, 6, 7, 8, 9, 12, 15, 16, 15, 18, 25, 23, 31, 46, 23, 54, 61, 119, 102, 155, 158, 256, 127, 227),
-            intArrayOf(-114, -80, -23, 3, 13, 3, 17, 10, 18)
+            intArrayOf(-52, -28, -15, -7, -3, 2, 9, 12, 14),
+            intArrayOf(-34, -16, -7, 0, 4, 9, 10, 14, 13, 18, 25, 26, 53, 48),
+            intArrayOf(-68, -44, -37, -31, -33, -25, -20, -17, -15, -12, -9, -10, -10, -5, -6),
+            intArrayOf(-7, -9, -13, -4, -3, 4, 5, 8, 9, 12, 14, 16, 17, 18, 21, 21, 31, 30, 33, 34, 38, 77, 52, 55, 126, 184, 253, 253),
+            intArrayOf(-114, -64, -23, -3, 13, 3, 27, 28, 26)
     )
 
     val MOBILITY_EG = arrayOf(
             intArrayOf(),
             intArrayOf(),
-            intArrayOf(-2, -8, 9, 18, 19, 27, 21, 18, 10),
-            intArrayOf(-24, -42, -20, -9, 3, 7, 12, 15, 18, 19, 11, 12, 52, 4),
-            intArrayOf(0, -16, 9, 18, 21, 26, 34, 39, 40, 43, 43, 48, 52, 52, 30),
-            intArrayOf(155, 65, 18, -32, -49, -44, -20, -6, 7, 8, 17, 27, 32, 16, 34, 16, 33, 8, 34, 11, 10, -37, -38, -62, -50, -153, -38, -108),
-            intArrayOf(0, 36, 22, 19, 16, 5, -1, 0, -24)
+            intArrayOf(-2, -14, 7, 16, 25, 35, 33, 30, 19),
+            intArrayOf(-24, -44, -22, -5, 7, 17, 24, 27, 34, 34, 28, 35, 33, 33),
+            intArrayOf(0, 10, 14, 14, 25, 28, 30, 33, 38, 43, 45, 50, 54, 48, 50),
+            intArrayOf(155, 10, -5, -48, -30, -50, -22, -14, -1, 0, 1, 11, 12, 16, 12, 18, 9, 8, 4, 3, -10, -15, -17, -33, -56, -121, -108, -44),
+            intArrayOf(0, 30, 26, 27, 18, 9, -1, 0, -24)
     )
     val MOBILITY = Array(Piece.SIZE) { IntArray(28) }
 
-    val PAWN_SUPPORT_MG = intArrayOf(0, 0, 4, 0, 0, 0, 0)
-    val PAWN_SUPPORT_EG = intArrayOf(0, 0, 17, 18, 0, 0, 0)
+    val PAWN_SUPPORT_MG = intArrayOf(0, 0, 6, 8, 0, 0, 0)
+    val PAWN_SUPPORT_EG = intArrayOf(0, 0, 17, 12, 0, 0, 0)
     val PAWN_SUPPORT = IntArray(Piece.SIZE)
 
-    val PAWN_THREAT_MG = intArrayOf(0, 0, 75, 74, 0, 0, 0)
-    val PAWN_THREAT_EG = intArrayOf(0, 0, 18, 46, 0, 0, 0)
+    val PAWN_THREAT_MG = intArrayOf(0, 0, 73, 73, 0, 0, 0)
+    val PAWN_THREAT_EG = intArrayOf(0, 0, 12, 44, 0, 0, 0)
     val PAWN_THREAT = IntArray(Piece.SIZE)
 
     const val PAWN_STRUCTURE_DEFENDED = 0
@@ -111,16 +111,16 @@ object TunableConstants {
     const val PAWN_STRUCTURE_BACKWARD = 4
     const val PAWN_STRUCTURE_BACKWARD_HALF_OPEN = 5
 
-    val PAWN_STRUCTURE_MG = intArrayOf(25, 10, -10, -4, -3, -22)
-    val PAWN_STRUCTURE_EG = intArrayOf(6, 1, -10, -12, -10, -16)
+    val PAWN_STRUCTURE_MG = intArrayOf(25, 10, -6, -12, 1, -28)
+    val PAWN_STRUCTURE_EG = intArrayOf(6, 1, -14, -14, -14, -16)
     val PAWN_STRUCTURE = IntArray(PAWN_STRUCTURE_EG.size)
 
-    val PASSED_PAWN_MG = intArrayOf(0, -7, -8, -18, 3, 7, 104, 0)
-    val PASSED_PAWN_EG = intArrayOf(0, -47, -39, -2, 34, 126, 230, 0)
+    val PASSED_PAWN_MG = intArrayOf(0, -23, -40, -32, -11, -7, 160, 0)
+    val PASSED_PAWN_EG = intArrayOf(0, -47, -29, 14, 60, 148, 226, 0)
     val PASSED_PAWN = IntArray(Rank.SIZE)
 
-    val PASSED_PAWN_BLOCKED_MG = intArrayOf(0, -35, -14, -25, -8, 10, 104, 0)
-    val PASSED_PAWN_BLOCKED_EG = intArrayOf(0, -60, -40, -15, 7, 34, 68, 0)
+    val PASSED_PAWN_BLOCKED_MG = intArrayOf(0, -35, -48, -41, -20, -12, 64, 0)
+    val PASSED_PAWN_BLOCKED_EG = intArrayOf(0, -52, -24, -5, 19, 50, 72, 0)
     val PASSED_PAWN_BLOCKED = IntArray(Rank.SIZE)
 
     const val PASSED_PAWN_SAFE = 0
@@ -130,54 +130,54 @@ object TunableConstants {
     const val PASSED_PAWN_DEFENDED_ADVANCE = 4
     const val PASSED_PAWN_KING_DISTANCE = 5
 
-    val PASSED_PAWN_BONUS_MG = intArrayOf(-8, -2, -17, 32, 9, -5)
-    val PASSED_PAWN_BONUS_EG = intArrayOf(9, 34, 25, -3, 12, 12)
+    val PASSED_PAWN_BONUS_MG = intArrayOf(-8, -4, -37, 32, 11, -5)
+    val PASSED_PAWN_BONUS_EG = intArrayOf(9, 34, 33, -3, 12, 12)
     val PASSED_PAWN_BONUS = IntArray(PASSED_PAWN_BONUS_EG.size)
 
     val PAWN_SHIELD_MG = arrayOf(
             arrayOf(
-                    intArrayOf(0, 51, 64, 32, 17, 37, -47, 0),
-                    intArrayOf(0, 66, 67, 40, 22, 17, -193, 0),
-                    intArrayOf(0, 39, 30, 17, 22, -33, -7, 0),
-                    intArrayOf(0, 46, 22, 16, 21, -81, 82, 0)
+                    intArrayOf(0, 51, 54, 10, 14, 7, -208, 0),
+                    intArrayOf(0, 66, 63, 22, 26, 70, 48, 0),
+                    intArrayOf(0, 61, 34, 34, 19, -17, 86, 0),
+                    intArrayOf(0, 18, 24, 32, 32, -39, -95, 0)
             ),
             arrayOf(
-                    intArrayOf(8, 24, 28, 15, 15, 9, -73, 0),
-                    intArrayOf(78, 54, 30, 33, 19, 22, -144, 0),
-                    intArrayOf(59, 44, 5, 10, 15, 31, 22, 0),
-                    intArrayOf(57, 46, 8, 21, 17, -47, -92, 0)
+                    intArrayOf(8, 32, 32, 19, 15, 53, -69, 0),
+                    intArrayOf(78, 56, 28, 21, 18, 44, -56, 0),
+                    intArrayOf(59, 42, 5, 18, 25, 54, -58, 0),
+                    intArrayOf(57, 12, 2, 12, 4, -21, -36, 0)
             )
     )
     val PAWN_SHIELD_EG = arrayOf(
             arrayOf(
-                    intArrayOf(0, -37, -31, -8, -1, -3, 78, 0),
-                    intArrayOf(0, -21, -14, -4, -1, 17, 9, 0),
-                    intArrayOf(0, -1, 3, 4, -10, 13, 51, 0),
-                    intArrayOf(0, 1, 9, 2, -18, 21, 9, 0)
+                    intArrayOf(0, -43, -25, -2, 4, 69, 98, 0),
+                    intArrayOf(0, -25, -12, -4, -5, 6, -80, 0),
+                    intArrayOf(0, -9, 3, -4, -2, -2, 45, 0),
+                    intArrayOf(0, 10, 15, -10, -26, -26, 125, 0)
             ),
             arrayOf(
-                    intArrayOf(-2, -11, -6, -4, -6, -20, 3, 0),
-                    intArrayOf(-20, -18, -4, -8, -2, 9, -15, 0),
-                    intArrayOf(-11, -9, 10, -1, -11, -15, -33, 0),
-                    intArrayOf(-6, -8, 4, -4, -22, 3, 7, 0)
+                    intArrayOf(-2, -19, -4, 0, 8, 8, -44, 0),
+                    intArrayOf(-20, -20, -2, 0, -2, 11, 62, 0),
+                    intArrayOf(-11, -11, 6, -9, -15, -23, -7, 0),
+                    intArrayOf(-6, 4, 8, 0, -8, -1, 29, 0)
             )
     )
     val PAWN_SHIELD = Array(2) { Array(File.SIZE / 2) { IntArray(Rank.SIZE) } }
 
-    val PAWN_PUSH_THREAT_MG = intArrayOf(0, 0, 17, 25, 23, 7, 170)
-    val PAWN_PUSH_THREAT_EG = intArrayOf(0, 0, 8, 15, 10, 27, -1)
+    val PAWN_PUSH_THREAT_MG = intArrayOf(0, 0, 29, 27, 29, 23, 118)
+    val PAWN_PUSH_THREAT_EG = intArrayOf(0, 0, 22, 21, 18, 11, 19)
     val PAWN_PUSH_THREAT = IntArray(PAWN_PUSH_THREAT_EG.size)
 
-    val KING_THREAT_MG = intArrayOf(0, 0, 12, 13, 11, 14, 0)
-    val KING_THREAT_EG = intArrayOf(0, 0, -2, 2, -2, 11, 0)
+    val KING_THREAT_MG = intArrayOf(0, 0, 14, 13, 15, 12, 0)
+    val KING_THREAT_EG = intArrayOf(0, 0, -2, 0, -4, 5, 0)
     val KING_THREAT = IntArray(Piece.SIZE)
 
-    val SAFE_CHECK_THREAT_MG = intArrayOf(0, 0, 117, 14, 87, 30, 0)
-    val SAFE_CHECK_THREAT_EG = intArrayOf(0, 0, 5, 33, 1, 99, 0)
+    val SAFE_CHECK_THREAT_MG = intArrayOf(0, 0, 91, 28, 93, 38, 0)
+    val SAFE_CHECK_THREAT_EG = intArrayOf(0, 0, -7, 21, -9, 65, 0)
     val SAFE_CHECK_THREAT = IntArray(Piece.SIZE)
 
-    val PINNED_BONUS_MG = intArrayOf(0, -14, -14, -8, -19, -8, 0)
-    val PINNED_BONUS_EG = intArrayOf(0, 8, -18, -11, -13, -18, 0)
+    val PINNED_BONUS_MG = intArrayOf(0, -12, 1, -18, -35, -45, 0)
+    val PINNED_BONUS_EG = intArrayOf(0, 0, -14, 3, 17, 10, 0)
     val PINNED_BONUS = IntArray(Piece.SIZE)
 
     const val OTHER_BONUS_BISHOP_PAIR = 0
@@ -185,20 +185,20 @@ object TunableConstants {
     const val OTHER_BONUS_ROOK_OPEN_FILE = 2
     const val OTHER_BONUS_ROOK_HALF_OPEN_FILE = 3
 
-    val OTHER_BONUS_MG = intArrayOf(25, 0, 33, 11)
-    val OTHER_BONUS_EG = intArrayOf(55, 14, 2, 4)
+    val OTHER_BONUS_MG = intArrayOf(25, -4, 35, 15)
+    val OTHER_BONUS_EG = intArrayOf(55, 30, 10, 0)
     val OTHER_BONUS = IntArray(OTHER_BONUS_EG.size)
 
-    val THREATEN_BY_KNIGHT_MG = intArrayOf(0, 5, 0, 35, 64, 31, 0)
-    val THREATEN_BY_KNIGHT_EG = intArrayOf(0, 10, 0, 21, 0, 0, 0)
+    val THREATEN_BY_KNIGHT_MG = intArrayOf(0, 5, 0, 33, 84, 45, 0)
+    val THREATEN_BY_KNIGHT_EG = intArrayOf(0, 18, 0, 29, -20, -18, 0)
     val THREATEN_BY_KNIGHT = IntArray(Piece.SIZE)
 
-    val THREATEN_BY_BISHOP_MG = intArrayOf(0, 10, 21, 0, 46, 56, 0)
-    val THREATEN_BY_BISHOP_EG = intArrayOf(0, 18, 31, 0, 7, 22, 0)
+    val THREATEN_BY_BISHOP_MG = intArrayOf(0, 2, 27, 0, 50, 56, 0)
+    val THREATEN_BY_BISHOP_EG = intArrayOf(0, 30, 25, 0, 9, 114, 0)
     val THREATEN_BY_BISHOP = IntArray(Piece.SIZE)
 
-    val THREATEN_BY_ROOK_MG = intArrayOf(0, -6, 34, 37, 0, 86, 0)
-    val THREATEN_BY_ROOK_EG = intArrayOf(0, 25, 21, 10, 0, 20, 0)
+    val THREATEN_BY_ROOK_MG = intArrayOf(0, -4, 34, 35, 0, 85, 0)
+    val THREATEN_BY_ROOK_EG = intArrayOf(0, 29, 31, 12, 0, 16, 0)
     val THREATEN_BY_ROOK = IntArray(Piece.SIZE)
 
     init {
