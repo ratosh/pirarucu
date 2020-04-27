@@ -68,7 +68,7 @@ class AttackInfo {
         val kingSquare = board.kingSquare[color]
         while (tmpPieces != Bitboard.EMPTY) {
             val fromSquare = Square.getSquare(tmpPieces)
-            val bitboard = BitboardMove.PAWN_ATTACKS[color][fromSquare] and mask and
+            val bitboard = BitboardMove.pawnAttacks(color, fromSquare) and mask and
                 BitboardMove.PINNED_MOVE_MASK[kingSquare][fromSquare]
 
             attacksBitboard[color][Piece.PAWN] = attacksBitboard[color][Piece.PAWN] or
@@ -141,7 +141,7 @@ class AttackInfo {
     private fun kingMoves(board: Board, color: Int) {
         val fromSquare = board.kingSquare[color]
         val theirKing = board.kingSquare[Color.invertColor(color)]
-        var moves = BitboardMove.KING_MOVES[fromSquare] and BitboardMove.KING_MOVES[theirKing].inv()
+        val moves = BitboardMove.KING_MOVES[fromSquare] and BitboardMove.KING_MOVES[theirKing].inv()
 
         pieceMovement[color][fromSquare] = moves
         attacksBitboard[color][Piece.KING] = moves

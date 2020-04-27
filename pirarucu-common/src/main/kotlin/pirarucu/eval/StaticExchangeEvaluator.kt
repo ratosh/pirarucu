@@ -9,7 +9,6 @@ import pirarucu.move.BitboardMove
 import pirarucu.move.Move
 import pirarucu.move.MoveType
 import pirarucu.tuning.TunableConstants
-import kotlin.math.max
 
 object StaticExchangeEvaluator {
 
@@ -148,8 +147,8 @@ object StaticExchangeEvaluator {
             result = result or (BitboardMove.rookMoves(toSquare, occupied) and rooks)
         }
         return result or
-            (BitboardMove.PAWN_ATTACKS[Color.BLACK][toSquare] and board.pieceBitboard[Color.WHITE][Piece.PAWN]) or
-            (BitboardMove.PAWN_ATTACKS[Color.WHITE][toSquare] and board.pieceBitboard[Color.BLACK][Piece.PAWN]) or
+            (BitboardMove.pawnAttacks(Color.BLACK, toSquare) and board.pieceBitboard[Color.WHITE][Piece.PAWN]) or
+            (BitboardMove.pawnAttacks(Color.WHITE, toSquare) and board.pieceBitboard[Color.BLACK][Piece.PAWN]) or
             (BitboardMove.KNIGHT_MOVES[toSquare] and
                 (board.pieceBitboard[Color.WHITE][Piece.KNIGHT] or board.pieceBitboard[Color.BLACK][Piece.KNIGHT])) or
             (BitboardMove.KING_MOVES[toSquare] and

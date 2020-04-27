@@ -5,7 +5,6 @@ import pirarucu.board.Color
 import pirarucu.board.File
 import pirarucu.board.Rank
 import pirarucu.board.Square
-import pirarucu.game.GameConstants
 
 object BitboardMove {
 
@@ -28,7 +27,6 @@ object BitboardMove {
 
     val PAWN_MOVES = Array(Color.SIZE) { LongArray(Square.SIZE) }
     val DOUBLE_PAWN_MOVES = Array(Color.SIZE) { LongArray(Square.SIZE) }
-    val PAWN_ATTACKS = Array(Color.SIZE) { LongArray(Square.SIZE) }
     val KNIGHT_MOVES = LongArray(Square.SIZE)
     val BISHOP_PSEUDO_MOVES = LongArray(Square.SIZE)
     val ROOK_PSEUDO_MOVES = LongArray(Square.SIZE)
@@ -44,7 +42,6 @@ object BitboardMove {
     init {
         populateBetween()
         populatePawnMoves()
-        populatePawnAttacks()
         populateKnightMoves()
         populateBishopMoves()
         populateRookMoves()
@@ -157,30 +154,8 @@ object BitboardMove {
         return result
     }
 
-    private fun populatePawnAttacks() {
-        for (square in 0 until Square.SIZE) {
-            PAWN_ATTACKS[Color.WHITE][square] = getPawnAttack(Color.WHITE, square)
-            PAWN_ATTACKS[Color.BLACK][square] = getPawnAttack(Color.BLACK, square)
-        }
-    }
-
-    private fun getPawnAttack(color: Int, square: Int): Long {
-        var result = Bitboard.EMPTY
-
-        var possibleBitboard: Long = Bitboard.ALL
-        val file = File.getFile(square)
-        when (file) {
-            File.FILE_A -> possibleBitboard = Bitboard.NOT_FILE_H
-            File.FILE_H -> possibleBitboard = Bitboard.NOT_FILE_A
-        }
-
-        for (i in PAWN_ATTACK_STEP) {
-            val attackSquare = square + i * GameConstants.COLOR_FACTOR[color]
-            if (Square.isValid(attackSquare)) {
-                result = result or Bitboard.getBitboard(attackSquare) and possibleBitboard
-            }
-        }
-        return result
+    fun pawnAttacks(color: Int, square: Int): Long {
+        return pawnAttacks(color, Bitboard.getBitboard(square))
     }
 
     private fun populateKnightMoves() {
