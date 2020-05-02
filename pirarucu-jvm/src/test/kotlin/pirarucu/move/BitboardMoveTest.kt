@@ -25,36 +25,12 @@ class BitboardMoveTest {
 
     @Test
     fun testPawnAttack() {
-        assertEquals(BitboardMove.PAWN_ATTACKS[Color.WHITE][Square.A2], Bitboard.B3)
-        assertEquals(
-            BitboardMove.PAWN_ATTACKS[Color.WHITE][Square.A2],
-            BitboardMove.pawnAttacks(Color.WHITE, Bitboard.A2)
-        )
-        assertEquals(BitboardMove.PAWN_ATTACKS[Color.WHITE][Square.H2], Bitboard.G3)
-        assertEquals(
-            BitboardMove.PAWN_ATTACKS[Color.WHITE][Square.H2],
-            BitboardMove.pawnAttacks(Color.WHITE, Bitboard.H2)
-        )
-        assertEquals(BitboardMove.PAWN_ATTACKS[Color.WHITE][Square.B3], Bitboard.A4 or Bitboard.C4)
-        assertEquals(
-            BitboardMove.PAWN_ATTACKS[Color.WHITE][Square.B3],
-            BitboardMove.pawnAttacks(Color.WHITE, Bitboard.B3)
-        )
-        assertEquals(BitboardMove.PAWN_ATTACKS[Color.BLACK][Square.A2], Bitboard.B1)
-        assertEquals(
-            BitboardMove.PAWN_ATTACKS[Color.BLACK][Square.A2],
-            BitboardMove.pawnAttacks(Color.BLACK, Bitboard.A2)
-        )
-        assertEquals(BitboardMove.PAWN_ATTACKS[Color.BLACK][Square.H2], Bitboard.G1)
-        assertEquals(
-            BitboardMove.PAWN_ATTACKS[Color.BLACK][Square.H2],
-            BitboardMove.pawnAttacks(Color.BLACK, Bitboard.H2)
-        )
-        assertEquals(BitboardMove.PAWN_ATTACKS[Color.BLACK][Square.B3], Bitboard.A2 or Bitboard.C2)
-        assertEquals(
-            BitboardMove.PAWN_ATTACKS[Color.BLACK][Square.B3],
-            BitboardMove.pawnAttacks(Color.BLACK, Bitboard.B3)
-        )
+        assertEquals(BitboardMove.pawnAttacks(Color.WHITE, Square.A2), Bitboard.B3)
+        assertEquals(BitboardMove.pawnAttacks(Color.WHITE, Square.H2), Bitboard.G3)
+        assertEquals(BitboardMove.pawnAttacks(Color.WHITE, Square.B3), Bitboard.A4 or Bitboard.C4)
+        assertEquals(BitboardMove.pawnAttacks(Color.BLACK, Square.A2), Bitboard.B1)
+        assertEquals(BitboardMove.pawnAttacks(Color.BLACK, Square.H2), Bitboard.G1)
+        assertEquals(BitboardMove.pawnAttacks(Color.BLACK, Square.B3), Bitboard.A2 or Bitboard.C2)
     }
 
     @Test

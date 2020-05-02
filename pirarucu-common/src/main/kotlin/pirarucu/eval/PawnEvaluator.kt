@@ -106,7 +106,7 @@ object PawnEvaluator {
             val stack = FRONTSPAN_MASK[ourColor][pawnSquare] and ourPawns
             val blockers = FRONTSPAN_MASK[ourColor][pawnSquare] and theirPawns
             val neighbours = NEIGHBOURS_MASK[pawnSquare] and ourPawns
-            val defense = BitboardMove.PAWN_ATTACKS[theirColor][pawnSquare] and ourPawns
+            val defense = BitboardMove.pawnAttacks(theirColor, pawnSquare) and ourPawns
             val phalanx = BitboardMove.NEIGHBOURS[pawnSquare] and ourPawns
             val supporters = PASSED_MASK[theirColor][pawnSquare] and ourPawns
             val dangerAdvance = attackInfo.attacksBitboard[theirColor][Piece.PAWN] and pawnMoves
