@@ -168,7 +168,9 @@ object Move {
                     move = Square.toString(getFromSquare(ourMove)) + move.substring(2, move.length)
                 }
                 5 -> {
-                    move = move.substring(1, move.length)
+                    if (Piece.getPiece(move[4]) == Piece.NONE) {
+                        move = move.substring(1, move.length)
+                    }
                 }
             }
         }

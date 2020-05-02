@@ -1,5 +1,6 @@
 package pirarucu.tuning
 
+import pirarucu.epd.EpdFileWriter
 import pirarucu.eval.EvalConstants
 import pirarucu.tuning.evaluator.MainSearchEvaluator
 import pirarucu.util.epd.EpdFileLoader
@@ -12,6 +13,7 @@ import kotlin.system.measureTimeMillis
 object SearchBigErrorApplication {
 
     private const val FILE_NAME = "g:\\chess\\epds\\texel-sets\\zuri_quiet_labeled.epd"
+    private const val RESULT_FILE_NAME = FILE_NAME + "e"
     private const val START_DEPTH = 1
     private const val FINISH_DEPTH = 16
     private const val DEPTH_INCREMENT = 1
@@ -32,12 +34,6 @@ object SearchBigErrorApplication {
                 evaluator.evaluate(epdList)
             }
             println("Search depth $currentDepth error " + ErrorUtil.calculate(epdList))
-            val explodedSearch = epdList
-                    .sortedByDescending { it.nodes }
-                    .subList(0, min(epdList.size, min(100, max(10, epdList.size / 10))))
-            explodedSearch.forEach {
-                println("Slow search (${it.time}|${it.nodes}) ${it.eval} = ${it.fenPosition}")
-            }
             println("Time taken $timeTaken")
             ErrorUtil.setError(epdList)
             mateList.addAll(epdList
@@ -61,9 +57,7 @@ object SearchBigErrorApplication {
         }
         list.addAll(mateList)
 
-        /*
-        val writer = EpdFileUpdater(FILE_NAME)
+        val writer = EpdFileWriter(RESULT_FILE_NAME)
         writer.flush(list)
-         */
     }
 }

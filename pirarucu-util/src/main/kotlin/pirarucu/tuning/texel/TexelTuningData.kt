@@ -22,7 +22,7 @@ data class TexelTuningData(
 
     private var currentIndex = 0
     private var baseIncrement = increment
-    private var currentIncrement = increment
+    private var currentMultiplier = 1
 
     var geneIndex: Int
         get() = geneStartIndex
@@ -51,7 +51,7 @@ data class TexelTuningData(
         totalBits = bitsPerValue.sum()
         geneIndex = 0
         PlatformSpecific.arrayCopy(elementList, 0, originalElementList, 0, elementList.size)
-        bestResult()
+        setBestResult()
     }
 
     fun reset() {
@@ -116,11 +116,11 @@ data class TexelTuningData(
         return tmpValue == bitsPerValue[result] - 1
     }
 
-    fun bestResult() {
+    fun setBestResult() {
         PlatformSpecific.arrayCopy(elementList, 0, bestElementList, 0, elementList.size)
     }
 
-    fun bestInteractionResult() {
+    fun setBestInteractionResult() {
         PlatformSpecific.arrayCopy(elementList, 0, bestInteractionElementList, 0, elementList.size)
     }
 
@@ -140,30 +140,30 @@ data class TexelTuningData(
         for (index in elementList.indices) {
             elementList[index] = bestElementList[index]
         }
-        if (insideBounds(currentIndex, currentIncrement)) {
-            elementList[currentIndex] = elementList[currentIndex] + currentIncrement
+        if (insideBounds()) {
+            elementList[currentIndex] = nextValue()
         }
-        currentIndex += 1
     }
 
     fun hasNext(): Boolean {
-        if (kotlin.math.abs(baseIncrement) < minIncrement) {
+        if (baseIncrement < minIncrement) {
             return false
         }
+        currentIndex++
         while (currentIndex < elementList.size &&
                 (Arrays.binarySearch(ignoreElementList, currentIndex) >= 0 ||
-                        !insideBounds(currentIndex, currentIncrement))
+                        !insideBounds())
         ) {
             currentIndex++
         }
         if (currentIndex >= elementList.size) {
-            return if (currentIncrement > 0) {
+            return if (currentMultiplier > 0) {
                 currentIndex = 0
-                currentIncrement = -currentIncrement
+                currentMultiplier *= -1
                 hasNext()
             } else {
                 currentIndex = 0
-                currentIncrement = baseIncrement
+                currentMultiplier *= -1
                 false
             }
         }
@@ -171,18 +171,20 @@ data class TexelTuningData(
     }
 
     fun canLowerIncrement(): Boolean {
-        return kotlin.math.abs(baseIncrement) > minIncrement
+        return baseIncrement > minIncrement
     }
 
-    private fun insideBounds(index: Int, increment: Int): Boolean {
-        val nextEntry = elementList[index] + increment
-        return nextEntry <= upperBounds[index] && nextEntry >= lowerBounds[index]
+    private fun insideBounds(): Boolean {
+        val nextEntry = nextValue()
+        return nextEntry <= upperBounds[currentIndex] && nextEntry >= lowerBounds[currentIndex]
     }
+
+    private fun nextValue() = elementList[currentIndex] + baseIncrement * currentMultiplier
 
     fun lowerIncrement() {
         if (canLowerIncrement()) {
             baseIncrement /= 2
-            currentIncrement = baseIncrement
+            currentMultiplier = 1
         }
         println("increment -> $baseIncrement")
     }
