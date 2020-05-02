@@ -236,8 +236,9 @@ class MainSearch(
         }
 
         // Only keep valid tt moves
-        if (!MoveGenerator.isPseudoLegalMove(board, currentNode.attackInfo, ttMove) ||
-                !board.isLegalMove(ttMove)) {
+        if (ttMove != Move.NONE &&
+                (!MoveGenerator.isPseudoLegalMove(board, currentNode.attackInfo, ttMove) ||
+                !board.isLegalMove(ttMove))) {
             ttMove = Move.NONE
         }
 

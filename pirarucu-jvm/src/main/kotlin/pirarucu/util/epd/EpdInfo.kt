@@ -21,7 +21,7 @@ data class EpdInfo(val fenPosition: String,
         if (null != moveScoreList) {
             for ((key, value) in moveScoreList) {
                 if (Move.areMovesCompatibles(board, foundMove, key)) {
-                    return value
+                    return 90 + value
                 }
             }
         }
@@ -29,7 +29,7 @@ data class EpdInfo(val fenPosition: String,
         if (null != bestMoveList) {
             for (move in bestMoveList) {
                 if (Move.areMovesCompatibles(board, foundMove, move)) {
-                    return 10
+                    return 100
                 }
             }
         }
@@ -37,7 +37,7 @@ data class EpdInfo(val fenPosition: String,
         if (null != avoidMoveList) {
             for (move in avoidMoveList) {
                 if (Move.areMovesCompatibles(board, foundMove, move)) {
-                    return 10
+                    return 100
                 }
             }
         }
