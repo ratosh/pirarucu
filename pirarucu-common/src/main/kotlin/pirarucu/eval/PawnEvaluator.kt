@@ -142,7 +142,7 @@ object PawnEvaluator {
     private fun evaluatePassedPawn(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
         var result = 0
 
-        var tmpPieces = board.colorBitboard[ourColor] and board.evalInfo.passedPawnBitboard
+        var tmpPieces = board.pieceBitboard[ourColor][Piece.NONE] and board.evalInfo.passedPawnBitboard
 
         while (tmpPieces != Bitboard.EMPTY) {
             val pawnSquare = Square.getSquare(tmpPieces)
@@ -211,7 +211,7 @@ object PawnEvaluator {
         pawnPush = pawnPush and
             (attackInfo.attacksBitboard[ourColor][Piece.NONE] or
                 attackInfo.attacksBitboard[theirColor][Piece.NONE].inv())
-        pawnPush = BitboardMove.pawnAttacks(ourColor, pawnPush) and board.colorBitboard[theirColor]
+        pawnPush = BitboardMove.pawnAttacks(ourColor, pawnPush) and board.pieceBitboard[theirColor][Piece.NONE]
 
         var result = 0
 

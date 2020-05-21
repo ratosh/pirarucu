@@ -7,7 +7,6 @@ import pirarucu.board.Piece
 import pirarucu.board.Square
 import pirarucu.move.BitboardMove
 import pirarucu.move.MoveGenerator
-import pirarucu.util.PlatformSpecific
 
 class BasicEvalInfo {
 
@@ -27,8 +26,7 @@ class BasicEvalInfo {
                 kingSquarePosition,
                 ourColor,
                 theirColor,
-                theirPieceBitboard,
-                board.colorBitboard
+                    board.pieceBitboard
             )
         }
 
@@ -42,20 +40,19 @@ class BasicEvalInfo {
      * Updates pinnedBitboard
      */
     private fun setPinned(
-        kingSquare: Int,
-        ourColor: Int,
-        theirColor: Int,
-        theirPieceBitboard: LongArray,
-        colorBitboard: LongArray
+            kingSquare: Int,
+            ourColor: Int,
+            theirColor: Int,
+            pieceBitboard: Array<LongArray>
     ) {
         var pinned = 0L
 
-        val ourColorBitboard = colorBitboard[ourColor]
-        val gameBitboard = ourColorBitboard or colorBitboard[theirColor]
+        val ourColorBitboard = pieceBitboard[ourColor][Piece.NONE]
+        val gameBitboard = ourColorBitboard or pieceBitboard[theirColor][Piece.NONE]
 
-        var tmpPiece = ((theirPieceBitboard[Piece.BISHOP] or theirPieceBitboard[Piece.QUEEN]) and
+        var tmpPiece = ((pieceBitboard[theirColor][Piece.BISHOP] or pieceBitboard[theirColor][Piece.QUEEN]) and
             BitboardMove.BISHOP_PSEUDO_MOVES[kingSquare]) or
-            ((theirPieceBitboard[Piece.ROOK] or theirPieceBitboard[Piece.QUEEN]) and
+            ((pieceBitboard[theirColor][Piece.ROOK] or pieceBitboard[theirColor][Piece.QUEEN]) and
                 BitboardMove.ROOK_PSEUDO_MOVES[kingSquare])
 
         while (tmpPiece != 0L) {

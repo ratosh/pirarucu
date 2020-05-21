@@ -72,7 +72,7 @@ object StaticExchangeEvaluator {
 
         while (true) {
             // Look for attackers with current color
-            val colorAttackers = attackers and board.colorBitboard[colorToMove]
+            val colorAttackers = attackers and board.pieceBitboard[colorToMove][Piece.NONE]
             // Stop if no attackers left
             if (colorAttackers == Bitboard.EMPTY) {
                 break
@@ -126,7 +126,7 @@ object StaticExchangeEvaluator {
 
                 // No other piece to attack besides the king and the opponent still have attackers left.
                 // This is illegal and should not be done.
-                if (nextVictim == Piece.KING && (attackers and board.colorBitboard[colorToMove] != Bitboard.EMPTY)) {
+                if (nextVictim == Piece.KING && (attackers and board.pieceBitboard[colorToMove][Piece.NONE] != Bitboard.EMPTY)) {
                     colorToMove = Color.invertColor(colorToMove)
                 }
                 break

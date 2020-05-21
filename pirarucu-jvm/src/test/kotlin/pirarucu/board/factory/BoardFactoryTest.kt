@@ -13,8 +13,8 @@ class BoardFactoryTest {
     @Test
     fun testGetBoard() {
         val board = BoardFactory.getBoard(BoardFactory.STARTER_FEN)
-        assertEquals(board.colorBitboard[Color.WHITE], Bitboard.RANK_1 or Bitboard.RANK_2)
-        assertEquals(board.colorBitboard[Color.BLACK], Bitboard.RANK_7 or Bitboard.RANK_8)
+        assertEquals(board.pieceBitboard[Color.WHITE][Piece.NONE], Bitboard.RANK_1 or Bitboard.RANK_2)
+        assertEquals(board.pieceBitboard[Color.BLACK][Piece.NONE], Bitboard.RANK_7 or Bitboard.RANK_8)
 
         assertEquals(board.pieceBitboard[Color.WHITE][Piece.PAWN], Bitboard.RANK_2)
         assertEquals(board.pieceBitboard[Color.BLACK][Piece.PAWN], Bitboard.RANK_7)
