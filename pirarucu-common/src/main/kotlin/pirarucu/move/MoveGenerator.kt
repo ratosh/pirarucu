@@ -108,7 +108,7 @@ class MoveGenerator(private val history: History) {
         moveList: OrderedMoveList
     ) {
         val theirColor = board.nextColorToMove
-        val theirBitboard = board.colorBitboard[theirColor]
+        val theirBitboard = board.pieceBitboard[theirColor][Piece.NONE]
         val ourColor = board.colorToMove
 
         attackInfo.update(board, ourColor)
@@ -226,7 +226,7 @@ class MoveGenerator(private val history: History) {
     ) {
         val ourColor = board.colorToMove
         val theirColor = board.nextColorToMove
-        val targetMask = board.colorBitboard[theirColor] and attackInfo.attacksBitboard[ourColor][movedPiece] and
+        val targetMask = board.pieceBitboard[theirColor][Piece.NONE] and attackInfo.attacksBitboard[ourColor][movedPiece] and
             maskBitboard
         if (targetMask == Bitboard.EMPTY) {
             return
@@ -358,8 +358,8 @@ class MoveGenerator(private val history: History) {
             val fromBitboard = Bitboard.getBitboard(fromSquare)
             val toBitboard = Bitboard.getBitboard(toSquare)
             val moveType = Move.getMoveType(move)
-            if (board.colorBitboard[ourColor] and fromBitboard == Bitboard.EMPTY ||
-                    board.colorBitboard[ourColor] and toBitboard != Bitboard.EMPTY) {
+            if (board.pieceBitboard[ourColor][Piece.NONE] and fromBitboard == Bitboard.EMPTY ||
+                    board.pieceBitboard[ourColor][Piece.NONE] and toBitboard != Bitboard.EMPTY) {
                 return false
             }
             return when (board.pieceTypeBoard[fromSquare]) {
@@ -388,7 +388,7 @@ class MoveGenerator(private val history: History) {
                             return false
                         }
                     }
-                    if (toBitboard and board.colorBitboard[theirColor] == Bitboard.EMPTY) {
+                    if (toBitboard and board.pieceBitboard[theirColor][Piece.NONE] == Bitboard.EMPTY) {
                         var bitboard = BitboardMove.PAWN_MOVES[ourColor][fromSquare] and board.emptyBitboard
 
                         if (bitboard != Bitboard.EMPTY) {

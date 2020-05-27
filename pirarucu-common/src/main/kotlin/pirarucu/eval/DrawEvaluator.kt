@@ -4,6 +4,7 @@ import pirarucu.board.Bitboard
 import pirarucu.board.Board
 import pirarucu.board.Color
 import pirarucu.board.Piece
+import pirarucu.util.PlatformSpecific
 
 object DrawEvaluator {
 
@@ -15,7 +16,7 @@ object DrawEvaluator {
      * Both side can force a mate.
      */
     fun hasSufficientMaterial(board: Board): Boolean {
-        return when (board.pieceCountType[Piece.NONE]) {
+        return when (PlatformSpecific.bitCount(board.gameBitboard)) {
             2 -> false
             3 -> (board.pieceBitboard[Color.WHITE][Piece.BISHOP]
                 or board.pieceBitboard[Color.BLACK][Piece.BISHOP]
@@ -30,18 +31,18 @@ object DrawEvaluator {
      * Side has sufficient material to force a mate
      */
     fun hasSufficientMaterial(board: Board, color: Int): Boolean {
-        return (board.pieceCountColorType[color][Piece.NONE] > 2 ||
-            (board.pieceCountColorType[color][Piece.NONE] == 2 &&
-                board.pieceCountColorType[color][Piece.BISHOP] +
-                board.pieceCountColorType[color][Piece.KNIGHT] == 0))
+        return (PlatformSpecific.bitCount(board.pieceBitboard[color][Piece.NONE]) > 2 ||
+            (PlatformSpecific.bitCount(board.pieceBitboard[color][Piece.NONE]) == 2 &&
+                    board.pieceBitboard[color][Piece.KNIGHT] or
+                    board.pieceBitboard[color][Piece.BISHOP] == Bitboard.EMPTY))
     }
 
     private fun fourIsSufficientMaterial(board: Board): Boolean {
-        val whiteKnightCount = board.pieceCountColorType[Color.WHITE][Piece.KNIGHT]
-        val blackKnightCount = board.pieceCountColorType[Color.BLACK][Piece.KNIGHT]
+        val whiteKnightCount = PlatformSpecific.bitCount(board.pieceBitboard[Color.WHITE][Piece.KNIGHT])
+        val blackKnightCount = PlatformSpecific.bitCount(board.pieceBitboard[Color.BLACK][Piece.KNIGHT])
 
-        val whiteBishopCount = board.pieceCountColorType[Color.WHITE][Piece.BISHOP]
-        val blackBishopCount = board.pieceCountColorType[Color.BLACK][Piece.BISHOP]
+        val whiteBishopCount = PlatformSpecific.bitCount(board.pieceBitboard[Color.WHITE][Piece.BISHOP])
+        val blackBishopCount = PlatformSpecific.bitCount(board.pieceBitboard[Color.BLACK][Piece.BISHOP])
 
         return !(whiteKnightCount + whiteBishopCount == 1 &&
             blackKnightCount + blackBishopCount == 1) &&

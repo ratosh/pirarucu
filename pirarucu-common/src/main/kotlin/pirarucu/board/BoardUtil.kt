@@ -3,6 +3,7 @@ package pirarucu.board
 import pirarucu.game.GameConstants
 import pirarucu.hash.Zobrist
 import pirarucu.tuning.TunableConstants
+import pirarucu.util.PlatformSpecific
 
 object BoardUtil {
     fun updateZobristKeys(board: Board) {
@@ -47,7 +48,7 @@ object BoardUtil {
         }
         for (square in Square.H1 until Square.SIZE) {
             if (board.pieceTypeBoard[square] != Piece.NONE &&
-                Bitboard.getBitboard(square) and board.gameBitboard == Bitboard.EMPTY) {
+                    Bitboard.getBitboard(square) and board.gameBitboard == Bitboard.EMPTY) {
                 println("game bitboard not set " + Square.toString(square))
                 return false
             }
@@ -68,8 +69,8 @@ object BoardUtil {
             return false
         }
 
-        if (board.colorBitboard[Color.WHITE] and board.colorBitboard[Color.BLACK] !=
-            Bitboard.EMPTY) {
+        if (board.pieceBitboard[Color.WHITE][Piece.NONE] and
+                board.pieceBitboard[Color.BLACK][Piece.NONE] != Bitboard.EMPTY) {
             println("OVERLAPPING COLOR BITBOARD")
             return false
         }
@@ -91,32 +92,37 @@ object BoardUtil {
 
     fun calculateMaterialScore(board: Board): Int {
         return (TunableConstants.MATERIAL_SCORE[Piece.PAWN] *
-            board.pieceCountColorType[Color.WHITE][Piece.PAWN] +
-            TunableConstants.MATERIAL_SCORE[Piece.KNIGHT] *
-            board.pieceCountColorType[Color.WHITE][Piece.KNIGHT] +
-            TunableConstants.MATERIAL_SCORE[Piece.BISHOP] *
-            board.pieceCountColorType[Color.WHITE][Piece.BISHOP] +
-            TunableConstants.MATERIAL_SCORE[Piece.ROOK] *
-            board.pieceCountColorType[Color.WHITE][Piece.ROOK] +
-            TunableConstants.MATERIAL_SCORE[Piece.QUEEN] *
-            board.pieceCountColorType[Color.WHITE][Piece.QUEEN] -
-            (TunableConstants.MATERIAL_SCORE[Piece.PAWN] *
-                board.pieceCountColorType[Color.BLACK][Piece.PAWN] +
+                PlatformSpecific.bitCount(board.pieceBitboard[Color.WHITE][Piece.PAWN]) +
                 TunableConstants.MATERIAL_SCORE[Piece.KNIGHT] *
-                board.pieceCountColorType[Color.BLACK][Piece.KNIGHT] +
+                PlatformSpecific.bitCount(board.pieceBitboard[Color.WHITE][Piece.KNIGHT]) +
                 TunableConstants.MATERIAL_SCORE[Piece.BISHOP] *
-                board.pieceCountColorType[Color.BLACK][Piece.BISHOP] +
+                PlatformSpecific.bitCount(board.pieceBitboard[Color.WHITE][Piece.BISHOP]) +
                 TunableConstants.MATERIAL_SCORE[Piece.ROOK] *
-                board.pieceCountColorType[Color.BLACK][Piece.ROOK] +
+                PlatformSpecific.bitCount(board.pieceBitboard[Color.WHITE][Piece.ROOK]) +
                 TunableConstants.MATERIAL_SCORE[Piece.QUEEN] *
-                board.pieceCountColorType[Color.BLACK][Piece.QUEEN]))
+                PlatformSpecific.bitCount(board.pieceBitboard[Color.WHITE][Piece.QUEEN]) -
+                (TunableConstants.MATERIAL_SCORE[Piece.PAWN] *
+                        PlatformSpecific.bitCount(board.pieceBitboard[Color.BLACK][Piece.PAWN]) +
+                        TunableConstants.MATERIAL_SCORE[Piece.KNIGHT] *
+                        PlatformSpecific.bitCount(board.pieceBitboard[Color.BLACK][Piece.KNIGHT]) +
+                        TunableConstants.MATERIAL_SCORE[Piece.BISHOP] *
+                        PlatformSpecific.bitCount(board.pieceBitboard[Color.BLACK][Piece.BISHOP]) +
+                        TunableConstants.MATERIAL_SCORE[Piece.ROOK] *
+                        PlatformSpecific.bitCount(board.pieceBitboard[Color.BLACK][Piece.ROOK]) +
+                        TunableConstants.MATERIAL_SCORE[Piece.QUEEN] *
+                        PlatformSpecific.bitCount(board.pieceBitboard[Color.BLACK][Piece.QUEEN])))
     }
 
     fun calculatePhase(board: Board): Int {
-        return TunableConstants.PHASE_PIECE_VALUE[Piece.PAWN] * board.pieceCountType[Piece.PAWN] +
-            TunableConstants.PHASE_PIECE_VALUE[Piece.KNIGHT] * board.pieceCountType[Piece.KNIGHT] +
-            TunableConstants.PHASE_PIECE_VALUE[Piece.BISHOP] * board.pieceCountType[Piece.BISHOP] +
-            TunableConstants.PHASE_PIECE_VALUE[Piece.ROOK] * board.pieceCountType[Piece.ROOK] +
-            TunableConstants.PHASE_PIECE_VALUE[Piece.QUEEN] * board.pieceCountType[Piece.QUEEN]
+        return TunableConstants.PHASE_PIECE_VALUE[Piece.PAWN] * PlatformSpecific
+                .bitCount(board.pieceBitboard[Color.WHITE][Piece.PAWN] or board.pieceBitboard[Color.BLACK][Piece.PAWN]) +
+                TunableConstants.PHASE_PIECE_VALUE[Piece.KNIGHT] * PlatformSpecific
+                .bitCount(board.pieceBitboard[Color.WHITE][Piece.KNIGHT] or board.pieceBitboard[Color.BLACK][Piece.KNIGHT]) +
+                TunableConstants.PHASE_PIECE_VALUE[Piece.BISHOP] * PlatformSpecific
+                .bitCount(board.pieceBitboard[Color.WHITE][Piece.BISHOP] or board.pieceBitboard[Color.BLACK][Piece.BISHOP]) +
+                TunableConstants.PHASE_PIECE_VALUE[Piece.ROOK] * PlatformSpecific
+                .bitCount(board.pieceBitboard[Color.WHITE][Piece.ROOK] or board.pieceBitboard[Color.BLACK][Piece.ROOK]) +
+                TunableConstants.PHASE_PIECE_VALUE[Piece.QUEEN] * PlatformSpecific
+                .bitCount(board.pieceBitboard[Color.WHITE][Piece.QUEEN] or board.pieceBitboard[Color.BLACK][Piece.QUEEN])
     }
 }
