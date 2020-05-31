@@ -41,7 +41,7 @@ object FenFactory {
                 }
 
                 if (file <= File.FILE_H) {
-                    val color = if (board.colorBitboard[Color.WHITE] and bitboard != Bitboard.EMPTY) 0 else 1
+                    val color = if (board.pieceBitboard[Color.WHITE][Piece.NONE] and bitboard != Bitboard.EMPTY) 0 else 1
                     stringBuilder.append(Piece.toString(color, piece))
                 }
             }

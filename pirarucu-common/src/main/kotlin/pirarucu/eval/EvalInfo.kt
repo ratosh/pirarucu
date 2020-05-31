@@ -21,9 +21,9 @@ class EvalInfo {
             return
         }
 
-        mobilityArea[Color.WHITE] = (board.colorBitboard[Color.WHITE] or
+        mobilityArea[Color.WHITE] = (board.pieceBitboard[Color.WHITE][Piece.NONE] or
             attackInfo.attacksBitboard[Color.BLACK][Piece.PAWN]).inv()
-        mobilityArea[Color.BLACK] = (board.colorBitboard[Color.BLACK] or
+        mobilityArea[Color.BLACK] = (board.pieceBitboard[Color.BLACK][Piece.NONE] or
             attackInfo.attacksBitboard[Color.WHITE][Piece.PAWN]).inv()
 
         kingArea[Color.WHITE] = EvalConstants.KING_AREA_MASK[Color.WHITE][board.kingSquare[Color.WHITE]]

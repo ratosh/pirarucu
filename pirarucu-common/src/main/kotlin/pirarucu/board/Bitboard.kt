@@ -148,7 +148,7 @@ object Bitboard {
      * Get bitboard info from a square list.
      */
     fun getBitboard(vararg squareList: Int): Long {
-        var result = Bitboard.EMPTY
+        var result = EMPTY
         for (square in squareList) {
             result = result or getBitboard(square)
         }
@@ -159,7 +159,7 @@ object Bitboard {
      * Check if the bitboard only contains one element.
      */
     fun oneElement(bitboard: Long): Boolean {
-        return bitboard and (bitboard - 1) == Bitboard.EMPTY
+        return bitboard and (bitboard - 1) == EMPTY
     }
 
     /**
@@ -172,7 +172,7 @@ object Bitboard {
             buffer.append(Rank.toString(rank)).append('-')
             for (file in File.FILE_A until File.SIZE) {
                 val square = Square.getSquare(file, rank)
-                buffer.append(if (bitboard and getBitboard(square) != Bitboard.EMPTY) "1" else "0")
+                buffer.append(if (bitboard and getBitboard(square) != EMPTY) "1" else "0")
             }
             buffer.append("\n")
         }

@@ -324,7 +324,7 @@ class MainSearch(
             val moveType = Move.getMoveType(move)
             val isPromotion = MoveType.isPromotion(moveType)
             val toSquare = Move.getToSquare(move)
-            val capturedPiece = board.pieceTypeBoard[toSquare]
+            val capturedPiece = board.pieceTypeBoard[Move.getToSquare(move)]
 
             val isCapture = capturedPiece != Piece.NONE
             val isQuiet = !isCapture && moveType == MoveType.TYPE_NORMAL

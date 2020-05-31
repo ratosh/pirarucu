@@ -52,8 +52,8 @@ object Evaluator {
             score += evalKing(board, attackInfo, Color.WHITE, Color.BLACK) -
                     evalKing(board, attackInfo, Color.BLACK, Color.WHITE)
 
-            score += evalOther(board, attackInfo, Color.WHITE, Color.BLACK) -
-                    evalOther(board, attackInfo, Color.BLACK, Color.WHITE)
+            score += evalOther(board, Color.WHITE) -
+                    evalOther(board, Color.BLACK)
         }
 
         val mgScore = SplitValue.getFirstPart(score)
@@ -79,7 +79,7 @@ object Evaluator {
         var result = 0
 
         val possibleSafeCheck = BitboardMove.KNIGHT_MOVES[board.kingSquare[theirColor]] and
-            board.colorBitboard[ourColor].inv() and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
+            board.pieceBitboard[ourColor][Piece.NONE].inv() and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
 
         while (tmpPieces != Bitboard.EMPTY) {
             val square = Square.getSquare(tmpPieces)
@@ -151,11 +151,12 @@ object Evaluator {
         val pawnThreatBitboard = attackInfo.attacksBitboard[theirColor][Piece.PAWN]
 
         val possibleSafeCheck = BitboardMove.bishopMoves(board.kingSquare[theirColor], board.gameBitboard) and
-            board.colorBitboard[ourColor].inv() and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
+            board.pieceBitboard[ourColor][Piece.NONE].inv() and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
 
         var result = 0
 
-        if (board.pieceCountColorType[ourColor][Piece.BISHOP] > 1) {
+        if (board.pieceBitboard[ourColor][Piece.BISHOP] != Bitboard.EMPTY &&
+                !Bitboard.oneElement(board.pieceBitboard[ourColor][Piece.BISHOP])) {
             result += TunableConstants.OTHER_BONUS[TunableConstants.OTHER_BONUS_BISHOP_PAIR]
         }
 
@@ -229,7 +230,7 @@ object Evaluator {
         var result = 0
 
         val possibleSafeCheck = BitboardMove.rookMoves(board.kingSquare[theirColor], board.gameBitboard) and
-            board.colorBitboard[ourColor].inv() and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
+            board.pieceBitboard[ourColor][Piece.NONE].inv() and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
 
         while (tmpPieces != Bitboard.EMPTY) {
             val square = Square.getSquare(tmpPieces)
@@ -311,7 +312,7 @@ object Evaluator {
         var result = 0
 
         val possibleSafeCheck = BitboardMove.queenMoves(board.kingSquare[theirColor], board.gameBitboard) and
-            board.colorBitboard[ourColor].inv() and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
+            board.pieceBitboard[ourColor][Piece.NONE].inv() and attackInfo.attacksBitboard[theirColor][Piece.NONE].inv()
 
         while (tmpPieces != Bitboard.EMPTY) {
             val square = Square.getSquare(tmpPieces)
@@ -368,9 +369,9 @@ object Evaluator {
         return result
     }
 
-    private fun evalOther(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
+    private fun evalOther(board: Board, ourColor: Int): Int {
         var result = 0
-        var pinnedPieces = board.basicEvalInfo.pinnedBitboard and board.colorBitboard[ourColor]
+        var pinnedPieces = board.basicEvalInfo.pinnedBitboard and board.pieceBitboard[ourColor][Piece.NONE]
         while (pinnedPieces != Bitboard.EMPTY) {
             val square = Square.getSquare(pinnedPieces)
             result += TunableConstants.PINNED_BONUS[board.pieceTypeBoard[square]]

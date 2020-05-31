@@ -31,10 +31,6 @@ class Board {
 
     val pieceTypeBoard = IntArray(Square.SIZE)
     val pieceBitboard = Array(Color.SIZE) { LongArray(Piece.SIZE) }
-    val colorBitboard = LongArray(Color.SIZE)
-
-    val pieceCountType = IntArray(Piece.SIZE)
-    val pieceCountColorType = Array(Color.SIZE) { IntArray(Piece.SIZE) }
 
     var rule50 = 0
     var castlingRights = CastlingRights.ANY_CASTLING
@@ -107,11 +103,6 @@ class Board {
 
         PlatformSpecific.arrayFill(pieceBitboard[Color.WHITE], Bitboard.EMPTY)
         PlatformSpecific.arrayFill(pieceBitboard[Color.BLACK], Bitboard.EMPTY)
-        PlatformSpecific.arrayFill(colorBitboard, Bitboard.EMPTY)
-
-        PlatformSpecific.arrayFill(pieceCountType, 0)
-        PlatformSpecific.arrayFill(pieceCountColorType[Color.WHITE], 0)
-        PlatformSpecific.arrayFill(pieceCountColorType[Color.BLACK], 0)
     }
 
     private fun pushToHistory() {
@@ -140,7 +131,7 @@ class Board {
     }
 
     private fun updateBitboardInfo() {
-        gameBitboard = colorBitboard[Color.WHITE] or colorBitboard[Color.BLACK]
+        gameBitboard = pieceBitboard[Color.WHITE][Piece.NONE] or pieceBitboard[Color.BLACK][Piece.NONE]
         emptyBitboard = gameBitboard.inv()
     }
 
@@ -163,7 +154,7 @@ class Board {
         for (color in Color.WHITE until Color.SIZE) {
             buffer.append("Color " + Color.toString(color))
             buffer.append("\n")
-            buffer.append(Bitboard.toString(colorBitboard[color]))
+            buffer.append(Bitboard.toString(pieceBitboard[color][Piece.NONE]))
             buffer.append("\n")
             for (piece in Piece.PAWN until Piece.SIZE) {
                 buffer.append("Piece " + Piece.toString(piece))
@@ -441,13 +432,7 @@ class Board {
     private fun removePiece(color: Int, piece: Int, square: Int) {
         val bitboard = Bitboard.getBitboard(square)
         pieceBitboard[color][piece] = pieceBitboard[color][piece] xor bitboard
-        colorBitboard[color] = colorBitboard[color] xor bitboard
-
-        pieceCountType[Piece.NONE]--
-        pieceCountType[piece]--
-
-        pieceCountColorType[color][Piece.NONE]--
-        pieceCountColorType[color][piece]--
+        pieceBitboard[color][Piece.NONE] = pieceBitboard[color][Piece.NONE] xor bitboard
 
         val relativeSquare = Square.getRelativeSquare(color, square)
         psqScore[color] -= TunableConstants.PSQT[piece][relativeSquare]
@@ -462,13 +447,7 @@ class Board {
         val bitboard = Bitboard.getBitboard(square)
         pieceTypeBoard[square] = piece
         pieceBitboard[color][piece] = pieceBitboard[color][piece] or bitboard
-        colorBitboard[color] = colorBitboard[color] or bitboard
-
-        pieceCountType[Piece.NONE]++
-        pieceCountType[piece]++
-
-        pieceCountColorType[color][Piece.NONE]++
-        pieceCountColorType[color][piece]++
+        pieceBitboard[color][Piece.NONE] = pieceBitboard[color][Piece.NONE] or bitboard
 
         val relativeSquare = Square.getRelativeSquare(color, square)
         psqScore[color] += TunableConstants.PSQT[piece][relativeSquare]
@@ -479,7 +458,7 @@ class Board {
     private fun movePiece(color: Int, piece: Int, fromSquare: Int, toSquare: Int) {
         val moveBitboard = Bitboard.getBitboard(fromSquare) xor Bitboard.getBitboard(toSquare)
         pieceBitboard[color][piece] = pieceBitboard[color][piece] xor moveBitboard
-        colorBitboard[color] = colorBitboard[color] xor moveBitboard
+        pieceBitboard[color][Piece.NONE] = pieceBitboard[color][Piece.NONE] xor moveBitboard
 
         pieceTypeBoard[fromSquare] = Piece.NONE
         pieceTypeBoard[toSquare] = piece
@@ -494,7 +473,7 @@ class Board {
      * Check if a side has pieces that are not pawns or king.
      */
     fun hasNonPawnMaterial(color: Int): Boolean {
-        return pieceCountColorType[color][Piece.PAWN] + 1 != pieceCountColorType[color][Piece.NONE]
+        return pieceBitboard[color][Piece.KING] or pieceBitboard[color][Piece.PAWN] != pieceBitboard[color][Piece.NONE]
     }
 
     private fun nextBasicEvalInfo(): BasicEvalInfo {
@@ -522,10 +501,6 @@ class Board {
 
         PlatformSpecific.arrayCopy(board.pieceTypeBoard, 0, pieceTypeBoard, 0, pieceTypeBoard.size)
         PlatformSpecific.arrayCopy(board.pieceBitboard, pieceBitboard)
-        PlatformSpecific.arrayCopy(board.colorBitboard, 0, colorBitboard, 0, colorBitboard.size)
-
-        PlatformSpecific.arrayCopy(board.pieceCountType, 0, pieceCountType, 0, pieceCountType.size)
-        PlatformSpecific.arrayCopy(board.pieceCountColorType, pieceCountColorType)
 
         rule50 = board.rule50
         castlingRights = board.castlingRights
@@ -561,8 +536,8 @@ class Board {
     fun pieceColorAt(square: Int): Int {
         val bitboard = Bitboard.getBitboard(square)
         return when {
-            colorBitboard[Color.WHITE] and bitboard != 0L -> Color.WHITE
-            colorBitboard[Color.BLACK] and bitboard != 0L -> Color.BLACK
+            pieceBitboard[Color.WHITE][Piece.NONE] and bitboard != 0L -> Color.WHITE
+            pieceBitboard[Color.BLACK][Piece.NONE] and bitboard != 0L -> Color.BLACK
             else -> Color.INVALID
         }
     }
