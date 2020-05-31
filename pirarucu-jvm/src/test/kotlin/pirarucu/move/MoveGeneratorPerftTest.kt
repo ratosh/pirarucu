@@ -14,7 +14,7 @@ class MoveGeneratorPerftTest {
     private val attackInfo = AttackInfo()
     private val moveGenerator = MoveGenerator(History())
 
-    //@Ignore
+    @Ignore
     @Test
     fun testInitialPosition() {
         val moveInfoList = Array(6) { MoveInfo() }
@@ -65,7 +65,7 @@ class MoveGeneratorPerftTest {
         assertEquals(809099, moveInfoList[5].checks)
     }
 
-    //@Ignore
+    @Ignore
     @Test
     fun testKiwiPete() {
         val moveInfoList = Array(5) { MoveInfo() }
@@ -109,7 +109,7 @@ class MoveGeneratorPerftTest {
         assertEquals(3309887, moveInfoList[4].checks)
     }
 
-    //@Ignore
+    @Ignore
     @Test
     fun testPosition3() {
         val moveInfoList = Array(7) { MoveInfo() }
@@ -167,7 +167,7 @@ class MoveGeneratorPerftTest {
         assertEquals(12797406, moveInfoList[6].checks)
     }
 
-    //@Ignore
+    @Ignore
     @Test
     fun testPosition4() {
         val moveInfoList = Array(6) { MoveInfo() }
@@ -219,7 +219,7 @@ class MoveGeneratorPerftTest {
         assertEquals(26973664, moveInfoList[5].checks)
     }
 
-    //@Ignore
+    @Ignore
     @Test
     fun testPosition5() {
         val moveInfoList = Array(5) { MoveInfo() }
@@ -234,7 +234,7 @@ class MoveGeneratorPerftTest {
         assertEquals(89941194, moveInfoList[4].moveCount)
     }
 
-    //@Ignore
+    @Ignore
     @Test
     fun testPosition6() {
         val moveInfoList = Array(5) { MoveInfo() }
