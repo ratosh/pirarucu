@@ -100,13 +100,14 @@ object PawnEvaluator {
         var result = 0
         while (tmpPieces != Bitboard.EMPTY) {
             val pawnSquare = Square.getSquare(tmpPieces)
-            val pawnMoves = BitboardMove.PAWN_MOVES[ourColor][pawnSquare]
+            val pawnBitboard = Bitboard.getBitboard(pawnSquare)
+            val pawnMoves = BitboardMove.pawnMove(ourColor, pawnBitboard)
 
             val stoppers = PASSED_MASK[ourColor][pawnSquare] and theirPawns
             val stack = FRONTSPAN_MASK[ourColor][pawnSquare] and ourPawns
             val blockers = FRONTSPAN_MASK[ourColor][pawnSquare] and theirPawns
             val neighbours = NEIGHBOURS_MASK[pawnSquare] and ourPawns
-            val defense = BitboardMove.pawnAttacks(theirColor, pawnSquare) and ourPawns
+            val defense = BitboardMove.pawnAttacks(theirColor, pawnBitboard) and ourPawns
             val phalanx = BitboardMove.NEIGHBOURS[pawnSquare] and ourPawns
             val supporters = PASSED_MASK[theirColor][pawnSquare] and ourPawns
             val dangerAdvance = attackInfo.attacksBitboard[theirColor][Piece.PAWN] and pawnMoves
@@ -148,7 +149,7 @@ object PawnEvaluator {
             val pawnSquare = Square.getSquare(tmpPieces)
             val bitboard = Bitboard.getBitboard(pawnSquare)
 
-            val pawnAdvance = BitboardMove.PAWN_MOVES[ourColor][pawnSquare]
+            val pawnAdvance = BitboardMove.pawnMove(ourColor, bitboard)
             val theirAttacks = attackInfo.attacksBitboard[theirColor][Piece.NONE]
             val ourAttacks = attackInfo.attacksBitboard[ourColor][Piece.NONE]
 
@@ -199,15 +200,12 @@ object PawnEvaluator {
     }
 
     private fun evalPawn(board: Board, attackInfo: AttackInfo, ourColor: Int, theirColor: Int): Int {
-        var pawnPush = BitboardMove.pawnForward(ourColor, board.pieceBitboard[ourColor][Piece.PAWN]) and
+        var pawnPush = BitboardMove.pawnMove(ourColor, board.pieceBitboard[ourColor][Piece.PAWN]) and
             board.emptyBitboard and attackInfo.attacksBitboard[theirColor][Piece.PAWN].inv()
         pawnPush = pawnPush or
             (board.emptyBitboard and
                 attackInfo.attacksBitboard[theirColor][Piece.PAWN].inv() and
-                BitboardMove.pawnForward(
-                    ourColor,
-                    pawnPush and Bitboard.RANKS[Rank.getRelativeRank(ourColor, Rank.RANK_3)]
-                ))
+                BitboardMove.pawnDoubleMove(ourColor, pawnPush))
         pawnPush = pawnPush and
             (attackInfo.attacksBitboard[ourColor][Piece.NONE] or
                 attackInfo.attacksBitboard[theirColor][Piece.NONE].inv())

@@ -68,8 +68,10 @@ class AttackInfo {
         val kingSquare = board.kingSquare[color]
         while (tmpPieces != Bitboard.EMPTY) {
             val fromSquare = Square.getSquare(tmpPieces)
-            val bitboard = BitboardMove.pawnAttacks(color, fromSquare) and mask and
-                BitboardMove.PINNED_MOVE_MASK[kingSquare][fromSquare]
+            val fromBitboard = Bitboard.getBitboard(fromSquare)
+            val bitboard = BitboardMove.pawnAttacks(color, fromBitboard) and
+                    mask and
+                    BitboardMove.PINNED_MOVE_MASK[kingSquare][fromSquare]
 
             attacksBitboard[color][Piece.PAWN] = attacksBitboard[color][Piece.PAWN] or
                 bitboard

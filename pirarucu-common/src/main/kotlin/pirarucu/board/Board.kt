@@ -223,9 +223,10 @@ class Board {
             }
             MoveType.TYPE_PASSANT -> {
                 val fromBitboard = Bitboard.getBitboard(Move.getFromSquare(move))
-
+                val epBitboard = Bitboard.getBitboard(epSquare)
                 val tmpBitboard = gameBitboard xor fromBitboard xor
-                    Bitboard.getBitboard(epSquare) xor BitboardMove.PAWN_MOVES[nextColorToMove][epSquare]
+                    epBitboard xor
+                    BitboardMove.pawnMove(nextColorToMove, epBitboard)
                 return MoveGenerator.squareAttackedBitboard(
                     kingSquare[colorToMove], colorToMove, pieceBitboard[nextColorToMove], tmpBitboard
                 ) == Bitboard.EMPTY

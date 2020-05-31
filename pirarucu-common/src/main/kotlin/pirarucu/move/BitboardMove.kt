@@ -17,7 +17,6 @@ object BitboardMove {
     val PAWN_FORWARD = arrayOf(NORTH, SOUTH)
     val DOUBLE_PAWN_FORWARD = arrayOf(NORTH * 2, SOUTH * 2)
 
-    private val PAWN_ATTACK_STEP = intArrayOf(NORTH + WEST, NORTH + EAST)
     private val KNIGHT_MOVE_STEPS = intArrayOf(SOUTH * 2 + WEST, SOUTH * 2 + EAST, -10, -6, 6, 10, 15, 17)
     private const val BISHOP_MAGIC_SHIFT = 9
     private val BISHOP_MOVE_STEPS = intArrayOf(-9, -7, 7, 9)
@@ -25,8 +24,6 @@ object BitboardMove {
     private val ROOK_MOVE_STEPS = intArrayOf(-8, -1, 1, 8)
     private val KING_MOVE_STEPS = intArrayOf(-9, -8, -7, -1, 1, 7, 8, 9)
 
-    val PAWN_MOVES = Array(Color.SIZE) { LongArray(Square.SIZE) }
-    val DOUBLE_PAWN_MOVES = Array(Color.SIZE) { LongArray(Square.SIZE) }
     val KNIGHT_MOVES = LongArray(Square.SIZE)
     val BISHOP_PSEUDO_MOVES = LongArray(Square.SIZE)
     val ROOK_PSEUDO_MOVES = LongArray(Square.SIZE)
@@ -41,21 +38,12 @@ object BitboardMove {
 
     init {
         populateBetween()
-        populatePawnMoves()
         populateKnightMoves()
         populateBishopMoves()
         populateRookMoves()
         populateKingMoves()
         populatePinnedMask()
         populateNeighbours()
-    }
-
-    private fun slideBetween(square: Int, slideValue: IntArray, limit: Long): Long {
-        var result = Bitboard.EMPTY
-        for (slide in slideValue) {
-            result = result or slideBetween(square, slide, limit)
-        }
-        return result
     }
 
     private fun slideBetween(square: Int, slideValue: Int, limit: Long): Long {
@@ -122,40 +110,21 @@ object BitboardMove {
         }
     }
 
-    private fun populatePawnMoves() {
-        for (square in Square.A1 until Square.SIZE) {
-            PAWN_MOVES[Color.WHITE][square] = getPawnMove(Color.WHITE, square)
-            PAWN_MOVES[Color.BLACK][square] = getPawnMove(Color.BLACK, square)
-            DOUBLE_PAWN_MOVES[Color.WHITE][square] = getDoublePawnMove(Color.WHITE, square)
-            DOUBLE_PAWN_MOVES[Color.BLACK][square] = getDoublePawnMove(Color.BLACK, square)
+    fun pawnMove(color: Int, bitboard: Long): Long {
+        return if (color == Color.WHITE) {
+            bitboard shl NORTH
+        } else {
+            bitboard ushr NORTH
         }
     }
 
-    private fun getPawnMove(color: Int, square: Int): Long {
-        var result = Bitboard.EMPTY
-        val pawnMove = PAWN_FORWARD[color]
-        val forwardSquare = square + pawnMove
-        if (Square.isValid(forwardSquare)) {
-            result = result or Bitboard.getBitboard(forwardSquare)
+    // Note: Pass a pawn move bitboard to this function
+    fun pawnDoubleMove(color: Int, bitboard: Long): Long {
+        return if (color == Color.WHITE) {
+            (bitboard and Bitboard.RANK_3) shl NORTH
+        } else {
+            (bitboard and Bitboard.RANK_6) ushr NORTH
         }
-        return result
-    }
-
-    private fun getDoublePawnMove(color: Int, square: Int): Long {
-        var result = Bitboard.EMPTY
-        val bitboard = Bitboard.getBitboard(square)
-        if (bitboard and Bitboard.DOUBLE_MOVEMENT_BITBOARD[color] != Bitboard.EMPTY) {
-            val doublePawnMove = DOUBLE_PAWN_FORWARD[color]
-            val forwardSquare = square + doublePawnMove
-            if (Square.isValid(forwardSquare)) {
-                result = result or Bitboard.getBitboard(forwardSquare)
-            }
-        }
-        return result
-    }
-
-    fun pawnAttacks(color: Int, square: Int): Long {
-        return pawnAttacks(color, Bitboard.getBitboard(square))
     }
 
     private fun populateKnightMoves() {
@@ -318,14 +287,6 @@ object BitboardMove {
             (bitboard shl 7 and Bitboard.NOT_FILE_H) or (bitboard shl 9 and Bitboard.NOT_FILE_A)
         } else {
             (bitboard ushr 7 and Bitboard.NOT_FILE_A) or (bitboard ushr 9 and Bitboard.NOT_FILE_H)
-        }
-    }
-
-    fun pawnForward(color: Int, bitboard: Long): Long {
-        return if (color == Color.WHITE) {
-            (bitboard shl 8)
-        } else {
-            (bitboard ushr 8)
         }
     }
 }

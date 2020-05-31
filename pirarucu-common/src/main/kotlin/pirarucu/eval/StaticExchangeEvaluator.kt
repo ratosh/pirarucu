@@ -146,9 +146,10 @@ object StaticExchangeEvaluator {
         if (rooks != Bitboard.EMPTY) {
             result = result or (BitboardMove.rookMoves(toSquare, occupied) and rooks)
         }
+        val toBitboard = Bitboard.getBitboard(toSquare)
         return result or
-            (BitboardMove.pawnAttacks(Color.BLACK, toSquare) and board.pieceBitboard[Color.WHITE][Piece.PAWN]) or
-            (BitboardMove.pawnAttacks(Color.WHITE, toSquare) and board.pieceBitboard[Color.BLACK][Piece.PAWN]) or
+            (BitboardMove.pawnAttacks(Color.BLACK, toBitboard) and board.pieceBitboard[Color.WHITE][Piece.PAWN]) or
+            (BitboardMove.pawnAttacks(Color.WHITE, toBitboard) and board.pieceBitboard[Color.BLACK][Piece.PAWN]) or
             (BitboardMove.KNIGHT_MOVES[toSquare] and
                 (board.pieceBitboard[Color.WHITE][Piece.KNIGHT] or board.pieceBitboard[Color.BLACK][Piece.KNIGHT])) or
             (BitboardMove.KING_MOVES[toSquare] and
