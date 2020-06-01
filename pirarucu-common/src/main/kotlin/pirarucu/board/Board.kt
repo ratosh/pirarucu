@@ -374,11 +374,9 @@ class Board {
 
     private fun updateCastlingRights(fromSquare: Int, toSquare: Int) {
         val castlingChange: Int = castlingRightsSquare[fromSquare] or castlingRightsSquare[toSquare]
-        if (castlingChange and castlingRights != 0) {
-            zobristKey = zobristKey xor Zobrist.CASTLING_RIGHT[castlingRights]
-            castlingRights = castlingRights and castlingChange.inv()
-            zobristKey = zobristKey xor Zobrist.CASTLING_RIGHT[castlingRights]
-        }
+        zobristKey = zobristKey xor Zobrist.CASTLING_RIGHT[castlingRights]
+        castlingRights = castlingRights and castlingChange.inv()
+        zobristKey = zobristKey xor Zobrist.CASTLING_RIGHT[castlingRights]
     }
 
     private fun clearEpSquare() {
