@@ -39,12 +39,13 @@ class MoveGenerator(private val history: History) {
         val theirColor = board.nextColorToMove
         var quietPieces = Bitboard.FROM_PROMOTION_BITBOARD[ourColor].inv() and
             board.pieceBitboard[ourColor][Piece.PAWN] and
-            BitboardMove.pawnForward(theirColor, board.emptyBitboard)
-        val emptyBitboardMask = board.emptyBitboard
+            BitboardMove.pawnMove(theirColor, board.emptyBitboard)
         while (quietPieces != Bitboard.EMPTY) {
             val fromSquare = Square.getSquare(quietPieces)
-            val bitboard = ((BitboardMove.PAWN_MOVES[ourColor][fromSquare] and emptyBitboardMask) or
-                (BitboardMove.DOUBLE_PAWN_MOVES[ourColor][fromSquare] and emptyBitboardMask)) and mask
+            val fromBitboard = Bitboard.getBitboard(fromSquare)
+            var bitboard = BitboardMove.pawnMove(ourColor, fromBitboard) and board.emptyBitboard
+            bitboard = bitboard or (BitboardMove.pawnDoubleMove(ourColor, bitboard) and board.emptyBitboard)
+            bitboard = bitboard and mask
 
             generateQuietMoves(moveList, ourColor, fromSquare, bitboard)
 
@@ -148,12 +149,14 @@ class MoveGenerator(private val history: History) {
         val ourColor = board.colorToMove
         val theirColor = board.nextColorToMove
         var promotionAttacks = attackInfo.attacksBitboard[ourColor][Piece.PAWN] and
-            Bitboard.PROMOTION_BITBOARD and mask
+                Bitboard.PROMOTION_BITBOARD and
+                mask
         val pawnBitboard = board.pieceBitboard[ourColor][Piece.PAWN]
 
         while (promotionAttacks != Bitboard.EMPTY) {
             val toSquare = Square.getSquare(promotionAttacks)
-            var bitboard = BitboardMove.pawnAttacks(theirColor, toSquare) and pawnBitboard
+            val toBitboard = Bitboard.getBitboard(toSquare)
+            var bitboard = BitboardMove.pawnAttacks(theirColor, toBitboard) and pawnBitboard
 
             while (bitboard != Bitboard.EMPTY) {
                 val fromSquare = Square.getSquare(bitboard)
@@ -173,7 +176,7 @@ class MoveGenerator(private val history: History) {
         val ourColor = board.colorToMove
         val theirColor = board.nextColorToMove
         val pawnBitboard = board.pieceBitboard[ourColor][Piece.PAWN] and board.basicEvalInfo.pinnedBitboard.inv()
-        var promotionLocation = BitboardMove.pawnForward(ourColor, pawnBitboard) and
+        var promotionLocation = BitboardMove.pawnMove(ourColor, pawnBitboard) and
             Bitboard.PROMOTION_BITBOARD and
             board.emptyBitboard and
             attackInfo.movementMask[ourColor]
@@ -202,7 +205,8 @@ class MoveGenerator(private val history: History) {
 
         while (pawnAttacks != Bitboard.EMPTY) {
             val toSquare = Square.getSquare(pawnAttacks)
-            var bitboard = BitboardMove.pawnAttacks(theirColor, toSquare) and pawnBitboard
+            val toBitboard = Bitboard.getBitboard(toSquare)
+            var bitboard = BitboardMove.pawnAttacks(theirColor, toBitboard) and pawnBitboard
 
             while (bitboard != Bitboard.EMPTY) {
                 val fromSquare = Square.getSquare(bitboard)
@@ -263,13 +267,14 @@ class MoveGenerator(private val history: History) {
     ) {
         val epSquare = board.epSquare
         if (epSquare != Square.NONE) {
+            val ourColor = board.colorToMove
             val theirColor = board.nextColorToMove
-            val epPawnBitboard = BitboardMove.PAWN_MOVES[theirColor][epSquare] and
-                maskBitboard
+            val epBitboard = Bitboard.getBitboard(epSquare)
+            val epPawnBitboard = BitboardMove.pawnMove(theirColor, epBitboard) and
+                    maskBitboard
             if (epPawnBitboard != Bitboard.EMPTY) {
-                val ourColor = board.colorToMove
                 var tmpPieces = board.pieceBitboard[ourColor][Piece.PAWN] and
-                    BitboardMove.pawnAttacks(theirColor, epSquare)
+                    BitboardMove.pawnAttacks(theirColor, epBitboard)
                 while (tmpPieces != Bitboard.EMPTY) {
                     val fromSquare = Square.getSquare(tmpPieces)
 
@@ -373,7 +378,7 @@ class MoveGenerator(private val history: History) {
                     }
                     if (MoveType.TYPE_PASSANT == moveType) {
                         return toSquare == board.epSquare &&
-                                toBitboard and BitboardMove.pawnAttacks(ourColor, fromSquare) != Bitboard.EMPTY
+                                toBitboard and BitboardMove.pawnAttacks(ourColor, fromBitboard) != Bitboard.EMPTY
                     }
                     val checkBitboard = board.basicEvalInfo.checkBitboard
                     val mask = when {
@@ -389,17 +394,13 @@ class MoveGenerator(private val history: History) {
                         }
                     }
                     if (toBitboard and board.pieceBitboard[theirColor][Piece.NONE] == Bitboard.EMPTY) {
-                        var bitboard = BitboardMove.PAWN_MOVES[ourColor][fromSquare] and board.emptyBitboard
-
-                        if (bitboard != Bitboard.EMPTY) {
-                            bitboard = bitboard or (BitboardMove.DOUBLE_PAWN_MOVES[ourColor][fromSquare] and
-                                    board.emptyBitboard)
-                        }
+                        var bitboard = BitboardMove.pawnMove(ourColor, fromBitboard) and board.emptyBitboard
+                        bitboard = bitboard or (BitboardMove.pawnDoubleMove(ourColor, bitboard) and board.emptyBitboard)
                         bitboard = bitboard and mask
 
                         return (toBitboard and bitboard != Bitboard.EMPTY)
                     }
-                    (toBitboard and BitboardMove.pawnAttacks(ourColor, fromSquare) and mask != Bitboard.EMPTY)
+                    (toBitboard and BitboardMove.pawnAttacks(ourColor, fromBitboard) and mask != Bitboard.EMPTY)
                 }
                 Piece.KING -> {
                     if (MoveType.isCastling(moveType)) {
@@ -442,7 +443,7 @@ class MoveGenerator(private val history: History) {
                 theirPieceBitboard[Piece.QUEEN]) and gameBitboard
             val rooks = (theirPieceBitboard[Piece.ROOK] or theirPieceBitboard[Piece.QUEEN]) and
                 gameBitboard
-            var result = (pawns and BitboardMove.pawnAttacks(ourColor, square)) or
+            var result = (pawns and BitboardMove.pawnAttacks(ourColor, Bitboard.getBitboard(square))) or
                 (knights and BitboardMove.KNIGHT_MOVES[square]) or
                 (BitboardMove.KING_MOVES[square] and theirPieceBitboard[Piece.KING])
 

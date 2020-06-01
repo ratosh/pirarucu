@@ -218,6 +218,18 @@ class MoveGeneratorTest {
     }
 
     @Test
+    fun epPinnedCapture() {
+        val board = BoardFactory.getBoard("5k2/6b1/8/3Pp3/8/2K5/8/8 w - e6")
+        assertEquals(8, countAll(board))
+    }
+
+    @Test
+    fun epCheckCapture() {
+        val board = BoardFactory.getBoard("5k2/6b1/8/3Pp3/5K2/8/8/8 w - e6")
+        assertEquals(8, countAll(board))
+    }
+
+    @Test
     fun p4_1() {
         val board = BoardFactory.getBoard("r1bqkbnr/pppppppp/2n5/8/Q7/2P5/PP1PPPPP/RNB1KBNR b KQkq -")
         assertEquals(22, countAll(board))
