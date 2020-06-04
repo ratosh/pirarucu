@@ -180,10 +180,7 @@ class Board {
         pushToHistory()
 
         zobristKey = zobristKey xor Zobrist.SIDE
-        if (epSquare != Square.NONE) {
-            zobristKey = zobristKey xor Zobrist.PASSANT_SQUARE[epSquare]
-            epSquare = Square.NONE
-        }
+        clearEpSquare()
         capturedPiece = 0
 
         nextColorToMove = colorToMove
@@ -380,10 +377,8 @@ class Board {
     }
 
     private fun clearEpSquare() {
-        if (epSquare != Square.NONE) {
-            zobristKey = zobristKey xor Zobrist.PASSANT_SQUARE[epSquare]
-            epSquare = Square.NONE
-        }
+        zobristKey = zobristKey xor Zobrist.PASSANT_SQUARE[epSquare]
+        epSquare = Square.NONE
     }
 
     private fun doCastle(ourColor: Int, fromSquare: Int, toSquare: Int) {

@@ -11,7 +11,7 @@ import pirarucu.util.XorShiftRandom
 object Zobrist {
 
     val PIECE_SQUARE_TABLE = Array(Color.SIZE) { Array(Piece.SIZE) { LongArray(Square.SIZE) } }
-    val PASSANT_SQUARE = LongArray(Square.SIZE)
+    val PASSANT_SQUARE = LongArray(Square.SIZE + 1)
     val CASTLING_RIGHT = LongArray(CastlingRights.SIZE)
     val SIDE: Long
 
