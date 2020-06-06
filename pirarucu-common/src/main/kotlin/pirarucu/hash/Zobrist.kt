@@ -33,7 +33,6 @@ object Zobrist {
             }
         }
 
-
         // skip first item: contains only zeros, default value and has no effect when xorring
         for (castlingRight in 1 until CastlingRights.SIZE) {
             CASTLING_RIGHT[castlingRight] = XorShiftRandom.nextLong()

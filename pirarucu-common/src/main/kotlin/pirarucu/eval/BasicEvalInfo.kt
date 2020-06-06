@@ -20,7 +20,6 @@ class BasicEvalInfo {
         pinnedBitboard = 0L
         for (ourColor in Color.WHITE until Color.SIZE) {
             val theirColor = Color.invertColor(ourColor)
-            val theirPieceBitboard = board.pieceBitboard[theirColor]
             val kingSquarePosition = board.kingSquare[ourColor]
             setPinned(
                 kingSquarePosition,
