@@ -3,6 +3,7 @@ package pirarucu.search
 import pirarucu.board.Bitboard
 import pirarucu.board.Board
 import pirarucu.board.Piece
+import pirarucu.board.Rank
 import pirarucu.cache.PawnEvaluationCache
 import pirarucu.eval.DrawEvaluator
 import pirarucu.eval.EvalConstants
@@ -323,15 +324,20 @@ class MainSearch(
 
             val moveType = Move.getMoveType(move)
             val isPromotion = MoveType.isPromotion(moveType)
+            val fromSquare = Move.getFromSquare(move)
+            val movingPiece = board.pieceTypeBoard[fromSquare]
             val toSquare = Move.getToSquare(move)
-            val capturedPiece = board.pieceTypeBoard[Move.getToSquare(move)]
+            val toRank = Rank.getRank(toSquare)
+            val capturedPiece = board.pieceTypeBoard[toSquare]
+            val pawnPush = movingPiece == Piece.PAWN && toRank > 5
 
             val isCapture = capturedPiece != Piece.NONE
             val isQuiet = !isCapture && moveType == MoveType.TYPE_NORMAL
 
             if (prunable &&
                 !isPromotion &&
-                movesPerformed > 0
+                movesPerformed > 0 &&
+                !pawnPush
             ) {
 
                 if (newDepth < SearchConstants.LMP_DEPTH) {
