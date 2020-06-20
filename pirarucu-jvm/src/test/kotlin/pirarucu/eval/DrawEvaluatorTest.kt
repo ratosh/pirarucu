@@ -11,13 +11,13 @@ import kotlin.test.assertTrue
 class DrawEvaluatorTest {
 
     @Test
-    fun testKK() {
+    fun testKk() {
         val board = BoardFactory.getBoard("4k3/8/8/8/8/8/8/4K3 b - -")
         assertFalse(DrawEvaluator.hasSufficientMaterial(board))
     }
 
     @Test
-    fun testKNK() {
+    fun testKNk() {
         var board = BoardFactory.getBoard("4k3/4n3/8/8/8/8/8/4K3 b - -")
         assertFalse(DrawEvaluator.hasSufficientMaterial(board))
         board = BoardFactory.getBoard("4k3/4N3/8/8/8/8/8/4K3 b - -")
@@ -25,7 +25,7 @@ class DrawEvaluatorTest {
     }
 
     @Test
-    fun testKBK() {
+    fun testKBk() {
         var board = BoardFactory.getBoard("4k3/4b3/8/8/8/8/8/4K3 b - -")
         assertFalse(DrawEvaluator.hasSufficientMaterial(board))
         board = BoardFactory.getBoard("4k3/4B3/8/8/8/8/8/4K3 b - -")
@@ -33,7 +33,7 @@ class DrawEvaluatorTest {
     }
 
     @Test
-    fun testKPK() {
+    fun testKPk() {
         var board = BoardFactory.getBoard("4k3/4p3/8/8/8/8/8/4K3 b - -")
         assertTrue(DrawEvaluator.hasSufficientMaterial(board))
         board = BoardFactory.getBoard("4k3/4P3/8/8/8/8/8/4K3 b - -")
@@ -41,7 +41,7 @@ class DrawEvaluatorTest {
     }
 
     @Test
-    fun testKNNK() {
+    fun testKNNk() {
         var board = BoardFactory.getBoard("4k3/4nn2/8/8/8/8/8/4K3 b - -")
         assertFalse(DrawEvaluator.hasSufficientMaterial(board))
         board = BoardFactory.getBoard("4k3/4NN2/8/8/8/8/8/4K3 b - -")
@@ -49,7 +49,7 @@ class DrawEvaluatorTest {
     }
 
     @Test
-    fun testKNBK() {
+    fun testKNBk() {
         var board = BoardFactory.getBoard("4k3/4nb2/8/8/8/8/8/4K3 b - -")
         assertTrue(DrawEvaluator.hasSufficientMaterial(board))
         board = BoardFactory.getBoard("4k3/4NB2/8/8/8/8/8/4K3 b - -")
@@ -57,7 +57,7 @@ class DrawEvaluatorTest {
     }
 
     @Test
-    fun testKBBK() {
+    fun testKBBk() {
         var board = BoardFactory.getBoard("4k3/4bb2/8/8/8/8/8/4K3 b - -")
         assertTrue(DrawEvaluator.hasSufficientMaterial(board))
         board = BoardFactory.getBoard("4k3/4BB2/8/8/8/8/8/4K3 b - -")
@@ -65,35 +65,39 @@ class DrawEvaluatorTest {
     }
 
     @Test
-    fun testKNKN() {
+    fun testKNkn() {
         val board = BoardFactory.getBoard("4k3/4n3/8/8/8/8/4N3/4K3 b - -")
         assertFalse(DrawEvaluator.hasSufficientMaterial(board))
     }
 
     @Test
-    fun testKBKB() {
+    fun testKBkb() {
         val board = BoardFactory.getBoard("4k3/4b3/8/8/8/8/4B3/4K3 b - -")
         assertFalse(DrawEvaluator.hasSufficientMaterial(board))
     }
 
     @Test
-    fun testKRKR() {
+    fun testKRkr() {
         val board = BoardFactory.getBoard("4k3/4r3/8/8/8/8/4R3/4K3 b - -")
         assertTrue(DrawEvaluator.hasSufficientMaterial(board))
     }
 
     @Test
-    fun testKRK() {
+    fun testKRk() {
         val board = BoardFactory.getBoard("4k3/4r3/8/8/8/8/8/4K3 b - -")
-        assertFalse(DrawEvaluator.hasSufficientMaterial(board, Color.WHITE))
-        assertTrue(DrawEvaluator.hasSufficientMaterial(board, Color.BLACK))
+        assertTrue(DrawEvaluator.hasSufficientMaterial(board, Color.BLACK, Color.WHITE))
     }
 
     @Test
-    fun testKNKP() {
+    fun testKRkp() {
+        val board = BoardFactory.getBoard("4k3/4r3/8/8/8/8/7P/4K3 w - -")
+        assertFalse(DrawEvaluator.hasSufficientMaterial(board, Color.BLACK, Color.WHITE))
+    }
+
+    @Test
+    fun testKNkp() {
         val board = BoardFactory.getBoard("4k3/4n3/8/8/8/8/4P3/4K3 b - -")
-        assertTrue(DrawEvaluator.hasSufficientMaterial(board, Color.WHITE))
-        assertFalse(DrawEvaluator.hasSufficientMaterial(board, Color.BLACK))
+        assertFalse(DrawEvaluator.hasSufficientMaterial(board, Color.BLACK, Color.WHITE))
     }
 
     @Test

@@ -14,6 +14,9 @@ object DrawEvaluator {
 
     /**
      * Both side can force a mate.
+     * 3 pieces draws:
+     * KNk
+     * KBk
      */
     fun hasSufficientMaterial(board: Board): Boolean {
         return when (PlatformSpecific.bitCount(board.gameBitboard)) {
@@ -29,14 +32,32 @@ object DrawEvaluator {
 
     /**
      * Side has sufficient material to force a mate
+     * NOTE: Only used on winning side view
+     * Not enough material when:
+     * KNkx (KNk already detected)
+     * KBkx (KBk already detected)
+     * KRkx
      */
-    fun hasSufficientMaterial(board: Board, color: Int): Boolean {
-        return (PlatformSpecific.bitCount(board.pieceBitboard[color][Piece.NONE]) > 2 ||
-            (PlatformSpecific.bitCount(board.pieceBitboard[color][Piece.NONE]) == 2 &&
-                    board.pieceBitboard[color][Piece.KNIGHT] or
-                    board.pieceBitboard[color][Piece.BISHOP] == Bitboard.EMPTY))
+    fun hasSufficientMaterial(board: Board, ourColor: Int, theirColor: Int): Boolean {
+        return board.pieceBitboard[ourColor][Piece.NONE] != board.pieceBitboard[ourColor][Piece.KING] &&
+            board.pieceBitboard[ourColor][Piece.NONE] !=
+            board.pieceBitboard[ourColor][Piece.KING] or board.pieceBitboard[ourColor][Piece.KNIGHT]  &&
+            board.pieceBitboard[ourColor][Piece.NONE] !=
+                board.pieceBitboard[ourColor][Piece.KING] or board.pieceBitboard[ourColor][Piece.BISHOP] &&
+                (board.pieceBitboard[ourColor][Piece.NONE] !=
+                board.pieceBitboard[ourColor][Piece.KING] or board.pieceBitboard[ourColor][Piece.ROOK] ||
+            board.pieceBitboard[theirColor][Piece.NONE] == board.pieceBitboard[theirColor][Piece.KING])
     }
 
+    /**
+     * Both sides have sufficient material to force a mate
+     * Detecting:
+     * KNNk
+     * KNkn
+     * KNkb
+     * KBBk
+     * KBkb
+     */
     private fun fourIsSufficientMaterial(board: Board): Boolean {
         val whiteKnightCount = PlatformSpecific.bitCount(board.pieceBitboard[Color.WHITE][Piece.KNIGHT])
         val blackKnightCount = PlatformSpecific.bitCount(board.pieceBitboard[Color.BLACK][Piece.KNIGHT])
