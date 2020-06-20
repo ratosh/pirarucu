@@ -15,7 +15,7 @@ class EpdFileWriter(private val file: File) {
             val tempFile = createTempFile()
             tempFile.printWriter().use { writer ->
                 epdInfoList.forEach {
-                    writer.println("${it.fenPosition} c9 ${it.result}")
+                    writer.println("${it.fenPosition} c9 ${it.toPgnResult()}")
                 }
             }
             check((!file.exists() || file.delete()) && tempFile.renameTo(file)) { "failed to replace file" }

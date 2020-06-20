@@ -44,4 +44,12 @@ data class EpdInfo(val fenPosition: String,
 
         return 0
     }
+
+    fun toPgnResult() : String {
+        return when {
+            (eval > 200) -> "1-0";
+            (eval < -200) -> "0-1";
+            else -> "1/2"
+        }
+    }
 }
