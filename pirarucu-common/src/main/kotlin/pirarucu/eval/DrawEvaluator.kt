@@ -31,17 +31,16 @@ object DrawEvaluator {
     }
 
     /**
-     * Side has sufficient material to force a mate
+     * Can easily convert material advantage
      * NOTE: Only used on winning side view
      * Not enough material when:
-     * KNkx (KNk already detected)
-     * KBkx (KBk already detected)
+     * KNkp (KNkn already detected)
+     * KBkp (KBkn and KBkb already detected)
      * KRkx
      */
-    fun hasSufficientMaterial(board: Board, ourColor: Int, theirColor: Int): Boolean {
-        return board.pieceBitboard[ourColor][Piece.NONE] != board.pieceBitboard[ourColor][Piece.KING] &&
-            board.pieceBitboard[ourColor][Piece.NONE] !=
-            board.pieceBitboard[ourColor][Piece.KING] or board.pieceBitboard[ourColor][Piece.KNIGHT]  &&
+    fun canEasilyConvertAdvantage(board: Board, ourColor: Int, theirColor: Int): Boolean {
+        return board.pieceBitboard[ourColor][Piece.NONE] !=
+            board.pieceBitboard[ourColor][Piece.KING] or board.pieceBitboard[ourColor][Piece.KNIGHT] &&
             board.pieceBitboard[ourColor][Piece.NONE] !=
                 board.pieceBitboard[ourColor][Piece.KING] or board.pieceBitboard[ourColor][Piece.BISHOP] &&
                 (board.pieceBitboard[ourColor][Piece.NONE] !=

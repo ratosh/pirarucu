@@ -85,19 +85,19 @@ class DrawEvaluatorTest {
     @Test
     fun testKRk() {
         val board = BoardFactory.getBoard("4k3/4r3/8/8/8/8/8/4K3 b - -")
-        assertTrue(DrawEvaluator.hasSufficientMaterial(board, Color.BLACK, Color.WHITE))
+        assertTrue(DrawEvaluator.canEasilyConvertAdvantage(board, Color.BLACK, Color.WHITE))
     }
 
     @Test
     fun testKRkp() {
         val board = BoardFactory.getBoard("4k3/4r3/8/8/8/8/7P/4K3 w - -")
-        assertFalse(DrawEvaluator.hasSufficientMaterial(board, Color.BLACK, Color.WHITE))
+        assertFalse(DrawEvaluator.canEasilyConvertAdvantage(board, Color.BLACK, Color.WHITE))
     }
 
     @Test
     fun testKNkp() {
         val board = BoardFactory.getBoard("4k3/4n3/8/8/8/8/4P3/4K3 b - -")
-        assertFalse(DrawEvaluator.hasSufficientMaterial(board, Color.BLACK, Color.WHITE))
+        assertFalse(DrawEvaluator.canEasilyConvertAdvantage(board, Color.BLACK, Color.WHITE))
     }
 
     @Test
