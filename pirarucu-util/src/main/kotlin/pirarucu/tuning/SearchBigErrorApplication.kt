@@ -1,5 +1,6 @@
 package pirarucu.tuning
 
+import pirarucu.epd.EpdFileUpdater
 import pirarucu.epd.EpdFileWriter
 import pirarucu.eval.EvalConstants
 import pirarucu.tuning.evaluator.MainSearchEvaluator
@@ -12,12 +13,12 @@ import kotlin.system.measureTimeMillis
 
 object SearchBigErrorApplication {
 
-    private const val FILE_NAME = "g:\\chess\\epds\\texel-sets\\zuri_quiet_labeled.epd"
+    private const val FILE_NAME = "g:\\chess\\epds\\texel-sets\\lichess_quiet_v2.epd"
     private const val RESULT_FILE_NAME = FILE_NAME + "e"
-    private const val START_DEPTH = 1
-    private const val FINISH_DEPTH = 16
+    private const val START_DEPTH = 2
+    private const val FINISH_DEPTH = 17
     private const val DEPTH_INCREMENT = 1
-    private const val THREADS = 5
+    private const val THREADS = 4
 
     @Throws(ExecutionException::class, InterruptedException::class)
     @JvmStatic
@@ -38,26 +39,32 @@ object SearchBigErrorApplication {
             ErrorUtil.setError(epdList)
             mateList.addAll(epdList
                     .filter {
-                        it.error >= 0.1 &&
+                        it.error >= 0.01 &&
                                 abs(it.eval) > EvalConstants.SCORE_MATE
                     })
             epdList = epdList
                     .filter {
-                        it.error >= 0.2 + currentDepth.toDouble() / 50 &&
-                                !mateList.contains(it)
+                        abs(it.eval) > 200 &&
+                        it.error >= 0.1 &&
+                                abs(it.eval) < EvalConstants.SCORE_MATE
                     }
             currentDepth += DEPTH_INCREMENT
         }
-        println("Found ${mateList.size} disagree mates")
         val list = mutableListOf<EpdInfo>()
-        list.addAll(epdList.filter { it.error >= 0.8 })
-        println("Result disagree on ${list.size} entries")
-        list.sortedByDescending { it.eval }.forEach {
-            println("Disagree (${it.result}|${it.eval}) -> ${it.fenPosition}")
+        println("Result disagree on ${epdList.size} entries")
+        epdList.filter { abs(it.eval) > 2000 && it.error >= 0.01 }
+                .sortedBy { abs(it.eval) }
+                .forEach {
+            list.add(it)
+            println("Big disagree (${it.result}|${it.eval}) -> ${it.fenPosition}")
         }
-        list.addAll(mateList)
+        println("Found ${mateList.size} disagree mates")
+        mateList.forEach {
+            list.add(it)
+            println("Mate (${it.toPgnResult()}) -> ${it.fenPosition}")
+        }
 
-        val writer = EpdFileWriter(RESULT_FILE_NAME)
+        val writer = EpdFileUpdater(FILE_NAME)
         writer.flush(list)
     }
 }

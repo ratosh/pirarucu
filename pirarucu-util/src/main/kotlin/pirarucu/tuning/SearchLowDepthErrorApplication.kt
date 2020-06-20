@@ -12,7 +12,7 @@ import kotlin.system.measureTimeMillis
 
 object SearchLowDepthErrorApplication {
 
-    private const val FILE_NAME = "g:\\chess\\epds\\texel-sets\\psf.epd"
+    private const val FILE_NAME = "g:\\chess\\epds\\texel-sets\\lichess_quiet.epd"
     private const val RESULT_FILE_NAME = FILE_NAME + "r"
     private const val START_DEPTH = 1
     private const val FINISH_DEPTH = 12
