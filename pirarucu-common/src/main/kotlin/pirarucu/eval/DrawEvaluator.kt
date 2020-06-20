@@ -38,14 +38,11 @@ object DrawEvaluator {
      * KBkp (KBkn and KBkb already detected)
      * KRkx
      */
-    fun canEasilyConvertAdvantage(board: Board, ourColor: Int, theirColor: Int): Boolean {
+    fun canEasilyConvertAdvantage(board: Board, ourColor: Int): Boolean {
         return board.pieceBitboard[ourColor][Piece.NONE] !=
             board.pieceBitboard[ourColor][Piece.KING] or board.pieceBitboard[ourColor][Piece.KNIGHT] &&
             board.pieceBitboard[ourColor][Piece.NONE] !=
-                board.pieceBitboard[ourColor][Piece.KING] or board.pieceBitboard[ourColor][Piece.BISHOP] &&
-                (board.pieceBitboard[ourColor][Piece.NONE] !=
-                board.pieceBitboard[ourColor][Piece.KING] or board.pieceBitboard[ourColor][Piece.ROOK] ||
-            board.pieceBitboard[theirColor][Piece.NONE] == board.pieceBitboard[theirColor][Piece.KING])
+                board.pieceBitboard[ourColor][Piece.KING] or board.pieceBitboard[ourColor][Piece.BISHOP]
     }
 
     /**

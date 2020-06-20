@@ -22,11 +22,11 @@ object Evaluator {
 
         val materialScore = board.materialScore[Color.WHITE] - board.materialScore[Color.BLACK]
         if (materialScore > EvalConstants.SCORE_DRAWISH_MATERIAL) {
-            if (!DrawEvaluator.canEasilyConvertAdvantage(board, Color.WHITE, Color.BLACK)) {
+            if (!DrawEvaluator.canEasilyConvertAdvantage(board, Color.WHITE)) {
                 return EvalConstants.SCORE_DRAW
             }
         } else if (materialScore < -EvalConstants.SCORE_DRAWISH_MATERIAL) {
-            if (!DrawEvaluator.canEasilyConvertAdvantage(board, Color.BLACK, Color.WHITE)) {
+            if (!DrawEvaluator.canEasilyConvertAdvantage(board, Color.BLACK)) {
                 return EvalConstants.SCORE_DRAW
             }
         }
