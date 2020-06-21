@@ -374,7 +374,7 @@ object Evaluator {
         var pinnedPieces = board.basicEvalInfo.pinnedBitboard and board.pieceBitboard[ourColor][Piece.NONE]
         while (pinnedPieces != Bitboard.EMPTY) {
             val square = Square.getSquare(pinnedPieces)
-            result += TunableConstants.PINNED_BONUS[board.pieceTypeBoard[square]]
+            result -= TunableConstants.PINNED_PENALTY[board.pieceTypeBoard[square]]
             pinnedPieces = pinnedPieces and pinnedPieces - 1
         }
         return result
