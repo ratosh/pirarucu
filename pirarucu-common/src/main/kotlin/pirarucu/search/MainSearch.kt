@@ -329,7 +329,7 @@ class MainSearch(
             val toSquare = Move.getToSquare(move)
             val toRank = Rank.getRank(toSquare)
             val capturedPiece = board.pieceTypeBoard[toSquare]
-            val pawnPush = movingPiece == Piece.PAWN && toRank > 5
+            val pawnPush = movingPiece == Piece.PAWN && toRank > 6
 
             val isCapture = capturedPiece != Piece.NONE
             val isQuiet = !isCapture && moveType == MoveType.TYPE_NORMAL
