@@ -324,7 +324,7 @@ class MainSearch(
             val moveType = Move.getMoveType(move)
             val isPromotion = MoveType.isPromotion(moveType)
             val toSquare = Move.getToSquare(move)
-            val capturedPiece = board.pieceTypeBoard[Move.getToSquare(move)]
+            val capturedPiece = board.pieceTypeBoard[toSquare]
 
             val isCapture = capturedPiece != Piece.NONE
             val isQuiet = !isCapture && moveType == MoveType.TYPE_NORMAL
@@ -432,7 +432,7 @@ class MainSearch(
                 }
                 break
             }
-            if (isQuiet) {
+            if (isQuiet && depth > 2) {
                 history.addHistory(board.colorToMove, move, -powerDepth)
             }
         }
