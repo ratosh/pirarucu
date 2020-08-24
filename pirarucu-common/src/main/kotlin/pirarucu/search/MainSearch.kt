@@ -222,16 +222,15 @@ class MainSearch(
 
         if (foundInfo != HashConstants.EMPTY_INFO) {
             ttMove = transpositionTable.getMove(foundInfo)
-            // IID
-        } else if (pvNode && newDepth > SearchConstants.IID_DEPTH) {
-            newDepth -= 1
-        }
 
-        // Only keep valid tt moves
-        if (ttMove != Move.NONE &&
-                (!MoveGenerator.isPseudoLegalMove(board, currentNode.attackInfo, ttMove) ||
-                !board.isLegalMove(ttMove))) {
-            ttMove = Move.NONE
+            // Only keep valid tt moves
+            if (!MoveGenerator.isPseudoLegalMove(board, currentNode.attackInfo, ttMove) ||
+                    !board.isLegalMove(ttMove)) {
+                ttMove = Move.NONE
+            }
+        }
+        if (ttMove == Move.NONE && pvNode && newDepth > SearchConstants.IID_DEPTH) {
+            newDepth -= 1
         }
 
         var ttMoveSingular = false
