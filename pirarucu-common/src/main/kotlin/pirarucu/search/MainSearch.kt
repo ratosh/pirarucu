@@ -52,7 +52,7 @@ class MainSearch(
             else -> 0
         }
 
-        val newDepth = depth + extension
+        var newDepth = depth + extension
 
         if (newDepth <= 0) {
             return quiescenceSearch.search(board, ply, alpha, beta)
@@ -80,7 +80,7 @@ class MainSearch(
 
         var eval = EvalConstants.SCORE_UNKNOWN
 
-        var foundInfo = transpositionTable.findEntry(board)
+        val foundInfo = transpositionTable.findEntry(board)
         var ttScore = EvalConstants.SCORE_UNKNOWN
         var ttScoreType = HashConstants.SCORE_TYPE_EXACT_SCORE
         var ttDepth = 0
@@ -224,15 +224,7 @@ class MainSearch(
             ttMove = transpositionTable.getMove(foundInfo)
             // IID
         } else if (pvNode && newDepth > SearchConstants.IID_DEPTH) {
-            search(
-                board, newDepth - SearchConstants.IID_DEPTH, ply, currentAlpha,
-                currentBeta, false
-            )
-            foundInfo = transpositionTable.findEntry(board)
-
-            if (foundInfo != HashConstants.EMPTY_INFO) {
-                ttMove = transpositionTable.getMove(foundInfo)
-            }
+            newDepth -= 1
         }
 
         // Only keep valid tt moves
