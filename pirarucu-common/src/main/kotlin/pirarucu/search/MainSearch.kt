@@ -229,7 +229,7 @@ class MainSearch(
                 ttMove = Move.NONE
             }
         }
-        if (ttMove == Move.NONE && pvNode && newDepth > SearchConstants.IID_DEPTH) {
+        if (ttMove == Move.NONE && newDepth > SearchConstants.IID_DEPTH) {
             newDepth -= 1
         }
 
