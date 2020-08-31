@@ -230,7 +230,7 @@ class MainSearch(
             }
         }
         if (ttMove == Move.NONE && pvNode && newDepth > SearchConstants.IID_DEPTH) {
-            newDepth = newDepth * 6 / 8
+            newDepth = newDepth * 4 / 5
         }
 
         var ttMoveSingular = false
